@@ -8,7 +8,7 @@ import type { SplitterProps } from './interface';
 import SplitBar from './SplitBar.vue';
 import { vResizeObserver } from '@vueuse/components';
 import Panel from './Panel.vue';
-import { cn } from '#/packages/src/utils/cn';
+import { cn } from '../../utils/cn';
 
 defineOptions({ name: 'Splitter' });
 

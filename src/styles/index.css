@@ -1,18 +1,36 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import './variable.css';
+@import './theme.css';
 
 #app {
   @apply h-[100vh] w-[100vw];
 }
 
 @theme {
-  --color-primary: #3b8e8e;
-  --color-primary-400: #56a9a9;
-  --color-main-bg: #ebecee;
+  --color-primary: var(--primary);
+  --color-primary-400: var(--primary-400);
+  --color-main-bg: var(--main-bg);
 }
 
 @layer components {
   .flex-center {
     @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+
+  .flex-end {
+    @apply flex items-center justify-end;
+  }
+
+  .flex-start {
+    @apply flex items-center justify-start;
+  }
+
+  .flex-around {
+    @apply flex items-center justify-around;
   }
 }

@@ -1,6 +1,10 @@
+import { resolve } from 'path';
+import { fileURLToPath } from 'url';
 import { defineConfig, loadEnv } from 'vite';
 import { wrapperEnv } from './build/uitls';
 import { createVitePlugins } from './build/vite/index';
+
+const externals = ['vue'];
 
 export default defineConfig(({ command, mode }) => {
   const root = process.cwd();
@@ -9,35 +13,34 @@ export default defineConfig(({ command, mode }) => {
   const env = wrapperEnv(rawEnv);
   return {
     plugins: createVitePlugins(rawEnv, mode),
-
     build: {
-      target: 'es2015',
       rollupOptions: {
+        external: [...externals],
         output: {
-          assetFileNames: '[ext]/[name]-[hash].[ext]',
-          chunkFileNames: 'js/[name]-[hash].js',
-          entryFileNames: 'jse/index-[name]-[hash].js',
+          globals: {
+            vue: 'Vue',
+          },
         },
       },
       esbuild: {
         drop: isBuild ? ['debugger'] : [],
         legalComments: 'none',
       },
+      lib: {
+        entry: resolve(__dirname, 'src/index.ts'),
+        name: 'index',
+        fileName: 'index',
+      },
+    },
+    resolve: {
+      dedupe: ['vue'],
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+      },
     },
     server: {
       host: true,
       port: env.VITE_PORT,
-      proxy: {
-        '/api': {
-          target: 'http://127.0.0.1:4523/m1/6705469-6415282-default',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-        },
-      },
-      warmup: {
-        // 预热文件
-        clientFiles: ['./index.html', './src/main.ts', './src/{views,layouts,router,store,api,adapter}/*'],
-      },
     },
   };
 });

@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "noImplicitAny": false,
+    "declaration": true,
+    "strictNullChecks": false,
+    "declarationDir": "./dist/typings",
+    "lib": ["esnext", "dom", "DOM.Iterable"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.*"]
+}
