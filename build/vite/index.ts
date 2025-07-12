@@ -6,7 +6,6 @@ import type { PluginOption } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import { VitePWA } from 'vite-plugin-pwa';
 import { wrapperEnv } from '../uitls';
-
 export function createVitePlugins(rawEnv: Record<string, string>, mode: string) {
   const isDev = mode === 'development';
   const env = wrapperEnv(rawEnv);

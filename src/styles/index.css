@@ -1,16 +1,10 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import './variable.css';
+
 @import './theme.css';
 
 #app {
   @apply h-[100vh] w-[100vw];
-}
-
-@theme {
-  --color-primary: var(--primary);
-  --color-primary-400: var(--primary-400);
-  --color-main-bg: var(--main-bg);
 }
 
 @layer components {
@@ -32,5 +26,14 @@
 
   .flex-around {
     @apply flex items-center justify-around;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

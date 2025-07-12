@@ -161,7 +161,7 @@ function getValidNumber(num: number | undefined): number {
     <div
       v-if="lazy"
       :class="
-        cn('pointer-none bg-primary-400 absolute z-1 hidden opacity-20 transition-none', {
+        cn('pointer-none bg-sidebar-ring absolute z-1 hidden opacity-20 transition-none', {
           'h-full transform-[translateX(calc(var(--offset)))]': !vertical,
           'w-full transform-[translateY(calc(var(--offset)))]': vertical,
           '!block': active,
@@ -189,7 +189,7 @@ function getValidNumber(num: number | undefined): number {
       v-if="startCollapsible"
       :class="
         cn(
-          'flex-center hover:bg-primary-400 bg-main-bg absolute z-2 box-border cursor-pointer opacity-0 group-hover:opacity-100 hover:text-white',
+          'flex-center hover:bg-sidebar-ring bg-main-bg absolute z-2 box-border cursor-pointer opacity-0 group-hover:opacity-100 hover:text-white',
           {
             'top-[50%] left-auto h-6 w-3 transform-[translateY(-50%)]': !vertical,
             'top-auto left-[50%] h-3 w-6 transform-[translateX(-50%)]': vertical,
@@ -205,7 +205,7 @@ function getValidNumber(num: number | undefined): number {
       v-if="endCollapsible"
       :class="
         cn(
-          'flex-center hover:bg-primary-400 bg-main-bg absolute z-2 box-border cursor-pointer opacity-0 group-hover:opacity-100 hover:text-white',
+          'flex-center hover:bg-sidebar-ring bg-main-bg absolute z-2 box-border cursor-pointer opacity-0 group-hover:opacity-100 hover:text-white',
           {
             'top-[50%] right-auto h-6 w-3 transform-[translateY(-50%)]': !vertical,
             'bottom-auto left-[50%] h-3 w-6 transform-[translateX(-50%)]': vertical,
