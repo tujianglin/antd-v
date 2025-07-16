@@ -7,7 +7,6 @@ import useToken from '../useToken';
 
 const useResetIconStyle = (iconPrefixCls: ComputedRef<string>, csp?: ComputedRef<CSPConfig>) => {
   const { theme, token } = toRefs(useToken());
-
   // Generate style for icons
   return useStyleRegister(
     computed(() => ({

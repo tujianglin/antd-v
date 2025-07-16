@@ -12,7 +12,6 @@ export function isValidWaveColor(color: CSSStyleDeclaration[keyof CSSStyleDeclar
 export function getTargetWaveColor(node: HTMLElement, colorSource: keyof CSSStyleDeclaration | null = null): string | null {
   const style = getComputedStyle(node);
   const { borderTopColor, borderColor, backgroundColor } = style;
-
   if (colorSource && isValidWaveColor(style[colorSource])) {
     return style[colorSource];
   }

@@ -37,7 +37,7 @@ const useCSSVarRegister = <V, T extends Record<string, V>>(
 
   const cache = useGlobalCache<CSSVarCacheValue<V, T>>(
     CSS_VAR_PREFIX,
-    stylePath,
+    computed(() => stylePath.value),
     () => {
       const originToken = fn();
       const [mergedToken, cssVarsStr] = transformToken<V, T>(originToken, key, {

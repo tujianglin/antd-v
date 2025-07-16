@@ -1,4 +1,3 @@
-import Ware from './index.vue';
 import type { WaveComponent } from './interface';
 
 export interface WaveProps {
@@ -7,4 +6,4 @@ export interface WaveProps {
   colorSource?: 'color' | 'backgroundColor' | 'borderColor' | null;
 }
 
-export default Ware;
+export { default as Wave } from './index.vue';

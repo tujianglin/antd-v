@@ -1,17 +1,16 @@
 import raf from '@/vc-util/raf';
 import {
-  computed,
   defineComponent,
   onBeforeUnmount,
   onMounted,
-  ref,
   render,
+  shallowRef,
   Transition,
-  useTemplateRef,
   type CSSProperties,
   type PropType,
 } from 'vue';
 import type { WaveProps } from '.';
+import useState from '../hooks/useState';
 import type { ShowWaveEffect } from './interface';
 import { getTargetWaveColor } from './util';
 
@@ -31,46 +30,38 @@ const WaveEffect = defineComponent({
     },
   },
   setup(props) {
-    const divRef = useTemplateRef<HTMLDivElement>('divRef');
-    const color = ref(null);
-    const borderRadius = ref<number[]>([]);
-    const left = ref(0);
-    const top = ref(0);
-    const width = ref(0);
-    const height = ref(0);
-    const enabled = ref(false);
-
-    const waveStyle = computed(
-      (): CSSProperties => ({
-        left: left.value,
-        top: top.value,
-        width: width.value,
-        height: height.value,
-        borderRadius: borderRadius.value.map((radius) => `${radius}px`).join(' '),
-        ...(color.value ? { '--wave-color': color.value } : {}),
-      }),
-    );
+    const divRef = shallowRef<HTMLDivElement>(null);
+    const [color, setWaveColor] = useState<string | null>(null);
+    const [borderRadius, setBorderRadius] = useState<number[]>([]);
+    const [left, setLeft] = useState(0);
+    const [top, setTop] = useState(0);
+    const [width, setWidth] = useState(0);
+    const [height, setHeight] = useState(0);
+    const [enabled, setEnabled] = useState(false);
 
     function syncPos() {
       const { target } = props;
       const nodeStyle = getComputedStyle(target);
 
       // Get wave color from target
-      color.value = getTargetWaveColor(target, props.colorSource);
+      setWaveColor(getTargetWaveColor(target));
 
       const isStatic = nodeStyle.position === 'static';
 
       // Rect
       const { borderLeftWidth, borderTopWidth } = nodeStyle;
-      left.value = isStatic ? target.offsetLeft : validateNum(-parseFloat(borderLeftWidth));
-      top.value = isStatic ? target.offsetTop : validateNum(-parseFloat(borderTopWidth));
-      width.value = target.offsetWidth;
-      height.value = target.offsetHeight;
+      setLeft(isStatic ? target.offsetLeft : validateNum(-parseFloat(borderLeftWidth)));
+      setTop(isStatic ? target.offsetTop : validateNum(-parseFloat(borderTopWidth)));
+      setWidth(target.offsetWidth);
+      setHeight(target.offsetHeight);
 
       // Get border radius
       const { borderTopLeftRadius, borderTopRightRadius, borderBottomLeftRadius, borderBottomRightRadius } = nodeStyle;
-      borderRadius.value = [borderTopLeftRadius, borderTopRightRadius, borderBottomRightRadius, borderBottomLeftRadius].map(
-        (radius) => validateNum(parseFloat(radius)),
+
+      setBorderRadius(
+        [borderTopLeftRadius, borderTopRightRadius, borderBottomRightRadius, borderBottomLeftRadius].map((radius) =>
+          validateNum(parseFloat(radius)),
+        ),
       );
     }
 
@@ -104,7 +95,7 @@ const WaveEffect = defineComponent({
         // since UI may change after click
         rafId = raf(() => {
           syncPos();
-          enabled.value = true;
+          setEnabled(true);
         });
 
         // Add resize observer to follow size
@@ -125,17 +116,35 @@ const WaveEffect = defineComponent({
         removeDom();
       }
     };
-    return (
-      <Transition
-        appear
-        name="wave-motion"
-        appearFromClass="wave-motion-appear"
-        appearActiveClass="wave-motion-appear"
-        appearToClass="wave-motion-appear wave-motion-appear-active"
-      >
-        <div ref={divRef} class={props.className} style={waveStyle.value} onTransitionend={onTransitionend} />
-      </Transition>
-    );
+    return () => {
+      if (!enabled.value) {
+        return null;
+      }
+      const waveStyle = {
+        left: `${left.value}px`,
+        top: `${top.value}px`,
+        width: `${width.value}px`,
+        height: `${height.value}px`,
+        borderRadius: borderRadius.value.map((radius) => `${radius}px`).join(' '),
+      } as CSSProperties & {
+        [name: string]: number | string;
+      };
+
+      if (color) {
+        waveStyle['--wave-color'] = color.value as string;
+      }
+      return (
+        <Transition
+          appear
+          name="wave-motion"
+          appearFromClass="wave-motion-appear"
+          appearActiveClass="wave-motion-appear"
+          appearToClass="wave-motion-appear wave-motion-appear-active"
+        >
+          <div ref={divRef} class={props.className} style={waveStyle} onTransitionend={onTransitionend} />
+        </Transition>
+      );
+    };
   },
 });
 
@@ -153,7 +162,6 @@ const showWaveEffect: ShowWaveEffect = (target, info) => {
   holder.style.left = '0px';
   holder.style.top = '0px';
   target?.insertBefore(holder, target?.firstChild);
-
   render(<WaveEffect {...info} target={target} />, holder);
   return () => {
     render(null, holder);

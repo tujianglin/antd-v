@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import { cn } from '@/utils/cn';
 import { reactiveComputed } from '@vueuse/core';
-import { computed, ref, toRefs, watch } from 'vue';
+import { computed, ref, toRefs, useAttrs, useSlots, watch } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import { useConfigContextInject } from '../config-provider';
 import { useComponentConfig } from '../config-provider/context';
@@ -16,12 +16,15 @@ import {
   type ButtonVariantType,
 } from './buttonHelpers';
 import useStyle from './style';
+import { Wave } from '../_util/wave';
 
 type ColorVariantPairType = [color?: ButtonColorType, variant?: ButtonVariantType];
 type LoadingConfigType = {
   loading: boolean;
   delay: number;
 };
+
+const props = defineProps<ButtonProps>();
 
 const {
   _skipSemantic,
@@ -44,8 +47,10 @@ const {
   classNames: buttonClassNames,
   styles,
   style: customStyle = {},
+  // autoInsertSpace,
+  // autoFocus,
   ...rest
-} = defineProps<ButtonProps>();
+} = props;
 
 function getLoadingConfig(loading: BaseButtonProps['loading']): LoadingConfigType {
   if (typeof loading === 'object' && loading) {
@@ -74,7 +79,7 @@ const ButtonTypeMap: Partial<Record<ButtonType, ColorVariantPairType>> = {
 
 const mergedType = computed(() => type || 'default');
 
-const context = useConfigContextInject();
+const { button } = toRefs(useConfigContextInject());
 
 const parsedColor = computed((): ColorVariantPairType => {
   if (color && variant) {
@@ -87,8 +92,8 @@ const parsedColor = computed((): ColorVariantPairType => {
     }
     return colorVariantPair;
   }
-  if (context.value.button?.color && context.value.button?.variant) {
-    return [context.value.button.color, context.value.button.variant];
+  if (button.value?.color && button.value?.variant) {
+    return [button.value.color, button.value.variant];
   }
   return ['default', 'outlined'];
 });
@@ -106,6 +111,7 @@ const mergedColorText = computed(() => (isDanger.value ? 'dangerous' : mergedCol
 const {
   getPrefixCls,
   direction,
+  // autoInsertSpace: contextAutoInsertSpace,
   className: contextClassName,
   style: contextStyle,
   classNames: contextClassNames,
@@ -178,14 +184,49 @@ const classes = computed(() => {
   );
 });
 
+const attrs = useAttrs() as {
+  onClick: (e: MouseEvent) => void;
+};
+
 const fullStyle = computed(() => ({
   ...mergedStyles.value?.root,
   ...contextStyle?.value,
   ...(customStyle as Record<string, string>),
 }));
+
+const handleClick = (e: MouseEvent) => {
+  if (innerLoading.value || mergedDisabled.value) {
+    e.preventDefault();
+    return;
+  }
+  attrs?.onClick?.('href' in props ? e : e);
+};
+
+const slots = useSlots();
+
+const ButtonNode = () => {
+  let buttonNode = (
+    <button
+      {...rest}
+      type={htmlType}
+      class={classes.value}
+      style={fullStyle.value}
+      onClick={handleClick}
+      disabled={mergedDisabled.value}
+    >
+      {slots.default?.()}
+    </button>
+  );
+  if (!isUnBorderedButtonVariant(mergedColor.value[1])) {
+    buttonNode = (
+      <Wave component="Button" disabled={innerLoading.value}>
+        {buttonNode}
+      </Wave>
+    );
+  }
+  return buttonNode;
+};
 </script>
 <template>
-  <button v-bind="rest" :type="htmlType" :class="classes" :style="fullStyle" :disabled="mergedDisabled">
-    <slot></slot>
-  </button>
+  <ButtonNode />
 </template>

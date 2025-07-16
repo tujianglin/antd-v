@@ -320,7 +320,6 @@ export default function useStyleRegister(
   if (process.env.NODE_ENV !== 'production' && styleContext.value.mock !== undefined) {
     isMergedClientSide = styleContext.value.mock === 'client';
   }
-
   useGlobalCache<StyleCacheValue>(
     STYLE_PREFIX,
     fullPath,

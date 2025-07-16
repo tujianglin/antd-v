@@ -1,5 +1,5 @@
 import { reactiveComputed } from '@vueuse/core';
-import { computed, inject, provide, type ComputedRef, type CSSProperties, type InjectionKey, type VNode } from 'vue';
+import { inject, provide, toRefs, type CSSProperties, type InjectionKey, type Reactive, type VNode } from 'vue';
 import type { ShowWaveEffect } from '../_util/wave/interface';
 import type { ButtonProps } from '../button';
 import type { AliasToken, MappingAlgorithm, OverrideToken } from '../theme/interface';
@@ -144,12 +144,12 @@ const defaultGetPrefixCls = (suffixCls?: string, customizePrefixCls?: string) =>
   return suffixCls ? `${defaultPrefixCls}-${suffixCls}` : defaultPrefixCls;
 };
 
-export const configProviderKey: InjectionKey<ComputedRef<ConfigConsumerProps>> = Symbol('configProvider');
+export const configProviderKey: InjectionKey<Reactive<ConfigConsumerProps>> = Symbol('configProvider');
 
 export const useConfigContextInject = () => {
   return inject(
     configProviderKey,
-    computed(
+    reactiveComputed(
       (): ConfigConsumerProps => ({
         getPrefixCls: defaultGetPrefixCls,
         iconPrefixCls: defaultIconPrefixCls,
@@ -158,7 +158,7 @@ export const useConfigContextInject = () => {
   );
 };
 
-export const useConfigContextProvider = (props: ComputedRef<ConfigConsumerProps>) => {
+export const useConfigContextProvider = (props: Reactive<ConfigConsumerProps>) => {
   provide(configProviderKey, props);
 };
 
@@ -189,10 +189,10 @@ type ComponentReturnType<T extends keyof ConfigComponentProps> = Omit<
 export function useComponentConfig<T extends keyof ConfigComponentProps>(propName: T) {
   const context = useConfigContextInject();
 
-  const { getPrefixCls, direction, getPopupContainer, renderEmpty } = context.value;
+  const { getPrefixCls, direction, getPopupContainer, renderEmpty } = toRefs(context);
 
   return reactiveComputed(() => {
-    const propValue = context.value[propName];
+    const propValue = context[propName];
     return {
       classNames: EMPTY_OBJECT,
       styles: EMPTY_OBJECT,

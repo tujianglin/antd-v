@@ -8,10 +8,18 @@ import useTheme from './hooks/useTheme';
 import type { ConfigProviderProps } from './interface';
 import useStyle from './style';
 import DesignTokenProvider from '../theme/DesignTokenProvider.vue';
+import { reactiveComputed } from '@vueuse/core';
 
 defineOptions({ name: 'ConfigProvider' });
 
-const { csp: customCsp, iconPrefixCls: customIconPrefixCls, prefixCls, button, theme = {} } = defineProps<ConfigProviderProps>();
+const {
+  csp: customCsp,
+  iconPrefixCls: customIconPrefixCls,
+  prefixCls,
+  button,
+  theme = {},
+  wave = { disabled: false },
+} = defineProps<ConfigProviderProps>();
 
 const parentContext = useConfigContextInject();
 
@@ -20,28 +28,29 @@ const getPrefixCls = (suffixCls: string, customizePrefixCls?: string) => {
     return customizePrefixCls;
   }
 
-  const mergedPrefixCls = prefixCls || parentContext.value.getPrefixCls('');
+  const mergedPrefixCls = prefixCls || parentContext.getPrefixCls('');
 
   return suffixCls ? `${mergedPrefixCls}-${suffixCls}` : mergedPrefixCls;
 };
 
-const iconPrefixCls = computed(() => customIconPrefixCls || parentContext.value.iconPrefixCls || defaultIconPrefixCls);
-const csp = computed(() => customCsp || parentContext.value.csp);
+const iconPrefixCls = computed(() => customIconPrefixCls || parentContext.iconPrefixCls || defaultIconPrefixCls);
+const csp = computed(() => customCsp || parentContext.csp);
 
 useStyle(iconPrefixCls, csp);
 
 const mergedTheme = useTheme(
   computed(() => theme),
-  computed(() => parentContext.value.theme),
+  computed(() => parentContext.theme),
   computed(() => ({ prefixCls: getPrefixCls('') })),
 );
 
-const baseConfig = computed(() => ({
+const baseConfig = reactiveComputed(() => ({
   csp: csp.value,
   getPrefixCls,
   iconPrefixCls: iconPrefixCls.value,
-  theme: mergedTheme?.value ?? parentContext.value.theme,
+  theme: mergedTheme?.value ?? parentContext.theme,
   button,
+  wave,
 }));
 
 const memoTheme = computed(() => {

@@ -296,7 +296,6 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
           () => getResetStyles(token.value, { prefix: { rootPrefixCls, iconPrefixCls }, csp }),
         );
       }
-
       useStyleRegister(
         computed(() => ({ ...sharedConfig, path: [concatComponent, prefixCls, iconPrefixCls] })),
         () => {

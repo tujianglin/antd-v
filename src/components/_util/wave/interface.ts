@@ -1,9 +1,14 @@
+import { defaultPrefixCls } from '@/components/config-provider';
+import type { GlobalToken } from '@/components/theme/internal';
 import type { WaveProps } from '.';
+
+export const TARGET_CLS = `${defaultPrefixCls}-wave-target`;
 
 export type ShowWaveEffect = (
   element: HTMLElement,
   info: {
     className: string;
+    token: GlobalToken;
     component?: WaveComponent;
     event: MouseEvent;
     hashId: string;

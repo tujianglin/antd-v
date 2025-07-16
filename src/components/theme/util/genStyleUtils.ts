@@ -15,11 +15,11 @@ export const { genStyleHooks, genComponentStyleHook, genSubStyleComponent } = ge
   usePrefix: () => {
     const context = useConfigContextInject();
 
-    const rootPrefixCls = context.value.getPrefixCls();
+    const rootPrefixCls = context.getPrefixCls();
 
     return {
       rootPrefixCls,
-      iconPrefixCls: unref(context.value.iconPrefixCls),
+      iconPrefixCls: unref(context.iconPrefixCls),
     };
   },
   useToken: () => {
@@ -34,7 +34,7 @@ export const { genStyleHooks, genComponentStyleHook, genSubStyleComponent } = ge
   },
   useCSP: () => {
     const context = useConfigContextInject();
-    return context.value.csp ?? {};
+    return context.csp ?? {};
   },
   getResetStyles: (token, config) => {
     const linkStyle = genLinkStyle(token);
