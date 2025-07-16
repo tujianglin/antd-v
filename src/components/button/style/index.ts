@@ -226,7 +226,6 @@ export default genStyleHooks(
   'Button',
   (token) => {
     const buttonToken = prepareToken(token);
-
     return [
       // Shared
       genSharedButtonStyle(buttonToken),

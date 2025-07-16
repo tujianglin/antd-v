@@ -1,14 +1,14 @@
-import { computed, useId, type Ref } from 'vue';
+import { computed, useId, type ComputedRef, type Ref } from 'vue';
 import type { OverrideToken } from '../../theme/interface';
 import { defaultConfig } from '../../theme/internal';
 import type { ThemeConfig } from '../context';
 
 export default function useTheme(
-  theme?: Ref<ThemeConfig>,
-  parentTheme?: Ref<ThemeConfig>,
-  config?: {
+  theme?: ComputedRef<ThemeConfig>,
+  parentTheme?: ComputedRef<ThemeConfig>,
+  config?: ComputedRef<{
     prefixCls?: string;
-  },
+  }>,
 ): Ref<ThemeConfig | undefined> {
   const themeConfig = computed(() => theme.value || {});
   const parentThemeConfig = computed((): ThemeConfig => {
@@ -42,7 +42,7 @@ export default function useTheme(
 
     const cssVarKey = `css-var-${themeKey.replace(/:/g, '')}`;
     const mergedCssVar = {
-      prefix: config?.prefixCls, // Same as prefixCls by default
+      prefix: config.value?.prefixCls, // Same as prefixCls by default
       ...parentThemeConfig.value.cssVar,
       ...themeConfig.value.cssVar,
       key: themeConfig.value.cssVar?.key || cssVarKey,
@@ -61,5 +61,6 @@ export default function useTheme(
       cssVar: mergedCssVar,
     };
   });
+
   return mergedTheme;
 }

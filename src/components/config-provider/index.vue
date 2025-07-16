@@ -11,7 +11,7 @@ import DesignTokenProvider from '../theme/DesignTokenProvider.vue';
 
 defineOptions({ name: 'ConfigProvider' });
 
-const props = defineProps<ConfigProviderProps>();
+const { csp: customCsp, iconPrefixCls: customIconPrefixCls, prefixCls, button, theme = {} } = defineProps<ConfigProviderProps>();
 
 const parentContext = useConfigContextInject();
 
@@ -20,32 +20,29 @@ const getPrefixCls = (suffixCls: string, customizePrefixCls?: string) => {
     return customizePrefixCls;
   }
 
-  const mergedPrefixCls = props.prefixCls || parentContext.getPrefixCls('');
+  const mergedPrefixCls = prefixCls || parentContext.value.getPrefixCls('');
 
   return suffixCls ? `${mergedPrefixCls}-${suffixCls}` : mergedPrefixCls;
 };
 
-const iconPrefixCls = computed(() => props.iconPrefixCls || parentContext.iconPrefixCls.value || defaultIconPrefixCls);
-const csp = computed(() => props.csp || parentContext.csp?.value);
+const iconPrefixCls = computed(() => customIconPrefixCls || parentContext.value.iconPrefixCls || defaultIconPrefixCls);
+const csp = computed(() => customCsp || parentContext.value.csp);
 
 useStyle(iconPrefixCls, csp);
 
 const mergedTheme = useTheme(
-  computed(() => props.theme),
-  computed(() => {
-    return parentContext.theme?.value;
-  }),
-  { prefixCls: getPrefixCls('') },
+  computed(() => theme),
+  computed(() => parentContext.value.theme),
+  computed(() => ({ prefixCls: getPrefixCls('') })),
 );
 
-const baseConfig = {
-  csp,
+const baseConfig = computed(() => ({
+  csp: csp.value,
   getPrefixCls,
-  iconPrefixCls,
-  theme: computed(() => {
-    return mergedTheme?.value ?? parentContext.theme?.value;
-  }),
-};
+  iconPrefixCls: iconPrefixCls.value,
+  theme: mergedTheme?.value ?? parentContext.value.theme,
+  button,
+}));
 
 const memoTheme = computed(() => {
   const { algorithm, token, components, cssVar, ...rest } = mergedTheme.value || {};
@@ -92,7 +89,7 @@ const slots = useSlots();
 
 const renderProvider = () => {
   const childNode = slots.default?.();
-  if (props.theme) return <DesignTokenProvider value={memoTheme.value}>{childNode}</DesignTokenProvider>;
+  if (theme) return <DesignTokenProvider value={memoTheme.value}>{childNode}</DesignTokenProvider>;
   return <>{childNode}</>;
 };
 </script>

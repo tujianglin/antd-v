@@ -200,6 +200,5 @@ export default function formatToken(derivativeToken: RawMergedToken): AliasToken
     // Override AliasToken
     ...overrideTokens,
   };
-
   return aliasToken;
 }

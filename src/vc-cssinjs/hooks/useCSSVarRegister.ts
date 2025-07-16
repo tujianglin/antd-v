@@ -33,7 +33,6 @@ const useCSSVarRegister = <V, T extends Record<string, V>>(
   const { key, prefix, unitless, ignore, token, hashId, scope = '' } = config;
   const styleContext = useStyleInject();
   const { _tokenKey: tokenKey } = token;
-
   const stylePath = computed(() => [...config.path, key, scope, tokenKey]);
 
   const cache = useGlobalCache<CSSVarCacheValue<V, T>>(

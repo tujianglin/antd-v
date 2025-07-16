@@ -13,7 +13,7 @@ import getDefaultComponentToken from './getDefaultComponentToken';
 import genMaxMin from './maxmin';
 import statisticToken, { merge as mergeToken } from './statistic';
 
-import { computed } from 'vue';
+import { computed, toRefs, type Reactive } from 'vue';
 import useUniqueMemo from '../_util/hooks/useUniqueMemo';
 import type { UseCSP } from '../hooks/useCSP';
 import useDefaultCSP from '../hooks/useCSP';
@@ -95,7 +95,7 @@ export type GetCompUnitless<CompTokenMap extends TokenMap, AliasToken extends To
 
 function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenType, DesignToken extends TokenType>(config: {
   usePrefix: UsePrefix;
-  useToken: UseToken<CompTokenMap, AliasToken, DesignToken>;
+  useToken: Reactive<UseToken<CompTokenMap, AliasToken, DesignToken>>;
   useCSP?: UseCSP;
   getResetStyles?: GetResetStyles<AliasToken>;
   getCommonStyle?: (token: AliasToken, componentPrefixCls: string, rootCls?: string, resetFont?: boolean) => CSSObject;
@@ -185,7 +185,7 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
     const { unitless: compUnitless, prefixToken, ignore } = options;
 
     return (rootCls: string) => {
-      const { cssVar, realToken } = useToken();
+      const { cssVar, realToken } = toRefs(useToken());
 
       useCSSVarRegister(
         {
@@ -249,7 +249,7 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
 
     // Return new style hook
     return (prefixCls: string, rootCls: string = prefixCls): string => {
-      const { theme, realToken, hashId, token, cssVar, zeroRuntime } = useToken();
+      const { theme, realToken, hashId, token, cssVar, zeroRuntime } = toRefs(useToken());
       // Update of `disabledRuntimeStyle` would cause React hook error, so memoized it and never update.
       const memoizedZeroRuntime = computed(() => zeroRuntime);
       if (memoizedZeroRuntime.value) {

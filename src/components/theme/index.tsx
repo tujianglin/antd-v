@@ -1,3 +1,4 @@
+import { toRefs } from 'vue';
 import DesignTokenProvider from './DesignTokenProvider.vue';
 import getDesignToken from './getDesignToken';
 import type { GlobalToken, MappingAlgorithm } from './interface';
@@ -11,9 +12,7 @@ import defaultAlgorithm from './themes/default';
 // Please do not export internal `useToken` directly to avoid something export unexpected.
 /** Get current context Design Token. Will be different if you are using nest theme config. */
 function useToken() {
-  const [theme, token, hashId, cssVar] = useInternalToken();
-
-  return { theme, token, hashId, cssVar };
+  return toRefs(useInternalToken());
 }
 
 export type { GlobalToken, MappingAlgorithm };

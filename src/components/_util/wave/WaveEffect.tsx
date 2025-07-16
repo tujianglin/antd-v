@@ -1,4 +1,4 @@
-import raf from '@/vc-component/util/lib/raf';
+import raf from '@/vc-util/raf';
 import {
   computed,
   defineComponent,

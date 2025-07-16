@@ -1,3 +1,4 @@
+import { reactiveComputed } from '@vueuse/core';
 import { computed, inject, provide, type ComputedRef, type CSSProperties, type InjectionKey, type VNode } from 'vue';
 import type { ShowWaveEffect } from '../_util/wave/interface';
 import type { ButtonProps } from '../button';
@@ -115,24 +116,24 @@ export interface ConfigComponentProps {
 export interface ConfigConsumerProps extends ConfigComponentProps {
   getTargetContainer?: () => HTMLElement;
   getPopupContainer?: (triggerNode?: HTMLElement) => HTMLElement;
-  rootPrefixCls?: ComputedRef<string>;
-  iconPrefixCls: ComputedRef<string>;
+  rootPrefixCls?: string;
+  iconPrefixCls: string;
   getPrefixCls: (suffixCls?: string, customizePrefixCls?: string) => string;
   renderEmpty?: VNode | (() => VNode);
   /**
    * @descCN 设置 [Content Security Policy](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP) 配置。
    * @descEN Set the [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) config.
    */
-  csp?: ComputedRef<CSPConfig>;
+  csp?: CSPConfig;
   /** @deprecated Please use `{ button: { autoInsertSpace: boolean }}` instead */
-  autoInsertSpaceInButton?: ComputedRef<boolean>;
-  variant?: ComputedRef<Variant>;
-  virtual?: ComputedRef<boolean>;
+  autoInsertSpaceInButton?: boolean;
+  variant?: Variant;
+  virtual?: boolean;
   // locale?: Locale;
-  direction?: ComputedRef<DirectionType>;
-  popupMatchSelectWidth?: ComputedRef<boolean>;
+  direction?: DirectionType;
+  popupMatchSelectWidth?: boolean;
   // popupOverflow?: PopupOverflow;
-  theme?: ComputedRef<ThemeConfig>;
+  theme?: ThemeConfig;
   // warning?: WarningContextProps;
 }
 
@@ -143,17 +144,22 @@ const defaultGetPrefixCls = (suffixCls?: string, customizePrefixCls?: string) =>
   return suffixCls ? `${defaultPrefixCls}-${suffixCls}` : defaultPrefixCls;
 };
 
-export const configProviderKey: InjectionKey<ConfigConsumerProps> = Symbol('configProvider');
+export const configProviderKey: InjectionKey<ComputedRef<ConfigConsumerProps>> = Symbol('configProvider');
 
 export const useConfigContextInject = () => {
-  return inject(configProviderKey, {
-    getPrefixCls: defaultGetPrefixCls,
-    iconPrefixCls: computed(() => defaultIconPrefixCls),
-  });
+  return inject(
+    configProviderKey,
+    computed(
+      (): ConfigConsumerProps => ({
+        getPrefixCls: defaultGetPrefixCls,
+        iconPrefixCls: defaultIconPrefixCls,
+      }),
+    ),
+  );
 };
 
-export const useConfigContextProvider = (props: ConfigConsumerProps) => {
-  return provide(configProviderKey, props);
+export const useConfigContextProvider = (props: ComputedRef<ConfigConsumerProps>) => {
+  provide(configProviderKey, props);
 };
 
 type GetClassNamesOrEmptyObject<Config extends { classNames?: any }> = Config extends {
@@ -182,16 +188,19 @@ type ComponentReturnType<T extends keyof ConfigComponentProps> = Omit<
 
 export function useComponentConfig<T extends keyof ConfigComponentProps>(propName: T) {
   const context = useConfigContextInject();
-  const { getPrefixCls, direction, getPopupContainer, renderEmpty } = context;
 
-  const propValue = context[propName];
-  return {
-    classNames: EMPTY_OBJECT,
-    styles: EMPTY_OBJECT,
-    ...propValue,
-    getPrefixCls,
-    direction,
-    getPopupContainer,
-    renderEmpty,
-  } as ComponentReturnType<T>;
+  const { getPrefixCls, direction, getPopupContainer, renderEmpty } = context.value;
+
+  return reactiveComputed(() => {
+    const propValue = context.value[propName];
+    return {
+      classNames: EMPTY_OBJECT,
+      styles: EMPTY_OBJECT,
+      ...propValue,
+      getPrefixCls,
+      direction,
+      getPopupContainer,
+      renderEmpty,
+    } as ComponentReturnType<T>;
+  });
 }

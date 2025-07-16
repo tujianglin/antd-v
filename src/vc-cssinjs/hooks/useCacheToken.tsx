@@ -1,6 +1,7 @@
 import { updateCSS } from '@/vc-util/Dom/dynamicCSS';
 import hash from '@emotion/hash';
-import { computed, type Ref } from 'vue';
+import { reactiveComputed } from '@vueuse/core';
+import { computed, type ComputedRef, type Reactive } from 'vue';
 import { ATTR_MARK, ATTR_TOKEN, CSS_IN_JS_INSTANCE, useStyleInject } from '../StyleContext';
 import type Theme from '../theme/Theme';
 import { flattenToken, memoResult, token2key, toStyleStr } from '../util';
@@ -120,13 +121,13 @@ export const getComputedToken = <DerivativeToken, DesignToken = DerivativeToken>
 
 export const TOKEN_PREFIX = 'token';
 
-type TokenCacheValue<DerivativeToken> = [
-  token: DerivativeToken,
-  hashId: string,
-  realToken: DerivativeToken,
-  cssVarStr: string,
-  cssVarKey: string,
-];
+type TokenCacheValue<DerivativeToken> = {
+  token: DerivativeToken;
+  hashId: string;
+  realToken: DerivativeToken;
+  cssVarStr: string;
+  cssVarKey: string;
+};
 
 /**
  * Cache theme derivative token as global shared one
@@ -136,10 +137,10 @@ type TokenCacheValue<DerivativeToken> = [
  * @returns Call Theme.getDerivativeToken(tokenObject) to get token
  */
 export default function useCacheToken<DerivativeToken, DesignToken = DerivativeToken>(
-  theme: Ref<Theme<any, any>>,
-  tokens: Ref<Partial<DesignToken>[]>,
-  option: Ref<Option<DerivativeToken, DesignToken>>,
-): TokenCacheValue<DerivativeToken> {
+  theme: ComputedRef<Theme<any, any>>,
+  tokens: ComputedRef<Partial<DesignToken>[]>,
+  option: ComputedRef<Option<DerivativeToken, DesignToken>>,
+): Reactive<TokenCacheValue<DerivativeToken>> {
   const styleContext = useStyleInject();
 
   // Basic - We do basic cache here
@@ -184,18 +185,24 @@ export default function useCacheToken<DerivativeToken, DesignToken = DerivativeT
       tokenWithCssVar._hashId = hashId;
 
       recordCleanToken(cssVar.key);
-      return [tokenWithCssVar, hashCls, actualToken, cssVarsStr, cssVar.key];
+      return {
+        token: tokenWithCssVar,
+        hashId: hashCls,
+        realToken: actualToken,
+        cssVarStr: cssVarsStr,
+        cssVarKey: cssVar.key,
+      };
     },
-    ([, , , , themeKey]) => {
+    ({ cssVarKey }) => {
       // Remove token will remove all related style
-      cleanTokenStyle(themeKey, styleContext.value.cache.instanceId);
+      cleanTokenStyle(cssVarKey, styleContext.value.cache.instanceId);
     },
-    ([, , , cssVarsStr, themeKey]) => {
-      if (!cssVarsStr) {
+    ({ cssVarStr, cssVarKey }) => {
+      if (!cssVarStr) {
         return;
       }
       // @ts-ignore 1111
-      const style = updateCSS(cssVarsStr, hash(`css-var-${themeKey}`), {
+      const style = updateCSS(cssVarStr, hash(`css-var-${cssVarKey}`), {
         mark: ATTR_MARK,
         prepend: 'queue',
         attachTo: styleContext.value.container,
@@ -203,17 +210,17 @@ export default function useCacheToken<DerivativeToken, DesignToken = DerivativeT
       });
       (style as any)[CSS_IN_JS_INSTANCE] = styleContext.value.cache.instanceId;
 
-      style.setAttribute(ATTR_TOKEN, themeKey);
+      style.setAttribute(ATTR_TOKEN, cssVarKey);
     },
   );
-  return cachedToken.value;
+  return reactiveComputed(() => cachedToken.value);
 }
 
 export const extract: ExtractStyle<TokenCacheValue<any>> = (cache, _effectStyles, options) => {
-  const [, , realToken, styleStr, cssVarKey] = cache;
+  const { realToken, cssVarStr, cssVarKey } = cache;
   const { plain } = options || {};
 
-  if (!styleStr) {
+  if (!cssVarStr) {
     return null;
   }
 
@@ -227,7 +234,7 @@ export const extract: ExtractStyle<TokenCacheValue<any>> = (cache, _effectStyles
     'data-vc-priority': `${order}`,
   };
 
-  const styleText = toStyleStr(styleStr, cssVarKey, styleId, sharedAttrs, plain);
+  const styleText = toStyleStr(cssVarStr, cssVarKey, styleId, sharedAttrs, plain);
 
   return [order, styleId, styleText];
 };

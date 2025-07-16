@@ -1,7 +1,8 @@
 import type { Theme } from '@/vc-cssinjs';
 import { useCacheToken } from '@/vc-cssinjs';
 
-import { computed, type ComputedRef } from 'vue';
+import { reactiveComputed } from '@vueuse/core';
+import { computed, toRefs, type Reactive } from 'vue';
 import version from '../version';
 import type { DesignTokenProviderProps } from './context';
 import { defaultTheme, useDesignTokenContextInject } from './context';
@@ -111,13 +112,13 @@ export const getComputedToken = (
 };
 
 // ================================== Hook ==================================
-export default function useToken(): [
-  theme: ComputedRef<Theme<SeedToken, AliasToken>>,
-  token: ComputedRef<GlobalToken>,
-  hashId: ComputedRef<string>,
-  realToken: ComputedRef<GlobalToken>,
-  cssVar: ComputedRef<DesignTokenProviderProps['cssVar']>,
-] {
+export default function useToken(): Reactive<{
+  theme: Theme<SeedToken, AliasToken>;
+  token: GlobalToken;
+  hashId: string;
+  realToken: GlobalToken;
+  cssVar: DesignTokenProviderProps['cssVar'];
+}> {
   // const { token: rootDesignToken, hashed, theme, override, cssVar: ctxCssVar } = useDesignTokenContextInject();
   const designTokenContext = useDesignTokenContextInject();
 
@@ -130,27 +131,31 @@ export default function useToken(): [
 
   const mergedTheme = computed(() => (designTokenContext.value.theme || defaultTheme) as Theme<SeedToken, AliasToken>);
 
-  const [token, hashId, realToken] = useCacheToken<GlobalToken, SeedToken>(
-    mergedTheme,
-    computed(() => [defaultSeedToken, designTokenContext.value.token]),
-    computed(() => ({
-      salt: `${version}-${designTokenContext.value.hashed || ''}`,
-      override: designTokenContext.value.override,
-      getComputedToken,
-      cssVar: {
-        ...cssVar.value,
-        unitless,
-        ignore,
-        preserve,
-      },
-    })),
+  const { token, hashId, realToken } = toRefs(
+    useCacheToken<GlobalToken, SeedToken>(
+      mergedTheme,
+      computed(() => [defaultSeedToken, designTokenContext.value.token]),
+      computed(() => ({
+        salt: `${version}-${designTokenContext.value.hashed || ''}`,
+        override: designTokenContext.value.override,
+        getComputedToken,
+        cssVar: {
+          ...cssVar.value,
+          unitless,
+          ignore,
+          preserve,
+        },
+      })),
+    ),
   );
 
-  return [
-    mergedTheme,
-    computed(() => realToken),
-    computed(() => (designTokenContext.value.hashed ? hashId : '')),
-    computed(() => token),
-    cssVar,
-  ];
+  return reactiveComputed(() => {
+    return {
+      theme: mergedTheme.value,
+      token: realToken.value,
+      hashId: designTokenContext.value.hashed ? hashId.value : '',
+      realToken: token.value,
+      cssVar: cssVar.value,
+    };
+  });
 }

@@ -4,7 +4,7 @@ import type * as CSS from 'csstype';
 // @ts-ignore 111
 import unitless from '@emotion/unitless';
 import { compile, serialize, stringify } from 'stylis';
-import { computed, type Ref } from 'vue';
+import { computed, type ComputedRef } from 'vue';
 import type { Theme, Transformer } from '..';
 import type Keyframes from '../Keyframes';
 import type { Linter } from '../linters/index';
@@ -288,7 +288,7 @@ type StyleCacheValue = [
  * Register a style to the global style sheet.
  */
 export default function useStyleRegister(
-  info: Ref<{
+  info: ComputedRef<{
     theme: Theme<any, any>;
     token: any;
     path: string[];
@@ -315,7 +315,6 @@ export default function useStyleRegister(
     list = [...list, ...info.value.path];
     return list;
   });
-
   // Check if need insert style
   let isMergedClientSide = isClientSide;
   if (process.env.NODE_ENV !== 'production' && styleContext.value.mock !== undefined) {

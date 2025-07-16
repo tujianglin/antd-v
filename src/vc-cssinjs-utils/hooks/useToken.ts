@@ -1,6 +1,5 @@
 import type { Theme, TokenType } from '@/vc-cssinjs';
 
-import type { ComputedRef } from 'vue';
 import type { GlobalToken, OverrideTokenMap, TokenMap } from '../interface';
 
 export type TokenMapWithTheme<CompTokenMap extends TokenMap, AliasToken extends TokenType, DesignToken extends TokenType> = {
@@ -10,16 +9,16 @@ export type TokenMapWithTheme<CompTokenMap extends TokenMap, AliasToken extends 
 };
 
 export interface UseTokenReturn<CompTokenMap extends TokenMap, AliasToken extends TokenType, DesignToken extends TokenType> {
-  token: ComputedRef<GlobalToken<CompTokenMap, AliasToken>>;
-  realToken?: ComputedRef<GlobalToken<CompTokenMap, AliasToken>>;
-  theme?: ComputedRef<Theme<DesignToken, AliasToken>>;
+  token: GlobalToken<CompTokenMap, AliasToken>;
+  realToken?: GlobalToken<CompTokenMap, AliasToken>;
+  theme?: Theme<DesignToken, AliasToken>;
   components?: TokenMapWithTheme<CompTokenMap, DesignToken, AliasToken>;
-  hashId?: ComputedRef<string>;
+  hashId?: string;
   hashed?: string | boolean;
-  cssVar?: ComputedRef<{
+  cssVar?: {
     prefix?: string;
     key?: string;
-  }>;
+  };
   zeroRuntime?: boolean;
 }
 
