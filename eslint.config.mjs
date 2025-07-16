@@ -201,7 +201,7 @@ export default defineConfig([
       'prefer-spread': 'error',
       'prefer-template': 'error',
       'space-before-function-paren': 'off',
-      'spaced-comment': 'error',
+      'spaced-comment': 'off',
       'symbol-description': 'error',
       'unicode-bom': ['error', 'never'],
 

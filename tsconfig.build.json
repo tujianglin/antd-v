@@ -7,7 +7,13 @@
     "skipLibCheck": true,
     "strictNullChecks": false,
     "declarationDir": "./dist/typings",
-    "lib": ["esnext", "dom", "DOM.Iterable"]
+    "lib": ["esnext", "dom", "DOM.Iterable"],
+    "moduleResolution": "nodenext",
+    "target": "esnext",
+    "module": "nodenext",
+    "types": ["@types/node"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*"],
   "exclude": ["src/**/*.test.*"]
