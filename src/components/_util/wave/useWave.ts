@@ -18,10 +18,10 @@ const useWave = (
 
   const showWave: ShowWave = (event) => {
     const node = findDOMNode(instance);
-    if (wave.value.disabled || !node) return;
+    if (wave?.value?.disabled || !node) return;
 
     const targetNode = node.querySelector<HTMLElement>(`.${TARGET_CLS}`) || node;
-    const { showEffect } = wave.value || {};
+    const { showEffect } = wave?.value || {};
     (showEffect || showWaveEffect)(targetNode, {
       className: className.value,
       token,

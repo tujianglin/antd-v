@@ -12,14 +12,9 @@ import { reactiveComputed } from '@vueuse/core';
 
 defineOptions({ name: 'ConfigProvider' });
 
-const {
-  csp: customCsp,
-  iconPrefixCls: customIconPrefixCls,
-  prefixCls,
-  button,
-  theme = {},
-  wave = { disabled: false },
-} = defineProps<ConfigProviderProps>();
+const props = defineProps<ConfigProviderProps>();
+
+const { csp: customCsp, iconPrefixCls: customIconPrefixCls, prefixCls, button, theme = {}, wave = { disabled: false } } = props;
 
 const parentContext = useConfigContextInject();
 

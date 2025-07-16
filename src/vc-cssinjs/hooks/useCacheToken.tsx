@@ -209,7 +209,6 @@ export default function useCacheToken<DerivativeToken, DesignToken = DerivativeT
         priority: -999,
       });
       (style as any)[CSS_IN_JS_INSTANCE] = styleContext.value.cache.instanceId;
-
       style.setAttribute(ATTR_TOKEN, cssVarKey);
     },
   );

@@ -119,25 +119,24 @@ export default function useToken(): Reactive<{
   realToken: GlobalToken;
   cssVar: DesignTokenProviderProps['cssVar'];
 }> {
-  // const { token: rootDesignToken, hashed, theme, override, cssVar: ctxCssVar } = useDesignTokenContextInject();
-  const designTokenContext = useDesignTokenContextInject();
+  const context = useDesignTokenContextInject();
 
   const cssVar = computed(() => {
     return {
-      prefix: designTokenContext.value.cssVar?.prefix || 'ant',
-      key: designTokenContext.value.cssVar?.key || 'css-var-root',
+      prefix: context.cssVar?.prefix || 'ant',
+      key: context.cssVar?.key || 'css-var-root',
     };
   });
 
-  const mergedTheme = computed(() => (designTokenContext.value.theme || defaultTheme) as Theme<SeedToken, AliasToken>);
+  const mergedTheme = computed(() => (context.theme || defaultTheme) as Theme<SeedToken, AliasToken>);
 
   const { token, hashId, realToken } = toRefs(
     useCacheToken<GlobalToken, SeedToken>(
       mergedTheme,
-      computed(() => [defaultSeedToken, designTokenContext.value.token]),
+      computed(() => [defaultSeedToken, context.token]),
       computed(() => ({
-        salt: `${version}-${designTokenContext.value.hashed || ''}`,
-        override: designTokenContext.value.override,
+        salt: `${version}-${context.hashed || ''}`,
+        override: context.override,
         getComputedToken,
         cssVar: {
           ...cssVar.value,
@@ -153,7 +152,7 @@ export default function useToken(): Reactive<{
     return {
       theme: mergedTheme.value,
       token: realToken.value,
-      hashId: designTokenContext.value.hashed ? hashId.value : '',
+      hashId: context.hashed ? hashId.value : '',
       realToken: token.value,
       cssVar: cssVar.value,
     };

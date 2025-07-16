@@ -4,7 +4,6 @@ import { unit } from '@/vc-cssinjs';
 import { genFocusStyle, resetIcon } from '../../style';
 import type { GenerateStyle } from '../../theme/internal';
 import { genStyleHooks, mergeToken } from '../../theme/internal';
-import genGroupStyle from './group';
 import type { ButtonToken, ComponentToken } from './token';
 import { prepareComponentToken, prepareToken } from './token';
 import genVariantStyle from './variant';
@@ -14,7 +13,6 @@ export type { ComponentToken };
 // ============================== Shared ==============================
 const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSSObject => {
   const { componentCls, iconCls, fontWeight, opacityLoading, motionDurationSlow, motionEaseInOut, marginXS, calc } = token;
-
   return {
     [componentCls]: {
       outline: 'none',
@@ -240,9 +238,6 @@ export default genStyleHooks(
 
       // Variant
       genVariantStyle(buttonToken),
-
-      // Button Group
-      genGroupStyle(buttonToken),
     ];
   },
   prepareComponentToken,
