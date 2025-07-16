@@ -1,7 +1,6 @@
 import { removeCSS, updateCSS } from '@/vc-util/Dom/dynamicCSS';
-import { useStyleInject } from 'ant-design-vue';
 import { computed } from 'vue';
-import { ATTR_MARK, ATTR_TOKEN, CSS_IN_JS_INSTANCE } from '../StyleContext';
+import { ATTR_MARK, ATTR_TOKEN, CSS_IN_JS_INSTANCE, useStyleInject } from '../StyleContext';
 import { isClientSide, toStyleStr } from '../util';
 import type { TokenWithCSSVar } from '../util/css-variables';
 import { transformToken } from '../util/css-variables';

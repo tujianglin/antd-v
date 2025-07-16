@@ -12,7 +12,7 @@
     "noUncheckedSideEffectImports": true,
     "noImplicitAny": false,
     "strictNullChecks": false,
-    "types": ["vite/client", "@types/node"],
+    "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
