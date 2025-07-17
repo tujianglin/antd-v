@@ -1,5 +1,16 @@
 export { default as Button } from './button';
+export { default as Col } from './col';
+export type { ColProps } from './col';
 export { default as ConfigProvider } from './config-provider';
+export { default as Flex } from './flex';
+export type { FlexProps } from './flex';
+export { default as FloatButton } from './float-button';
+export { default as Grid } from './grid';
+export { default as Input } from './input';
 export { default as Render } from './render';
+export { default as Row } from './row';
+export type { RowProps } from './row';
+export { default as Space } from './space';
+export type { SpaceProps } from './space';
 export { default as Splitter } from './splitter';
 export type { SplitterProps } from './splitter';

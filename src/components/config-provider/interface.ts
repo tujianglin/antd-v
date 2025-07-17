@@ -1,4 +1,4 @@
-import type { ButtonConfig, CSPConfig, ThemeConfig, Variant, WaveConfig } from './context';
+import type { ButtonConfig, CSPConfig, DirectionType, InputConfig, ThemeConfig, Variant, WaveConfig } from './context';
 import type { SizeType } from './SizeContext';
 
 export interface ConfigProviderProps {
@@ -18,6 +18,12 @@ export interface ConfigProviderProps {
   componentSize?: SizeType;
   componentDisabled?: boolean;
   /**
+   * @descCN 设置布局展示方向。
+   * @descEN Set direction of layout.
+   * @default ltr
+   */
+  direction?: DirectionType;
+  /**
    * @descCN 设置 `false` 时关闭虚拟滚动。
    * @descEN Close the virtual scrolling when setting `false`.
    * @default true
@@ -28,6 +34,7 @@ export interface ConfigProviderProps {
   popupMatchSelectWidth?: boolean;
   theme?: ThemeConfig;
   button?: ButtonConfig;
+  input?: InputConfig;
   /**
    * Wave is special component which only patch on the effect of component interaction.
    */

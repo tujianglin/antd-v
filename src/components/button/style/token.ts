@@ -271,7 +271,7 @@ export const prepareComponentToken: GetDefaultToken<'Button'> = (token) => {
   const contentLineHeight = token.contentLineHeight ?? getLineHeight(contentFontSize);
   const contentLineHeightSM = token.contentLineHeightSM ?? getLineHeight(contentFontSizeSM);
   const contentLineHeightLG = token.contentLineHeightLG ?? getLineHeight(contentFontSizeLG);
-  // const solidTextColor = isBright(new AggregationColor(token.colorBgSolid), '#fff') ? '#000' : '#fff';
+  const solidTextColor = '#fff';
 
   const shadowColorTokens = PresetColors.reduce<CSSObject>(
     (prev: CSSObject, colorKey: PresetColorKey) => ({
@@ -317,7 +317,7 @@ export const prepareComponentToken: GetDefaultToken<'Button'> = (token) => {
     defaultActiveBg: token.colorBgContainer,
     defaultActiveColor: token.colorPrimaryActive,
     defaultActiveBorderColor: token.colorPrimaryActive,
-    solidTextColor: '',
+    solidTextColor,
     contentFontSize,
     contentFontSizeSM,
     contentFontSizeLG,

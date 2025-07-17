@@ -67,10 +67,11 @@ export function injectCSS(css: string, option: Options = {}) {
   const isPrependQueue = mergedOrder === 'prependQueue';
 
   const styleNode = document.createElement('style');
-  styleNode.setAttribute(APPEND_ORDER, mergedOrder);
 
   if (isPrependQueue && priority) {
     styleNode.setAttribute(APPEND_PRIORITY, `${priority}`);
+  } else {
+    styleNode.setAttribute(APPEND_ORDER, mergedOrder);
   }
 
   if (csp?.nonce) {
@@ -85,7 +86,7 @@ export function injectCSS(css: string, option: Options = {}) {
     // If is queue `prepend`, it will prepend first style and then append rest style
     if (isPrependQueue) {
       const existStyle = (option.styles || findStyles(container)).filter((node) => {
-        // Ignore style which not injected by vc-util with prepend
+        // Ignore style which not injected by rc-util with prepend
         if (!['prepend', 'prependQueue'].includes(node.getAttribute(APPEND_ORDER))) {
           return false;
         }

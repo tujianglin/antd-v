@@ -1,13 +1,6 @@
 import { cn } from '@/utils/cn';
-import {
-  Fragment,
-  h,
-  type AnchorHTMLAttributes,
-  type ButtonHTMLAttributes,
-  type CSSProperties,
-  type HTMLAttributes,
-  type VNode,
-} from 'vue';
+import { Fragment, h, type ButtonHTMLAttributes, type CSSProperties, type VNode } from 'vue';
+import type { RenderNode } from '../_util/type';
 import type { SizeType } from '../config-provider/SizeContext';
 import { PresetColors } from '../theme/interface';
 
@@ -15,17 +8,18 @@ export type LegacyButtonType = ButtonType | 'danger';
 
 export type ButtonSemanticName = 'root' | 'icon' | 'content';
 export interface BaseButtonProps {
+  style?: CSSProperties;
+  class?: string;
   type?: ButtonType;
   color?: ButtonColorType;
   variant?: ButtonVariantType;
-  icon?: VNode;
+  icon?: RenderNode;
   iconPosition?: 'start' | 'end';
   shape?: ButtonShape;
   size?: SizeType;
   disabled?: boolean;
-  loading?: boolean | { delay?: number; icon?: VNode };
+  loading?: boolean | { delay?: number; icon?: RenderNode };
   prefixCls?: string;
-  className?: string;
   rootClassName?: string;
   ghost?: boolean;
   danger?: boolean;
@@ -33,7 +27,8 @@ export interface BaseButtonProps {
   [key: `data-${string}`]: string;
   classNames?: Partial<Record<ButtonSemanticName, string>>;
   styles?: Partial<Record<ButtonSemanticName, CSSProperties>>;
-
+  onClick?: ButtonHTMLAttributes['onClick'];
+  onMousedown?: ButtonHTMLAttributes['onMousedown'];
   // FloatButton reuse the Button as sub component,
   // But this should not consume context semantic classNames and styles.
   // Use props here to avoid context solution cost for normal usage.
@@ -41,9 +36,7 @@ export interface BaseButtonProps {
   _skipSemantic?: boolean;
 }
 
-type MergedHTMLAttributes = Omit<HTMLAttributes & ButtonHTMLAttributes & AnchorHTMLAttributes, 'type' | 'color' | 'disabled'>;
-
-export interface ButtonProps extends BaseButtonProps, /* @vue-ignore */ MergedHTMLAttributes {
+export interface ButtonProps extends BaseButtonProps {
   href?: string;
   htmlType?: ButtonHTMLType;
   autoInsertSpace?: boolean;

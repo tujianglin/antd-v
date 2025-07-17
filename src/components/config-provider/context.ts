@@ -1,7 +1,11 @@
 import { reactiveComputed } from '@vueuse/core';
-import { inject, provide, toRefs, type CSSProperties, type InjectionKey, type Reactive, type VNode } from 'vue';
+import { inject, provide, type CSSProperties, type InjectionKey, type Reactive, type VNode } from 'vue';
 import type { ShowWaveEffect } from '../_util/wave/interface';
 import type { ButtonProps } from '../button';
+import type { FlexProps } from '../flex';
+import type { FloatButtonGroupProps } from '../float-button/interface';
+import type { InputProps } from '../input/input.vue';
+import type { SpaceProps } from '../space/interface';
 import type { AliasToken, MappingAlgorithm, OverrideToken } from '../theme/interface';
 
 const EMPTY_OBJECT = {};
@@ -82,12 +86,21 @@ export interface ThemeConfig {
 }
 
 export interface ComponentStyleConfig {
-  className?: string;
+  class?: string;
   style?: CSSProperties;
 }
 
 export type ButtonConfig = ComponentStyleConfig &
   Pick<ButtonProps, 'classNames' | 'styles' | 'autoInsertSpace' | 'variant' | 'color'>;
+
+export type FloatButtonGroupConfig = ComponentStyleConfig & Pick<FloatButtonGroupProps, 'closeIcon' | 'classNames' | 'styles'>;
+
+export type FlexConfig = ComponentStyleConfig & Pick<FlexProps, 'vertical'>;
+
+export type SpaceConfig = ComponentStyleConfig & Pick<SpaceProps, 'size' | 'classNames' | 'styles'>;
+
+export type InputConfig = ComponentStyleConfig &
+  Pick<InputProps, 'autoComplete' | 'classNames' | 'styles' | 'allowClear' | 'variant'>;
 
 export const Variants = ['outlined', 'borderless', 'filled', 'underlined'] as const;
 
@@ -109,6 +122,10 @@ export interface WaveConfig {
 
 export interface ConfigComponentProps {
   button?: ButtonConfig;
+  floatButtonGroup?: FloatButtonGroupConfig;
+  flex?: FlexConfig;
+  space?: SpaceConfig;
+  input?: InputConfig;
   wave?: WaveConfig;
   watermark?: ComponentStyleConfig;
 }
@@ -188,19 +205,16 @@ type ComponentReturnType<T extends keyof ConfigComponentProps> = Omit<
 
 export function useComponentConfig<T extends keyof ConfigComponentProps>(propName: T) {
   const context = useConfigContextInject();
-
-  const { getPrefixCls, direction, getPopupContainer, renderEmpty } = toRefs(context);
-
   return reactiveComputed(() => {
     const propValue = context[propName];
     return {
       classNames: EMPTY_OBJECT,
       styles: EMPTY_OBJECT,
       ...propValue,
-      getPrefixCls,
-      direction,
-      getPopupContainer,
-      renderEmpty,
+      getPrefixCls: context.getPrefixCls,
+      direction: context.direction,
+      getPopupContainer: context.getPopupContainer,
+      renderEmpty: context.renderEmpty,
     } as ComponentReturnType<T>;
   });
 }

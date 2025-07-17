@@ -129,7 +129,6 @@ export default function useToken(): Reactive<{
   });
 
   const mergedTheme = computed(() => (context.theme || defaultTheme) as Theme<SeedToken, AliasToken>);
-
   const { token, hashId, realToken } = toRefs(
     useCacheToken<GlobalToken, SeedToken>(
       mergedTheme,

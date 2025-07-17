@@ -301,7 +301,7 @@ export default defineConfig([
       ...pluginVue.configs.essential.rules,
       ...pluginVue.configs['strongly-recommended'].rules,
       ...pluginVue.configs.recommended.rules,
-
+      'vue/no-dupe-keys': 'off',
       'vue/attribute-hyphenation': [
         'error',
         'always',

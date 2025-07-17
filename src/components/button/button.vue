@@ -1,11 +1,16 @@
 <script lang="tsx" setup>
-import { reactiveComputed } from '@vueuse/core';
-import { computed, nextTick, ref, toRefs, unref, useAttrs, useSlots, useTemplateRef, watch } from 'vue';
+import { cn } from '@/utils/cn';
+import classNames from 'classnames';
+import { omit } from 'lodash-es';
+import { computed, nextTick, ref, toRefs, useSlots, useTemplateRef, watch } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import isValidNode from '../_util/isValidNode';
+import { Wave } from '../_util/wave';
 import { useConfigContextInject } from '../config-provider';
 import { useComponentConfig } from '../config-provider/context';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import useSize from '../config-provider/hooks/useSize';
+import { useCompactItemContext } from '../space/CompactContext';
 import {
   isUnBorderedButtonVariant,
   spaceChildren,
@@ -15,13 +20,9 @@ import {
   type ButtonType,
   type ButtonVariantType,
 } from './buttonHelpers';
+import IconNode from './IconNode.vue';
 import useStyle from './style';
-import { Wave } from '../_util/wave';
-import IconWrapper from './IconWrapper.vue';
-import DefaultLoadingIcon from './DefaultLoadingIcon.vue';
-import { cn } from '@/utils/cn';
-import { omit } from 'lodash-es';
-import isValidNode from '../_util/isValidNode';
+import Compact from './style/compact';
 
 type ColorVariantPairType = [color?: ButtonColorType, variant?: ButtonVariantType];
 type LoadingConfigType = {
@@ -29,18 +30,20 @@ type LoadingConfigType = {
   delay: number;
 };
 
+defineOptions({ name: 'Button', inheritAttrs: false });
+
 const {
   _skipSemantic,
   loading = false,
   prefixCls: customizePrefixCls,
   color,
   variant,
-  type,
+  type = 'default',
   danger = false,
   shape = 'default',
   size: customizeSize,
   disabled: customDisabled,
-  className,
+  class: className,
   rootClassName,
   icon,
   iconPosition = 'start',
@@ -52,9 +55,9 @@ const {
   style: customStyle = {},
   autoInsertSpace = false,
   autoFocus = false,
+  onClick,
   ...rest
 } = defineProps<ButtonProps>();
-
 function getLoadingConfig(loading: BaseButtonProps['loading']): LoadingConfigType {
   if (typeof loading === 'object' && loading) {
     let delay = loading?.delay;
@@ -82,7 +85,7 @@ const ButtonTypeMap: Partial<Record<ButtonType, ColorVariantPairType>> = {
 
 const slots = useSlots();
 
-const slotVNodes = slots.default?.() || [];
+const slotVNodes = computed(() => slots.default?.() || []);
 
 const mergedType = computed(() => type || 'default');
 
@@ -101,8 +104,8 @@ const parsedColor = computed((): ColorVariantPairType => {
     }
     return colorVariantPair;
   }
-  if (button.value?.color && button.value?.variant) {
-    return [button.value.color, button.value.variant];
+  if (button?.value?.color && button?.value?.variant) {
+    return [button?.value.color, button?.value.variant];
   }
   return ['default', 'outlined'];
 });
@@ -117,22 +120,14 @@ const mergedColor = computed((): ColorVariantPairType => {
 const isDanger = computed(() => mergedColor.value[0] === 'danger');
 const mergedColorText = computed(() => (isDanger.value ? 'dangerous' : mergedColor.value[0]));
 
-const {
-  getPrefixCls,
-  direction,
-  autoInsertSpace: contextAutoInsertSpace,
-  className: contextClassName,
-  style: contextStyle,
-  classNames: contextClassNames,
-  styles: contextStyles,
-} = toRefs(useComponentConfig('button'));
+const config = useComponentConfig('button');
 
-const needInserted = computed(() => slotVNodes.length === 1 && !icon && !isUnBorderedButtonVariant(mergedColor.value[1]));
+const needInserted = computed(() => slotVNodes.value.length === 1 && !icon && !isUnBorderedButtonVariant(mergedColor.value[1]));
 
-const mergedInsertSpace = computed(() => autoInsertSpace ?? contextAutoInsertSpace.value ?? true);
+const mergedInsertSpace = computed(() => autoInsertSpace ?? config.autoInsertSpace ?? true);
 
-const prefixCls = computed(() => getPrefixCls.value('btn', customizePrefixCls));
-const [hashId, cssVarCls] = useStyle(prefixCls.value);
+const prefixCls = config.getPrefixCls('btn', customizePrefixCls);
+const [hashId, cssVarCls] = useStyle(prefixCls);
 
 const disbaled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? disbaled);
@@ -162,18 +157,19 @@ watch(
 
 const hasTwoCNChar = ref(false);
 
-const { mergedClassNames, mergedStyles } = toRefs(
-  reactiveComputed(() => {
-    return useMergeSemantic(
-      [_skipSemantic ? undefined : contextClassNames?.value, buttonClassNames],
-      [_skipSemantic ? undefined : contextStyles?.value, styles],
-    );
-  }),
+const mergedCs = useMergeSemantic(
+  computed(() => [_skipSemantic ? undefined : config.classNames, buttonClassNames]),
+  computed(() => [_skipSemantic ? undefined : config.styles, styles]),
+);
+
+const compact = useCompactItemContext(
+  prefixCls,
+  computed(() => config.direction),
 );
 
 const sizeClassNameMap = { large: 'lg', small: 'sm', middle: undefined };
 
-const sizeFullName = computed(() => useSize((ctxSize) => customizeSize ?? ctxSize));
+const sizeFullName = computed(() => useSize((ctxSize) => customizeSize ?? compact.compactSize ?? ctxSize));
 
 const sizeCls = computed(() => (sizeFullName?.value ? (sizeClassNameMap[sizeFullName?.value] ?? '') : ''));
 
@@ -182,124 +178,105 @@ const iconType = computed(() => (innerLoading?.value ? 'loading' : icon));
 const linkButtonRestProps = computed(() => omit(rest as ButtonProps));
 
 const classes = computed(() => {
-  return cn(
-    prefixCls.value,
+  return classNames(
+    prefixCls,
     hashId,
     cssVarCls,
     {
-      [`${prefixCls.value}-${shape}`]: shape !== 'default' && shape !== 'square' && shape,
-      [`${prefixCls.value}-${mergedType?.value}`]: mergedType?.value,
-      [`${prefixCls.value}-dangerous`]: danger,
+      [`${prefixCls}-${shape}`]: shape !== 'default' && shape !== 'square' && shape,
+      [`${prefixCls}-${mergedType?.value}`]: mergedType?.value,
+      [`${prefixCls}-dangerous`]: danger,
 
-      [`${prefixCls.value}-color-${mergedColorText?.value}`]: mergedColorText?.value,
-      [`${prefixCls.value}-variant-${mergedColor?.value[1]}`]: mergedColor?.value[1],
-      [`${prefixCls.value}-${sizeCls?.value}`]: sizeCls?.value,
-      [`${prefixCls.value}-icon-only`]: !slotVNodes && slotVNodes.length !== 0 && !!iconType?.value,
-      [`${prefixCls.value}-background-ghost`]: ghost && !isUnBorderedButtonVariant(mergedColor?.value[1]),
-      [`${prefixCls.value}-loading`]: innerLoading.value,
-      [`${prefixCls.value}-two-chinese-chars`]: hasTwoCNChar?.value && mergedInsertSpace.value && !innerLoading?.value,
-      [`${prefixCls.value}-block`]: block,
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
-      [`${prefixCls.value}-icon-end`]: iconPosition === 'end',
+      [`${prefixCls}-color-${mergedColorText?.value}`]: mergedColorText?.value,
+      [`${prefixCls}-variant-${mergedColor?.value[1]}`]: mergedColor?.value[1],
+      [`${prefixCls}-${sizeCls?.value}`]: sizeCls?.value,
+      [`${prefixCls}-icon-only`]: !slotVNodes.value && slotVNodes.value.length !== 0 && !!iconType?.value,
+      [`${prefixCls}-background-ghost`]: ghost && !isUnBorderedButtonVariant(mergedColor?.value[1]),
+      [`${prefixCls}-loading`]: innerLoading.value,
+      [`${prefixCls}-two-chinese-chars`]: hasTwoCNChar?.value && mergedInsertSpace.value && !innerLoading?.value,
+      [`${prefixCls}-block`]: block,
+      [`${prefixCls}-rtl`]: config.direction === 'rtl',
+      [`${prefixCls}-icon-end`]: iconPosition === 'end',
     },
+    compact.compactItemClassnames,
     className,
     rootClassName,
-    contextClassName,
-    mergedClassNames.value?.root,
+    config.class,
+    mergedCs.mergedClassNames?.root,
   );
 });
 
-const attrs = useAttrs() as {
-  onClick: (e: MouseEvent) => void;
-};
-
 const fullStyle = computed(() => ({
-  ...mergedStyles.value?.root,
-  ...contextStyle?.value,
+  ...mergedCs.mergedStyles?.root,
+  ...config.style,
   ...(customStyle as Record<string, string>),
 }));
 
 const iconSharedProps = computed(() => ({
-  className: mergedClassNames.value.icon,
-  style: mergedStyles.value.icon,
+  class: mergedCs.mergedClassNames.icon,
+  style: mergedCs.mergedStyles.icon,
 }));
-
-const IconNode = () => {
-  return icon && !innerLoading.value ? (
-    <IconWrapper prefixCls={prefixCls.value} {...unref(iconSharedProps)}>
-      {icon}
-    </IconWrapper>
-  ) : loading && typeof loading === 'object' && loading.icon ? (
-    <IconWrapper prefixCls={prefixCls.value} {...unref(iconSharedProps)}>
-      {loading.icon}
-    </IconWrapper>
-  ) : (
-    <DefaultLoadingIcon
-      existIcon={!!icon}
-      prefixCls={prefixCls.value}
-      loading={innerLoading.value}
-      {...unref(iconSharedProps)}
-    ></DefaultLoadingIcon>
-  );
-};
 
 const handleClick = (e: MouseEvent) => {
   if (innerLoading.value || mergedDisabled.value) {
     e.preventDefault();
     return;
   }
-  attrs?.onClick?.(e);
+  onClick?.(e);
 };
 
-const contentNode = isValidNode(slotVNodes)
-  ? spaceChildren(
-      slotVNodes,
-      needInserted.value && mergedInsertSpace.value,
-      mergedStyles.value.content,
-      mergedClassNames.value.content,
-    )
-  : null;
+const contentNode = computed(() =>
+  isValidNode(slotVNodes.value)
+    ? spaceChildren(
+        slotVNodes.value,
+        needInserted.value && mergedInsertSpace.value,
+        mergedCs.mergedStyles.content,
+        mergedCs.mergedClassNames.content,
+      )
+    : null,
+);
 </script>
 <template>
-  <template v-if="linkButtonRestProps.href !== undefined">
-    <a
-      ref="buttonRef"
-      v-bind="linkButtonRestProps"
-      :class="cn(classes, { [`${prefixCls}-disabled`]: mergedDisabled })"
-      :href="mergedDisabled ? undefined : linkButtonRestProps.href"
-      :style="fullStyle"
-      @click="handleClick"
-      :tabindex="mergedDisabled ? -1 : 0"
-    >
-      <IconNode />
-      <slot></slot>
-    </a>
-  </template>
+  <a
+    v-if="linkButtonRestProps.href !== undefined"
+    ref="buttonRef"
+    v-bind="{ ...linkButtonRestProps }"
+    :class="cn(classes, { [`${prefixCls}-disabled`]: mergedDisabled })"
+    :href="mergedDisabled ? undefined : linkButtonRestProps.href"
+    :style="fullStyle"
+    @click="handleClick"
+    :tabindex="mergedDisabled ? -1 : 0"
+  >
+    <IconNode :prefix-cls="prefixCls" :icon="icon" :inner-loading="innerLoading" :icon-shared-props="iconSharedProps" />
+    <slot></slot>
+  </a>
   <Wave v-else-if="!isUnBorderedButtonVariant(mergedColor[1])" component="Button" :disabled="innerLoading">
     <button
       ref="buttonRef"
-      v-bind="rest"
+      v-bind="{ ...rest }"
       :type="htmlType"
       :class="classes"
       :style="fullStyle"
       :disabled="mergedDisabled"
       @click="handleClick"
     >
-      <IconNode />
+      <IconNode :prefix-cls="prefixCls" :icon="icon" :inner-loading="innerLoading" :icon-shared-props="iconSharedProps" />
       <component v-for="(child, index) in contentNode" :is="child" :key="index" />
+      <Compact v-if="compact.compactItemClassnames" :prefix-cls="prefixCls" />
     </button>
   </Wave>
   <button
     v-else
     ref="buttonRef"
-    v-bind="rest"
+    v-bind="{ ...rest }"
     :type="htmlType"
     :class="classes"
     :style="fullStyle"
     :disabled="mergedDisabled"
     @click="handleClick"
   >
-    <IconNode />
+    <IconNode :prefix-cls="prefixCls" :icon="icon" :inner-loading="innerLoading" :icon-shared-props="iconSharedProps" />
     <component v-for="(child, index) in contentNode" :is="child" :key="index" />
+    <Compact v-if="compact.compactItemClassnames" :prefix-cls="prefixCls" />
   </button>
 </template>

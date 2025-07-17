@@ -3,50 +3,50 @@ import { createTheme } from '@/vc-cssinjs';
 import { computed, useSlots } from 'vue';
 import { defaultTheme } from '../theme/context';
 import defaultSeedToken from '../theme/themes/seed';
-import { defaultIconPrefixCls, useConfigContextInject, useConfigContextProvider } from './context';
+import { defaultIconPrefixCls, useConfigContextInject, useConfigContextProvider, type ConfigConsumerProps } from './context';
 import useTheme from './hooks/useTheme';
 import type { ConfigProviderProps } from './interface';
 import useStyle from './style';
 import DesignTokenProvider from '../theme/DesignTokenProvider.vue';
 import { reactiveComputed } from '@vueuse/core';
+import { omit } from 'lodash-es';
 
-defineOptions({ name: 'ConfigProvider' });
+defineOptions({ name: 'ConfigProvider', inheritAttrs: false });
 
 const props = defineProps<ConfigProviderProps>();
 
-const { csp: customCsp, iconPrefixCls: customIconPrefixCls, prefixCls, button, theme = {}, wave = { disabled: false } } = props;
-
 const parentContext = useConfigContextInject();
-
 const getPrefixCls = (suffixCls: string, customizePrefixCls?: string) => {
   if (customizePrefixCls) {
     return customizePrefixCls;
   }
 
-  const mergedPrefixCls = prefixCls || parentContext.getPrefixCls('');
+  const mergedPrefixCls = props.prefixCls || parentContext.getPrefixCls('');
 
   return suffixCls ? `${mergedPrefixCls}-${suffixCls}` : mergedPrefixCls;
 };
 
-const iconPrefixCls = computed(() => customIconPrefixCls || parentContext.iconPrefixCls || defaultIconPrefixCls);
-const csp = computed(() => customCsp || parentContext.csp);
+const iconPrefixCls = computed(() => props.iconPrefixCls || parentContext.iconPrefixCls || defaultIconPrefixCls);
+const csp = computed(() => props.csp || parentContext.csp);
 
 useStyle(iconPrefixCls, csp);
 
 const mergedTheme = useTheme(
-  computed(() => theme),
+  computed(() => props.theme),
   computed(() => parentContext.theme),
   computed(() => ({ prefixCls: getPrefixCls('') })),
 );
 
-const baseConfig = reactiveComputed(() => ({
-  csp: csp.value,
-  getPrefixCls,
-  iconPrefixCls: iconPrefixCls.value,
-  theme: mergedTheme?.value ?? parentContext.theme,
-  button,
-  wave,
-}));
+const baseConfig = reactiveComputed(
+  () =>
+    ({
+      csp: csp.value,
+      getPrefixCls,
+      iconPrefixCls: iconPrefixCls.value,
+      theme: mergedTheme?.value ?? parentContext.theme,
+      ...omit(props, ['csp', 'getPrefixCls', 'iconPrefixCls', 'theme']),
+    }) as ConfigConsumerProps,
+);
 
 const memoTheme = computed(() => {
   const { algorithm, token, components, cssVar, ...rest } = mergedTheme.value || {};
@@ -93,7 +93,7 @@ const slots = useSlots();
 
 const renderProvider = () => {
   const childNode = slots.default?.();
-  if (theme) return <DesignTokenProvider value={memoTheme.value}>{childNode}</DesignTokenProvider>;
+  if (props.theme) return <DesignTokenProvider value={memoTheme.value}>{childNode}</DesignTokenProvider>;
   return <>{childNode}</>;
 };
 </script>

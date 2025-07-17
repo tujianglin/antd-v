@@ -4,11 +4,11 @@ import { computed, type CSSProperties } from 'vue';
 
 export type IconWrapperProps = {
   prefixCls: string;
-  className?: string;
+  class?: string;
   style?: CSSProperties;
 };
 
-const { prefixCls, className } = defineProps<IconWrapperProps>();
+const { prefixCls, class: className } = defineProps<IconWrapperProps>();
 
 const iconWrapperCls = computed(() => cn(`${prefixCls}-icon`, className));
 </script>

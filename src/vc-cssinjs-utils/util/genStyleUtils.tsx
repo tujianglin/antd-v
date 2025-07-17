@@ -13,7 +13,7 @@ import getDefaultComponentToken from './getDefaultComponentToken';
 import genMaxMin from './maxmin';
 import statisticToken, { merge as mergeToken } from './statistic';
 
-import { computed, toRefs, type Reactive } from 'vue';
+import { computed, defineComponent, onMounted, onUpdated, toRefs, type Reactive } from 'vue';
 import useUniqueMemo from '../_util/hooks/useUniqueMemo';
 import type { UseCSP } from '../hooks/useCSP';
 import useDefaultCSP from '../hooks/useCSP';
@@ -384,16 +384,36 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
       ...options,
     });
 
-    const StyledComponent = ({ prefixCls, rootCls = prefixCls }: SubStyleComponentProps) => {
-      useStyle(prefixCls, rootCls);
-      return null;
-    };
+    return defineComponent({
+      name:
+        process.env.NODE_ENV !== 'production'
+          ? `SubStyle_${Array.isArray(componentName) ? componentName.join('.') : String(componentName)}`
+          : 'SubStyleComponent',
 
-    if (process.env.NODE_ENV !== 'production') {
-      StyledComponent.displayName = `SubStyle_${String(Array.isArray(componentName) ? componentName.join('.') : componentName)}`;
-    }
+      props: {
+        prefixCls: { type: String, default: '' },
+        rootCls: { type: String, default: '' },
+      },
 
-    return StyledComponent;
+      setup(props: SubStyleComponentProps) {
+        // 在客户端模式下应用样式
+        if (!options.clientOnly || typeof window !== 'undefined') {
+          // 在挂载和更新时调用 useStyle
+          const applyStyle = () => {
+            useStyle(props.prefixCls, props.rootCls || props.prefixCls);
+          };
+
+          onMounted(applyStyle);
+          onUpdated(applyStyle);
+
+          // 立即应用一次
+          applyStyle();
+        }
+
+        // 这个组件不需要渲染任何内容
+        return () => null;
+      },
+    });
   }
 
   return { genStyleHooks, genSubStyleComponent, genComponentStyleHook };
