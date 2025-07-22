@@ -1,6 +1,6 @@
-import { cn } from '@/utils/cn';
 import { reactiveComputed } from '@vueuse/core';
-import type { ComputedRef, CSSProperties } from 'vue';
+import clsx from 'clsx';
+import type { CSSProperties, Ref } from 'vue';
 import type { ValidChar } from './interface';
 
 type TemplateSemanticClassNames<T extends string> = Partial<Record<T, string>>;
@@ -32,11 +32,11 @@ export function mergeClassNames<
           // Covert string to object structure
           const { _default: defaultField } = keySchema;
           acc[key] = acc[key] || {};
-          acc[key][defaultField!] = cn(acc[key][defaultField!], curVal);
+          acc[key][defaultField!] = clsx(acc[key][defaultField!], curVal);
         }
       } else {
         // Flatten fill
-        acc[key] = cn(acc[key], curVal);
+        acc[key] = clsx(acc[key], curVal);
       }
     });
     return acc;
@@ -84,9 +84,9 @@ function fillObjectBySchema<T extends object>(obj: T, schema: SemanticSchema): T
  * When `schema` is provided, it will **must** provide the nest object structure.
  */
 export default function useMergeSemantic<ClassNamesType extends object, StylesType extends object>(
-  classNamesList: ComputedRef<(ClassNamesType | undefined)[]>,
-  stylesList: ComputedRef<(StylesType | undefined)[]>,
-  schema?: ComputedRef<SemanticSchema>,
+  classNamesList: Ref<(ClassNamesType | undefined)[]>,
+  stylesList: Ref<(StylesType | undefined)[]>,
+  schema?: Ref<SemanticSchema>,
 ) {
   return reactiveComputed(() => {
     const mergedClassNames = useSemanticClassNames(schema?.value, ...classNamesList.value) as ClassNamesType;

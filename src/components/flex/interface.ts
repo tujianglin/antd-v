@@ -15,5 +15,5 @@ export interface FlexProps {
   align?: CSSProperties['alignItems'];
   flex?: CSSProperties['flex'];
   gap?: CSSProperties['gap'] | SizeType;
-  component?: CustomComponent;
+  component?: CustomComponent | string;
 }

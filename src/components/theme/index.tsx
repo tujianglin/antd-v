@@ -1,5 +1,5 @@
 import { toRefs } from 'vue';
-import DesignTokenProvider from './DesignTokenProvider.vue';
+import { DesignTokenProvider } from './context';
 import getDesignToken from './getDesignToken';
 import type { GlobalToken, MappingAlgorithm } from './interface';
 import { defaultConfig, useDesignTokenContextInject, useToken as useInternalToken } from './internal';

@@ -1,7 +1,7 @@
 /** @type {import('stylelint').Config} */
 export default {
   extends: ['stylelint-config-standard', 'stylelint-config-tailwindcss', 'stylelint-config-recess-order'],
-  ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts', '**/*.json', '**/*.md', '**/iconfont/**'],
+  ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts', '**/*.json', '**/*.md', '**/iconfont/**', '**/*.less'],
   plugins: ['stylelint-order', '@stylistic/stylelint-plugin', 'stylelint-prettier'],
   overrides: [
     {

@@ -1,0 +1,6 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+#app {
+  @apply h-[100vh] w-[100vw];
+}

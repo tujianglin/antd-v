@@ -9,7 +9,7 @@ import { floatButtonPrefixCls, type FloatButtonProps } from './interface';
 import useStyle from './style';
 import { FileTextOutlined } from '@ant-design/icons-vue';
 import { useZIndex } from '../_util/hooks/useZIndex';
-import { cn } from '@/utils/cn';
+import clsx from 'clsx';
 import Render from '../render';
 
 defineOptions({ name: 'FloatButton' });
@@ -75,7 +75,7 @@ const [zIndex] = useZIndex('FloatButton', style?.zIndex as number);
 const mergedStyle = computed((): CSSProperties => ({ ...style, zIndex }));
 
 const classes = computed(() => {
-  return cn(
+  return clsx(
     hashId,
     cssVarCls,
     rootCls,

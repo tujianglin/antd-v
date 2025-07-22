@@ -49,18 +49,18 @@ export const useZIndex = (componentType: ZIndexContainer | ZIndexConsumer, custo
   if (customZIndex !== undefined) {
     result = [customZIndex, customZIndex];
   } else {
-    let zIndex = parentZIndex ?? 0;
+    let zIndex = parentZIndex.value ?? 0;
 
     if (isContainer) {
       zIndex +=
         // Use preset token zIndex by default but not stack when has parent container
-        (parentZIndex ? 0 : token.zIndexPopupBase) +
+        (parentZIndex.value ? 0 : token.zIndexPopupBase) +
         // Container offset
         containerBaseZIndexOffset[componentType];
     } else {
       zIndex += consumerBaseZIndexOffset[componentType];
     }
-    result = [parentZIndex === undefined ? customZIndex : zIndex, zIndex];
+    result = [parentZIndex.value === undefined ? customZIndex : zIndex, zIndex];
   }
 
   return result;

@@ -1,13 +1,7 @@
 <script lang="tsx" setup>
-import { ref } from 'vue';
-import demo from './demo';
-
-const direction = ref('ltr');
-
-setTimeout(() => {
-  direction.value = 'rtl';
-}, 2000);
+import {} from 'vue';
+import container from '../vc-component/trigger/demo/container';
 </script>
 <template>
-  <demo />
+  <div><container /></div>
 </template>

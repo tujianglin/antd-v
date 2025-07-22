@@ -1,102 +1,126 @@
 <script lang="tsx" setup>
-import { cloneVNode, computed, ref, useAttrs, useSlots } from 'vue';
+import { cloneVNode, computed, getCurrentInstance, ref, useSlots } from 'vue';
 import type { BaseInputProps } from './interface';
 import { hasAddon, hasPrefixSuffix } from './utils/commonUtils';
-import { cn } from '@/utils/cn';
 import Render from '@/components/render/render';
-import { reactiveComputed } from '@vueuse/core';
+import clsx from 'clsx';
+
+export interface HolderRef {
+  /** Provider holder ref. Will return `null` if not wrap anything */
+  nativeElement: () => HTMLElement | null;
+}
+
 defineOptions({ inheritAttrs: false });
 
-const props = defineProps<BaseInputProps>();
-const attrs = useAttrs();
+const {
+  prefixCls,
+  prefix,
+  suffix,
+  addonBefore,
+  addonAfter,
+  class: className,
+  style,
+  disabled,
+  readOnly,
+  focused,
+  triggerFocus,
+  allowClear,
+  handleReset,
+  hidden,
+  classNames,
+  dataAttrs,
+  styles,
+  components,
+  onClear,
+} = defineProps<BaseInputProps>();
 
-const bindProps = reactiveComputed(() => ({ ...props, ...attrs }) as BaseInputProps);
 const slots = useSlots();
 
-// const value = defineModel('value');
+const value = defineModel('value');
 
-const AffixWrapperComponent = computed(() => bindProps.components?.affixWrapper || 'span');
-const GroupWrapperComponent = computed(() => bindProps.components?.groupWrapper || 'span');
-const WrapperComponent = computed(() => bindProps.components?.wrapper || 'span');
-const GroupAddonComponent = computed(() => bindProps.components?.groupAddon || 'span');
+const AffixWrapperComponent = computed(() => components?.affixWrapper || 'span');
+const GroupWrapperComponent = computed(() => components?.groupWrapper || 'span');
+const WrapperComponent = computed(() => components?.wrapper || 'span');
+const GroupAddonComponent = computed(() => components?.groupAddon || 'span');
 
 const containerRef = ref<HTMLDivElement>(null);
-
+const wm = getCurrentInstance();
 function onInputClick(e: MouseEvent) {
   if (containerRef.value?.contains(e.target as Element)) {
-    bindProps.triggerFocus?.();
+    triggerFocus?.();
   }
 }
 
-const hasAffix = computed(() => hasPrefixSuffix(bindProps));
+const hasAffix = computed(() => hasPrefixSuffix({ prefix, suffix, allowClear }));
 
-const groupRef = ref<HTMLDivElement>(null);
+defineExpose<HolderRef>({
+  nativeElement: () => wm.vnode?.el as HTMLElement,
+});
 
 const Content = computed(() => {
   let element: any = cloneVNode(slots.default?.()[0], {
-    class: cn(bindProps.class, !hasAffix.value && bindProps.classNames.variant),
+    class: clsx(!hasAffix.value && classNames.variant),
   });
 
   // ================== Prefix & Suffix ================== //
   if (hasAffix.value) {
     // ================== Clear Icon ================== //
     let clearIcon = null;
-    if (bindProps.allowClear) {
-      const needClear = !bindProps.disabled && !bindProps.readOnly;
-      const clearIconCls = `${bindProps.prefixCls}-clear-icon`;
-      const iconNode =
-        typeof bindProps.allowClear === 'object' && bindProps.allowClear?.clearIcon ? bindProps.allowClear.clearIcon : '✖';
+    if (allowClear) {
+      const needClear = !disabled && !readOnly && value.value;
+      const clearIconCls = `${prefixCls}-clear-icon`;
+      const iconNode = typeof allowClear === 'object' && allowClear?.clearIcon ? allowClear.clearIcon : '✖';
 
       clearIcon = (
         <button
           type="button"
           tabindex={-1}
           onClick={(event) => {
-            bindProps.handleReset?.(event);
-            bindProps.onClear?.();
+            handleReset?.(event);
+            onClear?.();
           }}
           // Do not trigger onBlur when clear input
           // https://github.com/ant-design/ant-design/issues/31200
           onMousedown={(e) => e.preventDefault()}
-          class={cn(clearIconCls, {
+          class={clsx(clearIconCls, {
             [`${clearIconCls}-hidden`]: !needClear,
-            [`${clearIconCls}-has-suffix`]: !!bindProps.suffix,
+            [`${clearIconCls}-has-suffix`]: !!suffix,
           })}
         >
           <Render content={iconNode}></Render>
         </button>
       );
     }
-    const affixWrapperPrefixCls = `${bindProps.prefixCls}-affix-wrapper`;
-    const affixWrapperCls = cn(
+    const affixWrapperPrefixCls = `${prefixCls}-affix-wrapper`;
+    const affixWrapperCls = clsx(
       affixWrapperPrefixCls,
       {
-        [`${bindProps.prefixCls}-disabled`]: bindProps.disabled,
-        [`${affixWrapperPrefixCls}-disabled`]: bindProps.disabled, // Not used, but keep it
-        [`${affixWrapperPrefixCls}-focused`]: bindProps.focused, // Not used, but keep it
-        [`${affixWrapperPrefixCls}-readonly`]: bindProps.readOnly,
-        [`${affixWrapperPrefixCls}-input-with-clear-btn`]: bindProps.suffix && bindProps.allowClear,
+        [`${prefixCls}-disabled`]: disabled,
+        [`${affixWrapperPrefixCls}-disabled`]: disabled, // Not used, but keep it
+        [`${affixWrapperPrefixCls}-focused`]: focused, // Not used, but keep it
+        [`${affixWrapperPrefixCls}-readonly`]: readOnly,
+        [`${affixWrapperPrefixCls}-input-with-clear-btn`]: suffix && allowClear,
       },
-      bindProps.classNames?.affixWrapper,
-      bindProps.classNames?.variant,
+      classNames?.affixWrapper,
+      classNames?.variant,
     );
-    const suffixNode = (bindProps.suffix || bindProps.allowClear) && (
-      <span class={cn(`${bindProps.prefixCls}-suffix`, bindProps.classNames?.suffix)} style={bindProps.styles?.suffix}>
+    const suffixNode = (suffix || allowClear) && (
+      <span class={clsx(`${prefixCls}-suffix`, classNames?.suffix)} style={styles?.suffix}>
         <Render content={clearIcon}></Render>
-        <Render content={bindProps.suffix}></Render>
+        <Render content={suffix}></Render>
       </span>
     );
     element = (
       <AffixWrapperComponent.value
         class={affixWrapperCls}
-        style={bindProps.styles?.affixWrapper}
+        style={styles?.affixWrapper}
         onClick={onInputClick}
-        {...bindProps.dataAttrs?.affixWrapper}
+        {...dataAttrs?.affixWrapper}
         ref={containerRef}
       >
-        {bindProps.prefix && (
-          <span class={cn(`${bindProps.prefixCls}-prefix`, bindProps.classNames?.prefix)} style={bindProps.styles?.prefix}>
-            <Render content={bindProps.prefix}></Render>
+        {prefix && (
+          <span class={clsx(`${prefixCls}-prefix`, classNames?.prefix)} style={styles?.prefix}>
+            <Render content={prefix}></Render>
           </span>
         )}
         {element}
@@ -106,35 +130,35 @@ const Content = computed(() => {
   }
 
   // ================== Addon ================== //
-  if (hasAddon(props)) {
-    const wrapperCls = `${bindProps.prefixCls}-group`;
+  if (hasAddon({ addonBefore, addonAfter })) {
+    const wrapperCls = `${prefixCls}-group`;
     const addonCls = `${wrapperCls}-addon`;
     const groupWrapperCls = `${wrapperCls}-wrapper`;
 
-    const mergedWrapperClassName = cn(`${bindProps.prefixCls}-wrapper`, wrapperCls, bindProps.classNames?.wrapper);
+    const mergedWrapperClassName = clsx(`${prefixCls}-wrapper`, wrapperCls, classNames?.wrapper);
 
-    const mergedGroupClassName = cn(
+    const mergedGroupClassName = clsx(
       groupWrapperCls,
       {
-        [`${groupWrapperCls}-disabled`]: bindProps.disabled,
+        [`${groupWrapperCls}-disabled`]: disabled,
       },
-      bindProps.classNames?.groupWrapper,
+      classNames?.groupWrapper,
     );
 
     // Need another wrapper for changing display:table to display:inline-block
     // and put style prop in wrapper
     element = (
-      <GroupWrapperComponent.value class={mergedGroupClassName} ref={groupRef}>
+      <GroupWrapperComponent.value class={mergedGroupClassName}>
         <WrapperComponent.value class={mergedWrapperClassName}>
-          {bindProps.addonBefore && (
+          {addonBefore && (
             <GroupAddonComponent.value class={addonCls}>
-              <Render content={bindProps.addonBefore}></Render>
+              <Render content={addonBefore}></Render>
             </GroupAddonComponent.value>
           )}
           {element}
-          {bindProps.addonAfter && (
+          {addonAfter && (
             <GroupAddonComponent.value class={addonCls}>
-              <Render content={bindProps.addonAfter}></Render>
+              <Render content={addonAfter}></Render>
             </GroupAddonComponent.value>
           )}
         </WrapperComponent.value>
@@ -148,10 +172,11 @@ const Content = computed(() => {
 <template>
   <component
     :is="Content"
-    :class="cn(Content?.class, props.class)"
+    :class="clsx(Content?.class, className)"
     :style="{
       ...Content?.style,
-      ...props.style,
+      ...style,
     }"
+    :hidden="hidden"
   />
 </template>

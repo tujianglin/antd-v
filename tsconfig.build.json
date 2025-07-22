@@ -8,9 +8,9 @@
     "strictNullChecks": false,
     "declarationDir": "./dist/typings",
     "lib": ["esnext", "dom", "DOM.Iterable"],
-    "moduleResolution": "nodenext",
+    "moduleResolution": "bundler",
     "target": "esnext",
-    "module": "nodenext",
+    "module": "es2015",
     "types": ["@types/node"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true

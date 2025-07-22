@@ -1,13 +1,12 @@
 <script lang="tsx" setup>
 import { createTheme } from '@/vc-cssinjs';
 import { computed, useSlots } from 'vue';
-import { defaultTheme } from '../theme/context';
+import { defaultTheme, DesignTokenProvider } from '../theme/context';
 import defaultSeedToken from '../theme/themes/seed';
 import { defaultIconPrefixCls, useConfigContextInject, useConfigContextProvider, type ConfigConsumerProps } from './context';
 import useTheme from './hooks/useTheme';
 import type { ConfigProviderProps } from './interface';
 import useStyle from './style';
-import DesignTokenProvider from '../theme/DesignTokenProvider.vue';
 import { reactiveComputed } from '@vueuse/core';
 import { omit } from 'lodash-es';
 
@@ -37,16 +36,15 @@ const mergedTheme = useTheme(
   computed(() => ({ prefixCls: getPrefixCls('') })),
 );
 
-const baseConfig = reactiveComputed(
-  () =>
-    ({
-      csp: csp.value,
-      getPrefixCls,
-      iconPrefixCls: iconPrefixCls.value,
-      theme: mergedTheme?.value ?? parentContext.theme,
-      ...omit(props, ['csp', 'getPrefixCls', 'iconPrefixCls', 'theme']),
-    }) as ConfigConsumerProps,
-);
+const baseConfig = reactiveComputed(() => {
+  return {
+    csp: csp.value,
+    getPrefixCls,
+    iconPrefixCls: iconPrefixCls.value,
+    theme: mergedTheme?.value ?? parentContext.theme,
+    ...omit(props, ['csp', 'getPrefixCls', 'iconPrefixCls', 'theme']),
+  } as ConfigConsumerProps;
+});
 
 const memoTheme = computed(() => {
   const { algorithm, token, components, cssVar, ...rest } = mergedTheme.value || {};

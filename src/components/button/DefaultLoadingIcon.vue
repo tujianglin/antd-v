@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import { cn } from '@/utils/cn';
 import { LoadingOutlined } from '@ant-design/icons-vue';
+import clsx from 'clsx';
 import { computed, nextTick, type CSSProperties } from 'vue';
 import IconWrapper from './IconWrapper.vue';
 
@@ -46,7 +46,7 @@ const onLeave = () => {
 
 const visible = computed(() => !!loading);
 
-const mergedIconCls = cn(`${prefixCls}-loading-icon`, className);
+const mergedIconCls = clsx(`${prefixCls}-loading-icon`, className);
 </script>
 <template>
   <IconWrapper v-if="existIcon" :prefix-cls="mergedIconCls" :class="mergedIconCls" :style="style">

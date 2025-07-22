@@ -442,7 +442,6 @@ export const genAffixStyle: GenerateStyle<InputToken> = (token: InputToken) => {
 
   const affixCls = `${componentCls}-affix-wrapper`;
   const affixClsDisabled = `${componentCls}-affix-wrapper-disabled`;
-
   return {
     [affixCls]: {
       ...genBasicInputStyle(token),
@@ -658,7 +657,7 @@ const genSearchInputStyle: GenerateStyle<InputToken> = (token: InputToken) => {
       },
 
       // fix slight height diff in Firefox:
-      // https://ant.design/components/auto-complete-cn/#auto-complete-demo-certain-category
+      // https://ant.design/components/auto-complete-clsx/#auto-complete-demo-certain-category
       [`${componentCls}-lg`]: {
         lineHeight: token.calc(token.lineHeightLG).sub(0.0002).equal(),
       },

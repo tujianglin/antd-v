@@ -24,7 +24,7 @@ export const preMessage = (fn: preMessageFn) => {
  * ```
  */
 export function warning(valid: boolean, message: any) {
-  if (process.env.NODE_ENV !== 'production' && !valid && console !== undefined) {
+  if (process.env.NODE_ENV !== 'production' && valid && console !== undefined) {
     const finalMessage = preWarningFns.reduce((msg, preMessageFn) => preMessageFn(msg ?? '', 'warning'), message);
 
     if (finalMessage) {

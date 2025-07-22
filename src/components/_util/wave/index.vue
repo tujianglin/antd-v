@@ -5,7 +5,7 @@ import isVisible from '@/vc-util/Dom/isVisible';
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, useSlots, watch } from 'vue';
 import type { WaveProps } from '.';
 import useStyle from './style';
-import { cn } from '@/utils/cn';
+import clsx from 'clsx';
 import useWave from './useWave';
 
 const props = defineProps<WaveProps>();
@@ -18,7 +18,7 @@ const prefixCls = getPrefixCls('wave');
 const [, hashId] = useStyle(prefixCls);
 
 const showWave = useWave(
-  computed(() => cn(prefixCls, hashId)),
+  computed(() => clsx(prefixCls, hashId)),
   props.component,
   computed(() => props.colorSource),
 );

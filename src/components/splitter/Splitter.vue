@@ -8,7 +8,7 @@ import type { SplitterProps } from './interface';
 import SplitBar from './SplitBar.vue';
 import { vResizeObserver } from '@vueuse/components';
 import Panel from './Panel.vue';
-import { cn } from '../../utils/cn';
+import clsx from 'clsx';
 
 defineOptions({ name: 'Splitter' });
 
@@ -113,7 +113,7 @@ const splterBar = (idx) => {
 <template>
   <div
     v-resize-observer="onResizeObserver"
-    :class="cn('m-0 box-border flex size-full resize items-stretch p-0', isVertical ? 'flex-col' : 'flex-row', $attrs?.class)"
+    :class="clsx('m-0 box-border flex size-full resize items-stretch p-0', isVertical ? 'flex-col' : 'flex-row', $attrs?.class)"
   >
     <template v-for="(item, idx) in items" :key="idx">
       <Panel v-bind="item" :size="panelSizes[idx]" :class="rootClassName">

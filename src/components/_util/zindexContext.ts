@@ -1,11 +1,11 @@
-import { inject, provide, type InjectionKey } from 'vue';
+import { inject, provide, ref, type InjectionKey, type Ref } from 'vue';
 
-const zIndexProviderKey: InjectionKey<number | undefined> = Symbol('zIndexProvider');
+const zIndexProviderKey: InjectionKey<Ref<number | undefined>> = Symbol('zIndexProvider');
 
 export const useZIndexContextInject = () => {
-  return inject(zIndexProviderKey, undefined);
+  return inject(zIndexProviderKey, ref(undefined));
 };
 
-export const useZIndexContextProvider = (zIndex: number | undefined) => {
+export const useZIndexContextProvider = (zIndex: Ref<number | undefined>) => {
   return provide(zIndexProviderKey, zIndex);
 };

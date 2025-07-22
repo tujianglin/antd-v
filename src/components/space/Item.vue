@@ -1,8 +1,10 @@
 <script lang="tsx" setup>
-import { computed, useSlots, type CSSProperties } from 'vue';
+import clsx from 'clsx';
+import { toRefs, type CSSProperties } from 'vue';
 import type { RenderNode } from '../_util/type';
 import Render from '../render';
 import { useSpaceContextInject } from './context';
+
 export interface ItemProps {
   class: string;
   prefix: string;
@@ -13,19 +15,23 @@ export interface ItemProps {
   styles: Partial<Record<'separator', CSSProperties>>;
 }
 
-const props = defineProps<ItemProps>();
+defineOptions({ inheritAttrs: false });
 
-const { latestIndex } = useSpaceContextInject();
+const { class: className, prefix, index, separator, style, classNames, styles } = defineProps<ItemProps>();
 
-const children = computed(() => useSlots().default?.().length);
+const { latestIndex } = toRefs(useSpaceContextInject());
 </script>
 <template>
-  <template v-if="children">
-    <div :class="props.class" :style="props.style">
+  <template v-if="$slots.default">
+    <div :class="className" :style="style">
       <slot></slot>
     </div>
-    <span v-if="props.index < latestIndex && props.separator">
-      <Render :content="props.separator" />
+    <span
+      v-if="index < latestIndex && separator"
+      :class="clsx(`${prefix}-item-separator`, classNames.separator)"
+      :style="styles.separator"
+    >
+      <Render :content="separator" />
     </span>
   </template>
 </template>

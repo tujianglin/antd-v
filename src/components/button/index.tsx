@@ -1,5 +1,5 @@
-import Button from './button.vue';
+import Button from './index.vue';
 
-export type { ButtonProps } from './buttonHelpers';
+export type { ButtonProps } from './interface';
 
 export default Button;

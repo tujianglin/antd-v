@@ -7,7 +7,7 @@ import { useGroupContextInject } from './context';
 import { floatButtonPrefixCls, type FloatButtonProps } from './interface';
 import { VerticalAlignTopOutlined } from '@ant-design/icons-vue';
 import FloatButton from './FloatButton.vue';
-import { cn } from '@/utils/cn';
+import clsx from 'clsx';
 import { throttle } from 'lodash-es';
 export interface BackTopProps extends Omit<FloatButtonProps, 'target'> {
   visibilityHeight?: number;
@@ -88,7 +88,7 @@ const contentProps = computed((): FloatButtonProps => {
 <template>
   <Transition :name="`${rootPrefixCls}-fade`">
     <div v-show="visible">
-      <FloatButton ref="internalRef" v-bind="contentProps" @click="scrollToTop" :class="cn(className)" />
+      <FloatButton ref="internalRef" v-bind="contentProps" @click="scrollToTop" :class="clsx(className)" />
     </div>
   </Transition>
 </template>

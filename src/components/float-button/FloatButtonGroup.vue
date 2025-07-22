@@ -7,11 +7,11 @@ import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useStyle from './style';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import { useZIndex } from '../_util/hooks/useZIndex';
-import GroupContextProvider from './GroupContextProvider.vue';
-import { cn } from '@/utils/cn';
+import clsx from 'clsx';
 import FloatButton from './FloatButton.vue';
 import Flex from '../flex';
 import Space from '../space';
+import { GroupContextProvider } from './context';
 
 defineOptions({ name: 'FloatButtonGroup' });
 
@@ -146,7 +146,7 @@ const listCls = `${groupPrefixCls}-list`;
   <GroupContextProvider :value="listContext">
     <div
       :class="
-        cn(groupPrefixCls, hashId, cssVarCls, rootCls, config.class, merged.mergedClassNames.root, className, rootClassName, {
+        clsx(groupPrefixCls, hashId, cssVarCls, rootCls, config.class, merged.mergedClassNames.root, className, rootClassName, {
           [`${groupPrefixCls}-rtl`]: config.direction === 'rtl',
           [`${groupPrefixCls}-individual`]: individual,
           [`${groupPrefixCls}-${mergedPlacement}`]: isMenuMode,
@@ -165,7 +165,7 @@ const listCls = `${groupPrefixCls}-list`;
             :is="individual ? Flex : Space.Compact"
             :vertical="mergedPlacement === 'top' || mergedPlacement === 'bottom'"
             :style="merged.mergedStyles.list"
-            :class="cn(listCls, merged.mergedClassNames.list)"
+            :class="clsx(listCls, merged.mergedClassNames.list)"
           >
             <slot></slot>
           </component>
@@ -186,7 +186,7 @@ const listCls = `${groupPrefixCls}-list`;
         :is="individual ? Flex : Space.Compact"
         :vertical="mergedPlacement === 'top' || mergedPlacement === 'bottom'"
         :style="merged.mergedStyles.list"
-        :class="cn(listCls, merged.mergedClassNames.list)"
+        :class="clsx(listCls, merged.mergedClassNames.list)"
       >
         <slot></slot>
       </component>

@@ -1,18 +1,16 @@
+import tailwindcss from '@tailwindcss/vite';
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
-import { defineConfig, loadEnv } from 'vite';
-import { wrapperEnv } from './build/uitls';
-import { createVitePlugins } from './build/vite/index';
+import { defineConfig } from 'vite';
 
 const externals = ['vue'];
 
-export default defineConfig(({ command, mode }) => {
-  const root = process.cwd();
+export default defineConfig(({ command }) => {
   const isBuild = command === 'build';
-  const rawEnv = loadEnv(mode, root);
-  const env = wrapperEnv(rawEnv);
   return {
-    plugins: createVitePlugins(rawEnv, mode),
+    plugins: [vue(), vueJsx(), tailwindcss()],
     build: {
       rollupOptions: {
         external: [...externals],
@@ -40,7 +38,14 @@ export default defineConfig(({ command, mode }) => {
     },
     server: {
       host: true,
-      port: env.VITE_PORT,
+      port: 1814,
+      proxy: {
+        '/api': {
+          target: 'http://192.168.40.222:8080',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
+      },
     },
   };
 });

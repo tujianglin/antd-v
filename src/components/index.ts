@@ -1,4 +1,6 @@
 export { default as Button } from './button';
+export { default as Checkbox } from './checkbox';
+export type { CheckboxProps } from './checkbox';
 export { default as Col } from './col';
 export type { ColProps } from './col';
 export { default as ConfigProvider } from './config-provider';
@@ -7,6 +9,10 @@ export type { FlexProps } from './flex';
 export { default as FloatButton } from './float-button';
 export { default as Grid } from './grid';
 export { default as Input } from './input';
+export { default as InputNumber } from './input-number';
+export type { InputNumberProps } from './input-number';
+export { default as Radio } from './radio';
+export type { RadioProps } from './radio';
 export { default as Render } from './render';
 export { default as Row } from './row';
 export type { RowProps } from './row';

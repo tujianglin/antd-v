@@ -1,5 +1,5 @@
 import Compact from './Compact.vue';
-import SpaceComp from './space.vue';
+import SpaceComp from './index.vue';
 
 export type { SpaceProps } from './interface';
 

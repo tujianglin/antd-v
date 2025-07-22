@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
-import '../styles/index.css';
 import App from './App.vue';
+// import './index.css';
 
 const bootstrap = async () => {
   const app = createApp(App);

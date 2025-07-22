@@ -1,17 +1,21 @@
 import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
+import type { InputRef } from '../../../vc-component/input';
 
-export function useRemovePasswordTimeout(inputRef: Ref<HTMLInputElement | null>, triggerOnMount = false) {
+export function useRemovePasswordTimeout(inputRef: Ref<InputRef | null>, triggerOnMount = false) {
   const removePasswordTimeoutRef = ref<ReturnType<typeof setTimeout>[]>([]);
 
   const removePasswordTimeout = () => {
-    const timer = setTimeout(() => {
-      const inputEl = inputRef.value;
-      if (inputEl && inputEl.getAttribute('type') === 'password' && inputEl.hasAttribute('value')) {
-        inputEl.removeAttribute('value');
-      }
-    });
-
-    removePasswordTimeoutRef.value.push(timer);
+    removePasswordTimeoutRef.value.push(
+      setTimeout(() => {
+        if (
+          inputRef.value?.input &&
+          inputRef.value?.input().getAttribute('type') === 'password' &&
+          inputRef.value?.input().hasAttribute('value')
+        ) {
+          inputRef.value?.input().removeAttribute('value');
+        }
+      }),
+    );
   };
 
   onMounted(() => {

@@ -40,5 +40,5 @@
     "package.json": "pnpm-lock.yaml,pnpm-workspace.yaml,.gitattributes,.gitignore,.gitpod.yml,.npmrc,.browserslistrc,.node-version,.git*,.tazerc.json",
     "eslint.config.mjs": ".eslintignore,.prettierignore,.stylelintignore,commitlint.config.*,prettier.config.*,stylelint.config.*,lint-staged.config.*,.ls-lint*,cspell.json,lefthook.yml"
   },
-  "i18n-ally.localesPaths": []
+  "i18n-ally.localesPaths": [],
 }

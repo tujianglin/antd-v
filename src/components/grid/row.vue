@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import { cn } from '@/utils/cn';
 import { reactiveComputed } from '@vueuse/core';
+import clsx from 'clsx';
 import { computed, ref, toRefs, type CSSProperties } from 'vue';
 import { responsiveArray, type Breakpoint, type ScreenMap } from '../_util/responsiveObserver';
 import { useConfigContextInject } from '../config-provider';
@@ -75,7 +75,7 @@ const [hashId, cssVarCls] = useRowStyle(prefixCls);
 
 const gutters = computed(() => useGutter(props.gutter, screens.value));
 const classes = computed(() => {
-  return cn(
+  return clsx(
     prefixCls,
     {
       [`${prefixCls}-no-wrap`]: props.wrap === false,

@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import { cn } from '@/utils/cn';
 import { reactiveComputed } from '@vueuse/core';
+import clsx from 'clsx';
 import { computed, toRefs, type CSSProperties } from 'vue';
 import type { LiteralUnion } from '../_util/type';
 import { useConfigContextInject } from '../config-provider';
@@ -98,7 +98,7 @@ const { sizeStyle, sizeClassObj } = reactiveComputed(() => {
 
 // ==================== Normal =====================
 const classes = computed(() => {
-  return cn(
+  return clsx(
     prefixCls,
     {
       [`${prefixCls}-${props.span}`]: props.span !== undefined,

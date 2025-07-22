@@ -1,18 +1,16 @@
 <script lang="tsx" setup>
-import { cn } from '@/utils/cn';
-import { computed, type CSSProperties } from 'vue';
+import clsx from 'clsx';
+import { computed, toRefs, useSlots, type CSSProperties } from 'vue';
 import type { Orientation } from '../_util/hooks/useOrientation';
 import useOrientation from '../_util/hooks/useOrientation';
 import { useConfigContextInject } from '../config-provider';
 import useSize from '../config-provider/hooks/useSize';
 import type { SizeType } from '../config-provider/SizeContext';
-import {
-  SpaceCompactItemContextProvider,
-  useSpaceCompactItemContextInject,
-  type SpaceCompactItemContextType,
-} from './CompactContext';
+import { useSpaceCompactItemContextInject } from './CompactContext';
+import CompactItem from './CompactItem.vue';
 import useStyle from './style';
-import { extractValidChildren, propsToCamelCase } from '../_util/type';
+import Render from '../render';
+import { isEmpty } from 'lodash-es';
 
 export interface SpaceCompactProps {
   class?: string;
@@ -25,52 +23,68 @@ export interface SpaceCompactProps {
   rootClassName?: string;
 }
 
-const props = defineProps<SpaceCompactProps>();
+const {
+  size,
+  orientation,
+  block,
+  prefixCls: customizePrefixCls,
+  class: className,
+  rootClassName,
+  vertical,
+  ...restProps
+} = defineProps<SpaceCompactProps>();
 
-const config = useConfigContextInject();
+const { getPrefixCls, direction: directionConfig } = toRefs(useConfigContextInject());
 
-const merged = useOrientation(
-  computed(() => props.orientation),
-  computed(() => props.vertical),
+const { mergedOrientation, mergedVertical } = toRefs(
+  useOrientation(
+    computed(() => orientation),
+    computed(() => vertical),
+  ),
 );
-const mergedSize = computed(() => useSize((ctx) => props.size ?? ctx));
+const mergedSize = computed(() => useSize((ctx) => size ?? ctx));
 
-const prefixCls = config.getPrefixCls('space-compact', props.class);
+const prefixCls = getPrefixCls.value('space-compact', customizePrefixCls);
 const [hashId] = useStyle(prefixCls);
 
 const cls = computed(() => {
-  return cn(
+  return clsx(
     prefixCls,
     hashId,
     {
-      [`${prefixCls}-rtl`]: config.direction === 'rtl',
-      [`${prefixCls}-block`]: props.block,
-      [`${prefixCls}-vertical`]: merged.mergedVertical,
+      [`${prefixCls}-rtl`]: directionConfig?.value === 'rtl',
+      [`${prefixCls}-block`]: block,
+      [`${prefixCls}-vertical`]: mergedVertical.value,
     },
-    props.class,
-    props.rootClassName,
+    className,
+    rootClassName,
   );
 });
 
 const compactItemContext = useSpaceCompactItemContextInject();
 
-const CompactItem = (props: SpaceCompactItemContextType, { slots }) => {
-  return <SpaceCompactItemContextProvider value={propsToCamelCase(props)}>{slots.default?.()}</SpaceCompactItemContextProvider>;
-};
+const slots = useSlots();
+
+const nodes = computed(() => {
+  const childNodes = slots.default?.() || [];
+  return childNodes.map((child, i) => {
+    const key = child?.key || `${prefixCls}-item-${i}`;
+    return (
+      <CompactItem
+        key={key}
+        compactSize={mergedSize.value}
+        compactDirection={mergedOrientation.value}
+        isFirstItem={i === 0 && (isEmpty(compactItemContext) || compactItemContext?.isFirstItem)}
+        isLastItem={i === childNodes.length - 1 && (isEmpty(compactItemContext) || compactItemContext?.isLastItem)}
+      >
+        {child}
+      </CompactItem>
+    );
+  });
+});
 </script>
 <template>
-  <div :class="cls" :style="style">
-    <CompactItem
-      v-for="(child, index) in extractValidChildren($slots.default?.())"
-      :key="(child as any).key || `${prefixCls}-item-${index}`"
-      :compact-size="mergedSize"
-      :compact-direction="merged.mergedOrientation"
-      :is-first-item="index === 0 && (!compactItemContext || compactItemContext?.isFirstItem)"
-      :is-last-item="
-        index === extractValidChildren($slots.default?.()).length - 1 && (!compactItemContext || compactItemContext?.isLastItem)
-      "
-    >
-      <component :is="child" />
-    </CompactItem>
+  <div v-if="nodes.length" :class="cls" v-bind="restProps">
+    <Render :content="nodes" />
   </div>
 </template>

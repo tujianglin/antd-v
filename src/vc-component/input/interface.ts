@@ -3,11 +3,12 @@ import type { RenderNode } from '../../components/_util/type';
 import type { InputFocusOptions } from './utils/commonUtils';
 import type { LiteralUnion } from './utils/types';
 
+export type InputChangeEvnet = Event & { target?: HTMLInputElement };
+
 export interface CommonInputProps {
   class?: string;
   style?: CSSProperties;
   disabled?: boolean;
-  defaultValue?: string;
   prefix?: RenderNode;
   suffix?: RenderNode;
   addonBefore?: RenderNode;
@@ -26,7 +27,8 @@ export interface CommonInputProps {
     suffix?: CSSProperties;
   };
   allowClear?: boolean | { clearIcon?: RenderNode };
-  onChange?: HtmlHTMLAttributes['onChange'];
+  maxlength?: number;
+  onChange?: (e: Event) => void;
 }
 
 type DataAttr = Record<`data-${string}`, string>;
@@ -66,7 +68,7 @@ export interface InputProps
   extends CommonInputProps,
     /* @vue-ignore */ Omit<
       InputHTMLAttributes,
-      'size' | 'prefix' | 'type' | 'class' | 'style' | 'disabled' | 'value' | 'onChange'
+      'size' | 'prefix' | 'type' | 'class' | 'style' | 'disabled' | 'value' | 'onChange' | 'maxlength' | 'hidden'
     > {
   prefixCls?: string;
   // ref: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#%3Cinput%3E_types
@@ -101,7 +103,7 @@ export interface InputProps
     | {
         formatter: ShowCountFormatter;
       };
-  autoComplete?: string;
+  autocomplete?: string;
   htmlSize?: number;
   classNames?: CommonInputProps['classNames'] & {
     input?: string;
@@ -121,7 +123,8 @@ export interface InputRef {
   blur: () => void;
   setSelectionRange: (start: number, end: number, direction?: 'forward' | 'backward' | 'none') => void;
   select: () => void;
-  input: HTMLInputElement | null;
+  input: () => HTMLInputElement | null;
+  nativeElement: () => HTMLElement | null;
 }
 
 export interface ChangeEventInfo {

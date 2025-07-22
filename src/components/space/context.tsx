@@ -1,65 +1,53 @@
 import { reactiveComputed } from '@vueuse/core';
-import { defineComponent, inject, provide, type InjectionKey, type PropType, type Reactive } from 'vue';
+import { defineComponent, inject, provide, reactive, type InjectionKey, type PropType, type Reactive } from 'vue';
 import type { SpaceCompactItemContextType } from './CompactContext';
 
 export interface SpaceContextType {
   latestIndex: number;
 }
 
-const spaceContextProviderKey: InjectionKey<Reactive<SpaceContextType>> = Symbol('spaceContextProvider');
+const SpaceContext: InjectionKey<Reactive<SpaceContextType>> = Symbol('SpaceContext');
 
 export const useSpaceContextInject = () => {
-  return inject(
-    spaceContextProviderKey,
-    reactiveComputed(() => ({ latestIndex: 0 })),
-  );
+  return inject(SpaceContext, reactive<SpaceContextType>({ latestIndex: 0 }));
 };
 
 export const useSpaceContextProvider = (props: Reactive<SpaceContextType>) => {
-  provide(spaceContextProviderKey, props);
+  provide(SpaceContext, props);
 };
 
 export const SpaceContextProvider = defineComponent({
   props: {
-    value: {
-      type: Object as PropType<SpaceContextType>,
-      required: true,
-    },
+    value: Object as PropType<SpaceContextType>,
   },
   setup(props, { slots }) {
-    useSpaceContextProvider(props.value);
+    useSpaceContextProvider(reactiveComputed(() => props.value));
     return () => <>{slots.default?.()}</>;
   },
 });
 
-const spaceCompactItemContextProviderKey: InjectionKey<Reactive<SpaceCompactItemContextType>> = Symbol(
-  'spaceCompactItemContextProvider',
-);
+const SpaceCompactItemContex: InjectionKey<Reactive<SpaceCompactItemContextType>> = Symbol('SpaceCompactItemContex');
 
 export const useSpaceCompactItemContextInject = () => {
-  return inject(
-    spaceCompactItemContextProviderKey,
-    reactiveComputed(() => null),
-  );
+  return inject(SpaceCompactItemContex, reactive({}));
 };
 
 export const useSpaceCompactItemContextProvider = (props: Reactive<SpaceCompactItemContextType>) => {
-  provide(spaceCompactItemContextProviderKey, props);
+  provide(SpaceCompactItemContex, props);
 };
 
 export const SpaceCompactItemContextProvider = defineComponent({
   props: {
-    value: {
-      type: [Object, null] as PropType<SpaceCompactItemContextType | null>,
-      required: true,
-    },
+    value: Object as PropType<SpaceCompactItemContextType>,
   },
   setup(props, { slots }) {
-    useSpaceCompactItemContextProvider(props.value);
+    useSpaceCompactItemContextProvider(reactiveComputed(() => props.value));
     return () => <>{slots.default?.()}</>;
   },
 });
 
-export const NoCompactStyle = (_, { slots }) => {
-  return <SpaceCompactItemContextProvider value={null}>{slots.default?.()}</SpaceCompactItemContextProvider>;
-};
+export const NoCompactStyle = defineComponent({
+  setup(_, { slots }) {
+    return () => <SpaceCompactItemContextProvider value={{}}>{slots.default?.()}</SpaceCompactItemContextProvider>;
+  },
+});

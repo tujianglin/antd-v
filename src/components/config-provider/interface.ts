@@ -1,4 +1,15 @@
-import type { ButtonConfig, CSPConfig, DirectionType, InputConfig, ThemeConfig, Variant, WaveConfig } from './context';
+import type {
+  ButtonConfig,
+  CSPConfig,
+  DirectionType,
+  InputConfig,
+  InputNumberConfig,
+  InputSearchConfig,
+  TextAreaConfig,
+  ThemeConfig,
+  Variant,
+  WaveConfig,
+} from './context';
 import type { SizeType } from './SizeContext';
 
 export interface ConfigProviderProps {
@@ -35,6 +46,9 @@ export interface ConfigProviderProps {
   theme?: ThemeConfig;
   button?: ButtonConfig;
   input?: InputConfig;
+  inputSearch?: InputSearchConfig;
+  inputNumber?: InputNumberConfig;
+  textArea?: TextAreaConfig;
   /**
    * Wave is special component which only patch on the effect of component interaction.
    */

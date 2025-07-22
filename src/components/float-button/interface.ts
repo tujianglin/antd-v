@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, CSSProperties, HtmlHTMLAttributes } from 'vue';
 import type { RenderNode } from '../_util/type';
-import type { ButtonHTMLType, ButtonSemanticName } from '../button/buttonHelpers';
+import type { ButtonHTMLType, ButtonSemanticName } from '../button/interface';
 
 export type FloatButtonElement = HTMLAnchorElement & HTMLButtonElement;
 

@@ -1,21 +1,19 @@
-import { defineComponent, inject, type InjectionKey } from 'vue';
+import { computed, defineComponent, inject, ref, type InjectionKey, type Ref } from 'vue';
 
-export const disabledProviderKey: InjectionKey<boolean> = Symbol('disabledProvider');
+export const DisabledContext: InjectionKey<Ref<boolean>> = Symbol('DisabledContext');
 
 export const useDisabledContextInject = () => {
-  return inject(disabledProviderKey, false);
+  return inject(DisabledContext, ref(false));
 };
 
-export const useDisabledContextProvider = (props: boolean) => {
-  return inject(disabledProviderKey, props);
+export const useDisabledContextProvider = (props: Ref<boolean>) => {
+  return inject(DisabledContext, props);
 };
 
 export const DisabledContextProvider = defineComponent({
-  props: {
-    value: Boolean,
-  },
+  props: { value: Boolean },
   setup(props, { slots }) {
-    useDisabledContextProvider(props.value);
+    useDisabledContextProvider(computed(() => props.value));
     return <>{slots.default?.()}</>;
   },
 });

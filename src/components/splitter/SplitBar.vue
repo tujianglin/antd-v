@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import { DownOutlined, LeftOutlined, RightOutlined, UpOutlined } from '@ant-design/icons-vue';
 import { computed, ref, watch } from 'vue';
-import { cn } from '../../utils/cn';
+import clsx from 'clsx';
 
 export interface SplitBarProps {
   index: number;
@@ -152,7 +152,7 @@ function getValidNumber(num: number | undefined): number {
 </script>
 <template>
   <div
-    :class="cn('group relative box-border flex-none select-none')"
+    :class="clsx('group relative box-border flex-none select-none')"
     :aria-valuenow="getValidNumber(ariaNow)"
     :aria-valuemin="getValidNumber(ariaMin)"
     :aria-valuemax="getValidNumber(ariaMax)"
@@ -161,7 +161,7 @@ function getValidNumber(num: number | undefined): number {
     <div
       v-if="lazy"
       :class="
-        cn('pointer-none bg-sidebar-ring absolute z-1 hidden opacity-20 transition-none', {
+        clsx('pointer-none bg-sidebar-ring absolute z-1 hidden opacity-20 transition-none', {
           'h-full transform-[translateX(calc(var(--offset)))]': !vertical,
           'w-full transform-[translateY(calc(var(--offset)))]': vertical,
           '!block': active,
@@ -171,7 +171,7 @@ function getValidNumber(num: number | undefined): number {
     ></div>
     <div
       :class="
-        cn(
+        clsx(
           'absolute top-[50%] left-[50%] z-1 box-border transform-[translate(-50%,-50%)] before:absolute before:top-[50%] before:left-[50%] before:transform-[translate(-50%,-50%)] before:content-around before:bg-transparent',
           {
             'h-full cursor-col-resize before:h-full before:w-full': !vertical,
@@ -188,7 +188,7 @@ function getValidNumber(num: number | undefined): number {
     <div
       v-if="startCollapsible"
       :class="
-        cn(
+        clsx(
           'flex-center hover:bg-sidebar-ring bg-main-bg absolute z-2 box-border cursor-pointer opacity-0 group-hover:opacity-100 hover:text-white',
           {
             'top-[50%] left-auto h-6 w-3 transform-[translateY(-50%)]': !vertical,
@@ -204,7 +204,7 @@ function getValidNumber(num: number | undefined): number {
     <div
       v-if="endCollapsible"
       :class="
-        cn(
+        clsx(
           'flex-center hover:bg-sidebar-ring bg-main-bg absolute z-2 box-border cursor-pointer opacity-0 group-hover:opacity-100 hover:text-white',
           {
             'top-[50%] right-auto h-6 w-3 transform-[translateY(-50%)]': !vertical,

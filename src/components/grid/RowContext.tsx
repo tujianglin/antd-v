@@ -1,5 +1,5 @@
 import { reactiveComputed } from '@vueuse/core';
-import { defineComponent, inject, provide, type InjectionKey, type PropType, type Reactive } from 'vue';
+import { defineComponent, inject, provide, reactive, type InjectionKey, type PropType, type Reactive } from 'vue';
 
 export interface RowContextState {
   gutter?: [number, number];
@@ -9,10 +9,7 @@ export interface RowContextState {
 const rowContextProviderKey: InjectionKey<Reactive<RowContextState>> = Symbol('rowContextProvider');
 
 export const useRowContextInject = () => {
-  return inject(
-    rowContextProviderKey,
-    reactiveComputed((): RowContextState => ({})),
-  );
+  return inject(rowContextProviderKey, reactive<RowContextState>({}));
 };
 
 export const useRowContextProvider = (props: Reactive<RowContextState>) => {
@@ -21,13 +18,10 @@ export const useRowContextProvider = (props: Reactive<RowContextState>) => {
 
 export const RowContextProvider = defineComponent({
   props: {
-    value: {
-      type: Object as PropType<Reactive<RowContextState>>,
-      required: true,
-    },
+    value: Object as PropType<RowContextState>,
   },
   setup(props, { slots }) {
-    useRowContextProvider(props.value);
+    useRowContextProvider(reactiveComputed(() => props.value));
     return () => <>{slots.default?.()}</>;
   },
 });

@@ -54,7 +54,7 @@ export default defineConfig([
       'no-case-declarations': 'error',
       'no-class-assign': 'error',
       'no-compare-neg-zero': 'error',
-      'no-console': ['error', { allow: ['warn', 'error'] }],
+      // 'no-console': ['error', { allow: ['warn', 'error'] }],
       'no-const-assign': 'error',
       'no-control-regex': 'error',
       'no-debugger': 'error',
@@ -301,7 +301,6 @@ export default defineConfig([
       ...pluginVue.configs.essential.rules,
       ...pluginVue.configs['strongly-recommended'].rules,
       ...pluginVue.configs.recommended.rules,
-      'vue/no-dupe-keys': 'off',
       'vue/attribute-hyphenation': [
         'error',
         'always',

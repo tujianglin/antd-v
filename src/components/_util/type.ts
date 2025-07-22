@@ -1,6 +1,6 @@
-import { camelCase } from 'lodash-es';
-import type { Component, FunctionalComponent, VNode } from 'vue';
-import { Fragment, isVNode } from 'vue';
+import { assign, camelCase } from 'lodash-es';
+import type { Component, ComponentPublicInstance, FunctionalComponent, Ref, VNode, VNodeChild } from 'vue';
+import { Fragment, getCurrentInstance, isVNode } from 'vue';
 
 /** https://github.com/Microsoft/TypeScript/issues/29729 */
 export type LiteralUnion<T extends string> = T | (string & {});
@@ -12,7 +12,15 @@ declare type VNodeChildAtom = VNode | string | number | boolean | null | undefin
 
 export type VueNode = VNodeChildAtom | VNodeChildAtom[] | VNode;
 
-export type RenderNode = (() => any) | Component | VNode | string | number;
+export type RenderNode =
+  | VNodeChild // 支持 VNode、string、number、array 等
+  | VNode // 显式支持单个 VNode
+  | Component // 组件类型（可传递）
+  | ComponentPublicInstance // 组件实例（极少情况）
+  | (() => RenderNode | null | undefined) // 函数式返回 RenderNode 的写法
+  | null
+  | undefined
+  | string;
 
 export type HTMLTagName = keyof HTMLElementTagNameMap;
 
@@ -65,3 +73,25 @@ export function extractValidChildren(vnodes: VNode[] = []): VNode[] {
   });
   return result;
 }
+
+export const toUnrefProps = (refs: Record<string, any>) => {
+  const unrefed: Record<string, any> = {};
+  for (const key in refs) {
+    unrefed[key] = refs[key].value;
+  }
+  return unrefed;
+};
+
+export const useComposeRef = (expose?: Record<string, any>, ref?: Ref<any>) => {
+  const wm = getCurrentInstance();
+
+  const changeRef = (instacne) => {
+    if (ref) {
+      ref.value = instacne;
+    }
+    wm.exposed = assign(instacne || {}, expose);
+    wm.exposeProxy = assign(instacne || {}, expose);
+  };
+
+  return changeRef;
+};

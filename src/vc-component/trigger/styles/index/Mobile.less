@@ -1,0 +1,52 @@
+.@{triggerPrefixCls} {
+  &-mobile {
+    position: fixed;
+    inset: auto 0 0;
+
+    // Motion
+    &.raise {
+      &-enter,
+      &-appear {
+        transform: translateY(100%);
+
+        &-active {
+          transform: translateY(0);
+          transition: all 0.3s;
+        }
+      }
+
+      &-leave {
+        transform: translateY(0);
+
+        &-active {
+          transform: translateY(100%);
+          transition: all 0.3s;
+        }
+      }
+    }
+
+    // Mask
+    &-mask {
+      &.fade {
+        &-enter,
+        &-appear {
+          opacity: 0;
+
+          &-active {
+            opacity: 1;
+            transition: all 0.3s;
+          }
+        }
+
+        &-leave {
+          opacity: 1;
+
+          &-active {
+            opacity: 0;
+            transition: all 0.3s;
+          }
+        }
+      }
+    }
+  }
+}

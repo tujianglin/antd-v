@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
-import { cn } from '@/utils/cn';
+import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import { computed, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
 import { isPresetSize } from '../_util/gapSize';
 import useOrientation from '../_util/hooks/useOrientation';
 import { useConfigContextInject } from '../config-provider';
@@ -9,67 +9,66 @@ import type { FlexProps } from './interface';
 import useStyle from './style';
 import createFlexClassNames from './utils';
 
-defineOptions({ name: 'Flex', inheritAttrs: false });
+defineOptions({ name: 'Flex', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const props = withDefaults(defineProps<FlexProps>(), { component: 'div' });
+const {
+  prefixCls: customizePrefixCls,
+  rootClassName,
+  class: className,
+  style,
+  flex,
+  gap,
+  vertical,
+  orientation,
+  component = 'div',
+  ...othersProps
+} = defineProps<FlexProps>();
 
-const config = useConfigContextInject();
+const { flex: ctxFlex, direction: ctxDirection, getPrefixCls } = toRefs(useConfigContextInject());
 
-const prefixCls = config.getPrefixCls('flex', props.prefixCls);
+const prefixCls = getPrefixCls.value('flex', customizePrefixCls);
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
-const merged = useOrientation(
-  computed(() => props.orientation),
-  computed(() => props.vertical ?? config.flex?.vertical),
+const { mergedVertical } = toRefs(
+  useOrientation(
+    computed(() => orientation),
+    computed(() => vertical ?? ctxFlex?.value?.vertical),
+  ),
 );
 
+const wm = getCurrentInstance();
+
 const mergedCls = computed(() => {
-  return cn(
-    props.class,
-    props.rootClassName,
-    config.flex?.class,
+  return clsx(
+    className,
+    rootClassName,
+    ctxFlex?.value?.class,
     prefixCls,
     hashId,
     cssVarCls,
-    createFlexClassNames(prefixCls, props),
+    createFlexClassNames(prefixCls, wm.props),
     {
-      [`${prefixCls}-rtl`]: config.direction === 'rtl',
-      [`${prefixCls}-gap-${props.gap}`]: isPresetSize(props.gap),
-      [`${prefixCls}-vertical`]: merged.mergedVertical,
+      [`${prefixCls}-rtl`]: ctxDirection?.value === 'rtl',
+      [`${prefixCls}-gap-${gap}`]: isPresetSize(gap),
+      [`${prefixCls}-vertical`]: mergedVertical.value,
     },
   );
 });
 
 const mergedStyle = computed((): CSSProperties => {
-  const result: CSSProperties = { ...config.flex?.style, ...props.style };
-  if (props.flex) {
-    result.flex = props.flex;
+  const result: CSSProperties = { ...ctxFlex?.value?.style, ...style };
+  if (flex) {
+    result.flex = flex;
   }
-  if (props.gap && !isPresetSize(props.gap)) {
-    result.gap = props.gap;
+  if (gap && !isPresetSize(gap)) {
+    result.gap = `${gap}px`;
   }
   return result;
 });
-
-const delegatedProps = computed(() => {
-  return omit(props, [
-    'prefixCls',
-    'rootClassName',
-    'class',
-    'style',
-    'flex',
-    'gap',
-    'vertical',
-    'component',
-    'justify',
-    'wrap',
-    'align',
-  ]);
-});
 </script>
 <template>
-  <component :is="component" :class="mergedCls" :style="mergedStyle" v-bind="delegatedProps">
+  <component :is="component" :class="mergedCls" :style="mergedStyle" v-bind="omit(othersProps, ['justify', 'wrap', 'align'])">
     <slot></slot>
   </component>
 </template>

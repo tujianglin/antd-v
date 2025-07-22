@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { cn } from '@/utils/cn';
+import clsx from 'clsx';
 import { computed, type CSSProperties } from 'vue';
 
 export type IconWrapperProps = {
@@ -10,7 +10,7 @@ export type IconWrapperProps = {
 
 const { prefixCls, class: className } = defineProps<IconWrapperProps>();
 
-const iconWrapperCls = computed(() => cn(`${prefixCls}-icon`, className));
+const iconWrapperCls = computed(() => clsx(`${prefixCls}-icon`, className));
 </script>
 <template>
   <span :class="iconWrapperCls" :style="style">

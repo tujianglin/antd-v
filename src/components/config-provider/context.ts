@@ -1,10 +1,16 @@
 import { reactiveComputed } from '@vueuse/core';
-import { inject, provide, type CSSProperties, type InjectionKey, type Reactive, type VNode } from 'vue';
+import { inject, provide, reactive, type CSSProperties, type Reactive, type VNode } from 'vue';
 import type { ShowWaveEffect } from '../_util/wave/interface';
 import type { ButtonProps } from '../button';
+import type { CheckboxProps } from '../checkbox/interface';
 import type { FlexProps } from '../flex';
 import type { FloatButtonGroupProps } from '../float-button/interface';
-import type { InputProps } from '../input/input.vue';
+import type { SearchProps } from '../input';
+import type { InputNumberProps } from '../input-number/interface';
+import type { InputProps } from '../input/index.vue';
+import type { OTPProps } from '../input/OTP/interface';
+import type { TextAreaProps } from '../input/TextArea.vue';
+import type { RadioProps } from '../radio/interface';
 import type { SpaceProps } from '../space/interface';
 import type { AliasToken, MappingAlgorithm, OverrideToken } from '../theme/interface';
 
@@ -102,9 +108,23 @@ export type SpaceConfig = ComponentStyleConfig & Pick<SpaceProps, 'size' | 'clas
 export type InputConfig = ComponentStyleConfig &
   Pick<InputProps, 'autoComplete' | 'classNames' | 'styles' | 'allowClear' | 'variant'>;
 
+export type InputSearchConfig = ComponentStyleConfig & Pick<SearchProps, 'classNames' | 'styles'>;
+
+export type TextAreaConfig = ComponentStyleConfig &
+  Pick<TextAreaProps, 'autoComplete' | 'classNames' | 'styles' | 'allowClear' | 'variant'>;
+
+export type OTPConfig = ComponentStyleConfig & Pick<OTPProps, 'classNames' | 'styles'>;
+
+export type InputNumberConfig = ComponentStyleConfig & Pick<InputNumberProps, 'variant' | 'classNames' | 'styles'>;
+
+export type RadioConfig = ComponentStyleConfig & Pick<RadioProps, 'classNames' | 'styles'>;
+
+export type CheckboxConfig = ComponentStyleConfig & Pick<CheckboxProps, 'classNames' | 'styles'>;
+
 export const Variants = ['outlined', 'borderless', 'filled', 'underlined'] as const;
 
 export type Variant = (typeof Variants)[number];
+export type PopupOverflow = 'viewport' | 'scroll';
 
 export interface WaveConfig {
   /**
@@ -126,8 +146,14 @@ export interface ConfigComponentProps {
   flex?: FlexConfig;
   space?: SpaceConfig;
   input?: InputConfig;
+  otp?: OTPConfig;
+  inputSearch?: InputSearchConfig;
+  textArea?: TextAreaConfig;
+  inputNumber?: InputNumberConfig;
+  radio?: RadioConfig;
   wave?: WaveConfig;
   watermark?: ComponentStyleConfig;
+  checkbox?: CheckboxConfig;
 }
 
 export interface ConfigConsumerProps extends ConfigComponentProps {
@@ -149,7 +175,7 @@ export interface ConfigConsumerProps extends ConfigComponentProps {
   // locale?: Locale;
   direction?: DirectionType;
   popupMatchSelectWidth?: boolean;
-  // popupOverflow?: PopupOverflow;
+  popupOverflow?: PopupOverflow;
   theme?: ThemeConfig;
   // warning?: WarningContextProps;
 }
@@ -161,22 +187,14 @@ const defaultGetPrefixCls = (suffixCls?: string, customizePrefixCls?: string) =>
   return suffixCls ? `${defaultPrefixCls}-${suffixCls}` : defaultPrefixCls;
 };
 
-export const configProviderKey: InjectionKey<Reactive<ConfigConsumerProps>> = Symbol('configProvider');
+const ConfigContext = Symbol('ConfigContext');
 
-export const useConfigContextInject = () => {
-  return inject(
-    configProviderKey,
-    reactiveComputed(
-      (): ConfigConsumerProps => ({
-        getPrefixCls: defaultGetPrefixCls,
-        iconPrefixCls: defaultIconPrefixCls,
-      }),
-    ),
-  );
+export const useConfigContextInject = (): ConfigConsumerProps => {
+  return inject(ConfigContext, reactive({ getPrefixCls: defaultGetPrefixCls, iconPrefixCls: defaultIconPrefixCls }));
 };
 
 export const useConfigContextProvider = (props: Reactive<ConfigConsumerProps>) => {
-  provide(configProviderKey, props);
+  provide(ConfigContext, props);
 };
 
 type GetClassNamesOrEmptyObject<Config extends { classNames?: any }> = Config extends {
@@ -204,7 +222,7 @@ type ComponentReturnType<T extends keyof ConfigComponentProps> = Omit<
 };
 
 export function useComponentConfig<T extends keyof ConfigComponentProps>(propName: T) {
-  const context = useConfigContextInject();
+  const context = useConfigContextInject() as ConfigConsumerProps;
   return reactiveComputed(() => {
     const propValue = context[propName];
     return {
@@ -215,6 +233,6 @@ export function useComponentConfig<T extends keyof ConfigComponentProps>(propNam
       direction: context.direction,
       getPopupContainer: context.getPopupContainer,
       renderEmpty: context.renderEmpty,
-    } as ComponentReturnType<T>;
+    } as unknown as ComponentReturnType<T>;
   });
 }
