@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import {} from 'vue';
-import container from '../vc-component/trigger/demo/container';
+import rawRender from '../vc-component/overflow/demo/raw-render';
 </script>
 <template>
-  <div><container /></div>
+  <div><rawRender /></div>
 </template>
