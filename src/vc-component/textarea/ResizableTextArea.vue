@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
-import { falseToUndefined } from '@/vc-util/props';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
 import { computed, nextTick, onMounted, ref, toRefs, watch, type CSSProperties } from 'vue';
 import type { TextAreaProps } from '.';
+import { falseToUndefined } from '../../vc-util/props';
 import raf from '../../vc-util/raf';
 import ResizeObserver from '../resize-observer';
 import calculateAutoSizeStyle from './calculateNodeHeight';

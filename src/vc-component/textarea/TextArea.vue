@@ -8,7 +8,7 @@ import { Render } from '../../components';
 import { BaseInput } from '../input';
 import ResizableTextArea from './ResizableTextArea.vue';
 import type { HolderRef } from '../input/BaseInput.vue';
-import findDOMNode from '@/vc-util/Dom/findDOMNode';
+import findDOMNode from '../../vc-util/Dom/findDOMNode';
 
 defineOptions({ inheritAttrs: false });
 

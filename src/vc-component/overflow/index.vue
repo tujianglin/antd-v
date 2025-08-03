@@ -1,12 +1,13 @@
 <script lang="tsx" setup generic="ItemType extends any">
 import { Render } from '../../components';
-import ResizeObserver from '../../vc-component/resize-observer';
+import ResizeObserver from '../resize-observer';
 import clsx from 'clsx';
 import { computed, nextTick, ref, useAttrs, watch, type CSSProperties } from 'vue';
 import { OverflowContextProvider } from './context';
 import { INVALIDATE, RESPONSIVE, type OverflowProps } from './interface';
 import Item from './Item.vue';
-import { falseToUndefined } from '@/vc-util/props';
+import { falseToUndefined } from '../../vc-util/props';
+
 defineOptions({ name: 'Overflow', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
@@ -307,6 +308,12 @@ const restNode = () => {
 };
 
 const domRef = ref();
+
+defineExpose({
+  get el() {
+    return domRef.value || {};
+  },
+});
 
 const attrs = useAttrs();
 const overflowNode = () => {

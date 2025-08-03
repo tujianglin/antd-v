@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import {} from 'vue';
-import rawRender from '../vc-component/overflow/demo/raw-render';
+import nest from '../vc-component/virtual-list/demo/nest';
 </script>
 <template>
-  <div><rawRender /></div>
+  <div><nest /></div>
 </template>

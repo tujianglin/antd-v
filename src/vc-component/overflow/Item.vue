@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { computed, onBeforeUnmount, ref, useSlots, type CSSProperties, type HTMLAttributes } from 'vue';
 import { Render } from '../../components';
 import type { RenderNode } from '../../components/_util/type';
-import ResizeObserver from '../../vc-component/resize-observer';
+import ResizeObserver from '../resize-observer';
 
 export interface ItemProps<ItemType> extends /** @vue-ignore */ HTMLAttributes {
   prefixCls: string;

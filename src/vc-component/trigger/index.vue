@@ -2,9 +2,9 @@
 import clsx from 'clsx';
 import { isEmpty } from 'lodash-es';
 import { cloneVNode, computed, nextTick, onBeforeUnmount, onMounted, ref, toRefs, useId, watch, type HTMLAttributes } from 'vue';
-import ResizeObserver from '../../vc-component/resize-observer';
 import { isDOM } from '../../vc-util/Dom/findDOMNode';
 import { getShadowRoot } from '../../vc-util/Dom/shadow';
+import ResizeObserver from '../resize-observer';
 import { TriggerContextProvider, useTriggerContextInject, type TriggerContextProps } from './context';
 import useAction from './hooks/useAction';
 import useAlign from './hooks/useAlign';
