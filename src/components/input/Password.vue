@@ -25,7 +25,7 @@ export interface PasswordProps extends InputProps {
   iconRender?: (visible: boolean) => RenderNode;
 }
 
-defineOptions({ name: 'InputPassword', inheritAttrs: false });
+defineOptions({ name: 'InputPassword', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
   disabled: customDisabled,

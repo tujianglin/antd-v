@@ -3,7 +3,7 @@ export { default as Checkbox } from './checkbox';
 export type { CheckboxProps } from './checkbox';
 export { default as Col } from './col';
 export type { ColProps } from './col';
-export { default as ConfigProvider } from './config-provider';
+export * from './config-provider';
 export { default as Flex } from './flex';
 export type { FlexProps } from './flex';
 export { default as FloatButton } from './float-button';

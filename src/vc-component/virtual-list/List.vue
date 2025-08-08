@@ -46,6 +46,8 @@ const {
   ...restProps
 } = defineProps<ListProps<T>>();
 
+defineSlots<{ default: (data: { item: T; index: number; props: { style: CSSProperties; offsetX: number } }) => any }>();
+
 const EMPTY_DATA = [];
 const ScrollStyle: CSSProperties = {
   overflowY: 'auto',
@@ -70,15 +72,17 @@ const containerHeight = computed(() => {
   heights.value?.id;
   return Object.values(heights.value?.maps).reduce((total, curr) => total + curr, 0);
 });
-const inVirtual = computed(
-  () => useVirtual.value && data && (Math.max(itemHeight * data.length, containerHeight.value) > height || !!scrollWidth),
-);
+
+const inVirtual = computed(() => {
+  return useVirtual.value && data && (Math.max(itemHeight * data.length, containerHeight.value) > height || !!scrollWidth);
+});
+
 const isRTL = computed(() => direction === 'rtl');
 
 const mergedClassName = computed(() => clsx(prefixCls, { [`${prefixCls}-rtl`]: isRTL.value }, className));
 const mergedData = computed(() => data || EMPTY_DATA);
 const componentRef = ref<HTMLDivElement>();
-const fillerInnerRef = ref<HTMLDivElement>();
+const fillerInnerRef = ref();
 const containerRef = ref<HTMLDivElement>();
 
 // =============================== Item Key ===============================
@@ -158,7 +162,7 @@ const {
     // Always use virtual scroll bar in avoid shaking
     if (!inVirtual.value) {
       return {
-        scrollHeight: fillerInnerRef.value?.offsetHeight || 0,
+        scrollHeight: fillerInnerRef.value?.el?.offsetHeight || 0,
         start: 0,
         end: mergedData.value.length - 1,
         offset: undefined,
@@ -351,7 +355,6 @@ function onFallbackScroll(e: UIEvent) {
   onScroll?.(e);
   triggerScroll();
 }
-
 const keepInHorizontalRange = (nextOffsetLeft: number) => {
   let tmpOffsetLeft = nextOffsetLeft;
   const max = scrollWidth ? scrollWidth - size.value.width : 0;

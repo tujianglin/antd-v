@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, nextTick, onBeforeUnmount, useTemplateRef, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, toRefs, useTemplateRef, watch } from 'vue';
 import { floatButtonPrefixCls, type FloatButtonGroupProps } from './interface';
 import { useComponentConfig } from '../config-provider/context';
 import { CloseOutlined, FileTextOutlined } from '@ant-design/icons-vue';
@@ -13,7 +13,7 @@ import Flex from '../flex';
 import Space from '../space';
 import { GroupContextProvider } from './context';
 
-defineOptions({ name: 'FloatButtonGroup' });
+defineOptions({ name: 'FloatButtonGroup', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
   prefixCls: customizePrefixCls,
@@ -35,11 +35,19 @@ const {
   ...floatButtonProps
 } = defineProps<FloatButtonGroupProps>();
 
-const config = useComponentConfig('floatButtonGroup');
+const {
+  direction,
+  getPrefixCls,
+  closeIcon: contextCloseIcon,
+  classNames: contextClassNames,
+  styles: contextStyles,
+  class: contextClassName,
+  style: contextStyle,
+} = toRefs(useComponentConfig('floatButtonGroup'));
 
-const mergedCloseIcon = computed(() => closeIcon ?? config.closeIcon ?? <CloseOutlined />);
+const mergedCloseIcon = computed(() => closeIcon ?? contextCloseIcon.value ?? <CloseOutlined />);
 
-const prefixCls = config.getPrefixCls(floatButtonPrefixCls, customizePrefixCls);
+const prefixCls = getPrefixCls.value(floatButtonPrefixCls, customizePrefixCls);
 const rootCls = useCSSVarCls(prefixCls);
 
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
@@ -49,8 +57,8 @@ const groupPrefixCls = `${prefixCls}-group`;
 const isMenuMode = computed(() => trigger && ['click', 'hover'].includes(trigger));
 
 const merged = useMergeSemantic(
-  computed(() => [config.classNames, classNames]),
-  computed(() => [config.styles, styles]),
+  computed(() => [contextClassNames.value, classNames]),
+  computed(() => [contextStyles.value, styles]),
   computed(() => ({
     item: {
       _default: 'root',
@@ -146,14 +154,24 @@ const listCls = `${groupPrefixCls}-list`;
   <GroupContextProvider :value="listContext">
     <div
       :class="
-        clsx(groupPrefixCls, hashId, cssVarCls, rootCls, config.class, merged.mergedClassNames.root, className, rootClassName, {
-          [`${groupPrefixCls}-rtl`]: config.direction === 'rtl',
-          [`${groupPrefixCls}-individual`]: individual,
-          [`${groupPrefixCls}-${mergedPlacement}`]: isMenuMode,
-          [`${groupPrefixCls}-menu-mode`]: isMenuMode,
-        })
+        clsx(
+          groupPrefixCls,
+          hashId,
+          cssVarCls,
+          rootCls,
+          contextClassName,
+          merged.mergedClassNames.root,
+          className,
+          rootClassName,
+          {
+            [`${groupPrefixCls}-rtl`]: direction === 'rtl',
+            [`${groupPrefixCls}-individual`]: individual,
+            [`${groupPrefixCls}-${mergedPlacement}`]: isMenuMode,
+            [`${groupPrefixCls}-menu-mode`]: isMenuMode,
+          },
+        )
       "
-      :style="{ ...config.style, zIndex, ...merged.mergedStyles.root, ...style }"
+      :style="{ ...contextStyle, zIndex, ...merged.mergedStyles.root, ...style }"
       ref="floatButtonGroupRef"
       @mouseenter="onMouseEnter"
       @mouseleave="onMouseLeave"

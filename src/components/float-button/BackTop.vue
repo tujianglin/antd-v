@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, onBeforeUnmount, onMounted, ref, useTemplateRef, type ButtonHTMLAttributes, type CSSProperties } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, type ButtonHTMLAttributes, type CSSProperties } from 'vue';
 import getScroll from '../_util/getScroll';
 import scrollTo from '../_util/scrollTo';
 import { useConfigContextInject } from '../config-provider';
@@ -20,6 +20,8 @@ export interface BackTopProps extends Omit<FloatButtonProps, 'target'> {
   duration?: number;
 }
 
+defineOptions({ name: 'BackTop', inheritAttrs: false, compatConfig: { MODE: 3 } });
+
 const {
   prefixCls: customizePrefixCls,
   class: className,
@@ -35,7 +37,7 @@ const {
 
 const visible = ref<boolean>(visibilityHeight === 0);
 
-const internalRef = useTemplateRef<HTMLButtonElement>('internalRef');
+const internalRef = ref<HTMLButtonElement>(null);
 
 const getDefaultTarget = computed((): HTMLElement | Document | Window => {
   return internalRef.value?.ownerDocument || window;

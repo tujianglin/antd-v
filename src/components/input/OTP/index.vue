@@ -13,6 +13,8 @@ import type { OTPInputProps } from './OTPInput.vue';
 import OTPInput from './OTPInput.vue';
 import Separator from './Separator.vue';
 
+defineOptions({ name: 'InputOTP', inheritAttrs: false, compatConfig: { MODE: 3 } });
+
 const {
   prefixCls: customizePrefixCls,
   length = 6,

@@ -27,7 +27,7 @@ interface FillerProps {
   extra?: RenderNode;
 }
 
-defineOptions({ name: 'Filter', inheritAttrs: false, compatConfig: { MODE: 3 } });
+defineOptions({ name: 'Filler', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { height, offsetY, offsetX, prefixCls, onInnerResize, innerProps, rtl, extra } = defineProps<FillerProps>();
 

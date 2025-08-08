@@ -14,7 +14,7 @@ import type { CheckboxProps } from './interface';
 import useStyle from './style';
 import useBubbleLock from './useBubbleLock';
 
-defineOptions({ name: 'Checkbox', inheritAttrs: false });
+defineOptions({ name: 'Checkbox', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
   prefixCls: customizePrefixCls,

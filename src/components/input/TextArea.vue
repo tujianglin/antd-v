@@ -28,7 +28,7 @@ export interface TextAreaProps extends Omit<VcTextAreaProps, 'suffix'> {
   styles?: Partial<Record<SemanticName, CSSProperties>>;
 }
 
-defineOptions({ name: 'InputTextArea', inheritAttrs: false });
+defineOptions({ name: 'InputTextArea', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
   prefixCls: customizePrefixCls,

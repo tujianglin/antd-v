@@ -11,9 +11,9 @@ export const useDisabledContextProvider = (props: Ref<boolean>) => {
 };
 
 export const DisabledContextProvider = defineComponent({
-  props: { value: Boolean },
+  props: { disabled: Boolean },
   setup(props, { slots }) {
-    useDisabledContextProvider(computed(() => props.value));
-    return <>{slots.default?.()}</>;
+    useDisabledContextProvider(computed(() => props.disabled));
+    return () => <>{slots.default?.()}</>;
   },
 });

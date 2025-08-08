@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { shallowRef, watchEffect } from 'vue';
+import { defineProps, shallowRef, watchEffect } from 'vue';
 
-defineOptions({ name: 'PopupContent' });
-
-const props = defineProps<{
+interface PopupContentProps {
   cache?: boolean;
-}>();
+}
 
-const slotContent = shallowRef();
+const props = defineProps<PopupContentProps>();
 
-// 自动跟踪 slot 内容并决定是否缓存
+// 用来缓存上一次渲染的内容
+const cachedVNode = shallowRef();
+
 watchEffect(() => {
   if (!props.cache) {
-    slotContent.value = undefined;
+    // 不缓存时，重新渲染
+    cachedVNode.value = undefined;
   }
 });
 </script>
 
 <template>
-  <template v-if="cache">
-    <slot></slot>
-  </template>
+  <!-- 如果有缓存并启用缓存，则使用缓存，否则更新 -->
+  <slot v-if="!props.cache || !cachedVNode" v-bind="{ ref: (el) => (cachedVNode = el) }"></slot>
   <template v-else>
-    <!-- Don't reuse cached content -->
-    <slot :key="Math.random()"></slot>
+    <!-- 渲染缓存的 vnode -->
+    <component :is="cachedVNode" />
   </template>
 </template>

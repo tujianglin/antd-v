@@ -14,11 +14,15 @@ export default function useChildren<T>(
 ) {
   return list.slice(startIndex, endIndex + 1).map((item, index) => {
     const eleIndex = startIndex + index;
-    const node = renderFunc(item, eleIndex, {
-      style: {
-        width: scrollWidth ? `${scrollWidth}px` : undefined,
+    const node = renderFunc({
+      item,
+      index: eleIndex,
+      props: {
+        style: {
+          width: scrollWidth ? `${scrollWidth}px` : undefined,
+        },
+        offsetX,
       },
-      offsetX,
     }) as VNode;
 
     const key = getKey(item);

@@ -16,6 +16,8 @@ export interface OTPInputProps extends Omit<InputProps, 'onChange'> {
   mask?: boolean | string;
 }
 
+defineOptions({ name: 'OTPInput', inheritAttrs: false, compatConfig: { MODE: 3 } });
+
 const { class: className, onChange, onActiveChange, index, mask, ...restProps } = defineProps<OTPInputProps>();
 const attrs = useAttrs();
 

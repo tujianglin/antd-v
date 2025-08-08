@@ -4,6 +4,8 @@ import { Render } from '../../components';
 import type { ResizeObserverProps } from './interface';
 import SingleObserver from './SingleObserver/index.vue';
 
+defineOptions({ name: 'ResizeObserver', inheritAttrs: false, compatConfig: { MODE: 3 } });
+
 const props = defineProps<ResizeObserverProps>();
 
 const INTERNAL_PREFIX_KEY = 'rc-observer-key';

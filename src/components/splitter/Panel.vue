@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { computed } from 'vue';
 import type { InternalPanelProps } from './interface';
 
-defineOptions({ name: 'SplitterPanel' });
+defineOptions({ name: 'SplitterPanel', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { size, style = {} } = defineProps<InternalPanelProps>();
 

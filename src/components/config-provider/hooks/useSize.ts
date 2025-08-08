@@ -1,9 +1,9 @@
-import { computed, toRefs } from 'vue';
+import { computed } from 'vue';
 import { useSizeContextInject, type SizeType } from '../SizeContext';
 
 const useSize = <T extends string | undefined | number | object>(customSize?: T | ((ctxSize: SizeType) => T)): T => {
-  const { size } = toRefs(useSizeContextInject());
-  const mergedSize = computed(() => {
+  const size = useSizeContextInject();
+  const mergedSize = computed<T>(() => {
     if (!customSize) {
       return size.value as T;
     }

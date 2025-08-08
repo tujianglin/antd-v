@@ -17,7 +17,7 @@ import ContextIsolator from '../_util/ContextIsolator';
 import Render from '../render';
 import type { ValueType } from '@/vc-component/mini-decimal';
 
-defineOptions({ name: 'InputNumber', inheritAttrs: false });
+defineOptions({ name: 'InputNumber', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
   rootClassName,

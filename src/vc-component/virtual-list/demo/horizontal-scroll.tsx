@@ -145,7 +145,7 @@ export default defineComponent({
               console.warn('Scroll:', e);
             }}
           >
-            {(item, _, props) => <MyItem {...item} {...props} />}
+            {({ item, props }) => <MyItem {...item} {...props} />}
           </List>
         </div>
       </div>

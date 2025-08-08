@@ -20,7 +20,7 @@ export default function useHeights<T>(
 ] {
   const updatedMark = ref(0);
   const instanceRef = shallowRef(new Map<PropertyKey, HTMLElement>());
-  const heightsRef = shallowRef(new CacheMap());
+  const heightsRef = ref(new CacheMap());
 
   let promiseIdRef = 0;
 

@@ -56,7 +56,7 @@ const {
   getPrefixCls,
   direction,
   allowClear: contextAllowClear,
-  autoComplete: contextAutoComplete,
+  autocomplete: contextAutoComplete,
   class: contextClassName,
   style: contextStyle,
   classNames: contextClassNames,

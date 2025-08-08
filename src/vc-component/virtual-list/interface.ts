@@ -4,7 +4,7 @@ import type { InnerProps } from './Filler.vue';
 import type { ScrollBarDirectionType } from './ScrollBar.vue';
 import type { ScrollPos, ScrollTarget } from './hooks/useScrollTo';
 
-export type RenderFunc<T> = (item: T, index: number, props: { style: CSSProperties; offsetX: number }) => RenderNode;
+export type RenderFunc<T> = (data: { item: T; index: number; props: { style: CSSProperties; offsetX: number } }) => RenderNode;
 
 export interface SharedConfig<T> {
   getKey: (item: T) => PropertyKey;

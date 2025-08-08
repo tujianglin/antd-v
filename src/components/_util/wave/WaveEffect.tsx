@@ -19,6 +19,7 @@ function validateNum(value: number) {
 }
 
 const WaveEffect = defineComponent({
+  inheritAttrs: false,
   props: {
     className: String,
     target: {

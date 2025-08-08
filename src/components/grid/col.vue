@@ -38,7 +38,7 @@ export interface ColProps {
   xxl?: ColSpanType | ColSize;
 }
 
-defineOptions({ name: 'Col' });
+defineOptions({ name: 'Col', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const props = defineProps<ColProps>();
 function parseFlex(flex: FlexType): string {

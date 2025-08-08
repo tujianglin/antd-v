@@ -304,7 +304,7 @@ defineExpose({
     return externalForwardRef.value;
   },
   get popupElement() {
-    return externalForwardRef.value;
+    return externalPopupRef.value;
   },
   forceAlign: triggerAlign,
 });

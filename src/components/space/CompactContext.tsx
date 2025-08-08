@@ -11,8 +11,8 @@ import {
   type PropType,
   type Reactive,
 } from 'vue';
-import type { DirectionType } from '../config-provider';
 import type { SizeType } from '../config-provider/SizeContext';
+import type { DirectionType } from '../config-provider/context';
 
 export interface SpaceCompactItemContextType {
   compactSize?: SizeType;

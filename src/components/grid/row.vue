@@ -30,7 +30,7 @@ export interface RowProps {
   wrap?: boolean;
 }
 
-defineOptions({ name: 'Row' });
+defineOptions({ name: 'Row', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const props = defineProps<RowProps>();
 

@@ -5,6 +5,8 @@ import type { RenderNode } from '../../_util/type';
 import Render from '../../render';
 import type { SeparatorProps } from './interface';
 
+defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
+
 const { index, prefixCls, separator, class: semanticClassName, style: semanticStyle } = defineProps<SeparatorProps>();
 
 const separatorNode = computed(() =>

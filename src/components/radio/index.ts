@@ -1,6 +1,6 @@
-import Group from './Group.vue';
+import Group from './group.vue';
 import InternalRadio from './index.vue';
-import Button from './RadioButton.vue';
+import Button from './radioButton.vue';
 export type { CheckboxRef as RadioRef } from '@/vc-component/checkbox/index.vue';
 export type {
   RadioChangeEvent,

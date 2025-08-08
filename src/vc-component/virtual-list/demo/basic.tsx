@@ -221,7 +221,7 @@ export default defineComponent({
             }}
             onScroll={onScroll}
           >
-            {(item, _, props) => {
+            {({ item, props }) => {
               return type.value === 'dom' ? <MyItem {...item} {...props} /> : <TestItem {...item} {...props} />;
             }}
           </List>

@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, CSSProperties, HtmlHTMLAttributes } from 'vue';
+import type { ButtonHTMLAttributes, Component, CSSProperties, HtmlHTMLAttributes, VNode } from 'vue';
 import type { RenderNode } from '../_util/type';
 import type { ButtonHTMLType, ButtonSemanticName } from '../button/interface';
 
@@ -70,6 +70,6 @@ export interface FloatButtonGroupProps extends FloatButtonProps {
   onOpenChange?: (open: boolean) => void;
 
   // UI
-  closeIcon?: RenderNode;
+  closeIcon?: VNode | Component;
   placement?: 'top' | 'left' | 'right' | 'bottom';
 }

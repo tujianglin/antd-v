@@ -27,7 +27,7 @@ const MyItem = ({ id }) => (
       }}
       // debug={`inner_${id}`}
     >
-      {(item, index, props) => (
+      {({ item, index, props }) => (
         <div {...(item as any)} {...props} style={{ height: '20px', border: '1px solid cyan' }}>
           {id}-{index}
         </div>
@@ -56,7 +56,7 @@ export default defineComponent({
         onScroll={onScroll}
         // debug="outer"
       >
-        {(item, _, props) => <MyItem {...item} {...props} />}
+        {({ item, props }) => <MyItem {...item} {...props} />}
       </List>
     );
   },

@@ -1,19 +1,6 @@
 import type { Theme } from '@/vc-cssinjs';
-
 import { reactiveComputed } from '@vueuse/core';
-import {
-  defineComponent,
-  inject,
-  provide,
-  reactive,
-  shallowRef,
-  triggerRef,
-  unref,
-  watch,
-  type InjectionKey,
-  type PropType,
-  type Reactive,
-} from 'vue';
+import { defineComponent, inject, provide, reactive, type InjectionKey, type PropType, type Reactive } from 'vue';
 import type { AliasToken, MapToken, OverrideToken, SeedToken } from './interface';
 import defaultSeedToken from './themes/seed';
 
@@ -21,11 +8,11 @@ export { default as defaultTheme } from './themes/default/theme';
 
 // ================================ Context =================================
 // To ensure snapshot stable. We disable hashed in test env.
-export const defaultConfig = reactive<DesignTokenProviderProps>({
+export const defaultConfig = {
   token: defaultSeedToken,
   override: { override: defaultSeedToken },
   hashed: false,
-});
+};
 
 export type ComponentsToken = {
   [key in keyof OverrideToken]?: OverrideToken[key] & {
@@ -39,37 +26,28 @@ export interface DesignTokenProviderProps {
   components?: ComponentsToken;
   /** Just merge `token` & `override` at top to save perf */
   override: { override: Partial<AliasToken> } & ComponentsToken;
-  hashed?: boolean;
+  hashed?: string | boolean;
   cssVar?: {
     prefix?: string;
     key?: string;
   };
 }
 
-export const designTokenContextKey: InjectionKey<Reactive<DesignTokenProviderProps>> = Symbol('designTokenContext');
-export const globalDesignTokenApi = shallowRef<DesignTokenProviderProps>();
+export const DesignTokenContext: InjectionKey<Reactive<DesignTokenProviderProps>> = Symbol('DesignTokenContext');
 export const useDesignTokenContextInject = () => {
-  return inject(designTokenContextKey, reactive(globalDesignTokenApi.value || defaultConfig));
+  return inject(DesignTokenContext, reactive(defaultConfig as DesignTokenProviderProps));
 };
 
 export const useDesignTokenContextProvider = (props: Reactive<DesignTokenProviderProps>) => {
-  provide(designTokenContextKey, props);
-  watch(
-    () => props,
-    (val) => {
-      globalDesignTokenApi.value = unref(val) as any;
-      triggerRef(globalDesignTokenApi);
-    },
-    { immediate: true, deep: true },
-  );
+  provide(DesignTokenContext, props);
 };
 
-export const DesignTokenProvider = defineComponent({
+export const DesignTokenContextProvider = defineComponent({
   props: {
     value: Object as PropType<DesignTokenProviderProps>,
   },
   setup(props, { slots }) {
     useDesignTokenContextProvider(reactiveComputed(() => props.value));
-    return <>{slots.default?.()}</>;
+    return () => <>{slots.default?.()}</>;
   },
 });

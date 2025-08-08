@@ -10,7 +10,7 @@ import { vResizeObserver } from '@vueuse/components';
 import Panel from './Panel.vue';
 import clsx from 'clsx';
 
-defineOptions({ name: 'Splitter' });
+defineOptions({ name: 'Splitter', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { layout = 'horizontal', onResize, onResizeEnd, lazy } = defineProps<SplitterProps>();
 

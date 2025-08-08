@@ -39,7 +39,7 @@ export interface CheckboxGroupProps<T = any> extends AbstractCheckboxGroupProps<
 
 type InternalCheckboxValueType = string | number | boolean;
 
-defineOptions({ name: 'CheckboxGroup', inheritAttrs: false });
+defineOptions({ name: 'CheckboxGroup', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
   options = [],

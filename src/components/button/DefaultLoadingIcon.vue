@@ -12,6 +12,8 @@ export type DefaultLoadingIconProps = {
   style?: CSSProperties;
 };
 
+defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
+
 const { prefixCls, loading, existIcon, class: className, style } = defineProps<DefaultLoadingIconProps>();
 
 const getCollapsedWidth = (): CSSProperties => ({

@@ -116,7 +116,6 @@ const memoizedValue = computed(() => ({ onChange: onRadioChange, value: value.va
         </template>
       </template>
       <template v-else>
-        {{ console.log(111) }}
         <slot></slot>
       </template>
     </RadioGroupContextProvider>

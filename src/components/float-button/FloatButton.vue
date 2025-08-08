@@ -12,7 +12,7 @@ import { useZIndex } from '../_util/hooks/useZIndex';
 import clsx from 'clsx';
 import Render from '../render';
 
-defineOptions({ name: 'FloatButton' });
+defineOptions({ name: 'FloatButton', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
   prefixCls: customizePrefixCls,

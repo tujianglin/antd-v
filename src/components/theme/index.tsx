@@ -1,8 +1,8 @@
 import { toRefs } from 'vue';
-import { DesignTokenProvider } from './context';
+import { useDesignTokenContextInject, useDesignTokenContextProvider } from './context';
 import getDesignToken from './getDesignToken';
 import type { GlobalToken, MappingAlgorithm } from './interface';
-import { defaultConfig, useDesignTokenContextInject, useToken as useInternalToken } from './internal';
+import { defaultConfig, useToken as useInternalToken } from './internal';
 import compactAlgorithm from './themes/compact';
 import darkAlgorithm from './themes/dark';
 import defaultAlgorithm from './themes/default';
@@ -20,7 +20,8 @@ export type { GlobalToken, MappingAlgorithm };
 export default {
   /** Default seedToken */
   defaultSeed: defaultConfig.token,
-  DesignTokenProvider,
+  useDesignTokenContextInject,
+  useDesignTokenContextProvider,
   useToken,
   defaultAlgorithm,
   darkAlgorithm,

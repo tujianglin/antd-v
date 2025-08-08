@@ -7,6 +7,7 @@ import TextArea from './TextArea.vue';
 
 export type { InputProps } from './interface';
 export type { SearchProps } from './Search.vue';
+export type { TextAreaProps } from './TextArea.vue';
 
 type CompoundedComponent = typeof InternalInput & {
   Search: typeof Search;

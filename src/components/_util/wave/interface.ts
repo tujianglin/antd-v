@@ -1,4 +1,4 @@
-import { defaultPrefixCls } from '@/components/config-provider';
+import { defaultPrefixCls } from '@/components/config-provider/context';
 import type { GlobalToken } from '@/components/theme/internal';
 import type { WaveProps } from '.';
 

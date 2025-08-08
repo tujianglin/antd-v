@@ -17,7 +17,7 @@ export type RenderNode =
   | VNode // 显式支持单个 VNode
   | Component // 组件类型（可传递）
   | ComponentPublicInstance // 组件实例（极少情况）
-  | (() => RenderNode | null | undefined) // 函数式返回 RenderNode 的写法
+  | ((props?: any) => RenderNode | null | undefined) // 函数式返回 RenderNode 的写法
   | null
   | undefined
   | string;

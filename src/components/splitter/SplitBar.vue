@@ -22,6 +22,8 @@ export interface SplitBarProps {
   size?: number | string;
 }
 
+defineOptions({ name: 'SplitBar', inheritAttrs: false, compatConfig: { MODE: 3 } });
+
 const {
   vertical,
   index,

@@ -2,7 +2,7 @@
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
 import { assign } from 'lodash-es';
-import { computed, ref, toRefs, watch, type CSSProperties, type TransitionProps } from 'vue';
+import { computed, ref, toRefs, type CSSProperties, type TransitionProps } from 'vue';
 import { Render } from '../../../components';
 import Portal from '../../portal';
 import ResizeObserver from '../../resize-observer';
@@ -105,7 +105,7 @@ const offsetStyle = computed(() => {
       };
 
   // Set align style
-  if (!isMobile.value && (ready || !open)) {
+  if (!isMobile.value && (ready || open)) {
     const { points } = align;
     const dynamicInset = align.dynamicInset || (align as any)._experimental?.dynamicInset;
     const alignRight = dynamicInset && points[0][1] === 'r';
@@ -152,13 +152,6 @@ const miscStyle = computed(() => {
   return result;
 });
 
-const key = ref(0);
-watch(
-  () => open,
-  () => {
-    key.value = key.value + 1;
-  },
-);
 const domRef = ref();
 defineExpose({
   get el() {
@@ -186,12 +179,11 @@ defineExpose({
         v-bind="mergedPopupMotion"
         @before-enter="onPrepare"
         @before-appear="onPrepare"
-        @after-enter="onVisibleChanged(true)"
-        @after-leave="onVisibleChanged(false)"
+        @after-enter="() => onVisibleChanged(true)"
+        @after-leave="() => onVisibleChanged(false)"
       >
         <div
           ref="domRef"
-          :key="key"
           :class="
             clsx(prefixCls, className, {
               [`${prefixCls}-mobile`]: isMobile,

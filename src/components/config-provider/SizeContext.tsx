@@ -1,18 +1,23 @@
-import { inject, provide, reactive, ref, type InjectionKey, type Reactive, type Ref } from 'vue';
+import { computed, defineComponent, inject, provide, ref, type InjectionKey, type PropType, type Ref } from 'vue';
 
 export type SizeType = 'small' | 'middle' | 'large' | undefined;
 
-export interface SizeContextProps {
-  size?: Ref<SizeType>;
-}
-
-export const sizeProviderKey: InjectionKey<Reactive<SizeContextProps>> = Symbol('sizeProviderKey');
+export const sizeProviderKey: InjectionKey<Ref<SizeType>> = Symbol('sizeProviderKey');
 
 export const useSizeContextInject = () => {
-  const size = ref<SizeType>('middle');
-  return inject(sizeProviderKey, reactive<SizeContextProps>({ size }));
+  return inject(sizeProviderKey, ref<SizeType>('middle'));
 };
 
-export const useSizeContextProvider = (props: Reactive<SizeContextProps>) => {
+export const useSizeContextProvider = (props: Ref<SizeType>) => {
   return provide(sizeProviderKey, props);
 };
+
+export const SizeContextProvider = defineComponent({
+  props: {
+    size: String as PropType<SizeType>,
+  },
+  setup(props, { slots }) {
+    useSizeContextProvider(computed(() => props.size));
+    return () => <>{slots.default?.()}</>;
+  },
+});
