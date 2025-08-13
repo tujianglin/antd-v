@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
+import CSSMotion, { type CSSMotionProps } from '@/vc-component/motion';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { assign } from 'lodash-es';
-import { computed, ref, toRefs, type CSSProperties, type TransitionProps } from 'vue';
+import { computed, ref, toRefs, type CSSProperties } from 'vue';
 import { Render } from '../../../components';
 import Portal from '../../portal';
 import ResizeObserver from '../../resize-observer';
@@ -80,8 +80,8 @@ const { mergedMask, mergedMaskMotion, mergedPopupMotion } = toRefs(
   reactiveComputed(
     (): {
       mergedMask: boolean;
-      mergedMaskMotion: TransitionProps | undefined;
-      mergedPopupMotion: TransitionProps | undefined;
+      mergedMaskMotion: CSSMotionProps | undefined;
+      mergedPopupMotion: CSSMotionProps | undefined;
     } => {
       if (mobile) {
         return { mergedMask: mobile.mask, mergedMaskMotion: mobile.maskMotion, mergedPopupMotion: mobile.motion };
@@ -105,7 +105,7 @@ const offsetStyle = computed(() => {
       };
 
   // Set align style
-  if (!isMobile.value && (ready || open)) {
+  if (!isMobile.value && (ready || !open)) {
     const { points } = align;
     const dynamicInset = align.dynamicInset || (align as any)._experimental?.dynamicInset;
     const alignRight = dynamicInset && points[0][1] === 'r';
@@ -174,23 +174,64 @@ defineExpose({
       :mobile="isMobile"
     />
     <ResizeObserver @resize="onAlign" :disabled="!open">
-      <Transition
-        appear
+      <CSSMotion
+        motion-appear
+        motion-enter
+        motion-leave
+        :remove-on-leave="false"
+        :force-render="forceRender"
+        :leaved-class-name="`${prefixCls}-hidden`"
+        @appear-prepare="onPrepare"
+        @enter-prepare="onPrepare"
         v-bind="mergedPopupMotion"
-        @before-enter="onPrepare"
-        @before-appear="onPrepare"
-        @after-enter="() => onVisibleChanged(true)"
-        @after-leave="() => onVisibleChanged(false)"
+        :visible="open"
+        @visible-changed="
+          (nextVisible) => {
+            motion?.onVisibleChanged?.(nextVisible);
+            onVisibleChanged(nextVisible);
+          }
+        "
       >
-        <div
-          ref="domRef"
-          :class="
-            clsx(prefixCls, className, {
-              [`${prefixCls}-mobile`]: isMobile,
-              [`${prefixCls}-hidden`]: !forceRender && !isNodeVisible,
-            })
-          "
-          :style="
+        <template #default="{ class: motionClassName, style: motionStyle }">
+          <div
+            ref="domRef"
+            :class="
+              clsx(prefixCls, motionClassName, className, {
+                [`${prefixCls}-mobile`]: isMobile,
+              })
+            "
+            :style="{
+              '--arrow-x': `${arrowPos.x || 0}px`,
+              '--arrow-y': `${arrowPos.y || 0}px`,
+              ...offsetStyle,
+              ...miscStyle,
+              ...motionStyle,
+              boxSizing: 'border-box',
+              zIndex,
+              ...style,
+            }"
+            @mouseenter="onMouseenter"
+            @mouseleave="onMouseleave"
+            @pointerenter="onPointerEnter"
+            @click="onClick"
+            @pointerdown.capture="onPointerDownCapture"
+          >
+            <Arrow v-if="arrow" :prefix-cls="prefixCls" :arrow="arrow" :arrow-pos="arrowPos" :align="align" />
+            <PopupContent :cache="!open && !fresh">
+              <Render :content="popup" />
+            </PopupContent>
+          </div>
+        </template>
+      </CSSMotion>
+      <!-- <div
+        ref="domRef"
+        :class="
+          clsx(prefixCls, className, {
+            [`${prefixCls}-mobile`]: isMobile,
+            [`${prefixCls}-hidden`]: !forceRender && !isNodeVisible,
+          })
+        "
+        :style="
           assign(
             {
               '--arrow-x': `${arrowPos.x || 0}px`,
@@ -204,18 +245,17 @@ defineExpose({
             forceRender && !open ? { display: 'none' } : {},
           ) as CSSProperties
         "
-          @mouseenter="onMouseenter"
-          @mouseleave="onMouseleave"
-          @pointerenter="onPointerEnter"
-          @click="onClick"
-          @pointerdown.capture="onPointerDownCapture"
-        >
-          <Arrow v-if="arrow" :prefix-cls="prefixCls" :arrow="arrow" :arrow-pos="arrowPos" :align="align" />
-          <PopupContent :cache="!open && !fresh">
-            <Render :content="popup" />
-          </PopupContent>
-        </div>
-      </Transition>
+        @mouseenter="onMouseenter"
+        @mouseleave="onMouseleave"
+        @pointerenter="onPointerEnter"
+        @click="onClick"
+        @pointerdown.capture="onPointerDownCapture"
+      >
+        <Arrow v-if="arrow" :prefix-cls="prefixCls" :arrow="arrow" :arrow-pos="arrowPos" :align="align" />
+        <PopupContent :cache="!open && !fresh">
+          <Render :content="popup" />
+        </PopupContent>
+      </div> -->
     </ResizeObserver>
   </Portal>
 </template>

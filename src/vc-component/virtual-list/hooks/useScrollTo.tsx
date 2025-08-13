@@ -147,7 +147,7 @@ export default function useScrollTo<T>(
         warning(false, 'Seems `scrollTo` with `rc-virtual-list` reach the max limitation. Please fire issue for us. Thanks.');
       }
     },
-    { flush: 'post', immediate: true },
+    { flush: 'post', immediate: true, deep: true },
   );
 
   // =========================== Scroll To ===========================

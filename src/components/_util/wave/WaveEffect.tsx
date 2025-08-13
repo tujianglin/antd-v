@@ -1,14 +1,9 @@
+import type { UnmountType } from '@/components/config-provider/UnstableContext';
+import CSSMotion from '@/vc-component/motion';
 import raf from '@/vc-util/raf';
-import {
-  defineComponent,
-  onBeforeUnmount,
-  onMounted,
-  render,
-  shallowRef,
-  Transition,
-  type CSSProperties,
-  type PropType,
-} from 'vue';
+import { composeRef } from '@/vc-util/ref';
+import clsx from 'clsx';
+import { defineComponent, onBeforeUnmount, onMounted, ref, render, shallowRef, type CSSProperties, type PropType } from 'vue';
 import type { WaveProps } from '.';
 import useState from '../hooks/useState';
 import type { ShowWaveEffect } from './interface';
@@ -26,12 +21,14 @@ const WaveEffect = defineComponent({
       type: Object as PropType<HTMLElement>,
     },
     component: String,
+    registerUnmount: Function as PropType<() => UnmountType | null>,
     colorSource: {
       type: Object as PropType<WaveProps['colorSource']>,
     },
   },
   setup(props) {
     const divRef = shallowRef<HTMLDivElement>(null);
+    const unmountRef = ref<UnmountType>(null);
     const [color, setWaveColor] = useState<string | null>(null);
     const [borderRadius, setBorderRadius] = useState<number[]>([]);
     const [left, setLeft] = useState(0);
@@ -39,6 +36,10 @@ const WaveEffect = defineComponent({
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
     const [enabled, setEnabled] = useState(false);
+
+    onMounted(() => {
+      unmountRef.value = props?.registerUnmount?.();
+    });
 
     function syncPos() {
       const { target } = props;
@@ -135,15 +136,32 @@ const WaveEffect = defineComponent({
         waveStyle['--wave-color'] = color.value as string;
       }
       return (
-        <Transition
-          appear
-          name="wave-motion"
-          appearFromClass="wave-motion-appear"
-          appearActiveClass="wave-motion-appear"
-          appearToClass="wave-motion-appear wave-motion-appear-active"
+        <CSSMotion
+          visible
+          motionAppear
+          motionName="wave-motion"
+          motionDeadline={5000}
+          onAppearEnd={(_, event) => {
+            if (event.deadline || (event as TransitionEvent).propertyName === 'opacity') {
+              const holder = divRef.value?.parentElement;
+              unmountRef.value?.().then(() => {
+                holder?.remove();
+              });
+            }
+            return false;
+          }}
         >
-          <div ref={divRef} class={props.className} style={waveStyle} onTransitionend={onTransitionend} />
-        </Transition>
+          {{
+            default: ({ class: motionClassName, ref: motionRef }) => (
+              <div
+                ref={composeRef((e) => (divRef.value = e), motionRef)}
+                class={clsx(props.className, motionClassName)}
+                style={waveStyle}
+                onTransitionend={onTransitionend}
+              />
+            ),
+          }}
+        </CSSMotion>
       );
     };
   },
@@ -163,13 +181,14 @@ const showWaveEffect: ShowWaveEffect = (target, info) => {
   holder.style.left = '0px';
   holder.style.top = '0px';
   target?.insertBefore(holder, target?.firstChild);
-  render(<WaveEffect {...info} target={target} />, holder);
-  return () => {
-    render(null, holder);
-    if (holder.parentElement) {
-      holder.parentElement.removeChild(holder);
-    }
-  };
+
+  let unmountCallback: UnmountType | null = null;
+
+  function registerUnmount() {
+    return unmountCallback;
+  }
+
+  unmountCallback = render(<WaveEffect {...info} target={target} registerUnmount={registerUnmount}></WaveEffect>, holder) as any;
 };
 
 export default showWaveEffect;

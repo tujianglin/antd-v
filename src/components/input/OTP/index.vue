@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { useEvent } from '@/vc-util/hooks/useEvent';
+import useEvent from '@/vc-util/hooks/useEvent';
 import pickAttrs from '@/vc-util/pickAttrs';
 import clsx from 'clsx';
 import { computed, ref, toRefs, watch } from 'vue';

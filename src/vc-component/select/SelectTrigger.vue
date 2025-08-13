@@ -162,7 +162,7 @@ defineExpose({
     :popup-placement="placement || (direction === 'rtl' ? 'bottomRight' : 'bottomLeft')"
     :builtin-placements="mergedBuiltinPlacements"
     :prefix-cls="popupPrefixCls"
-    :popup-motion="{ name: mergedTransitionName }"
+    :popup-motion="{ motionName: mergedTransitionName }"
     :popup="h('div', { onMousedown: onPopupMouseEnter }, h(Render, { content: popupNode }))"
     ref="triggerPopupRef"
     :stretch="stretch"

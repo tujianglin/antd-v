@@ -12,6 +12,7 @@ import FloatButton from './FloatButton.vue';
 import Flex from '../flex';
 import Space from '../space';
 import { GroupContextProvider } from './context';
+import CSSMotion from '@/vc-component/motion';
 
 defineOptions({ name: 'FloatButtonGroup', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -45,7 +46,7 @@ const {
   style: contextStyle,
 } = toRefs(useComponentConfig('floatButtonGroup'));
 
-const mergedCloseIcon = computed(() => closeIcon ?? contextCloseIcon.value ?? <CloseOutlined />);
+const mergedCloseIcon = computed(() => closeIcon ?? contextCloseIcon?.value ?? <CloseOutlined />);
 
 const prefixCls = getPrefixCls.value(floatButtonPrefixCls, customizePrefixCls);
 const rootCls = useCSSVarCls(prefixCls);
@@ -177,17 +178,18 @@ const listCls = `${groupPrefixCls}-list`;
       @mouseleave="onMouseLeave"
     >
       <template v-if="isMenuMode">
-        <Transition :name="`${listCls}-motion`">
-          <component
-            v-show="open"
-            :is="individual ? Flex : Space.Compact"
-            :vertical="mergedPlacement === 'top' || mergedPlacement === 'bottom'"
-            :style="merged.mergedStyles.list"
-            :class="clsx(listCls, merged.mergedClassNames.list)"
-          >
-            <slot></slot>
-          </component>
-        </Transition>
+        <CSSMotion :visible="open" :motion-name="`${listCls}-motion`">
+          <template #default="{ class: motionClassName }">
+            <component
+              :is="individual ? Flex : Space.Compact"
+              :vertical="mergedPlacement === 'top' || mergedPlacement === 'bottom'"
+              :style="merged.mergedStyles.list"
+              :class="clsx(listCls, merged.mergedClassNames.list, motionClassName)"
+            >
+              <slot></slot>
+            </component>
+          </template>
+        </CSSMotion>
         <GroupContextProvider :value="triggerContext">
           <FloatButton
             :type="type"

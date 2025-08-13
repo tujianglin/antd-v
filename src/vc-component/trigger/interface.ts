@@ -1,5 +1,6 @@
-import type { CSSProperties, TransitionProps, VNode } from 'vue';
+import type { CSSProperties, VNode } from 'vue';
 import type { VueNode } from '../../components/_util/type';
+import type { CSSMotionProps } from '../motion';
 import type { MobileConfig } from './Popup/interface';
 
 export type Placement =
@@ -160,8 +161,8 @@ export interface TriggerProps {
   maskClosable?: boolean;
 
   // =================== Motion ====================
-  popupMotion?: TransitionProps;
-  maskMotion?: TransitionProps;
+  popupMotion?: CSSMotionProps;
+  maskMotion?: CSSMotionProps;
 
   // ==================== Delay ====================
   mouseEnterDelay?: number;

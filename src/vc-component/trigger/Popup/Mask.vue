@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
+import type { CSSMotionProps } from '@/vc-component/motion';
 import clsx from 'clsx';
-import type { TransitionProps } from 'vue';
 
 export interface MaskProps {
   class?: string;
@@ -10,7 +10,7 @@ export interface MaskProps {
   mask?: boolean;
 
   // Motion
-  motion?: TransitionProps;
+  motion?: CSSMotionProps;
 
   mobile?: boolean;
 }

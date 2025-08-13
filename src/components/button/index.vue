@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import { computed, nextTick, ref, toRefs, useAttrs, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRefs, useAttrs, watch } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import isValidNode from '../_util/isValidNode';
 import { useComposeRef } from '../_util/type';
@@ -138,6 +138,18 @@ const { mergedClassNames, mergedStyles } = toRefs(
   ),
 );
 
+// ========================= Mount ==========================
+// Record for mount status.
+// This will help to no to show the animation of loading on the first mount.
+const isMountRef = ref(true);
+onMounted(() => {
+  isMountRef.value = false;
+});
+
+onBeforeUnmount(() => {
+  isMountRef.value = true;
+});
+
 watch(
   () => autofocus,
   async (val) => {
@@ -228,7 +240,13 @@ const iconNode = () => {
       <Render content={loading.icon}></Render>
     </IconWrapper>
   ) : (
-    <DefaultLoadingIcon existIcon={!!iconSlot.value} prefixCls={prefixCls} loading={innerLoading.value} {...iconSharedProps} />
+    <DefaultLoadingIcon
+      existIcon={!!iconSlot.value}
+      prefixCls={prefixCls}
+      loading={innerLoading.value}
+      mount={isMountRef.value}
+      {...iconSharedProps}
+    />
   );
 };
 

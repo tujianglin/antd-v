@@ -1,4 +1,4 @@
-import { onBeforeUnmount, ref, shallowRef, type Ref } from 'vue';
+import { onBeforeUnmount, ref, type Ref } from 'vue';
 import findDOMNode from '../../../vc-util/Dom/findDOMNode';
 import type { GetKey } from '../interface';
 import CacheMap from '../utils/CacheMap';
@@ -19,7 +19,7 @@ export default function useHeights<T>(
   updatedMark: Ref<number>,
 ] {
   const updatedMark = ref(0);
-  const instanceRef = shallowRef(new Map<PropertyKey, HTMLElement>());
+  const instanceRef = ref(new Map<PropertyKey, HTMLElement>());
   const heightsRef = ref(new CacheMap());
 
   let promiseIdRef = 0;
@@ -30,7 +30,6 @@ export default function useHeights<T>(
 
   function collectHeight(sync = false) {
     cancelRaf();
-
     const doCollect = () => {
       let changed = false;
       instanceRef.value.forEach((element, key) => {
@@ -47,7 +46,6 @@ export default function useHeights<T>(
           }
         }
       });
-
       // Always trigger update mark to tell parent that should re-calculate heights when resized
       if (changed) {
         updatedMark.value = updatedMark.value + 1;

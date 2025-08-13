@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import { computed, h, ref, type Ref } from 'vue';
-import Trigger from '../index';
+import { computed, h, ref } from 'vue';
+import Trigger from '..';
 import type { ActionType, BuildInPlacements } from '../interface';
 import LabelItem from './LabelItem.vue';
 const builtinPlacements: BuildInPlacements = {
@@ -31,42 +31,27 @@ const builtinPlacements: BuildInPlacements = {
 };
 
 const Motion = {
-  name: 'fade-top',
+  motionName: 'case-motion',
 };
 
 const MaskMotion = {
-  name: 'mask-motion',
+  motionName: 'mask-motion',
 };
 
-function useControl<T>(valuePropName: string, defaultValue: T): [Ref<any>, any] {
-  const value = ref<T>(defaultValue);
+const hover = ref(true);
+const focus = ref(false);
+const click = ref(false);
+const contextMenu = ref(false);
 
-  return [
-    value,
-    {
-      value: value.value,
-      checked: value.value,
-      onChange({ target }) {
-        value.value = target[valuePropName];
-      },
-    },
-  ];
-}
-
-const [hover, hoverProps] = useControl('checked', true);
-const [focus, focusProps] = useControl('checked', false);
-const [click, clickProps] = useControl('checked', false);
-const [contextMenu, contextMenuProps] = useControl('checked', false);
-
-const [placement, placementProps] = useControl('value', 'right');
-const [stretch, stretchProps] = useControl('value', '');
-const [motion, motionProps] = useControl('checked', true);
-const [destroyPopupOnHide, destroyPopupOnHideProps] = useControl('checked', false);
-const [mask, maskProps] = useControl('checked', false);
-const [maskClosable, maskClosableProps] = useControl('checked', true);
-const [forceRender, forceRenderProps] = useControl('checked', false);
-const [offsetX, offsetXProps] = useControl<number>('value', 0);
-const [offsetY, offsetYProps] = useControl<number>('value', 0);
+const placement = ref('right');
+const stretch = ref('');
+const motion = ref(true);
+const destroyPopupOnHide = ref(false);
+const mask = ref(false);
+const maskClosable = ref(true);
+const forceRender = ref(false);
+const offsetX = ref<number>(0);
+const offsetY = ref<number>(0);
 
 const actionsKeys = computed(() => {
   const actions = {
@@ -82,21 +67,21 @@ const actionsKeys = computed(() => {
   <div>
     <div :style="{ margin: '10px 20px' }">
       <strong>Actions: </strong>
-      <LabelItem title="Hover" v-bind="hoverProps">
-        <input type="checkbox" />
+      <LabelItem title="Hover">
+        <input type="checkbox" :checked="hover" @change="(e) => (hover = (e.target as any).checked)" />
       </LabelItem>
-      <LabelItem title="Focus" v-bind="focusProps">
-        <input type="checkbox" />
+      <LabelItem title="Focus">
+        <input type="checkbox" :checked="focus" @change="(e) => (focus = (e.target as any).checked)" />
       </LabelItem>
-      <LabelItem title="Click" v-bind="clickProps">
-        <input type="checkbox" />
+      <LabelItem title="Click">
+        <input type="checkbox" :checked="click" @change="(e) => (click = (e.target as any).checked)" />
       </LabelItem>
-      <LabelItem title="ContextMenu" v-bind="contextMenuProps">
-        <input type="checkbox" />
+      <LabelItem title="ContextMenu">
+        <input type="checkbox" :checked="contextMenu" @change="(e) => (contextMenu = (e.target as any).checked)" />
       </LabelItem>
       <hr />
-      <LabelItem title="Stretch" v-bind="stretchProps">
-        <select>
+      <LabelItem title="Stretch">
+        <select :value="stretch" @change="(e) => (stretch = (e.target as any).value)">
           <option value="">--NONE--</option>
           <option value="width">width</option>
           <option value="minWidth">minWidth</option>
@@ -105,8 +90,8 @@ const actionsKeys = computed(() => {
         </select>
       </LabelItem>
 
-      <LabelItem title="Placement" v-bind="placementProps">
-        <select>
+      <LabelItem title="Placement">
+        <select :value="placement" @change="(e) => (placement = (e.target as any).value)">
           <option>right</option>
           <option>left</option>
           <option>top</option>
@@ -118,32 +103,32 @@ const actionsKeys = computed(() => {
         </select>
       </LabelItem>
 
-      <LabelItem title="Motion" v-bind="motionProps">
-        <input type="checkbox" />
+      <LabelItem title="Motion">
+        <input type="checkbox" :checked="motion" @change="(e) => (motion = (e.target as any).checked)" />
       </LabelItem>
 
-      <LabelItem title="Destroy Popup On Hide" v-bind="destroyPopupOnHideProps">
-        <input type="checkbox" />
+      <LabelItem title="Destroy Popup On Hide">
+        <input type="checkbox" :checked="destroyPopupOnHide" @change="(e) => (destroyPopupOnHide = (e.target as any).checked)" />
       </LabelItem>
 
-      <LabelItem title="Mask" v-bind="maskProps">
-        <input type="checkbox" />
+      <LabelItem title="Mask">
+        <input type="checkbox" :checked="mask" @change="(e) => (mask = (e.target as any).checked)" />
       </LabelItem>
 
-      <LabelItem title="Mask Closable" v-bind="maskClosableProps">
-        <input type="checkbox" />
+      <LabelItem title="Mask Closable">
+        <input type="checkbox" :checked="maskClosable" @change="(e) => (maskClosable = (e.target as any).checked)" />
       </LabelItem>
 
-      <LabelItem title="Force Render" v-bind="forceRenderProps">
-        <input type="checkbox" />
+      <LabelItem title="Force Render">
+        <input type="checkbox" :checked="forceRender" @change="(e) => (forceRender = (e.target as any).checked)" />
       </LabelItem>
 
-      <LabelItem title="OffsetX" v-bind="offsetXProps">
-        <input />
+      <LabelItem title="OffsetX">
+        <input :value="offsetX" @input="(e) => (offsetX = (e.target as any).value)" />
       </LabelItem>
 
-      <LabelItem title="OffsetY" v-bind="offsetYProps">
-        <input />
+      <LabelItem title="OffsetY">
+        <input :value="offsetY" @input="(e) => (offsetY = (e.target as any).value)" />
       </LabelItem>
     </div>
     <div :style="{ margin: '120px', position: 'relative' }">
@@ -172,11 +157,7 @@ const actionsKeys = computed(() => {
         }"
         :popup="h('div', {}, 'i am a popup')"
         :popup-motion="motion ? Motion : null"
-        @popup-align="
-          () => {
-            console.warn('Aligned!');
-          }
-        "
+        @popup-align="() => {}"
       >
         <div
           :style="{
@@ -195,3 +176,6 @@ const actionsKeys = computed(() => {
     </div>
   </div>
 </template>
+<style lang="less">
+@import './case.less';
+</style>

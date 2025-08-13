@@ -1,7 +1,8 @@
 <script lang="tsx" setup>
+import CSSMotion from '@/vc-component/motion';
 import { LoadingOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
-import { computed, nextTick, type CSSProperties } from 'vue';
+import { computed, type CSSProperties } from 'vue';
 import IconWrapper from './IconWrapper.vue';
 
 export type DefaultLoadingIconProps = {
@@ -10,11 +11,12 @@ export type DefaultLoadingIconProps = {
   loading?: boolean | object;
   class?: string;
   style?: CSSProperties;
+  mount?: boolean;
 };
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { prefixCls, loading, existIcon, class: className, style } = defineProps<DefaultLoadingIconProps>();
+const { prefixCls, loading, existIcon, class: className, style, mount } = defineProps<DefaultLoadingIconProps>();
 
 const getCollapsedWidth = (): CSSProperties => ({
   width: 0,
@@ -22,29 +24,11 @@ const getCollapsedWidth = (): CSSProperties => ({
   transform: 'scale(0)',
 });
 
-const getRealWidth = (node) => {
-  nextTick(() => {
-    if (node) {
-      node.style.width = `${node.scrollWidth}px`;
-      node.style.opacity = '1';
-      node.style.transform = 'scale(1)';
-    }
-  });
-};
-
-const resetStyle = (node) => {
-  if (node && node.style) {
-    node.style.width = null;
-    node.style.opacity = null;
-    node.style.transform = null;
-  }
-};
-
-const onLeave = () => {
-  setTimeout(() => {
-    getCollapsedWidth();
-  });
-};
+const getRealWidth = (node: HTMLElement): CSSProperties => ({
+  width: `${node.scrollWidth}px`,
+  opacity: 1,
+  transform: 'scale(1)',
+});
 
 const visible = computed(() => !!loading);
 
@@ -55,18 +39,30 @@ const mergedIconCls = clsx(`${prefixCls}-loading-icon`, className);
     <LoadingOutlined />
   </IconWrapper>
   <template v-else>
-    <Transition
-      :name="`${prefixCls}-loading-icon-motion`"
-      @before-enter="getCollapsedWidth"
-      @enter="getRealWidth"
-      @after-enter="resetStyle"
-      @before-leave="getRealWidth"
-      @leave="onLeave"
-      @after-leave="resetStyle"
+    <CSSMotion
+      :visible="visible"
+      :motion-name="`${prefixCls}-loading-icon-motion`"
+      :motion-appear="!mount"
+      :motion-enter="!mount"
+      :motion-leave="!mount"
+      remove-on-leave
+      @appear-start="getCollapsedWidth"
+      @appear-active="getRealWidth"
+      @enter-start="getCollapsedWidth"
+      @enter-active="getRealWidth"
+      @leave-start="getRealWidth"
+      @leave-active="getCollapsedWidth"
     >
-      <IconWrapper v-if="visible" :prefix-cls="mergedIconCls" :class="mergedIconCls" :style="style">
-        <LoadingOutlined />
-      </IconWrapper>
-    </Transition>
+      <template #default="{ class: motionCls, style: motionStyle, ref: motionRef }">
+        <IconWrapper
+          :ref="motionRef"
+          :prefix-cls="mergedIconCls"
+          :class="clsx(mergedIconCls, motionCls)"
+          :style="{ ...style, ...motionStyle }"
+        >
+          <LoadingOutlined />
+        </IconWrapper>
+      </template>
+    </CSSMotion>
   </template>
 </template>

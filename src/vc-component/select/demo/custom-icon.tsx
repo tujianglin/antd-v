@@ -150,7 +150,7 @@ const Test = defineComponent({
           <Select
             class="custom-select"
             v-model:value={value.value}
-            animation={useAnim ? 'slide-up' : null}
+            animation={useAnim.value ? 'slide-up' : null}
             choiceTransitionName="rc-select-selection__choice-zoom"
             style={{ width: `${500}px` }}
             mode="multiple"

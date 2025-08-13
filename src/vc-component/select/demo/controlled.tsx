@@ -33,7 +33,7 @@ export default defineComponent({
             value={value}
             placeholder="placeholder"
             listHeight={200}
-            style={{ width: 500 }}
+            style={{ width: '500px' }}
             onBlur={onBlur}
             onFocus={onFocus}
             showSearch={{

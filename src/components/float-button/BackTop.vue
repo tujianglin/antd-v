@@ -9,6 +9,8 @@ import { VerticalAlignTopOutlined } from '@ant-design/icons-vue';
 import FloatButton from './FloatButton.vue';
 import clsx from 'clsx';
 import { throttle } from 'lodash-es';
+import CSSMotion from '@/vc-component/motion';
+import { composeRef } from '@/vc-util/ref';
 export interface BackTopProps extends Omit<FloatButtonProps, 'target'> {
   visibilityHeight?: number;
   onClick?: ButtonHTMLAttributes['onClick'];
@@ -88,9 +90,14 @@ const contentProps = computed((): FloatButtonProps => {
 });
 </script>
 <template>
-  <Transition :name="`${rootPrefixCls}-fade`">
-    <div v-show="visible">
-      <FloatButton ref="internalRef" v-bind="contentProps" @click="scrollToTop" :class="clsx(className)" />
-    </div>
-  </Transition>
+  <CSSMotion :visible="visible" :motion-name="`${rootPrefixCls}-fade`">
+    <template #default="{ class: montionClassName, ref: motionRef }">
+      <FloatButton
+        :ref="composeRef((e) => (internalRef = e), motionRef)"
+        v-bind="contentProps"
+        @click="scrollToTop"
+        :class="clsx(className, montionClassName)"
+      />
+    </template>
+  </CSSMotion>
 </template>

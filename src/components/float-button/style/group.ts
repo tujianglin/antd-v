@@ -75,18 +75,25 @@ const genGroupStyle: GenerateStyle<FloatButtonToken, CSSObject> = (token) => {
         [listCls]: {
           borderRadius: token.borderRadiusLG,
 
-          '&-motion-enter-from,&-motion-leave-to': {
-            opacity: 0,
-            transform: getCssVar('list-transform-start', true),
-          },
-
-          '&-motion-enter-to, &-motion-leave-from': {
-            opacity: 1,
-            transform: 'translate(0, 0)',
-          },
-
-          '&-motion-enter-active, &-motion-leave-active': {
+          '&-motion': {
             transition: `all ${token.motionDurationSlow}`,
+
+            '&-enter, &-appear': {
+              opacity: 0,
+              transform: getCssVar('list-transform-start', true),
+
+              '&-active': {
+                opacity: 1,
+                transform: `translate(0, 0)`,
+              },
+            },
+
+            '&-leave': {
+              '&-active': {
+                opacity: 0,
+                transform: getCssVar('list-transform-start', true),
+              },
+            },
           },
         },
 

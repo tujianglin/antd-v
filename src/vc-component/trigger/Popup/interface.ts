@@ -1,12 +1,13 @@
-import type { CSSProperties, TransitionProps } from 'vue';
+import type { CSSMotionProps } from '@/vc-component/motion';
+import type { CSSProperties } from 'vue';
 import type { AlignType, ArrowPos, ArrowTypeOuter, TriggerProps } from '../interface';
 
 export interface MobileConfig {
   mask?: boolean;
   /** Set popup motion. You can ref `rc-motion` for more info. */
-  motion?: TransitionProps;
+  motion?: CSSMotionProps;
   /** Set mask motion. You can ref `rc-motion` for more info. */
-  maskMotion?: TransitionProps;
+  maskMotion?: CSSMotionProps;
 }
 
 export interface PopupProps {
@@ -39,8 +40,8 @@ export interface PopupProps {
   onClick?: (e: MouseEvent) => void;
 
   // Motion
-  motion?: TransitionProps;
-  maskMotion?: TransitionProps;
+  motion?: CSSMotionProps;
+  maskMotion?: CSSMotionProps;
 
   // Portal
   forceRender?: boolean;

@@ -1,6 +1,7 @@
 <script lang="tsx" setup>
-import {} from 'vue';
+import customIcon from '@/vc-component/select/demo/custom-icon';
 </script>
 <template>
-  <div>111</div>
+  <customIcon />
+  <!-- <basic /> -->
 </template>

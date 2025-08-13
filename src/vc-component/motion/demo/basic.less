@@ -1,0 +1,91 @@
+.grid {
+  display: table;
+
+  > div {
+    display: table-cell;
+    min-width: 350px;
+  }
+}
+
+.demo-block {
+  display: block;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  background: red;
+}
+
+.transition {
+  transition: background 0.3s, height 1.3s, opacity 1.3s;
+  // transition: all 5s!important;
+
+  &.transition-appear,
+  &.transition-enter {
+    opacity: 0;
+  }
+
+  &.transition-appear.transition-appear-active,
+  &.transition-enter.transition-enter-active {
+    opacity: 1;
+  }
+
+  &.transition-leave-active {
+    background: green;
+    opacity: 0;
+  }
+}
+
+.animation {
+  animation-duration: 1.3s;
+  animation-fill-mode: both;
+
+  &.animation-appear,
+  &.animation-enter {
+    animation-name: enter;
+    animation-play-state: paused;
+    animation-fill-mode: both;
+  }
+
+  &.animation-appear.animation-appear-active,
+  &.animation-enter.animation-enter-active {
+    animation-name: enter;
+    animation-play-state: running;
+  }
+
+  &.animation-leave {
+    animation-name: leave;
+    animation-play-state: paused;
+    animation-fill-mode: both;
+
+    &.animation-leave-active {
+      animation-name: leave;
+      animation-play-state: running;
+    }
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+@keyframes enter {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes leave {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
