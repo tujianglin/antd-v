@@ -346,6 +346,7 @@ function onScrollBar(newScrollOffset: number, horizontal?: boolean) {
 
 // When data size reduce. It may trigger native scroll event back to fit scroll position
 function onFallbackScroll(e: UIEvent) {
+  console.log(2);
   const { scrollTop: newScrollTop } = e.currentTarget as HTMLDivElement;
   if (newScrollTop !== offsetTop.value) {
     syncScrollTop(newScrollTop);
@@ -590,7 +591,7 @@ const containerProps = computed(() => {
         :class="`${prefixCls}-holder`"
         :style="componentStyle"
         ref="componentRef"
-        @scroll="onFallbackScroll"
+        @scroll.passive="onFallbackScroll"
         @mouseenter="delayHideScrollBar"
       >
         <Filler

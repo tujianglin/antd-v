@@ -1,5 +1,6 @@
 <script lang="tsx" setup>
 import CSSMotion, { type CSSMotionProps } from '@/vc-component/motion';
+import { composeRef } from '@/vc-util/ref';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
 import { computed, ref, toRefs, type CSSProperties } from 'vue';
@@ -192,9 +193,9 @@ defineExpose({
           }
         "
       >
-        <template #default="{ class: motionClassName, style: motionStyle }">
+        <template #default="{ class: motionClassName, style: motionStyle, ref: motionRef }">
           <div
-            ref="domRef"
+            :ref="composeRef((el) => (domRef = el), motionRef)"
             :class="
               clsx(prefixCls, motionClassName, className, {
                 [`${prefixCls}-mobile`]: isMobile,
@@ -223,39 +224,6 @@ defineExpose({
           </div>
         </template>
       </CSSMotion>
-      <!-- <div
-        ref="domRef"
-        :class="
-          clsx(prefixCls, className, {
-            [`${prefixCls}-mobile`]: isMobile,
-            [`${prefixCls}-hidden`]: !forceRender && !isNodeVisible,
-          })
-        "
-        :style="
-          assign(
-            {
-              '--arrow-x': `${arrowPos.x || 0}px`,
-              '--arrow-y': `${arrowPos.y || 0}px`,
-              ...offsetStyle,
-              ...miscStyle,
-              ...style,
-              boxSizing: 'border-box',
-              zIndex,
-            },
-            forceRender && !open ? { display: 'none' } : {},
-          ) as CSSProperties
-        "
-        @mouseenter="onMouseenter"
-        @mouseleave="onMouseleave"
-        @pointerenter="onPointerEnter"
-        @click="onClick"
-        @pointerdown.capture="onPointerDownCapture"
-      >
-        <Arrow v-if="arrow" :prefix-cls="prefixCls" :arrow="arrow" :arrow-pos="arrowPos" :align="align" />
-        <PopupContent :cache="!open && !fresh">
-          <Render :content="popup" />
-        </PopupContent>
-      </div> -->
     </ResizeObserver>
   </Portal>
 </template>

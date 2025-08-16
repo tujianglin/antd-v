@@ -182,7 +182,7 @@ const motionChildren = () => {
     } else if (!removeOnLeave && renderedRef.value && leavedClassName) {
       result = children({ ...mergedProps, class: leavedClassName, ref: nodeRef });
     } else if (forceRender || (!removeOnLeave && !leavedClassName)) {
-      result = children({ ...mergedProps, style: { display: 'none' }, ref: nodeRef });
+      result = children({ ...mergedProps, style: { visibility: 'hidden' }, ref: nodeRef });
     } else {
       result = null;
     }
