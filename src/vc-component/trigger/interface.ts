@@ -1,4 +1,4 @@
-import type { CSSProperties, VNode } from 'vue';
+import type { CSSProperties } from 'vue';
 import type { VueNode } from '../../components/_util/type';
 import type { CSSMotionProps } from '../motion';
 import type { MobileConfig } from './Popup/interface';
@@ -172,7 +172,7 @@ export interface TriggerProps {
   blurDelay?: number;
 
   // ==================== Popup ====================
-  popup: VNode | (() => VNode);
+  popup: any;
   popupPlacement?: string;
   builtinPlacements?: BuildInPlacements;
   popupAlign?: AlignType;

@@ -52,7 +52,7 @@ const {
   popupStyle,
 
   popupPlacement,
-  builtinPlacements = {},
+  builtinPlacements,
   popupAlign,
   zIndex,
   stretch,
@@ -480,11 +480,16 @@ watch(
 
 // ============================ Perf ============================
 const rendedRef = ref(false);
-watch([() => forceRender, () => mergedOpen.value, () => inMotion.value], () => {
-  if (!rendedRef.value) {
-    rendedRef.value = forceRender || mergedOpen.value || inMotion.value;
-  }
-});
+watch(
+  [() => forceRender, () => mergedOpen.value, () => inMotion.value],
+  async () => {
+    await nextTick();
+    if (!rendedRef.value) {
+      rendedRef.value = forceRender || mergedOpen.value || inMotion.value;
+    }
+  },
+  { flush: 'post', immediate: true },
+);
 
 // =========================== Render ===========================
 const mergedChildrenProps = computed(() => ({

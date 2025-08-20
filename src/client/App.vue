@@ -1,9 +1,6 @@
 <script lang="tsx" setup>
-// import AutoTokenization from '@/vc-component/select/demo/auto-tokenization.vue';
-import customIcon from '@/vc-component/select/demo/custom-icon';
+import {} from 'vue';
 </script>
 <template>
-  <customIcon />
-  <!-- <Case /> -->
-  <!-- <AutoTokenization /> -->
+  <div>111</div>
 </template>

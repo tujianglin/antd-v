@@ -1,4 +1,4 @@
-import { onBeforeUnmount, ref, watch, type Ref } from 'vue';
+import { nextTick, onBeforeUnmount, ref, watch, type Ref } from 'vue';
 import { getShadowRoot } from '../../../vc-util/Dom/shadow';
 import warning from '../../../vc-util/warning';
 import { getWin } from '../util';
@@ -36,13 +36,14 @@ export default function useWinClick(
   };
 
   // Click to hide is special action since click popup element should not hide
-  watch([clickToHide, targetEle, popupEle, mask, maskClosable], ([val1, val2, val3, val4, val5]) => {
+  watch([clickToHide, targetEle, popupEle, mask, maskClosable], async ([val1, val2, val3, val4, val5]) => {
+    await nextTick();
     if (val1 && val3 && (!val4 || val5)) {
       win = getWin(val2);
 
-      win.addEventListener('pointerdown', onPointerDown, true);
-      win.addEventListener('mousedown', onTriggerClose, true);
-      win.addEventListener('contextmenu', onTriggerClose, true);
+      win?.addEventListener('pointerdown', onPointerDown, true);
+      win?.addEventListener('mousedown', onTriggerClose, true);
+      win?.addEventListener('contextmenu', onTriggerClose, true);
 
       // shadow root
       targetShadowRoot = getShadowRoot(val2) as unknown as HTMLElement;

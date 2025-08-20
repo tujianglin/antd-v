@@ -28,7 +28,7 @@ export function getAlignPopupClassName(
 }
 
 export function getWin(ele: HTMLElement) {
-  return ele.ownerDocument.defaultView;
+  return ele?.ownerDocument.defaultView;
 }
 
 /**

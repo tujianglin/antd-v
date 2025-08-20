@@ -97,25 +97,15 @@ export default function useAlign(
   onAlign: VoidFunction,
 ] {
   const offsetInfo = ref<{
-    /** Align finished */
     ready: boolean;
-    /** Offset Left of value Left */
     offsetX: number;
-    /** Offset Top of value Top */
     offsetY: number;
-    /** Offset Right of value Left */
     offsetR: number;
-    /** Offset Bottom of value Top */
     offsetB: number;
-    /** Arrow X offset related with popup */
     arrowX: number;
-    /** Arrow Y offset related with popup */
     arrowY: number;
-    /** Scale X of popup */
     scaleX: number;
-    /** Scale Y of popup */
     scaleY: number;
-    /** Calculated align info */
     align: AlignType;
   }>({
     ready: false,
@@ -127,8 +117,16 @@ export default function useAlign(
     arrowY: 0,
     scaleX: 1,
     scaleY: 1,
-    align: builtinPlacements.value[placement.value] || {},
+    align: {},
   });
+
+  watch(
+    [builtinPlacements, placement],
+    ([val1, val2]) => {
+      offsetInfo.value.align = val1[val2] || {};
+    },
+    { immediate: true, deep: true },
+  );
   const alignCountRef = ref<number>(0);
 
   const scrollerList = computed(() => {
@@ -488,7 +486,6 @@ export default function useAlign(
           prevFlipRef.value.lr = true;
           nextOffsetX = tmpNextOffsetX;
           popupOffsetX = -popupOffsetX;
-
           nextAlignInfo.points = [reversePoints(popupPoints, 1), reversePoints(targetPoints, 1)];
         } else {
           prevFlipRef.value.lr = false;
@@ -597,7 +594,6 @@ export default function useAlign(
         scaleY,
         align: nextAlignInfo,
       };
-
       offsetInfo.value = nextOffsetInfo;
     }
   };
