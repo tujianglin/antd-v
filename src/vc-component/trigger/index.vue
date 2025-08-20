@@ -1,7 +1,19 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
 import { isEmpty } from 'lodash-es';
-import { cloneVNode, computed, nextTick, onBeforeUnmount, onMounted, ref, toRefs, useId, watch, type HTMLAttributes } from 'vue';
+import {
+  cloneVNode,
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  toRefs,
+  useId,
+  watch,
+  type HTMLAttributes,
+  type VNode,
+} from 'vue';
 import { isDOM } from '../../vc-util/Dom/findDOMNode';
 import { getShadowRoot } from '../../vc-util/Dom/shadow';
 import ResizeObserver from '../resize-observer';
@@ -76,6 +88,10 @@ const {
 
   ...restProps
 } = defineProps<TriggerProps>();
+
+const slots = defineSlots<{ popup?: () => VNode; default?: () => VNode }>();
+
+const slotPopup = computed(() => slots.popup || popup);
 
 // =========================== Mobile ===========================
 const isMobile = computed(() => !!mobile);
@@ -569,7 +585,7 @@ watch(
   <ResizeObserver :disabled="!mergedOpen" :ref="setTargetRef" @resize="onTargetResize">
     <component
       :is="
-        cloneVNode($slots.default?.()[0], {
+        cloneVNode(slots.default?.()[0], {
           ...mergedChildrenProps,
           ...passedProps,
         })
@@ -580,7 +596,7 @@ watch(
     <Popup
       :ref="setPopupRef"
       :prefix-cls="prefixCls"
-      :popup="popup"
+      :popup="slotPopup"
       :class="clsx(popupClassName, !isMobile && alignedClassName)"
       :style="popupStyle"
       :target="targetEle"

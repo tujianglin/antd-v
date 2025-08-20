@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, h, ref } from 'vue';
+import { computed, ref } from 'vue';
 import Trigger from '..';
 import type { ActionType, BuildInPlacements } from '../interface';
 import LabelItem from './LabelItem.vue';
@@ -155,10 +155,12 @@ const actionsKeys = computed(() => {
           background: 'white',
           boxSizing: 'border-box',
         }"
-        :popup="h('div', {}, 'i am a popup')"
         :popup-motion="motion ? Motion : null"
         @popup-align="() => {}"
       >
+        <template #popup>
+          <div>i am a popup</div>
+        </template>
         <div
           :style="{
             margin: '20px',

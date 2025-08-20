@@ -172,7 +172,7 @@ export interface TriggerProps {
   blurDelay?: number;
 
   // ==================== Popup ====================
-  popup: any;
+  popup?: any;
   popupPlacement?: string;
   builtinPlacements?: BuildInPlacements;
   popupAlign?: AlignType;

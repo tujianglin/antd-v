@@ -1,6 +1,7 @@
 <script lang="tsx" setup>
+import Trigger from '@/vc-component/color-picker/demo/trigger.vue';
 import {} from 'vue';
 </script>
 <template>
-  <div>111</div>
+  <Trigger />
 </template>
