@@ -228,7 +228,6 @@ export default function useStatus(
       }
 
       const nextEventHandlers = getEventHandlers(nextStatus);
-
       // Update to next status
       if (nextStatus && (supportMotion || nextEventHandlers[STEP_PREPARE])) {
         status.value = nextStatus;

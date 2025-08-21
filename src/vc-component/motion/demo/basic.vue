@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { defineComponent, effect, ref } from 'vue';
+import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import CSSMotion from '../CSSMotion.vue';
 import clsx from 'clsx';
 
@@ -50,11 +50,14 @@ async function forceDelay(): Promise<void> {
 
 const Div = defineComponent({
   setup(props, { attrs }) {
+    onMounted(() => {
+      console.log('DIV >>> Mounted!');
+    });
+    onUnmounted(() => {
+      console.log('DIV >>> Unmounted!');
+    });
     return () => <div {...props} {...attrs}></div>;
   },
-});
-effect(() => {
-  console.log(prepare.value);
 });
 </script>
 <template>
@@ -102,8 +105,8 @@ effect(() => {
             }
           "
         >
-          <template #default="{ style, class: className }">
-            <Div :class="clsx('demo-block', className)" :style="style" />
+          <template #default="{ style, class: className, ref: montionRef }">
+            <Div :ref="montionRef" :class="clsx('demo-block', className)" :style="style" />
           </template>
         </CSSMotion>
       </div>

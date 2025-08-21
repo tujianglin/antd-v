@@ -66,7 +66,9 @@ const getKey = (item: T) => {
 const [setInstanceRef, collectHeight, heights, heightUpdatedMark] = useHeights(getKey, null, null);
 
 // ================================= MISC =================================
-const useVirtual = computed(() => !!(virtual && height && itemHeight));
+const useVirtual = computed(() => {
+  return !!(virtual && height && itemHeight);
+});
 const containerHeight = computed(() => {
   // eslint-disable-next-line no-unused-expressions
   heights.value?.id;
@@ -346,7 +348,6 @@ function onScrollBar(newScrollOffset: number, horizontal?: boolean) {
 
 // When data size reduce. It may trigger native scroll event back to fit scroll position
 function onFallbackScroll(e: UIEvent) {
-  console.log(2);
   const { scrollTop: newScrollTop } = e.currentTarget as HTMLDivElement;
   if (newScrollTop !== offsetTop.value) {
     syncScrollTop(newScrollTop);
@@ -607,7 +608,9 @@ const containerProps = computed(() => {
           :extra="extraContent"
         >
           <Render
-            :content="useChildren(mergedData, start, end, scrollWidth, offsetLeft, setInstanceRef, $slots.default, sharedConfig)"
+            :content="
+              useChildren < T > (mergedData, start, end, scrollWidth, offsetLeft, setInstanceRef, $slots.default, sharedConfig)
+            "
           />
         </Filler>
       </component>

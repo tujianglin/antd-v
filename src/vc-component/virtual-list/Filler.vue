@@ -11,7 +11,7 @@ export type InnerProps = Pick<HTMLDivElement, 'role' | 'id'>;
 interface FillerProps {
   prefixCls?: string;
   /** Virtual filler height. Should be `count * itemMinHeight` */
-  height: number;
+  height: number | undefined;
   /** Set offset of visible items. Should be the top of start item position */
   offsetY?: number;
   offsetX?: number;

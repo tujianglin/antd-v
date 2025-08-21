@@ -567,7 +567,7 @@ const onVisibleChanged = (visible: boolean) => {
 const onPrepare = () =>
   new Promise<void>((resolve) => {
     syncTargetSize();
-    motionPrepareResolve.value = () => resolve;
+    motionPrepareResolve.value = resolve;
   });
 
 watch(
