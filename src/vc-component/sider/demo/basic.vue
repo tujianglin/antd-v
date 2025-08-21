@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import Slider from '../vc-component/sider/Slider.vue';
+import Slider from '../Slider.vue';
 
 const marks = {
   '-10': '-10°C',
