@@ -63,23 +63,23 @@ const isCheckable = computed(() => {
   return context.checkable;
 });
 
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 // ======= Event Handlers: Selection and Check =======
 const onSelect = (e: MouseEvent) => {
   if (isDisabled.value) {
     return;
   }
-  context.onNodeSelect(e, convertNodePropsToEventData(wm.props));
+  context.onNodeSelect(e, convertNodePropsToEventData(vm.props));
 };
 
 const onCheck = (e: MouseEvent) => {
   if (isDisabled.value) {
     return;
   }
-  if (!isCheckable.value || wm.props.disableCheckbox) {
+  if (!isCheckable.value || vm.props.disableCheckbox) {
     return;
   }
-  context.onNodeCheck(e, convertNodePropsToEventData(wm.props), !checked);
+  context.onNodeCheck(e, convertNodePropsToEventData(vm.props), !checked);
 };
 
 // ======= State: Selectable Check =======
@@ -93,7 +93,7 @@ const isSelectable = computed<boolean>(() => {
 
 const onSelectorClick = (e: MouseEvent) => {
   // Click trigger before select/check operation
-  context.onNodeClick(e, convertNodePropsToEventData(wm.props));
+  context.onNodeClick(e, convertNodePropsToEventData(vm.props));
   if (isSelectable.value) {
     onSelect(e);
   } else {
@@ -102,19 +102,19 @@ const onSelectorClick = (e: MouseEvent) => {
 };
 
 const onSelectorDoubleClick = (e: MouseEvent) => {
-  context.onNodeDoubleClick(e, convertNodePropsToEventData(wm.props));
+  context.onNodeDoubleClick(e, convertNodePropsToEventData(vm.props));
 };
 
 const onMouseEnter = (e: MouseEvent) => {
-  context.onNodeMouseEnter(e, convertNodePropsToEventData(wm.props));
+  context.onNodeMouseEnter(e, convertNodePropsToEventData(vm.props));
 };
 
 const onMouseLeave = (e: MouseEvent) => {
-  context.onNodeMouseLeave(e, convertNodePropsToEventData(wm.props));
+  context.onNodeMouseLeave(e, convertNodePropsToEventData(vm.props));
 };
 
 const onContextMenu = (e: MouseEvent) => {
-  context.onNodeContextMenu(e, convertNodePropsToEventData(wm.props));
+  context.onNodeContextMenu(e, convertNodePropsToEventData(vm.props));
 };
 
 // ======= Drag: Drag Enabled =======
@@ -126,7 +126,7 @@ const isDraggable = computed<boolean>(() => {
 const onDragStart = (e: DragEvent) => {
   e.stopPropagation();
   dragNodeHighlight.value = true;
-  context.onNodeDragStart(e, wm.props);
+  context.onNodeDragStart(e, vm.props);
   try {
     // ie throw error
     // firefox-need-it
@@ -139,31 +139,31 @@ const onDragStart = (e: DragEvent) => {
 const onDragEnter = (e: DragEvent) => {
   e.preventDefault();
   e.stopPropagation();
-  context.onNodeDragEnter(e, wm.props);
+  context.onNodeDragEnter(e, vm.props);
 };
 
 const onDragOver = (e: DragEvent) => {
   e.preventDefault();
   e.stopPropagation();
-  context.onNodeDragOver(e, wm.props);
+  context.onNodeDragOver(e, vm.props);
 };
 
 const onDragLeave = (e: DragEvent) => {
   e.stopPropagation();
-  context.onNodeDragLeave(e, wm.props);
+  context.onNodeDragLeave(e, vm.props);
 };
 
 const onDragEnd = (e: DragEvent) => {
   e.stopPropagation();
   dragNodeHighlight.value = false;
-  context.onNodeDragEnd(e, wm.props);
+  context.onNodeDragEnd(e, vm.props);
 };
 
 const onDrop = (e: DragEvent) => {
   e.preventDefault();
   e.stopPropagation();
   dragNodeHighlight.value = false;
-  context.onNodeDrop(e, wm.props);
+  context.onNodeDrop(e, vm.props);
 };
 
 // ======= Expand: Node Expansion =======
@@ -171,7 +171,7 @@ const onExpand = (e: MouseEvent) => {
   if (loading) {
     return;
   }
-  context.onNodeExpand(e, convertNodePropsToEventData(wm.props));
+  context.onNodeExpand(e, convertNodePropsToEventData(vm.props));
 };
 
 // ======= State: Has Children =======
@@ -183,24 +183,24 @@ const hasChildren = computed<boolean>(() => {
 // ======= State: Leaf Check =======
 const memoizedIsLeaf = computed<boolean>(() => {
   if (!isLeaf) {
-    return isLeaf || (!context.loadData && !hasChildren.value) || (context.loadData && wm.props.loaded && !hasChildren.value);
+    return isLeaf || (!context.loadData && !hasChildren.value) || (context.loadData && vm.props.loaded && !hasChildren.value);
   }
   return isLeaf;
 });
 
 // ============== Effect ==============
 watch(
-  [() => loading, () => context.loadData, () => context.onNodeLoad, () => expanded, () => memoizedIsLeaf.value, () => wm.props],
+  [() => loading, () => context.loadData, () => context.onNodeLoad, () => expanded, () => memoizedIsLeaf.value, () => vm.props],
   () => {
     // Load data to avoid default expanded tree without data
     if (loading) {
       return;
     }
     // read from state to avoid loadData at same time
-    if (typeof context.loadData === 'function' && expanded && !memoizedIsLeaf.value && !wm.props.loaded) {
+    if (typeof context.loadData === 'function' && expanded && !memoizedIsLeaf.value && !vm.props.loaded) {
       // We needn't reload data when has children in sync logic
       // It's only needed in node expanded
-      context.onNodeLoad(convertNodePropsToEventData(wm.props));
+      context.onNodeLoad(convertNodePropsToEventData(vm.props));
     }
   },
   { immediate: true, deep: true },
@@ -220,10 +220,10 @@ const dragHandlerNode = () => {
 
 // ====================== Render: Switcher ======================
 const renderSwitcherIconDom = (isInternalLeaf: boolean) => {
-  const switcherIcon = wm.props.switcherIcon || context.switcherIcon;
+  const switcherIcon = vm.props.switcherIcon || context.switcherIcon;
   // if switcherIconDom is null, no render switcher span
   if (typeof switcherIcon === 'function') {
-    return switcherIcon({ ...wm.props, isLeaf: isInternalLeaf });
+    return switcherIcon({ ...vm.props, isLeaf: isInternalLeaf });
   }
   return switcherIcon;
 };
@@ -264,13 +264,13 @@ const checkboxNode = () => {
       class={clsx(`${context.prefixCls}-checkbox`, {
         [`${context.prefixCls}-checkbox-checked`]: checked,
         [`${context.prefixCls}-checkbox-indeterminate`]: !checked && halfChecked,
-        [`${context.prefixCls}-checkbox-disabled`]: isDisabled.value || wm.props.disableCheckbox,
+        [`${context.prefixCls}-checkbox-disabled`]: isDisabled.value || vm.props.disableCheckbox,
       })}
       onClick={onCheck}
       role="checkbox"
       aria-checked={halfChecked ? 'mixed' : checked}
-      aria-disabled={isDisabled.value || (wm.props.disableCheckbox as boolean)}
-      aria-label={`Select ${typeof wm.props.title === 'string' ? wm.props.title : 'tree node'}`}
+      aria-disabled={isDisabled.value || (vm.props.disableCheckbox as boolean)}
+      aria-label={`Select ${typeof vm.props.title === 'string' ? vm.props.title : 'tree node'}`}
     >
       <Render content={$custom}></Render>
     </span>
@@ -306,7 +306,7 @@ const iconNode = () => {
 const dropIndicatorNode = () => {
   const rootDraggable = Boolean(context.draggable);
   // allowDrop is calculated in Tree.tsx, there is no need for calc it here
-  const showIndicator = !wm.props.disabled && rootDraggable && context.dragOverNodeKey === eventKey;
+  const showIndicator = !vm.props.disabled && rootDraggable && context.dragOverNodeKey === eventKey;
   if (!showIndicator) {
     return null;
   }
@@ -326,7 +326,7 @@ const dropIndicatorNode = () => {
 
 // Icon + Title
 const selectorNode = () => {
-  const { title = defaultTitle } = wm.props;
+  const { title = defaultTitle } = vm.props;
 
   const wrapClass = `${context.prefixCls}-node-content-wrapper`;
 
@@ -334,14 +334,14 @@ const selectorNode = () => {
   let $icon: any;
 
   if (context.showIcon) {
-    const currentIcon = wm.props.icon || context.icon;
+    const currentIcon = vm.props.icon || context.icon;
 
     $icon = currentIcon ? (
       <span
         class={clsx(treeClassNames.value?.itemIcon, `${context.prefixCls}-iconEle`, `${context.prefixCls}-icon__customize`)}
         style={styles.value?.itemIcon}
       >
-        {typeof currentIcon === 'function' ? currentIcon(wm.props) : currentIcon}
+        {typeof currentIcon === 'function' ? currentIcon(vm.props) : currentIcon}
       </span>
     ) : (
       iconNode

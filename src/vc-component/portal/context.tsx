@@ -16,6 +16,6 @@ export const OrderContextProvider = defineComponent({
   },
   setup(props, { slots }) {
     useOrderContextProvider(props.value);
-    return () => slots.default?.();
+    return () => <>{slots.default?.()}</>;
   },
 });

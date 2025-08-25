@@ -14,7 +14,7 @@ import {
   type HTMLAttributes,
   type VNode,
 } from 'vue';
-import { isDOM } from '../../vc-util/Dom/findDOMNode';
+import { flattenChildren, isDOM } from '../../vc-util/Dom/findDOMNode';
 import { getShadowRoot } from '../../vc-util/Dom/shadow';
 import ResizeObserver from '../resize-observer';
 import { TriggerContextProvider, useTriggerContextInject, type TriggerContextProps } from './context';
@@ -89,7 +89,7 @@ const {
   ...restProps
 } = defineProps<TriggerProps>();
 
-const slots = defineSlots<{ popup?: () => VNode; default?: () => VNode }>();
+const slots = defineSlots<{ popup?: () => VNode[]; default?: () => VNode[] }>();
 
 const slotPopup = computed(() => slots.popup || popup);
 
@@ -196,12 +196,14 @@ watch(
 const lastTriggerRef = ref<boolean[]>([]);
 
 const internalTriggerOpen = (nextOpen: boolean) => {
-  setMergedOpen(nextOpen);
-
+  lastTriggerRef.value = [];
+  nextTick(() => {
+    setMergedOpen(nextOpen);
+  });
   // Enter or Pointer will both trigger open state change
   // We only need take one to avoid duplicated change event trigger
   // Use `lastTriggerRef` to record last open type
-  if ((lastTriggerRef.value[lastTriggerRef.value.length - 1] || mergedOpen.value) !== nextOpen) {
+  if ((lastTriggerRef.value[lastTriggerRef.value.length - 1] ?? mergedOpen.value) !== nextOpen) {
     lastTriggerRef.value.push(nextOpen);
     onOpenChange?.(nextOpen);
   }
@@ -427,7 +429,6 @@ watch(
           setMousePosByEvent(event);
           triggerOpen(true);
         }
-
         // Pass to origin
         originChildProps.value.onClick?.(event, ...args);
         touchedRef.value = false;
@@ -585,7 +586,7 @@ watch(
   <ResizeObserver :disabled="!mergedOpen" :ref="setTargetRef" @resize="onTargetResize">
     <component
       :is="
-        cloneVNode(slots.default?.()[0], {
+        cloneVNode(flattenChildren(slots.default?.())[0], {
           ...mergedChildrenProps,
           ...passedProps,
         })

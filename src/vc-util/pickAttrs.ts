@@ -39,7 +39,7 @@ export interface PickConfig {
  * @param props Passed props
  * @param ariaOnly boolean | { aria?: boolean; data?: boolean; attr?: boolean; } filter config
  */
-export default function pickAttrs(props: object, ariaOnly: boolean | PickConfig = false) {
+export default function pickAttrs(props: object, ariaOnly: boolean | PickConfig = false): any {
   let mergedConfig: PickConfig;
   if (ariaOnly === false) {
     mergedConfig = {

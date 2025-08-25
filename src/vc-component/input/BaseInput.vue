@@ -44,7 +44,7 @@ const WrapperComponent = computed(() => components?.wrapper || 'span');
 const GroupAddonComponent = computed(() => components?.groupAddon || 'span');
 
 const containerRef = ref<HTMLDivElement>(null);
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 function onInputClick(e: MouseEvent) {
   if (containerRef.value?.contains(e.target as Element)) {
     triggerFocus?.();
@@ -54,7 +54,7 @@ function onInputClick(e: MouseEvent) {
 const hasAffix = computed(() => hasPrefixSuffix({ prefix, suffix, allowClear }));
 
 defineExpose<HolderRef>({
-  nativeElement: () => wm.vnode?.el as HTMLElement,
+  nativeElement: () => vm.vnode?.el as HTMLElement,
 });
 
 const Content = computed(() => {

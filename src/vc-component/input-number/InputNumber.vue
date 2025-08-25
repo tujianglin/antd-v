@@ -33,15 +33,15 @@ const focus = (option?: InputFocusOptions) => {
     triggerFocus(inputFocusRef.value, option);
   }
 };
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 function changeRef(instance) {
   inputFocusRef.value = instance?.input?.();
-  wm.exposed = {
+  vm.exposed = {
     focus,
     blur: () => inputFocusRef.value.blur(),
     nativeElement: () => holderRef.value.nativeElement() || instance.domRef(),
   };
-  wm.exposeProxy = {
+  vm.exposeProxy = {
     focus,
     blur: () => inputFocusRef.value.blur(),
     nativeElement: () => holderRef.value.nativeElement() || instance.domRef(),

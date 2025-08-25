@@ -193,11 +193,11 @@ const renderRest = (omittedValues: DisplayValueType[]) => {
     : defaultRenderSelector({ title: content }, content, false);
 };
 
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 
 const changeRef = (instance) => {
-  wm.exposed = instance || {};
-  wm.exposeProxy = instance || {};
+  vm.exposed = instance || {};
+  vm.exposeProxy = instance || {};
 };
 // >>> Input Node
 const inputNode = () => (
@@ -231,7 +231,7 @@ const inputNode = () => (
       onCompositionend={onInputCompositionEnd}
       onBlur={onInputBlur}
       tabindex={tabindex}
-      attrs={pickAttrs(wm.props, true)}
+      attrs={pickAttrs(vm.props, true)}
     />
 
     {/* Measure Node */}

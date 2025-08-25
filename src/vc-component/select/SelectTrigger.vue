@@ -1,6 +1,4 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
-import type { RenderNode } from '@/components/_util/type';
 import Trigger from '@/vc-component/trigger';
 import type { AlignType, BuildInPlacements, TriggerRef } from '@/vc-component/trigger/interface';
 import clsx from 'clsx';
@@ -15,7 +13,7 @@ export interface SelectTriggerProps {
   prefixCls: string;
   disabled: boolean;
   visible: boolean;
-  popupElement: RenderNode;
+  popupElement: any;
 
   animation?: string;
   transitionName?: string;
@@ -25,7 +23,7 @@ export interface SelectTriggerProps {
   popupClassName?: string;
   direction?: string;
   popupMatchSelectWidth?: boolean | number;
-  popupRender?: (menu: RenderNode) => RenderNode;
+  popupRender?: (menu: any) => any;
   getPopupContainer?: RenderDOMFunc;
   popupAlign?: AlignType;
   empty: boolean;
@@ -129,7 +127,6 @@ const stretch = computed(() => {
   if (isNumberPopupWidth.value) {
     return null;
   }
-
   return popupMatchSelectWidth === false ? 'minWidth' : 'width';
 });
 
@@ -163,7 +160,7 @@ defineExpose({
     :builtin-placements="mergedBuiltinPlacements"
     :prefix-cls="popupPrefixCls"
     :popup-motion="{ motionName: mergedTransitionName }"
-    :popup="h('div', { onMousedown: onPopupMouseEnter }, h(Render, { content: popupNode }))"
+    :popup="h('div', { onMousedown: onPopupMouseEnter }, h(popupNode))"
     ref="triggerPopupRef"
     :stretch="stretch"
     :popup-align="popupAlign"
@@ -175,6 +172,7 @@ defineExpose({
       })
     "
     :popup-style="mergedPopupStyle"
+    @open-change="onPopupVisibleChange"
   >
     <slot></slot>
   </Trigger>

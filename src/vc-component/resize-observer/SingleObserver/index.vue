@@ -65,9 +65,9 @@ const onInternalResize = (target: HTMLElement) => {
 };
 
 const currentElement = ref();
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 const registerObserver = () => {
-  const elementRef = findDOMNode(wm);
+  const elementRef = findDOMNode(vm);
   currentElement.value = elementRef;
   if (currentElement.value && !props.disabled) {
     observe(currentElement.value, onInternalResize as any);

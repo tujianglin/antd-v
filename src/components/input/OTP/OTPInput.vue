@@ -61,11 +61,11 @@ function onInternalKeyUp(e) {
   syncSelection();
 }
 
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 function changeRef(instance) {
   inputRef.value = instance;
-  wm.exposed = instance || {};
-  wm.exposeProxy = instance || {};
+  vm.exposed = instance || {};
+  vm.exposeProxy = instance || {};
 }
 </script>
 <template>

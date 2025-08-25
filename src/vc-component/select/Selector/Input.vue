@@ -38,10 +38,10 @@ const { classNames: contextClassNames, styles: contextStyles } = toRefs(useBaseS
 
 const inputNode = computed(() => (inputElement || <input />) as VNode);
 
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 const changeRef = (instance) => {
-  wm.exposed = instance || {};
-  wm.exposeProxy = instance || {};
+  vm.exposed = instance || {};
+  vm.exposeProxy = instance || {};
 };
 </script>
 <template>

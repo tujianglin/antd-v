@@ -83,11 +83,11 @@ const placeholderNode = computed(() => {
   );
 });
 
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 
 const changeRef = (instance) => {
-  wm.exposed = instance || {};
-  wm.exposeProxy = instance || {};
+  vm.exposed = instance || {};
+  vm.exposeProxy = instance || {};
 };
 </script>
 <template>

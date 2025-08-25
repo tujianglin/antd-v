@@ -89,12 +89,12 @@ defineExpose({
   },
 });
 
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 
 const extraProps = computed(() => {
   const res = JSON.parse(JSON.stringify(restProps));
-  if ((wm.props as unknown as TooltipProps).visible) {
-    res.popupVisible = (wm.props as unknown as TooltipProps).visible;
+  if ((vm.props as unknown as TooltipProps).visible) {
+    res.popupVisible = (vm.props as unknown as TooltipProps).visible;
   }
   return res;
 });

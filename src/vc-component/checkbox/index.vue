@@ -43,7 +43,7 @@ const {
   onChange,
   ...inputProps
 } = defineProps<CheckboxProps>();
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 
 const inputRef = shallowRef<HTMLInputElement>(null);
 const holderRef = shallowRef<HTMLElement>(null);
@@ -74,8 +74,8 @@ const handleChange = (e: Event) => {
   value.value = (e.target as HTMLInputElement).checked;
   onChange?.({
     target: {
-      ...wm.props,
-      ...wm.attrs,
+      ...vm.props,
+      ...vm.attrs,
       type,
       checked: (e.target as HTMLInputElement).checked,
     },

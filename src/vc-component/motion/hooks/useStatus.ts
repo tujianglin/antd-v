@@ -145,7 +145,7 @@ export default function useStatus(
         if (!onPrepare) {
           return SkipStep;
         }
-        (onPrepare as any)(getDomElement());
+        return (onPrepare as any)(getDomElement());
       }
 
       // Rest step is sync update

@@ -37,7 +37,7 @@ const { mergedVertical } = toRefs(
   ),
 );
 
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 
 const mergedCls = computed(() => {
   return clsx(
@@ -47,7 +47,7 @@ const mergedCls = computed(() => {
     prefixCls,
     hashId,
     cssVarCls,
-    createFlexClassNames(prefixCls, wm.props),
+    createFlexClassNames(prefixCls, vm.props),
     {
       [`${prefixCls}-rtl`]: ctxDirection?.value === 'rtl',
       [`${prefixCls}-gap-${gap}`]: isPresetSize(gap),

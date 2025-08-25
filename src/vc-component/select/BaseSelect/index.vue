@@ -167,7 +167,7 @@ const customizeInputElement = computed(
 // Used for customize replacement for `rc-cascader`
 const customizeRawInputElement = computed(() => typeof getRawInputElement === 'function' && (getRawInputElement() as VNode));
 
-// const customizeRawInputRef = useComposeRef<HTMLElement>(customDomRef, customizeRawInputElement?.props?.ref);
+const customizeRawInputRef = ref(null);
 
 // ============================== Open ==============================
 // SSR not support Portal which means we need delay `open` for the first time render
@@ -195,11 +195,10 @@ const onToggleOpen = (newOpen?: boolean) => {
   const nextOpen = newOpen !== undefined ? newOpen : !mergedOpen.value;
 
   if (!disabled) {
-    innerOpen.value = nextOpen;
-
     if (mergedOpen.value !== nextOpen) {
       onPopupVisibleChange?.(nextOpen);
     }
+    innerOpen.value = nextOpen;
   }
 };
 
@@ -438,7 +437,6 @@ onBeforeUnmount(() => {
 const onInternalMouseDown = (event) => {
   const { target } = event;
   const popupElement: HTMLDivElement = triggerRef.value?.getPopupElement;
-
   // We should give focus back to selector if clicked item is not focusable
   if (popupElement && popupElement.contains(target as HTMLElement)) {
     const timeoutId = setTimeout(() => {
@@ -553,8 +551,9 @@ const mergedClassName = computed(() => {
   });
 });
 
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 const onPopupMouseEnter = () => {};
+
 // >>> Selector
 const selectorNode = () => {
   return (
@@ -580,10 +579,10 @@ const selectorNode = () => {
       onPopupMouseEnter={onPopupMouseEnter}
     >
       {customizeRawInputElement.value ? (
-        <Render content={cloneVNode(customizeRawInputElement.value)}></Render>
+        cloneVNode(customizeRawInputElement.value, { ref: customizeRawInputRef })
       ) : (
         <Selector
-          {...omit(wm.props, ['onSearch'])}
+          {...omit(vm.props, ['onSearch'])}
           prefixClassName={classNames?.prefix || ''}
           prefixStyle={styles?.prefix || {}}
           prefixCls={prefixCls}

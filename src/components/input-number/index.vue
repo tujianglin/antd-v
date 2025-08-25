@@ -127,10 +127,10 @@ const inputNumberClass = computed(() => {
 });
 const wrapperClassName = `${prefixCls}-group`;
 
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 function changeRef(instance) {
-  wm.exposed = instance || {};
-  wm.exposeProxy = instance || {};
+  vm.exposed = instance || {};
+  vm.exposeProxy = instance || {};
 }
 </script>
 <template>

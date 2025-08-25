@@ -83,14 +83,14 @@ export const toUnrefProps = (refs: Record<string, any>) => {
 };
 
 export const useComposeRef = (expose?: Record<string, any>, ref?: Ref<any>) => {
-  const wm = getCurrentInstance();
+  const vm = getCurrentInstance();
 
   const changeRef = (instacne) => {
     if (ref) {
       ref.value = instacne;
     }
-    wm.exposed = assign(instacne || {}, expose);
-    wm.exposeProxy = assign(instacne || {}, expose);
+    vm.exposed = assign(instacne || {}, expose);
+    vm.exposeProxy = assign(instacne || {}, expose);
   };
 
   return changeRef;

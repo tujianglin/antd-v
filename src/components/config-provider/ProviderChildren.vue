@@ -115,10 +115,10 @@ const baseConfig = computed(() => ({
   watermark,
 }));
 
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 
 const memoedConfig = computed(() => {
-  const props = wm.props as any;
+  const props = vm.props as any;
   const config: ConfigConsumerProps = { ...parentContext };
 
   (Object.keys(baseConfig.value) as (keyof typeof baseConfig.value)[]).forEach((key) => {

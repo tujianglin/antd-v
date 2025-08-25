@@ -33,3 +33,10 @@ function setStyle(style: CSSProperties, options: SetStyleOptions = {}): CSSPrope
 }
 
 export default setStyle;
+
+export function toPx(value: number | string): string {
+  if (typeof value === 'number') {
+    return `${value}px`;
+  }
+  return value;
+}

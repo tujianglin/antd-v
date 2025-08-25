@@ -5,7 +5,7 @@ import { falseToUndefined } from '@/vc-util/props';
 import { getNodeRef, supportRef } from '@/vc-util/ref';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { cloneVNode, computed, getCurrentInstance, ref, toRefs, watch, type VNode } from 'vue';
+import { cloneVNode, computed, getCurrentInstance, ref, toRefs, watch, type CSSProperties, type VNode } from 'vue';
 import { useContextInject } from './context';
 import useStatus from './hooks/useStatus';
 import { isActive } from './hooks/useStepQueue';
@@ -100,9 +100,11 @@ const {
   eventProps,
 } = defineProps<CSSMotionProps>();
 
-const slots = defineSlots<{ default: (props?: Record<string, any>) => VNode }>();
+const slots = defineSlots<{
+  default: (props: { visible?: boolean; class?: string; style?: CSSProperties; [key: string]: any }) => VNode[];
+}>();
 
-const wm = getCurrentInstance();
+const vm = getCurrentInstance();
 
 const { motion: contextMotion } = toRefs(useContextInject());
 
@@ -115,7 +117,7 @@ function isSupportTransition(props: CSSMotionProps, contextMotion?: boolean) {
   return !!(props.motionName && transitionSupport && contextMotion !== false);
 }
 
-const supportMotion = computed(() => isSupportTransition(wm.props, contextMotion?.value));
+const supportMotion = computed(() => isSupportTransition(vm.props, contextMotion?.value));
 
 // Ref to the react node, it may be a HTMLElement
 const nodeRef = ref<any>();
@@ -128,7 +130,7 @@ const [status, statusStep, statusStyle, mergedVisible] = useStatus(
   supportMotion,
   computed(() => visible),
   getDomElement,
-  reactiveComputed(() => falseToUndefined(wm.props)),
+  reactiveComputed(() => falseToUndefined(vm.props)),
 );
 
 // Record whether content has rendered
@@ -145,34 +147,23 @@ watch(
 );
 
 // ====================== Refs ======================
-const refObj = computed((): CSSMotionRef => {
-  const obj = {} as CSSMotionRef;
-  Object.defineProperties(obj, {
-    nativeElement: {
-      enumerable: true,
-      get: getDomElement,
-    },
-    inMotion: {
-      enumerable: true,
-      get: () => () => status.value !== STATUS_NONE,
-    },
-    enableMotion: {
-      enumerable: true,
-      get: () => () => supportMotion,
-    },
-  });
-  return obj;
-});
 
 defineExpose({
-  ...refObj.value,
+  get nativeElement() {
+    return getDomElement();
+  },
+  inMotion() {
+    return status.value !== STATUS_NONE;
+  },
+  enableMotion() {
+    return supportMotion.value;
+  },
 });
 // ===================== Render =====================
 const motionChildren = () => {
   let result = null;
   const children = slots.default;
   const mergedProps = { ...eventProps, visible };
-
   if (!children) {
     result = null;
   } else if (status.value === STATUS_NONE) {
@@ -182,7 +173,7 @@ const motionChildren = () => {
     } else if (!removeOnLeave && renderedRef.value && leavedClassName) {
       result = children({ ...mergedProps, class: leavedClassName, ref: nodeRef });
     } else if (forceRender || (!removeOnLeave && !leavedClassName)) {
-      result = children({ ...mergedProps, style: { visibility: 'hidden' }, ref: nodeRef });
+      result = children({ ...mergedProps, style: { display: 'none' }, ref: nodeRef });
     } else {
       result = null;
     }

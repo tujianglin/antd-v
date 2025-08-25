@@ -18,9 +18,11 @@ const contentCls = computed(() => (customizeContainer.value ? '' : 'abs'));
 <template>
   <div :style="{ height: '200vh' }">
     <div :style="{ border: '2px solid red' }">Real Version: VUE3</div>
-    <button @click="show = !show">show: {{ show }}</button>
-    <button @click="customizeContainer = !customizeContainer">customizeContainer: {{ customizeContainer }}</button>
-    <button @click="lock = !lock">lock: {{ lock }}</button>
+    <div style="margin: 0 200px">
+      <button @click="show = !show">show: {{ show }}</button>
+      <button @click="customizeContainer = !customizeContainer">customizeContainer: {{ customizeContainer }}</button>
+      <button @click="lock = !lock">lock: {{ lock }}</button>
+    </div>
     <div id="customize" ref="divRef" :style="{ border: '1px solid green', minHeight: '10px' }"></div>
     <Portal :open="show" :get-container="getContainer" :auto-lock="lock">
       <p :class="clsx(contentCls, 'root')">Hello Root</p>
