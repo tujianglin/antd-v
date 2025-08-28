@@ -3,7 +3,7 @@ export default {
   items_per_page: '/ страни',
   jump_to: 'Иди на',
   page: '',
-  
+
   // Pagination.jsx
   prev_page: 'Претходна страна',
   next_page: 'Следећа страна',

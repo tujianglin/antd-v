@@ -4,7 +4,7 @@ export default {
   jump_to: 'जाऊ त्यहाँ',
   jump_to_confirm: 'पुष्टि गर्नुहोस्',
   page: 'पृष्ठ',
-  
+
   // Pagination.jsx
   prev_page: 'अघिल्लो पृष्ठ',
   next_page: 'अर्को पृष्ठ',
