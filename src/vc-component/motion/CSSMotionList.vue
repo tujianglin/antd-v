@@ -79,8 +79,8 @@ function removeKey(removeKey: string | number) {
         }
       "
     >
-      <template #default="{ ...motionProps }">
-        <slot v-bind="{ ...motionProps, index }"></slot>
+      <template #default="{ ref: motionRef, ...motionProps }">
+        <slot v-bind="{ ...motionProps, index }" :ref="motionRef"></slot>
       </template>
     </OriginCSSMotion>
   </component>

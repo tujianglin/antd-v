@@ -11,6 +11,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "noImplicitAny": false,
+    "skipLibCheck": true,
     "strictNullChecks": false,
     "types": ["vite/client", "@types/node"],
     "baseUrl": ".",

@@ -74,8 +74,8 @@ onMounted(() => {
         }
       "
     >
-      <template #default="{ key, background, class: className, style }">
-        <div :class="clsx('list-demo-block', className)" :style="{ ...style, background }">
+      <template #default="{ key, background, class: className, style, ref: motionRef }">
+        <div :class="clsx('list-demo-block', className)" :style="{ ...style, background }" :ref="motionRef">
           <span>{{ key }}</span>
         </div>
       </template>
