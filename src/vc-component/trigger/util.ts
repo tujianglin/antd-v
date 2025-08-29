@@ -14,8 +14,7 @@ export function getAlignPopupClassName(
   isAlignPoint: boolean,
 ): string {
   const { points } = align;
-
-  const placements = Object.keys(builtinPlacements);
+  const placements = Object.keys(builtinPlacements || {});
 
   for (let i = 0; i < placements.length; i += 1) {
     const placement = placements[i];

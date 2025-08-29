@@ -534,6 +534,3 @@ const cls = computed(() => {
     />
   </ul>
 </template>
-<style lang="less">
-@import './assets/index.less';
-</style>

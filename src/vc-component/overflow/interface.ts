@@ -20,8 +20,8 @@ export interface OverflowProps<ItemType> extends /** @vue-ignore */ HTMLAttribut
   /** @private Do not use in your production. Render raw node that need wrap Item by developer self */
   renderRawRest?: (omittedItems: ItemType[]) => RenderNode;
   suffix?: RenderNode;
-  component?: string;
-  itemComponent?: string;
+  component?: any;
+  itemComponent?: any;
 
   /** @private This API may be refactor since not well design */
   onVisibleChange?: (visibleCount: number) => void;

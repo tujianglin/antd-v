@@ -410,6 +410,3 @@ const domRef = ref();
     />
   </CascaderContextProvider>
 </template>
-<style lang="less">
-@import './assets/index.less';
-</style>

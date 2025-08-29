@@ -252,6 +252,3 @@ const onPreview = (e) => {
     v-bind="omit(previewConfig, ['src', 'open', 'onOpenChange', 'cover', 'rootClassName'])"
   />
 </template>
-<style lang="less">
-@import './assets/index.less';
-</style>

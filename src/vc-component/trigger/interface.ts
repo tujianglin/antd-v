@@ -146,10 +146,6 @@ export interface TriggerProps {
   defaultPopupVisible?: boolean;
   onOpenChange?: (visible: boolean) => void;
   afterOpenChange?: (visible: boolean) => void;
-  /** @deprecated Use `onOpenChange` instead */
-  onPopupVisibleChange?: (visible: boolean) => void;
-  /** @deprecated Use `afterOpenChange` instead */
-  afterPopupVisibleChange?: (visible: boolean) => void;
 
   // =================== Portal ====================
   getPopupContainer?: (node: HTMLElement) => HTMLElement;

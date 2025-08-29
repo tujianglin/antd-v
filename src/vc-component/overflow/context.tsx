@@ -34,6 +34,6 @@ export const OverflowContextProvider = defineComponent({
   },
   setup(props, { slots }) {
     useOverflowContextProvider(reactiveComputed(() => props.value || ({} as any)));
-    return () => slots.default?.();
+    return () => <>{slots.default?.()}</>;
   },
 });

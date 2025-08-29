@@ -1,0 +1,35 @@
+@import 'variables';
+
+.@{stepsPrefixClass}-vertical {
+  display: block;
+  .@{stepsPrefixClass}-item {
+    display: block;
+    overflow: visible;
+    &-icon {
+      float: left;
+      &-inner {
+        margin-right: 16px;
+      }
+    }
+    &-section {
+      min-height: 48px;
+      overflow: hidden;
+      display: block;
+    }
+    &-title {
+      line-height: 26px;
+      &:after {
+        display: none;
+      }
+    }
+    &-description {
+      padding-bottom: 12px;
+    }
+  }
+
+  &.@{stepsPrefixClass}-small {
+    .@{stepsPrefixClass}-item-title {
+      line-height: 18px;
+    }
+  }
+}

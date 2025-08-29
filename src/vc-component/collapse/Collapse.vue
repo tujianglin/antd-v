@@ -90,6 +90,3 @@ const domRef = ref(null);
     <Render :content="mergedChildren" />
   </div>
 </template>
-<style lang="less">
-@import './assets/index.less';
-</style>

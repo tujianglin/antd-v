@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { isEmpty } from 'lodash-es';
+import { isEmpty, omit } from 'lodash-es';
 import {
   cloneVNode,
   computed,
@@ -118,7 +118,6 @@ const externalPopupRef = ref<HTMLDivElement>(null);
 const setPopupRef = (node) => {
   if (isEmpty(node)) return;
   externalPopupRef.value = node.el;
-
   if (isDOM(node.el) && popupEle.value !== node.el) {
     popupEle.value = node.el;
   }
@@ -172,10 +171,11 @@ const inPopupOrChild = (ele: EventTarget) => {
 };
 
 // ============================ Open ============================
-const internalOpen = ref(defaultPopupVisible);
+const internalOpen = ref(defaultPopupVisible || false);
+const prevPopupVisible = ref(popupVisible);
 
 // Render still use props as first priority
-const mergedOpen = computed(() => popupVisible || internalOpen.value);
+const mergedOpen = computed(() => popupVisible ?? internalOpen.value);
 
 // We use effect sync here in case `popupVisible` back to `undefined`
 const setMergedOpen = (nextOpen: boolean) => {
@@ -188,9 +188,10 @@ watch(
   () => popupVisible,
   async (val) => {
     await nextTick();
+    prevPopupVisible.value = internalOpen.value;
     internalOpen.value = val;
   },
-  { immediate: true, deep: true },
+  { immediate: true },
 );
 
 const lastTriggerRef = ref<boolean[]>([]);
@@ -214,6 +215,7 @@ const delayRef = ref<ReturnType<typeof setTimeout>>(null);
 
 const clearDelay = () => {
   clearTimeout(delayRef.value);
+  delayRef.value = null;
 };
 
 const triggerOpen = (nextOpen: boolean, delay = 0) => {
@@ -392,9 +394,8 @@ const onPopupPointerDown = useWinClick(
   triggerOpen,
 );
 
-let onPopupMouseEnter: (e: MouseEvent) => void;
-let onPopupMouseLeave: VoidFunction;
-
+const onPopupMouseEnter = ref<(e: MouseEvent) => void>();
+const onPopupMouseLeave = ref<(e) => void>();
 const ignoreMouseTrigger = () => {
   return touchedRef.value;
 };
@@ -402,6 +403,8 @@ const ignoreMouseTrigger = () => {
 watch(
   [() => showActions.value, () => hideActions.value],
   ([shows, hides]) => {
+    onPopupMouseEnter.value = undefined;
+    onPopupMouseLeave.value = undefined;
     cloneProps.value = {};
     originChildProps.value = {};
     // ======================= Action: Touch ========================
@@ -443,7 +446,7 @@ watch(
       // Compatible with old browser which not support pointer event
       wrapperAction<MouseEvent>('onMouseenter', true, mouseEnterDelay, onMouseEnterCallback, ignoreMouseTrigger);
       wrapperAction<PointerEvent>('onPointerenter', true, mouseEnterDelay, onMouseEnterCallback, ignoreMouseTrigger);
-      onPopupMouseEnter = (event) => {
+      onPopupMouseEnter.value = (event) => {
         // Only trigger re-open when popup is visible
         if ((mergedOpen.value || inMotion.value) && popupEle.value?.contains(event.target as HTMLElement)) {
           triggerOpen(true, mouseEnterDelay);
@@ -461,7 +464,7 @@ watch(
     if (hides.has('hover')) {
       wrapperAction('onMouseleave', false, mouseLeaveDelay, undefined, ignoreMouseTrigger);
       wrapperAction('onPointerleave', false, mouseLeaveDelay, undefined, ignoreMouseTrigger);
-      onPopupMouseLeave = () => {
+      onPopupMouseLeave.value = () => {
         triggerOpen(false, mouseLeaveDelay);
       };
     }
@@ -581,14 +584,29 @@ watch(
     }
   },
 );
+const onVnodeMounted = (vnode: any) => {
+  const el = vnode.el as HTMLElement;
+  if (el) {
+    el.addEventListener('touchstart', mergedChildrenProps.value.onTouchstart, { passive: true });
+  }
+};
+
+const onVnodeBeforeUnmount = (vnode: any) => {
+  const el = vnode.el as HTMLElement;
+  if (el) {
+    el.removeEventListener('touchstart', mergedChildrenProps.value.onTouchstart);
+  }
+};
 </script>
 <template>
   <ResizeObserver :disabled="!mergedOpen" :ref="setTargetRef" @resize="onTargetResize">
     <component
       :is="
         cloneVNode(flattenChildren(slots.default?.())[0], {
-          ...mergedChildrenProps,
+          ...omit(mergedChildrenProps, 'onTouchstart'),
           ...passedProps,
+          onVnodeMounted,
+          onVnodeBeforeUnmount,
         })
       "
     />
@@ -634,6 +652,3 @@ watch(
     />
   </TriggerContextProvider>
 </template>
-<style lang="less">
-@import './styles/index.less';
-</style>

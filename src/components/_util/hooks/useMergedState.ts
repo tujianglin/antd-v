@@ -38,9 +38,13 @@ export default function useMergedState<T, R = Ref<T>>(
   }
 
   // Effect of reset value to `undefined`
-  watch(value, () => {
-    innerValue.value = value.value as T;
-  });
+  watch(
+    value,
+    () => {
+      innerValue.value = value.value as T;
+    },
+    { deep: true },
+  );
 
   return [mergedValue as unknown as R, triggerChange];
 }

@@ -177,6 +177,3 @@ const defaultPanel = () => {
     <defaultPanel />
   </div>
 </template>
-<style lang="less">
-@import './assets/index.less';
-</style>

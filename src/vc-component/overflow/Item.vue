@@ -112,7 +112,7 @@ defineExpose({
         ...overflowStyle,
         ...style,
       }"
-      v-bind="{ ...overflowProps, ...restProps }"
+      v-bind="{ ...overflowProps, ...restProps, ...$attrs }"
       ref="domRef"
     >
       <Render :content="childNode" />
@@ -126,7 +126,7 @@ defineExpose({
       ...overflowStyle,
       ...style,
     }"
-    v-bind="{ ...overflowProps, ...restProps }"
+    v-bind="{ ...overflowProps, ...restProps, ...$attrs }"
     ref="domRef"
   >
     <Render :content="childNode" />

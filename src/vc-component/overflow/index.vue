@@ -2,7 +2,7 @@
 import { Render } from '../../components';
 import ResizeObserver from '../resize-observer';
 import clsx from 'clsx';
-import { computed, nextTick, ref, useAttrs, watch, type CSSProperties } from 'vue';
+import { computed, nextTick, ref, resolveDynamicComponent, useAttrs, watch, type CSSProperties } from 'vue';
 import { OverflowContextProvider } from './context';
 import { INVALIDATE, RESPONSIVE, type OverflowProps } from './interface';
 import Item from './Item.vue';
@@ -24,6 +24,7 @@ const {
   renderRest,
   renderRawRest,
   suffix,
+  component: Component = 'div',
   itemComponent,
   onVisibleChange,
   ...restProps
@@ -105,7 +106,6 @@ function updateDisplayCount(count: number, suffixFixedStartVal: number, notReady
   if (displayCount.value === count && (suffixFixedStartVal === undefined || suffixFixedStartVal === suffixFixedStart.value)) {
     return;
   }
-
   displayCount.value = count;
   if (!notReady) {
     restReady.value = count < data.length - 1;
@@ -276,7 +276,7 @@ const internalRenderItemNode = () => {
 // >>>>> Rest node
 const restContextProps = computed(() => ({
   order: displayRest.value ? mergedDisplayCount.value : Number.MAX_SAFE_INTEGER,
-  className: `${itemPrefixCls}-rest`,
+  class: `${itemPrefixCls}-rest`,
   registerSize: registerOverflowSize,
   display: displayRest.value,
 }));
@@ -316,9 +316,10 @@ defineExpose({
 });
 
 const attrs = useAttrs();
-const overflowNode = () => {
+const OverflowNode = () => {
+  const Dynamic = resolveDynamicComponent(Component) as any;
   return (
-    <div
+    <Dynamic
       class={clsx(!invalidate.value && prefixCls, className)}
       style={style}
       ref={domRef}
@@ -328,7 +329,7 @@ const overflowNode = () => {
       {mergedData.value.map(internalRenderItemNode())}
 
       {/* Rest Count Item */}
-      {showRest.value ? <Render content={restNode()}></Render> : null}
+      {showRest.value ? <Render content={restNode}></Render> : null}
 
       {/* Suffix Node */}
       {suffix && (
@@ -345,17 +346,13 @@ const overflowNode = () => {
           <Render content={suffix}></Render>
         </Item>
       )}
-    </div>
+    </Dynamic>
   );
 };
 </script>
 <template>
   <ResizeObserver v-if="isResponsive" @resize="onOverflowResize" :disabled="!shouldResponsive">
-    <Render :content="overflowNode()" />
+    <OverflowNode />
   </ResizeObserver>
-  <Render v-else :content="overflowNode()" />
+  <OverflowNode v-else />
 </template>
-
-<style lang="less">
-@import './styles/index.less';
-</style>

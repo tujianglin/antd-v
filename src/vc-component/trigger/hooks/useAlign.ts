@@ -122,11 +122,12 @@ export default function useAlign(
 
   watch(
     [builtinPlacements, placement],
-    ([val1, val2]) => {
-      offsetInfo.value.align = val1[val2] || {};
+    () => {
+      offsetInfo.value.align = builtinPlacements?.value?.[placement?.value] || {};
     },
     { immediate: true, deep: true },
   );
+
   const alignCountRef = ref<number>(0);
 
   const scrollerList = computed(() => {
@@ -162,7 +163,6 @@ export default function useAlign(
 
       const doc = popupElement.ownerDocument;
       const win = getWin(popupElement);
-
       const { position: popupPosition } = win.getComputedStyle(popupElement);
       const originLeft = popupElement.style.left;
       const originTop = popupElement.style.top;
@@ -171,7 +171,7 @@ export default function useAlign(
       const originOverflow = popupElement.style.overflow;
       // Placement
       const placementInfo: AlignType = {
-        ...builtinPlacements.value[placement.value],
+        ...builtinPlacements?.value?.[placement.value],
         ...popupAlign.value,
       };
 
@@ -581,7 +581,6 @@ export default function useAlign(
         nextOffsetY = Math.round(nextOffsetY);
         offsetY4Bottom = Math.round(offsetY4Bottom);
       }
-
       const nextOffsetInfo = {
         ready: true,
         offsetX: nextOffsetX / scaleX,
@@ -612,7 +611,7 @@ export default function useAlign(
 
   // Reset ready status when placement & open changed
   const resetReady = () => {
-    offsetInfo.value.ready = false;
+    offsetInfo.value!.ready = false;
   };
 
   watch(

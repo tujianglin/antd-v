@@ -104,6 +104,3 @@ const domRef = ref(null);
     </span>
   </button>
 </template>
-<style lang="less">
-@import './assets/index.less';
-</style>

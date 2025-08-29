@@ -504,6 +504,3 @@ const OMIT_DOM_PROPS = ['inputValue'];
     />
   </SelectContextProvider>
 </template>
-<style lang="less">
-@import './styles/index.less';
-</style>

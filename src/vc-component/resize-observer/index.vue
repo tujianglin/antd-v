@@ -1,6 +1,5 @@
 <script lang="tsx" setup>
 import { ref } from 'vue';
-import { Render } from '../../components';
 import type { ResizeObserverProps } from './interface';
 import SingleObserver from './SingleObserver/index.vue';
 
@@ -11,8 +10,8 @@ const props = defineProps<ResizeObserverProps>();
 const INTERNAL_PREFIX_KEY = 'rc-observer-key';
 
 const mergedRef = ref();
-const changeRef = (ele) => {
-  mergedRef.value = ele?.el;
+const changeRef = (el) => {
+  mergedRef.value = el?.el;
 };
 
 defineExpose({
@@ -26,8 +25,8 @@ defineExpose({
     v-for="(child, index) in $slots.default?.()"
     v-bind="props"
     :key="child?.key || `${INTERNAL_PREFIX_KEY}-${index}`"
-    :ref="index === 0 ? changeRef : undefined"
+    :ref="index === 0 ? changeRef : null"
   >
-    <Render :content="child" />
+    <component :is="child" />
   </SingleObserver>
 </template>

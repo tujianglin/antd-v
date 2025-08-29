@@ -58,7 +58,3 @@ watch(
     </Portal>
   </RefContextProvider>
 </template>
-<style lang="less">
-@import './assets/bootstrap.less';
-@import './assets/index.less';
-</style>

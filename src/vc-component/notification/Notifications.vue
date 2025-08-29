@@ -167,6 +167,3 @@ const ItemNode = () => {
     </Teleport>
   </template>
 </template>
-<style lang="less">
-@import './assets/index.less';
-</style>

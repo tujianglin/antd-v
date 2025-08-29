@@ -1,0 +1,221 @@
+@import 'variables';
+
+.@{stepsPrefixClass} {
+  font-size: 0;
+  width: 100%;
+  line-height: 1.5;
+  display: flex;
+
+  &,
+  * {
+    box-sizing: border-box;
+  }
+}
+
+.@{stepsPrefixClass}-item {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  flex: 1;
+  // overflow: hidden;
+
+  &:last-child {
+    flex: none;
+  }
+
+  &:last-child &-title:after {
+    display: none;
+  }
+
+  &-icon,
+  &-section {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  &-icon {
+    flex: none;
+    border: 1px solid @wait-icon-color;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    text-align: center;
+    border-radius: 26px;
+    font-size: 14px;
+    transition:
+      background-color 0.3s,
+      border-color 0.3s;
+
+    > .@{stepsPrefixClass}-icon {
+      line-height: 1;
+      top: -1px;
+      color: @primary-color;
+      position: relative;
+
+      &.rcicon {
+        font-size: 12px;
+        position: relative;
+        top: -2px;
+      }
+    }
+  }
+
+  &-section {
+    margin-top: 3px;
+  }
+  &-title {
+    font-size: 14px;
+    color: #666;
+    font-weight: bold;
+    display: inline-block;
+    position: relative;
+  }
+  &-subtitle {
+    font-size: 12px;
+    display: inline-block;
+    color: #999;
+  }
+  &-description {
+    font-size: 12px;
+    color: #999;
+  }
+  .step-item-status(wait);
+  .step-item-status(process);
+  &-process &-icon {
+    background: @process-icon-color;
+    > .@{stepsPrefixClass}-icon {
+      color: #fff;
+    }
+  }
+  .step-item-status(finish);
+  .step-item-status(error);
+
+  &.@{stepsPrefixClass}-next-error .@{stepsPrefixClass}-item-title:after {
+    background: @error-icon-color;
+  }
+}
+
+.@{stepsPrefixClass}-horizontal:not(.@{stepsPrefixClass}-label-vertical) {
+  .@{stepsPrefixClass}-item {
+    &-description {
+      max-width: @stepDescriptionMaxWidth;
+    }
+  }
+}
+
+.step-item-status(@status) {
+  @icon-color: '@{status}-icon-color';
+  @title-color: '@{status}-title-color';
+  @description-color: '@{status}-description-color';
+  @tail-color: '@{status}-tail-color';
+  &-@{status} &-icon {
+    border-color: @@icon-color;
+    background-color: #fff;
+    > .@{stepsPrefixClass}-icon {
+      color: @@icon-color;
+      .@{stepsPrefixClass}-icon-dot {
+        background: @@icon-color;
+      }
+    }
+  }
+  &-@{status} &-title {
+    color: @@title-color;
+  }
+  &-@{status} &-description {
+    color: @@description-color;
+  }
+}
+
+// @import 'custom-icon';
+// @import 'small';
+// @import 'vertical';
+// @import 'label-placement';
+// @import 'progress-dot';
+// @import 'nav';
+// @import 'inline';
+
+// ======================= Horizontal =======================
+.verticalFlex() {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.@{stepsPrefixClass} {
+  .@{stepsPrefixClass}-item {
+    &-section {
+      min-width: 0;
+    }
+
+    &-header {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    // Ellipsis
+    &-title,
+    &-subtitle,
+    &-description {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+.@{stepsPrefixClass}-horizontal {
+  .@{stepsPrefixClass}-item {
+    flex: 1;
+    position: relative;
+    min-width: 0;
+
+    &-rail {
+      height: 1px;
+      background: @process-tail-color;
+    }
+  }
+
+  // Label Vertical
+  &.@{stepsPrefixClass}-label-vertical {
+    .@{stepsPrefixClass}-item {
+      .verticalFlex();
+      padding-inline: 8px;
+
+      &-section {
+        .verticalFlex();
+      }
+
+      &-rail {
+        position: absolute;
+        top: 13px;
+        left: calc(50% + 13px);
+        width: 100%;
+      }
+    }
+  }
+
+  // Label Horizontal
+  &.@{stepsPrefixClass}-label-horizontal {
+    .@{stepsPrefixClass}-item {
+      display: flex;
+
+      &:last-child {
+        flex: none;
+      }
+
+      &-section {
+        flex: 1;
+      }
+
+      &-rail {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+  }
+}
+
+// ======================== Vertical ========================
+.@{stepsPrefixClass}-vertical {
+}

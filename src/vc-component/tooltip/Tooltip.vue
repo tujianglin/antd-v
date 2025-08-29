@@ -148,6 +148,3 @@ const getChildren = () => {
     <getChildren />
   </Trigger>
 </template>
-<style lang="less">
-@import './style/bootstrap_white.less';
-</style>

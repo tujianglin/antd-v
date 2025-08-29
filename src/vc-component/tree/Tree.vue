@@ -1341,6 +1341,3 @@ const contextValue = computed(() => {
     </div>
   </TreeContextProvider>
 </template>
-<style lang="less">
-@import './assets/index.less';
-</style>
