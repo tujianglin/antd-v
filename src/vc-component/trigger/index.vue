@@ -118,6 +118,7 @@ const externalPopupRef = ref<HTMLDivElement>(null);
 const setPopupRef = (node) => {
   if (isEmpty(node)) return;
   externalPopupRef.value = node.el;
+
   if (isDOM(node.el) && popupEle.value !== node.el) {
     popupEle.value = node.el;
   }
@@ -171,11 +172,10 @@ const inPopupOrChild = (ele: EventTarget) => {
 };
 
 // ============================ Open ============================
-const internalOpen = ref(defaultPopupVisible || false);
-const prevPopupVisible = ref(popupVisible);
+const internalOpen = ref(defaultPopupVisible);
 
 // Render still use props as first priority
-const mergedOpen = computed(() => popupVisible ?? internalOpen.value);
+const mergedOpen = computed(() => popupVisible || internalOpen.value);
 
 // We use effect sync here in case `popupVisible` back to `undefined`
 const setMergedOpen = (nextOpen: boolean) => {
@@ -188,7 +188,6 @@ watch(
   () => popupVisible,
   async (val) => {
     await nextTick();
-    prevPopupVisible.value = internalOpen.value;
     internalOpen.value = val;
   },
   { immediate: true },
@@ -215,7 +214,6 @@ const delayRef = ref<ReturnType<typeof setTimeout>>(null);
 
 const clearDelay = () => {
   clearTimeout(delayRef.value);
-  delayRef.value = null;
 };
 
 const triggerOpen = (nextOpen: boolean, delay = 0) => {
@@ -314,7 +312,6 @@ watch(
 
 const alignedClassName = computed(() => {
   const baseClassName = getAlignPopupClassName(builtinPlacements, prefixCls, alignInfo.value, alignPoint);
-
   return clsx(baseClassName, getPopupClassNameFromAlign?.(alignInfo.value));
 });
 
@@ -394,8 +391,9 @@ const onPopupPointerDown = useWinClick(
   triggerOpen,
 );
 
-const onPopupMouseEnter = ref<(e: MouseEvent) => void>();
-const onPopupMouseLeave = ref<(e) => void>();
+let onPopupMouseEnter: (e: MouseEvent) => void;
+let onPopupMouseLeave: VoidFunction;
+
 const ignoreMouseTrigger = () => {
   return touchedRef.value;
 };
@@ -403,8 +401,6 @@ const ignoreMouseTrigger = () => {
 watch(
   [() => showActions.value, () => hideActions.value],
   ([shows, hides]) => {
-    onPopupMouseEnter.value = undefined;
-    onPopupMouseLeave.value = undefined;
     cloneProps.value = {};
     originChildProps.value = {};
     // ======================= Action: Touch ========================
@@ -446,7 +442,7 @@ watch(
       // Compatible with old browser which not support pointer event
       wrapperAction<MouseEvent>('onMouseenter', true, mouseEnterDelay, onMouseEnterCallback, ignoreMouseTrigger);
       wrapperAction<PointerEvent>('onPointerenter', true, mouseEnterDelay, onMouseEnterCallback, ignoreMouseTrigger);
-      onPopupMouseEnter.value = (event) => {
+      onPopupMouseEnter = (event) => {
         // Only trigger re-open when popup is visible
         if ((mergedOpen.value || inMotion.value) && popupEle.value?.contains(event.target as HTMLElement)) {
           triggerOpen(true, mouseEnterDelay);
@@ -464,7 +460,7 @@ watch(
     if (hides.has('hover')) {
       wrapperAction('onMouseleave', false, mouseLeaveDelay, undefined, ignoreMouseTrigger);
       wrapperAction('onPointerleave', false, mouseLeaveDelay, undefined, ignoreMouseTrigger);
-      onPopupMouseLeave.value = () => {
+      onPopupMouseLeave = () => {
         triggerOpen(false, mouseLeaveDelay);
       };
     }
@@ -652,3 +648,6 @@ const onVnodeBeforeUnmount = (vnode: any) => {
     />
   </TriggerContextProvider>
 </template>
+<style lang="less">
+// @import './assets/index.less';
+</style>
