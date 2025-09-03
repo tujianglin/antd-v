@@ -475,8 +475,12 @@ onBeforeUnmount(() => {
 });
 
 defineExpose({
-  domRef: () => domRef.value,
-  input: () => inputRef.value,
+  get domRef() {
+    return domRef.value as HTMLDivElement;
+  },
+  get input() {
+    return inputRef.value as HTMLInputElement;
+  },
 });
 </script>
 

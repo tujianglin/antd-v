@@ -8,7 +8,7 @@ export interface AutoSizeType {
 
 // To compatible with origin usage. We have to wrap this
 export interface ResizableTextAreaRef {
-  textArea: () => HTMLTextAreaElement;
+  textArea: HTMLTextAreaElement;
 }
 
 export type TextAreaProps = {
@@ -22,7 +22,7 @@ export type TextAreaProps = {
   autoSize?: boolean | AutoSizeType;
   onPressEnter?: (e: KeyboardEvent) => void;
   onResize?: (size: { width: number; height: number }) => void;
-  onChange?: (e: Event) => void;
+  onChange?: (e) => void;
   classNames?: CommonInputProps['classNames'] & {
     textarea?: string;
     count?: string;
@@ -36,8 +36,8 @@ export type TextAreaProps = {
   /* @vue-ignore */ Omit<TextareaHTMLAttributes, 'onResize' | 'value' | 'style' | 'onChange' | 'class' | 'hidden' | 'maxlength'>;
 
 export type TextAreaRef = {
-  resizableTextArea: () => ResizableTextAreaRef;
   focus: () => void;
   blur: () => void;
-  nativeElement: () => HTMLElement;
+  resizableTextArea: ResizableTextAreaRef;
+  nativeElement: HTMLElement;
 };

@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import type { ResizableTextAreaRef, TextAreaProps } from './interface';
-import { computed, ref, useAttrs, watch } from 'vue';
+import type { TextAreaProps } from './interface';
+import { computed, ref, useTemplateRef, watch } from 'vue';
 import useCount from '../input/hooks/useCount';
 import { resolveOnChange } from '../input/utils/commonUtils';
 import { Render } from '../../components';
@@ -38,7 +38,6 @@ const {
   onKeydown,
   ...rest
 } = defineProps<TextAreaProps>();
-const attrs = useAttrs();
 
 const value = defineModel<string>('value');
 
@@ -47,20 +46,24 @@ const compositionRef = ref(false);
 const textareaResized = ref(false);
 
 const holderRef = ref<HolderRef>(null);
-const resizableTextAreaRef = ref<ResizableTextAreaRef>(null);
-const getTextArea = () => resizableTextAreaRef.value.textArea?.();
+const resizableTextAreaRef = useTemplateRef('resizableTextAreaRef');
+const getTextArea = () => resizableTextAreaRef.value.textArea;
 
 function focus() {
   getTextArea().focus();
 }
 
 defineExpose({
-  resizableTextArea: () => resizableTextAreaRef.value,
   focus,
   blur: () => {
     getTextArea().blur();
   },
-  nativeElement: () => findDOMNode(holderRef.value.nativeElement()) || getTextArea(),
+  get resizableTextArea() {
+    return resizableTextAreaRef.value;
+  },
+  get nativeElement() {
+    return findDOMNode(holderRef.value.nativeElement) || getTextArea();
+  },
 });
 
 watch(
@@ -225,7 +228,7 @@ const isPureTextArea = computed(() => !autoSize && !showCount && !allowClear);
     @clear="onClear"
   >
     <ResizableTextArea
-      v-bind="{ ...rest, ...attrs }"
+      v-bind="{ ...rest, ...$attrs }"
       v-model:value="value"
       :auto-size="autoSize"
       :maxlength="maxlength"

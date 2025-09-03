@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { getCurrentInstance, ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import { BaseInput } from '../input';
 import type { HolderRef } from '../input/BaseInput.vue';
 import { triggerFocus, type InputFocusOptions } from '../input/utils/commonUtils';
@@ -26,27 +26,21 @@ const {
 const value = defineModel<ValueType>('value');
 
 const holderRef = ref<HolderRef>(null);
-const inputFocusRef = ref<HTMLInputElement>(null);
+const inputFocusRef = useTemplateRef('InternalInputNumberRef');
 
 const focus = (option?: InputFocusOptions) => {
-  if (inputFocusRef.value) {
-    triggerFocus(inputFocusRef.value, option);
+  if (inputFocusRef.value?.input) {
+    triggerFocus(inputFocusRef.value?.input, option);
   }
 };
-const vm = getCurrentInstance();
-function changeRef(instance) {
-  inputFocusRef.value = instance?.input?.();
-  vm.exposed = {
-    focus,
-    blur: () => inputFocusRef.value.blur(),
-    nativeElement: () => holderRef.value.nativeElement() || instance.domRef(),
-  };
-  vm.exposeProxy = {
-    focus,
-    blur: () => inputFocusRef.value.blur(),
-    nativeElement: () => holderRef.value.nativeElement() || instance.domRef(),
-  };
-}
+
+defineExpose({
+  focus,
+  blur: () => inputFocusRef.value?.input?.blur?.(),
+  get nativeElement() {
+    return holderRef.value.nativeElement || inputFocusRef.value?.domRef;
+  },
+});
 </script>
 <template>
   <SemanticContextProvider :value="{ classNames, styles }">
@@ -76,7 +70,7 @@ function changeRef(instance) {
         v-model:value="value"
         :prefix-cls="prefixCls"
         :disabled="disabled"
-        :ref="changeRef"
+        ref="InternalInputNumberRef"
         :class="classNames?.input"
         :style="styles.input"
       />

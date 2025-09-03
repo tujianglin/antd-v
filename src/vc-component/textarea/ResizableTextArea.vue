@@ -155,13 +155,14 @@ const mergedStyle = computed(() => {
 });
 
 defineExpose({
-  textArea: () => textareaRef.value,
+  get textArea() {
+    return textareaRef.value;
+  },
 });
 </script>
 <template>
-  <ResizeObserver @resize="onInternalResize" :disabled="!(autoSize || onResize)">
+  <ResizeObserver :ref="(el: any) => (textareaRef = el?.el)" @resize="onInternalResize" :disabled="!(autoSize || onResize)">
     <textarea
-      ref="textareaRef"
       v-bind="{ ...restProps, ...falseToUndefined($attrs) }"
       :style="mergedStyle"
       :class="

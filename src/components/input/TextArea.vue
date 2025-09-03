@@ -75,9 +75,11 @@ const { mergedClassNames, mergedStyles } = toRefs(
 // ===================== Ref ======================
 const innerRef = ref<VcTextAreaRef>(null);
 defineExpose({
-  resizableTextArea: () => innerRef.value?.resizableTextArea(),
+  get resizableTextArea() {
+    return innerRef.value?.resizableTextArea;
+  },
   focus: (option?: InputFocusOptions) => {
-    triggerFocus(innerRef.value?.resizableTextArea?.()?.textArea(), option);
+    triggerFocus(innerRef.value?.resizableTextArea?.textArea, option);
   },
   blur: () => innerRef.value?.blur(),
 });
@@ -133,7 +135,7 @@ const onInternalResize: VcTextAreaProps['onResize'] = (size) => {
 
   // Change to dirty since this maybe from the `resize: both` style
   if (isMouseDown.value && typeof getComputedStyle === 'function') {
-    const ele = innerRef.value?.nativeElement();
+    const ele = innerRef.value?.nativeElement;
     if (ele && getComputedStyle(ele).resize === 'both') {
       resizeDirty.value = true;
     }

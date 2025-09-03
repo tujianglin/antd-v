@@ -7,7 +7,7 @@ import clsx from 'clsx';
 
 export interface HolderRef {
   /** Provider holder ref. Will return `null` if not wrap anything */
-  nativeElement: () => HTMLElement | null;
+  nativeElement: HTMLElement | null;
 }
 
 defineOptions({ inheritAttrs: false });
@@ -54,12 +54,14 @@ function onInputClick(e: MouseEvent) {
 const hasAffix = computed(() => hasPrefixSuffix({ prefix, suffix, allowClear }));
 
 defineExpose<HolderRef>({
-  nativeElement: () => vm.vnode?.el as HTMLElement,
+  get nativeElement() {
+    return vm.vnode?.el as HTMLElement;
+  },
 });
 
 const Content = computed(() => {
   let element: any = cloneVNode(slots.default?.()[0], {
-    class: clsx(!hasAffix.value && classNames.variant),
+    class: clsx(!hasAffix.value && classNames?.variant),
   });
 
   // ================== Prefix & Suffix ================== //

@@ -1,6 +1,9 @@
-<script lang="tsx" setup>
-import {} from 'vue';
+<script lang="tsx">
+import { defineComponent } from 'vue';
+export default defineComponent({
+  setup() {
+    return () => <div></div>;
+  },
+});
 </script>
-<template>
-  <div>1</div>
-</template>
+<style lang="less" scoped></style>

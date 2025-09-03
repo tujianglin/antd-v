@@ -45,12 +45,12 @@ import SubMenu from './SubMenu/index.vue';
 import { PrivateContextProvider } from './context/PrivateContext';
 import { IdContextProvider } from './context/IdContext';
 import { PathRegisterContextProvider, PathUserContextProvider } from './context/PathContext';
-export interface MenuProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'onClick' | 'onSelect' | 'dir'> {
+export interface MenuProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'onClick' | 'onSelect' | 'dir' | 'onScroll'> {
   prefixCls?: string;
   rootClassName?: string;
   classNames?: Partial<Record<SemanticName, string>>;
   styles?: Partial<Record<SemanticName, CSSProperties>>;
-  items?: ItemType[];
+  items: ItemType[];
 
   disabled?: boolean;
   /** @private Disable auto overflow. Pls note the prop name may refactor since we do not final decided. */
@@ -146,6 +146,7 @@ export interface MenuProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'onCl
   class?: string;
   style?: CSSProperties;
   onKeydown?: (e: KeyboardEvent) => void;
+  onScroll?: (e) => void;
 }
 
 interface LegacyMenuProps extends MenuProps {
@@ -400,7 +401,7 @@ defineExpose({
   },
   findItem: ({ key: itemKey }) => {
     const keys = getKeys();
-    const { key2element } = refreshElements(keys, uuid.value``);
+    const { key2element } = refreshElements(keys, uuid.value);
     return key2element.get(itemKey) || null;
   },
 });

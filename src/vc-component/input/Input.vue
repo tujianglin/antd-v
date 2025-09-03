@@ -81,8 +81,12 @@ defineExpose({
   select: () => {
     inputRef.value?.select();
   },
-  input: () => inputRef.value,
-  nativeElement: () => holderRef.value?.nativeElement() || inputRef.value,
+  get input() {
+    return inputRef.value;
+  },
+  get nativeElement() {
+    return holderRef.value?.nativeElement || inputRef.value;
+  },
 });
 
 watch(
