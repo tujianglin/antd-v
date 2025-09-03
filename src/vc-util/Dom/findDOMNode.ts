@@ -1,8 +1,13 @@
+import { isArray } from 'lodash-es';
 import { Fragment, isVNode, type VNode } from 'vue';
 import { isEmptyElement, isValid } from '../props';
 
 export default function findDOMNode(instance: any): HTMLDivElement {
-  let node = instance?.vnode?.el || (instance && (instance.$el || instance));
+  let node;
+  if (isArray(instance)) {
+    instance = instance[0];
+  }
+  node = instance?.vnode?.el || (instance && (instance.$el || instance.el || instance));
   while (node && !node.tagName) {
     node = node.nextSibling;
   }
