@@ -53,6 +53,9 @@ export function supportRef(nodeOrComponent: unknown): boolean {
   return false;
 }
 
+export const supportNodeRef = (node: any) => {
+  return isVueElement(node) && supportRef(node);
+};
 /**
  * Merge refs into one ref function to support ref passing.
  */
