@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import useMergedState from '@/components/_util/hooks/useMergedState';
 import isValidNode from '@/components/_util/isValidNode';
+import useMergedState from '@/vc-util/hooks/useMergedState';
 import warning from '@/vc-util/warning';
 import { reactiveComputed } from '@vueuse/core';
 import { isEmpty } from 'lodash-es';
@@ -65,7 +65,7 @@ const {
 const open = defineModel('open', { default: false });
 
 const { filterOption, searchValue, optionFilterProp, filterSort, onSearch, autoClearSearchValue } = toRefs(
-  reactiveComputed(() => showSearch),
+  reactiveComputed(() => showSearch || {}),
 );
 
 const mergedId = useId();

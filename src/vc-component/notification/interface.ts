@@ -1,3 +1,4 @@
+import type { VueKey } from '@/vc-util/type';
 import type { AriaAttributes, CSSProperties, HTMLAttributes } from 'vue';
 
 export type Placement = 'top' | 'topLeft' | 'topRight' | 'bottom' | 'bottomLeft' | 'bottomRight';
@@ -27,7 +28,7 @@ export interface NoticeConfig {
 }
 
 export interface OpenConfig extends NoticeConfig {
-  key: PropertyKey;
+  key: VueKey;
   placement?: Placement;
   content?: any;
   duration?: number | null;

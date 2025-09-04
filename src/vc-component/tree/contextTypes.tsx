@@ -2,6 +2,7 @@
  * Webpack has bug for import loop, which is not the same behavior as ES module.
  * When util.js imports the TreeNode for tree generate will cause treeContextTypes be empty.
  */
+import type { VueKey } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
 import {
   defineComponent,
@@ -44,15 +45,15 @@ export interface TreeContextProps<TreeDataType extends BasicDataNode = DataNode>
   icon: IconType;
   switcherIcon: IconType;
   draggable?: DraggableConfig;
-  draggingNodeKey?: PropertyKey;
+  draggingNodeKey?: VueKey;
   checkable: boolean | any;
   checkStrictly: boolean;
   disabled: boolean;
   keyEntities: KeyEntities;
   // for details see comment in Tree.state (Tree.tsx)
   dropLevelOffset?: number;
-  dropContainerKey: PropertyKey | null;
-  dropTargetKey: PropertyKey | null;
+  dropContainerKey: VueKey | null;
+  dropTargetKey: VueKey | null;
   dropPosition: -1 | 0 | 1 | null;
   indent: number | null;
   dropIndicatorRender: (props: {
@@ -62,7 +63,7 @@ export interface TreeContextProps<TreeDataType extends BasicDataNode = DataNode>
     prefixCls: string;
     direction: Direction;
   }) => any;
-  dragOverNodeKey: PropertyKey | null;
+  dragOverNodeKey: VueKey | null;
   direction: Direction;
 
   loadData: (treeNode: EventDataNode<TreeDataType>) => Promise<void>;

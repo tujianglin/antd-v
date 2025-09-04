@@ -2,6 +2,7 @@
  * Legacy code. Should avoid to use if you are new to import these code.
  */
 
+import type { VueKey } from '@/vc-util/type';
 import warning from '@/vc-util/warning';
 import type { BasicDataNode, DataEntity, DataNode, Direction, FlattenNode, KeyEntities, TreeNodeProps } from './interface';
 import type { AllowDrop, TreeProps } from './Tree.vue';
@@ -9,7 +10,7 @@ import getEntity from './utils/keyUtil';
 
 export { getPosition, isTreeNode } from './utils/treeUtil';
 
-export function arrDel(list: PropertyKey[], value: PropertyKey) {
+export function arrDel(list: VueKey[], value: VueKey) {
   if (!list) return [];
   const clone = list.slice();
   const index = clone.indexOf(value);
@@ -19,7 +20,7 @@ export function arrDel(list: PropertyKey[], value: PropertyKey) {
   return clone;
 }
 
-export function arrAdd(list: PropertyKey[], value: PropertyKey) {
+export function arrAdd(list: VueKey[], value: VueKey) {
   const clone = (list || []).slice();
   if (clone.indexOf(value) === -1) {
     clone.push(value);
@@ -32,9 +33,9 @@ export function posToArr(pos: string) {
 }
 
 export function getDragChildrenKeys<TreeDataType extends BasicDataNode = DataNode>(
-  dragNodeKey: PropertyKey,
+  dragNodeKey: VueKey,
   keyEntities: KeyEntities<TreeDataType>,
-): PropertyKey[] {
+): VueKey[] {
   // not contains self
   // self for left or right drag
   const dragChildrenKeys = [];
@@ -78,15 +79,15 @@ export function calcDropPosition<TreeDataType extends BasicDataNode = DataNode>(
   allowDrop: AllowDrop<TreeDataType>,
   flattenedNodes: FlattenNode<TreeDataType>[],
   keyEntities: KeyEntities<TreeDataType>,
-  expandKeys: PropertyKey[],
+  expandKeys: VueKey[],
   direction: Direction,
 ): {
   dropPosition: -1 | 0 | 1;
   dropLevelOffset: number;
-  dropTargetKey: PropertyKey;
+  dropTargetKey: VueKey;
   dropTargetPos: string;
-  dropContainerKey: PropertyKey;
-  dragOverNodeKey: PropertyKey;
+  dropContainerKey: VueKey;
+  dragOverNodeKey: VueKey;
   dropAllowed: boolean;
 } {
   const { clientX, clientY } = event;
@@ -240,7 +241,7 @@ export function calcDropPosition<TreeDataType extends BasicDataNode = DataNode>(
  * @param props
  * @returns [string]
  */
-export function calcSelectedKeys(selectedKeys: PropertyKey[], props: TreeProps) {
+export function calcSelectedKeys(selectedKeys: VueKey[], props: TreeProps) {
   if (!selectedKeys) return undefined;
 
   const { multiple } = props;
@@ -257,13 +258,13 @@ export function calcSelectedKeys(selectedKeys: PropertyKey[], props: TreeProps) 
 /**
  * Parse `checkedKeys` to { checkedKeys, halfCheckedKeys } style
  */
-export function parseCheckedKeys(keys: PropertyKey[] | { checked: PropertyKey[]; halfChecked: PropertyKey[] }) {
+export function parseCheckedKeys(keys: VueKey[] | { checked: VueKey[]; halfChecked: VueKey[] }) {
   if (!keys) {
     return null;
   }
 
   // Convert keys to object format
-  let keyProps: { checkedKeys?: PropertyKey[]; halfCheckedKeys?: PropertyKey[] };
+  let keyProps: { checkedKeys?: VueKey[]; halfCheckedKeys?: VueKey[] };
   if (Array.isArray(keys)) {
     // [Legacy] Follow the api doc
     keyProps = {
@@ -288,10 +289,10 @@ export function parseCheckedKeys(keys: PropertyKey[] | { checked: PropertyKey[];
  * @param keyList
  * @param keyEntities
  */
-export function conductExpandParent(keyList: PropertyKey[], keyEntities: KeyEntities): PropertyKey[] {
-  const expandedKeys = new Set<PropertyKey>();
+export function conductExpandParent(keyList: VueKey[], keyEntities: KeyEntities): VueKey[] {
+  const expandedKeys = new Set<VueKey>();
 
-  function conductUp(key: PropertyKey) {
+  function conductUp(key: VueKey) {
     if (expandedKeys.has(key)) return;
 
     const entity = getEntity(keyEntities, key);

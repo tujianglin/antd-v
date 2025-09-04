@@ -22,6 +22,7 @@ export default function useMergedState<T, R = Ref<T>>(
   const innerValue = ref(initValue) as Ref<T>;
   const mergedValue = ref(initValue) as Ref<T>;
   watchEffect(() => {
+    innerValue.value;
     let val = value.value !== undefined ? value.value : innerValue.value;
     if (option.postState) {
       val = option.postState(val as T);

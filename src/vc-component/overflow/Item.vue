@@ -1,4 +1,5 @@
 <script lang="tsx" setup generic="ItemType">
+import type { VueKey } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, onBeforeUnmount, ref, useSlots, type CSSProperties, type HTMLAttributes } from 'vue';
 import { Render } from '../../components';
@@ -18,8 +19,8 @@ export interface ItemProps<ItemType> extends /** @vue-ignore */ HTMLAttributes {
    * But disable it when it's no need to real measure.
    */
   responsiveDisabled?: boolean;
-  itemKey?: PropertyKey;
-  registerSize: (key: PropertyKey, width: number | null) => void;
+  itemKey?: VueKey;
+  registerSize: (key: VueKey, width: number | null) => void;
   display: boolean;
   order: number;
   component?: string;

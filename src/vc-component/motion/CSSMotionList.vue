@@ -1,4 +1,5 @@
 <script lang="tsx" setup>
+import type { VueKey } from '@/vc-util/type';
 import { omit } from 'lodash-es';
 import { reactive, watch, type HTMLAttributes, type VNode } from 'vue';
 import type { CSSMotionProps } from './CSSMotion.vue';
@@ -6,11 +7,11 @@ import OriginCSSMotion from './CSSMotion.vue';
 import { diffKeys, parseKeys, STATUS_ADD, STATUS_KEEP, STATUS_REMOVE, STATUS_REMOVED, type KeyObject } from './util/diff';
 
 export interface CSSMotionListProps extends Omit<CSSMotionProps, 'onVisibleChanged'>, /** @vue-ignore */ HTMLAttributes {
-  keys: (PropertyKey | { key: PropertyKey; [name: string]: any })[];
+  keys: (VueKey | { key: VueKey; [name: string]: any })[];
   component?: any;
 
   /** This will always trigger after final visible changed. Even if no motion configured. */
-  onVisibleChanged?: (visible: boolean, info: { key: PropertyKey }) => void;
+  onVisibleChanged?: (visible: boolean, info: { key: VueKey }) => void;
   /** All motion leaves in the screen */
   onAllRemoved?: () => void;
 }

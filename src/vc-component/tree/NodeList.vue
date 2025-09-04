@@ -8,6 +8,7 @@ import { findExpandedKeys, getExpandRange } from './utils/diffUtil';
 import { getKey, getTreeNodeProps } from './utils/treeUtil';
 import MotionTreeNode from './MotionTreeNode.vue';
 import { isEqual } from 'lodash-es';
+import type { VueKey } from '@/vc-util/type';
 export interface NodeListRef {
   scrollTo: ScrollTo;
   getIndentWidth: () => number;
@@ -26,16 +27,16 @@ interface NodeListProps<TreeDataType extends BasicDataNode> {
   selectable?: boolean;
   disabled?: boolean;
 
-  expandedKeys: PropertyKey[];
-  selectedKeys: PropertyKey[];
-  checkedKeys: PropertyKey[];
-  loadedKeys: PropertyKey[];
-  loadingKeys: PropertyKey[];
-  halfCheckedKeys: PropertyKey[];
+  expandedKeys: VueKey[];
+  selectedKeys: VueKey[];
+  checkedKeys: VueKey[];
+  loadedKeys: VueKey[];
+  loadingKeys: VueKey[];
+  halfCheckedKeys: VueKey[];
   keyEntities: KeyEntities;
 
   dragging: boolean;
-  dragOverNodeKey: PropertyKey;
+  dragOverNodeKey: VueKey | null;
   dropPosition: number | undefined;
 
   // Virtual list
@@ -49,7 +50,7 @@ interface NodeListProps<TreeDataType extends BasicDataNode> {
   onBlur?: (e: FocusEvent) => void;
   onContextmenu?: (e: MouseEvent) => void;
   onScroll?: (e: UIEvent) => void;
-  onActiveChange: (key: PropertyKey) => void;
+  onActiveChange: (key: VueKey) => void;
 
   onListChangeStart: () => void;
   onListChangeEnd: () => void;

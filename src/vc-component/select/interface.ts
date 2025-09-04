@@ -1,4 +1,5 @@
 import type { RenderNode } from '@/components/_util/type';
+import type { VueKey } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 import type { BaseSelectPropsWithoutPrivate, BaseSelectSemanticName } from './BaseSelect/interface';
 
@@ -6,14 +7,14 @@ export type RawValueType = string | number;
 export interface FlattenOptionData<OptionType> {
   label?: RenderNode;
   data: OptionType;
-  key: PropertyKey;
+  key: VueKey;
   value?: RawValueType;
   groupOption?: boolean;
   group?: boolean;
 }
 
 export interface DisplayValueType {
-  key?: PropertyKey;
+  key?: VueKey;
   value?: RawValueType;
   label?: RenderNode;
   title?: RenderNode;

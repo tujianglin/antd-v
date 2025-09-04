@@ -1,3 +1,5 @@
+import type { VueKey } from '@/vc-util/type';
+
 // Firefox has low performance of map.
 class CacheMap {
   maps: Record<string, number>;
@@ -6,13 +8,13 @@ class CacheMap {
   // `useMemo` no need to update if `id` not change
   id: number = 0;
 
-  diffRecords = new Map<PropertyKey, number>();
+  diffRecords = new Map<VueKey, number>();
 
   constructor() {
     this.maps = Object.create(null);
   }
 
-  set(key: PropertyKey, value: number) {
+  set(key: VueKey, value: number) {
     // Record prev value
     this.diffRecords.set(key, this.maps[key as string]);
 
@@ -20,7 +22,7 @@ class CacheMap {
     this.id += 1;
   }
 
-  get(key: PropertyKey) {
+  get(key: VueKey) {
     return this.maps[key as string];
   }
 

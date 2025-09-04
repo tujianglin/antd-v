@@ -1,3 +1,4 @@
+import type { VueKey } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 import type { SubMenuProps } from './SubMenu/index.vue';
 
@@ -51,7 +52,7 @@ export interface MenuItemType extends ItemSharedProps {
 
   extra?: any;
 
-  key: PropertyKey;
+  key: VueKey;
 
   // >>>>> Active
   onMouseenter?: MenuHoverEventHandler;

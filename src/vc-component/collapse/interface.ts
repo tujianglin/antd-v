@@ -1,4 +1,5 @@
 import type { CSSMotionProps } from '@/vc-component/motion';
+import type { VueKey } from '@/vc-util/type';
 import type { CSSProperties, HTMLAttributes } from 'vue';
 
 export type CollapsibleType = 'header' | 'icon' | 'disabled';
@@ -21,7 +22,7 @@ export interface ItemType
 export interface CollapseProps {
   prefixCls?: string;
   openMotion?: CSSMotionProps;
-  onChange?: (key: PropertyKey[]) => void;
+  onChange?: (key: VueKey[]) => void;
   accordion?: boolean;
   class?: string;
   style?: object;
@@ -55,9 +56,9 @@ export interface CollapsePanelProps extends /** @vue-ignore */ Omit<HTMLAttribut
   accordion?: boolean;
   forceRender?: boolean;
   extra?: any;
-  onItemClick?: (panelKey: PropertyKey) => void;
+  onItemClick?: (panelKey: VueKey) => void;
   expandIcon?: (props: object) => any;
-  panelKey?: PropertyKey;
+  panelKey?: VueKey;
   role?: string;
   collapsible?: CollapsibleType;
   children?: any;

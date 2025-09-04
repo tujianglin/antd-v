@@ -1,6 +1,7 @@
 <script lang="tsx" setup>
 import { Render } from '@/components';
 import pickAttrs from '@/vc-util/pickAttrs';
+import type { VueKey } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, ref, watch } from 'vue';
 import useItems from './hooks/useItems';
@@ -23,7 +24,7 @@ const {
   styles,
 } = defineProps<CollapseProps>();
 
-function getActiveKeysArray(activeKey: PropertyKey | PropertyKey[]) {
+function getActiveKeysArray(activeKey: VueKey | VueKey[]) {
   let currentActiveKey = activeKey;
   if (!Array.isArray(currentActiveKey)) {
     const activeKeyType = typeof currentActiveKey;
@@ -34,7 +35,7 @@ function getActiveKeysArray(activeKey: PropertyKey | PropertyKey[]) {
 
 const collapseClassName = computed(() => clsx(prefixCls, className));
 
-const activeKey = defineModel<PropertyKey[]>('activeKey', {
+const activeKey = defineModel<VueKey[]>('activeKey', {
   get(v) {
     return getActiveKeysArray(v);
   },
@@ -47,7 +48,7 @@ watch(
   },
   { deep: true },
 );
-const onItemClick = (key: PropertyKey) => {
+const onItemClick = (key: VueKey) => {
   if (accordion) {
     activeKey.value = activeKey.value[0] === key ? [] : [key];
     return;

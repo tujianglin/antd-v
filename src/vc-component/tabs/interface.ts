@@ -1,5 +1,6 @@
 import type { DropdownProps } from '@/vc-component/dropdown';
 import type { CSSMotionProps } from '@/vc-component/motion';
+import type { VueKey } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 import type { TabPaneProps } from './TabPanelList/TabPane.vue';
 
@@ -13,7 +14,7 @@ export type MoreProps = {
 
 export type SizeInfo = [width: number, height: number];
 
-export type TabSizeMap = Map<PropertyKey, { width: number; height: number; left: number; top: number }>;
+export type TabSizeMap = Map<VueKey, { width: number; height: number; left: number; top: number }>;
 
 export interface TabOffset {
   width: number;
@@ -23,7 +24,7 @@ export interface TabOffset {
   top: number;
 }
 
-export type TabOffsetMap = Map<PropertyKey, TabOffset>;
+export type TabOffsetMap = Map<VueKey, TabOffset>;
 
 export type TabPosition = 'left' | 'right' | 'top' | 'bottom';
 

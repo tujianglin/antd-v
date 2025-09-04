@@ -1,10 +1,11 @@
+import type { VueKey } from '@/vc-util/type';
 import type { EditableConfig } from './interface';
 
 /**
  * We trade Map as deps which may change with same value but different ref object.
  * We should make it as hash for deps
  * */
-export function stringify<K extends PropertyKey, V>(obj: Record<K, V> | Map<K, V>) {
+export function stringify<K extends VueKey, V>(obj: Record<K, V> | Map<K, V>) {
   let tgt: Record<K, V>;
 
   if (obj instanceof Map) {
@@ -21,7 +22,7 @@ export function stringify<K extends PropertyKey, V>(obj: Record<K, V> | Map<K, V
 
 const RC_TABS_DOUBLE_QUOTE = 'TABS_DQ';
 
-export function genDataNodeKey(key: PropertyKey): string {
+export function genDataNodeKey(key: VueKey): string {
   return String(key).replace(/"/g, RC_TABS_DOUBLE_QUOTE);
 }
 

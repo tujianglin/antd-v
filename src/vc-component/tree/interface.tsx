@@ -1,3 +1,4 @@
+import type { VueKey } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 
 export const MOTION_KEY = `RC_TREE_MOTION_${Math.random()}`;
@@ -16,7 +17,7 @@ export const MotionEntity: DataEntity = {
 };
 
 export interface TreeNodeProps<TreeDataType extends BasicDataNode = DataNode> {
-  eventKey?: PropertyKey; // Pass by parent `cloneElement`
+  eventKey?: VueKey; // Pass by parent `cloneElement`
   prefixCls?: string;
   class?: string;
   style?: CSSProperties;
@@ -78,17 +79,16 @@ export type FieldDataNode<T, ChildFieldName extends string = 'children'> = Basic
  * It's safe to remove this when typescript fix:
  * https://github.com/microsoft/TypeScript/issues/50217
  */
-export type SafeKey = Exclude<PropertyKey, bigint>;
 
-export type KeyEntities<DateType extends BasicDataNode = any> = Record<SafeKey, DataEntity<DateType>>;
+export type KeyEntities<DateType extends BasicDataNode = any> = Record<VueKey, DataEntity<DateType>>;
 
 export type DataNode = FieldDataNode<{
-  key: PropertyKey;
+  key: VueKey;
   title?: any | ((data: DataNode) => any);
 }>;
 
 export type EventDataNode<TreeDataType> = {
-  key: PropertyKey;
+  key: VueKey;
   expanded: boolean;
   selected: boolean;
   checked: boolean;
@@ -119,7 +119,7 @@ export type NodeInstance<TreeDataType extends BasicDataNode = DataNode> = TreeNo
 export interface Entity {
   node: NodeElement;
   index: number;
-  key: PropertyKey;
+  key: VueKey;
   pos: string;
   parent?: Entity;
   children?: Entity[];
@@ -139,12 +139,12 @@ export interface FlattenNode<TreeDataType extends BasicDataNode = DataNode> {
   pos: string;
   data: TreeDataType;
   title: any;
-  key: PropertyKey;
+  key: VueKey;
   isStart: boolean[];
   isEnd: boolean[];
 }
 
-export type GetKey<RecordType> = (record: RecordType, index?: number) => PropertyKey;
+export type GetKey<RecordType> = (record: RecordType, index?: number) => VueKey;
 
 export type GetCheckDisabled<RecordType> = (record: RecordType) => boolean;
 

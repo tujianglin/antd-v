@@ -1,10 +1,22 @@
 <script lang="tsx" setup generic="TreeDataType extends BasicDataNode = DataNode">
 import KeyCode from '@/vc-util/KeyCode';
 import pickAttrs from '@/vc-util/pickAttrs';
+import type { VueKey } from '@/vc-util/type';
 import warning from '@/vc-util/warning';
 import clsx from 'clsx';
 import { assign } from 'lodash-es';
-import { computed, markRaw, onBeforeUnmount, onMounted, reactive, ref, useAttrs, watch, type CSSProperties } from 'vue';
+import {
+  computed,
+  markRaw,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  useAttrs,
+  useTemplateRef,
+  watch,
+  type CSSProperties,
+} from 'vue';
 import {
   TreeContextProvider,
   type NodeDragEventParams,
@@ -23,10 +35,8 @@ import {
   type FlattenNode,
   type IconType,
   type KeyEntities,
-  type SafeKey,
   type TreeNodeProps,
 } from './interface';
-import type { NodeListRef } from './NodeList.vue';
 import NodeList from './NodeList.vue';
 import {
   arrAdd,
@@ -55,7 +65,7 @@ export interface CheckInfo<TreeDataType extends BasicDataNode = DataNode> {
   nativeEvent: MouseEvent;
   checkedNodes: TreeDataType[];
   checkedNodesPositions?: { node: TreeDataType; pos: string }[];
-  halfCheckedKeys?: PropertyKey[];
+  halfCheckedKeys?: VueKey[];
 }
 
 export interface AllowDropOptions<TreeDataType extends BasicDataNode = DataNode> {
@@ -81,7 +91,7 @@ export interface TreeProps<TreeDataType extends BasicDataNode = DataNode> {
   styles?: Partial<Record<SemanticName, CSSProperties>>;
   classNames?: Partial<Record<SemanticName, string>>;
   focusable?: boolean;
-  activeKey?: PropertyKey | null;
+  activeKey?: VueKey | null;
   tabindex?: number;
   treeData?: TreeDataType[]; // Generate treeNode by children
   fieldNames?: FieldNames;
@@ -98,12 +108,12 @@ export interface TreeProps<TreeDataType extends BasicDataNode = DataNode> {
   defaultExpandParent?: boolean;
   autoExpandParent?: boolean;
   defaultExpandAll?: boolean;
-  defaultExpandedKeys?: PropertyKey[];
-  expandedKeys?: PropertyKey[];
-  defaultCheckedKeys?: PropertyKey[];
-  checkedKeys?: PropertyKey[] | { checked: PropertyKey[]; halfChecked: PropertyKey[] };
-  defaultSelectedKeys?: PropertyKey[];
-  selectedKeys?: PropertyKey[];
+  defaultExpandedKeys?: VueKey[];
+  expandedKeys?: VueKey[];
+  defaultCheckedKeys?: VueKey[];
+  checkedKeys?: VueKey[] | { checked: VueKey[]; halfChecked: VueKey[] };
+  defaultSelectedKeys?: VueKey[];
+  selectedKeys?: VueKey[];
   allowDrop?: AllowDrop<TreeDataType>;
   titleRender?: any;
   dropIndicatorRender?: any;
@@ -115,19 +125,16 @@ export interface TreeProps<TreeDataType extends BasicDataNode = DataNode> {
   onDoubleClick?: NodeMouseEventHandler<TreeDataType>;
   onScroll?: (e: UIEvent) => void;
   onExpand?: (
-    expandedKeys: PropertyKey[],
+    expandedKeys: VueKey[],
     info: {
       node: EventDataNode<TreeDataType>;
       expanded: boolean;
       nativeEvent: MouseEvent;
     },
   ) => void;
-  onCheck?: (
-    checked: { checked: PropertyKey[]; halfChecked: PropertyKey[] } | PropertyKey[],
-    info: CheckInfo<TreeDataType>,
-  ) => void;
+  onCheck?: (checked: { checked: VueKey[]; halfChecked: VueKey[] } | VueKey[], info: CheckInfo<TreeDataType>) => void;
   onSelect?: (
-    selectedKeys: PropertyKey[],
+    selectedKeys: VueKey[],
     info: {
       event: 'select';
       selected: boolean;
@@ -137,26 +144,26 @@ export interface TreeProps<TreeDataType extends BasicDataNode = DataNode> {
     },
   ) => void;
   onLoad?: (
-    loadedKeys: PropertyKey[],
+    loadedKeys: VueKey[],
     info: {
       event: 'load';
       node: EventDataNode<TreeDataType>;
     },
   ) => void;
   loadData?: (treeNode: EventDataNode<TreeDataType>) => Promise<any>;
-  loadedKeys?: PropertyKey[];
+  loadedKeys?: VueKey[];
   onMouseEnter?: (info: NodeMouseEventParams<TreeDataType>) => void;
   onMouseLeave?: (info: NodeMouseEventParams<TreeDataType>) => void;
   onRightClick?: (info: { event: MouseEvent; node: EventDataNode<TreeDataType> }) => void;
   onDragStart?: (info: NodeDragEventParams<TreeDataType>) => void;
-  onDragEnter?: (info: NodeDragEventParams<TreeDataType> & { expandedKeys: PropertyKey[] }) => void;
+  onDragEnter?: (info: NodeDragEventParams<TreeDataType> & { expandedKeys: VueKey[] }) => void;
   onDragOver?: (info: NodeDragEventParams<TreeDataType>) => void;
   onDragLeave?: (info: NodeDragEventParams<TreeDataType>) => void;
   onDragEnd?: (info: NodeDragEventParams<TreeDataType>) => void;
   onDrop?: (
     info: NodeDragEventParams<TreeDataType> & {
       dragNode: EventDataNode<TreeDataType>;
-      dragNodesKeys: PropertyKey[];
+      dragNodesKeys: VueKey[];
       dropPosition: number;
       dropToGap: boolean;
     },
@@ -165,7 +172,7 @@ export interface TreeProps<TreeDataType extends BasicDataNode = DataNode> {
    * Used for `rc-tree-select` only.
    * Do not use in your production code directly since this will be refactor.
    */
-  onActiveChange?: (key: PropertyKey) => void;
+  onActiveChange?: (key: VueKey) => void;
   filterTreeNode?: (treeNode: EventDataNode<TreeDataType>) => boolean;
   motion?: any;
   switcherIcon?: IconType;
@@ -189,30 +196,30 @@ interface TreeState<TreeDataType extends BasicDataNode = DataNode> {
 
   indent: number | null;
 
-  selectedKeys: PropertyKey[];
-  checkedKeys: PropertyKey[];
-  halfCheckedKeys: PropertyKey[];
-  loadedKeys: PropertyKey[];
-  loadingKeys: PropertyKey[];
-  expandedKeys: PropertyKey[];
+  selectedKeys: VueKey[];
+  checkedKeys: VueKey[];
+  halfCheckedKeys: VueKey[];
+  loadedKeys: VueKey[];
+  loadingKeys: VueKey[];
+  expandedKeys: VueKey[];
 
-  draggingNodeKey: PropertyKey;
-  dragChildrenKeys: PropertyKey[];
+  draggingNodeKey: VueKey;
+  dragChildrenKeys: VueKey[];
 
   // for details see comment in Tree.state
   dropPosition: -1 | 0 | 1 | null;
   dropLevelOffset: number | null;
-  dropContainerKey: PropertyKey | null;
-  dropTargetKey: PropertyKey | null;
+  dropContainerKey: VueKey | null;
+  dropTargetKey: VueKey | null;
   dropTargetPos: string | null;
   dropAllowed: boolean;
-  dragOverNodeKey: PropertyKey | null;
+  dragOverNodeKey: VueKey | null;
 
   treeData: TreeDataType[];
   flattenNodes: FlattenNode<TreeDataType>[];
 
   focused: boolean;
-  activeKey: PropertyKey | null;
+  activeKey: VueKey | null;
 
   // Record if list is changing
   listChanging: boolean;
@@ -251,9 +258,9 @@ const MAX_RETRY_TIMES = 10;
 
 const destroyed = ref(false);
 
-const delayedDragEnterLogic = ref<Record<SafeKey, number>>();
+const delayedDragEnterLogic = ref<Record<VueKey, number>>();
 
-const loadingRetryTimes = ref<Record<SafeKey, number>>({});
+const loadingRetryTimes = ref<Record<VueKey, number>>({});
 
 const state = reactive<TreeState<TreeDataType>>({
   keyEntities: {},
@@ -303,7 +310,7 @@ const dragNodeProps = ref<TreeNodeProps<TreeDataType>>(null);
 
 const currentMouseOverDroppableNodeKey = ref(null);
 
-const listRef = ref<NodeListRef>();
+const listRef = useTemplateRef('listRef');
 
 onMounted(() => {
   destroyed.value = false;
@@ -379,7 +386,7 @@ function getDerivedStateFromProps(props: TreeProps<DataNode>, prevState: TreeSta
     delete cloneKeyEntities[MOTION_KEY];
 
     // Only take the key who has the children to enhance the performance
-    const nextExpandedKeys: PropertyKey[] = [];
+    const nextExpandedKeys: VueKey[] = [];
     Object.keys(cloneKeyEntities).forEach((key) => {
       const entity = cloneKeyEntities[key];
       if (entity.children && entity.children.length) {
@@ -420,7 +427,7 @@ function getDerivedStateFromProps(props: TreeProps<DataNode>, prevState: TreeSta
 
   // ================= checkedKeys =================
   if (props.checkable) {
-    let checkedKeyEntity: { checkedKeys?: PropertyKey[]; halfCheckedKeys?: PropertyKey[] };
+    let checkedKeyEntity: { checkedKeys?: VueKey[]; halfCheckedKeys?: VueKey[] };
 
     if (needSync('checkedKeys')) {
       checkedKeyEntity = parseCheckedKeys(props.checkedKeys) || {};
@@ -837,7 +844,7 @@ function onNodeCheck(e: MouseEvent, treeNode: EventDataNode<TreeDataType>, check
   const { key } = treeNode;
 
   // Prepare trigger arguments
-  let checkedObj: { checked: PropertyKey[]; halfChecked: PropertyKey[] } | PropertyKey[];
+  let checkedObj: { checked: VueKey[]; halfChecked: VueKey[] } | VueKey[];
 
   const eventObj: Partial<CheckInfo<TreeDataType>> = {
     event: 'check',
@@ -934,8 +941,8 @@ function onNodeLoad(treeNode: EventDataNode<TreeDataType>) {
         state.loadingKeys = arrDel(state.loadingKeys, key);
 
         // If exceed max retry times, we give up retry
-        loadingRetryTimes[key as SafeKey] = (loadingRetryTimes[key as SafeKey] || 0) + 1;
-        if (loadingRetryTimes[key as SafeKey] >= MAX_RETRY_TIMES) {
+        loadingRetryTimes[key as VueKey] = (loadingRetryTimes[key as VueKey] || 0) + 1;
+        if (loadingRetryTimes[key as VueKey] >= MAX_RETRY_TIMES) {
           const { loadedKeys: currentLoadedKeys } = state;
 
           warning(false, 'Retry for `loadData` many times but still failed. No more retry.');
@@ -1018,7 +1025,7 @@ function getTreeNodeRequiredProps() {
 
 // =========================== Expanded ===========================
 /** Set uncontrolled `expandedKeys`. This will also auto update `flattenNodes`. */
-function setExpandedKeys(expandedKeys: PropertyKey[]) {
+function setExpandedKeys(expandedKeys: VueKey[]) {
   const { treeData, fieldNames } = state;
   const flattenNodes = flattenTreeData<TreeDataType>(treeData as TreeDataType[], expandedKeys, fieldNames);
   setUncontrolledState({ expandedKeys, flattenNodes }, true);
@@ -1085,7 +1092,7 @@ function onListChangeEnd() {
 }
 
 // =========================== Keyboard ===========================
-function onInnerActiveChange(newActiveKey: PropertyKey | null) {
+function onInnerActiveChange(newActiveKey: VueKey | null) {
   const { activeKey } = state;
   const { onActiveChange, itemScrollOffset = 0 } = props;
 
@@ -1296,6 +1303,11 @@ const contextValue = computed(() => {
     onNodeDragEnd,
     onNodeDrop,
   } as any;
+});
+
+defineExpose({
+  scrollTo,
+  onKeydown: onKeyDown,
 });
 </script>
 <template>

@@ -1,15 +1,15 @@
 <script lang="tsx" setup>
-export interface ItemProps {
-  setRef: (element: HTMLElement) => void;
-}
-import { cloneVNode } from 'vue';
+import findDOMNode from '@/vc-util/Dom/findDOMNode';
+import { getCurrentInstance } from 'vue';
 
-const props = defineProps<ItemProps>();
+const vm = getCurrentInstance();
 
-function refFunc(node) {
-  props.setRef(node);
-}
+defineExpose({
+  get el() {
+    return findDOMNode(vm);
+  },
+});
 </script>
 <template>
-  <component :is="cloneVNode($slots.default?.()[0], { ref: refFunc })" />
+  <slot></slot>
 </template>

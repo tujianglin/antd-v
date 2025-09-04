@@ -1,3 +1,4 @@
+import type { VueKey } from '@/vc-util/type';
 import type { CSSProperties, HTMLAttributes } from 'vue';
 import type { RenderNode } from '../../components/_util/type';
 import type { InnerProps } from './Filler.vue';
@@ -7,12 +8,12 @@ import type { ScrollPos, ScrollTarget } from './hooks/useScrollTo';
 export type RenderFunc<T> = (data: { item: T; index: number; props: { style: CSSProperties; offsetX: number } }) => RenderNode;
 
 export interface SharedConfig<T> {
-  getKey: (item: T) => PropertyKey;
+  getKey: (item: T) => VueKey;
 }
 
-export type GetKey<T> = (item: T) => PropertyKey;
+export type GetKey<T> = (item: T) => VueKey;
 
-export type GetSize = (startKey: PropertyKey, endKey?: PropertyKey) => { top: number; bottom: number };
+export type GetSize = (startKey: VueKey, endKey?: VueKey) => { top: number; bottom: number };
 
 export interface ExtraRenderInfo {
   /** Virtual list start line */
@@ -54,7 +55,7 @@ export interface ListProps<T> extends /** @vue-ignore */ Omit<HTMLAttributes, 'o
   itemHeight?: number;
   /** If not match virtual scroll condition, Set List still use height of container. */
   fullHeight?: boolean;
-  itemKey: PropertyKey | ((item: T) => PropertyKey);
+  itemKey: VueKey | ((item: T) => VueKey);
   component?: string;
   /** Set `false` will always use real scroll instead of virtual one */
   virtual?: boolean;

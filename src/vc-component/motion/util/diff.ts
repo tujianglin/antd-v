@@ -1,3 +1,5 @@
+import type { VueKey } from '@/vc-util/type';
+
 export const STATUS_ADD = 'add' as const;
 export const STATUS_KEEP = 'keep' as const;
 export const STATUS_REMOVE = 'remove' as const;
@@ -11,7 +13,7 @@ export interface KeyObject {
   status?: DiffStatus;
 }
 
-export function wrapKeyToObject(key: PropertyKey | KeyObject) {
+export function wrapKeyToObject(key: VueKey | KeyObject) {
   let keyObj: KeyObject;
   if (key && typeof key === 'object' && 'key' in key) {
     keyObj = key;

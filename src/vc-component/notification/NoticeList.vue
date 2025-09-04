@@ -1,5 +1,6 @@
 <script lang="tsx" setup>
 import { CSSMotionList, type CSSMotionProps } from '@/vc-component/motion';
+import type { VueKey } from '@/vc-util/type';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
 import { computed, ref, toRefs, watch, type CSSProperties } from 'vue';
@@ -17,7 +18,7 @@ export interface NoticeListProps {
 
   // Events
   onAllNoticeRemoved?: (placement: Placement) => void;
-  onNoticeClose?: (key: PropertyKey) => void;
+  onNoticeClose?: (key: VueKey) => void;
 
   // Common
   class?: string;

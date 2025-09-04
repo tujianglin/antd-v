@@ -1,14 +1,15 @@
+import type { VueKey } from '@/vc-util/type';
 import warning from '@/vc-util/warning';
 import type { BasicDataNode, DataEntity, DataNode, GetCheckDisabled, KeyEntities } from '../interface';
 import getEntity from './keyUtil';
 
 interface ConductReturnType {
-  checkedKeys: PropertyKey[];
-  halfCheckedKeys: PropertyKey[];
+  checkedKeys: VueKey[];
+  halfCheckedKeys: VueKey[];
 }
 
-function removeFromCheckedKeys(halfCheckedKeys: Set<PropertyKey>, checkedKeys: Set<PropertyKey>) {
-  const filteredKeys = new Set<PropertyKey>();
+function removeFromCheckedKeys(halfCheckedKeys: Set<VueKey>, checkedKeys: Set<VueKey>) {
+  const filteredKeys = new Set<VueKey>();
   halfCheckedKeys.forEach((key) => {
     if (!checkedKeys.has(key)) {
       filteredKeys.add(key);
@@ -24,13 +25,13 @@ export function isCheckDisabled<TreeDataType>(node: TreeDataType) {
 
 // Fill miss keys
 function fillConductCheck<TreeDataType extends BasicDataNode = DataNode>(
-  keys: Set<PropertyKey>,
+  keys: Set<VueKey>,
   levelEntities: Map<number, Set<DataEntity<TreeDataType>>>,
   maxLevel: number,
   syntheticGetCheckDisabled: GetCheckDisabled<TreeDataType>,
 ): ConductReturnType {
-  const checkedKeys = new Set<PropertyKey>(keys);
-  const halfCheckedKeys = new Set<PropertyKey>();
+  const checkedKeys = new Set<VueKey>(keys);
+  const halfCheckedKeys = new Set<VueKey>();
 
   // Add checked keys top to bottom
   for (let level = 0; level <= maxLevel; level += 1) {
@@ -49,7 +50,7 @@ function fillConductCheck<TreeDataType extends BasicDataNode = DataNode>(
   }
 
   // Add checked keys from bottom to top
-  const visitedKeys = new Set<PropertyKey>();
+  const visitedKeys = new Set<VueKey>();
   for (let level = maxLevel; level >= 0; level -= 1) {
     const entities = levelEntities.get(level) || new Set();
     entities.forEach((entity) => {
@@ -100,14 +101,14 @@ function fillConductCheck<TreeDataType extends BasicDataNode = DataNode>(
 
 // Remove useless key
 function cleanConductCheck<TreeDataType extends BasicDataNode = DataNode>(
-  keys: Set<PropertyKey>,
-  halfKeys: PropertyKey[],
+  keys: Set<VueKey>,
+  halfKeys: VueKey[],
   levelEntities: Map<number, Set<DataEntity<TreeDataType>>>,
   maxLevel: number,
   syntheticGetCheckDisabled: GetCheckDisabled<TreeDataType>,
 ): ConductReturnType {
-  const checkedKeys = new Set<PropertyKey>(keys);
-  let halfCheckedKeys = new Set<PropertyKey>(halfKeys);
+  const checkedKeys = new Set<VueKey>(keys);
+  let halfCheckedKeys = new Set<VueKey>(halfKeys);
 
   // Remove checked keys from top to bottom
   for (let level = 0; level <= maxLevel; level += 1) {
@@ -126,8 +127,8 @@ function cleanConductCheck<TreeDataType extends BasicDataNode = DataNode>(
   }
 
   // Remove checked keys form bottom to top
-  halfCheckedKeys = new Set<PropertyKey>();
-  const visitedKeys = new Set<PropertyKey>();
+  halfCheckedKeys = new Set<VueKey>();
+  const visitedKeys = new Set<VueKey>();
   for (let level = maxLevel; level >= 0; level -= 1) {
     const entities = levelEntities.get(level) || new Set();
 
@@ -184,12 +185,12 @@ function cleanConductCheck<TreeDataType extends BasicDataNode = DataNode>(
  * @param mode `fill` to fill missing key, `clean` to remove useless key
  */
 export function conductCheck<TreeDataType extends BasicDataNode = DataNode>(
-  keyList: PropertyKey[],
-  checked: true | { checked: false; halfCheckedKeys: PropertyKey[] },
+  keyList: VueKey[],
+  checked: true | { checked: false; halfCheckedKeys: VueKey[] },
   keyEntities: KeyEntities<TreeDataType>,
   getCheckDisabled?: GetCheckDisabled<TreeDataType>,
 ): ConductReturnType {
-  const warningMissKeys: PropertyKey[] = [];
+  const warningMissKeys: VueKey[] = [];
 
   let syntheticGetCheckDisabled: GetCheckDisabled<TreeDataType>;
   if (getCheckDisabled) {
@@ -199,7 +200,7 @@ export function conductCheck<TreeDataType extends BasicDataNode = DataNode>(
   }
 
   // We only handle exist keys
-  const keys = new Set<PropertyKey>(
+  const keys = new Set<VueKey>(
     keyList.filter((key) => {
       const hasEntity = !!getEntity(keyEntities, key);
       if (!hasEntity) {

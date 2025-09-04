@@ -1,4 +1,5 @@
 import type { CSSMotionProps } from '@/vc-component/motion';
+import type { VueKey } from '@/vc-util/type';
 import { computed, ref, watch, watchEffect, type AriaAttributes, type CSSProperties, type Ref } from 'vue';
 import type { NotificationsProps, NotificationsRef } from '../Notifications.vue';
 import Notifications from '../Notifications.vue';
@@ -32,7 +33,7 @@ export interface NotificationConfig {
 
 export interface NotificationAPI {
   open: (config: OptionalConfig) => void;
-  close: (key: PropertyKey) => void;
+  close: (key: VueKey) => void;
   destroy: () => void;
 }
 
@@ -43,7 +44,7 @@ interface OpenTask {
 
 interface CloseTask {
   type: 'close';
-  key: PropertyKey;
+  key: VueKey;
 }
 
 interface DestroyTask {

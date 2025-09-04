@@ -1,3 +1,4 @@
+import type { VueKey } from '@/vc-util/type';
 import clsx from 'clsx';
 import type { CSSProperties } from 'vue';
 import type { FlexProps } from './interface';
@@ -40,7 +41,7 @@ const genClsWrap = (prefixCls: string, props: FlexProps) => {
 };
 
 const genClsAlign = (prefixCls: string, props: FlexProps) => {
-  const alignCls: Record<PropertyKey, boolean> = {};
+  const alignCls: Record<VueKey, boolean> = {};
   alignItemsValues.forEach((cssKey) => {
     alignCls[`${prefixCls}-align-${cssKey}`] = props.align === cssKey;
   });
@@ -49,7 +50,7 @@ const genClsAlign = (prefixCls: string, props: FlexProps) => {
 };
 
 const genClsJustify = (prefixCls: string, props: FlexProps) => {
-  const justifyCls: Record<PropertyKey, boolean> = {};
+  const justifyCls: Record<VueKey, boolean> = {};
   justifyContentValues.forEach((cssKey) => {
     justifyCls[`${prefixCls}-justify-${cssKey}`] = props.justify === cssKey;
   });

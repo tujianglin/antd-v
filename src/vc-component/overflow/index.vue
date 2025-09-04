@@ -7,6 +7,7 @@ import { OverflowContextProvider } from './context';
 import { INVALIDATE, RESPONSIVE, type OverflowProps } from './interface';
 import Item from './Item.vue';
 import { falseToUndefined } from '../../vc-util/props';
+import type { VueKey } from '@/vc-util/type';
 
 defineOptions({ name: 'Overflow', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -35,7 +36,7 @@ const fullySSR = computed(() => ssr === 'full');
 const containerWidth = ref(null);
 const mergedContainerWidth = computed(() => containerWidth.value || 0);
 
-const itemWidths = ref(new Map<PropertyKey, number>());
+const itemWidths = ref(new Map<VueKey, number>());
 
 const prevRestWidth = ref<number>(0);
 const restWidth = ref<number>(0);
@@ -123,7 +124,7 @@ function onOverflowResize(_: object, element: HTMLElement) {
   containerWidth.value = element.clientWidth;
 }
 
-function registerSize(key: PropertyKey, width: number | null) {
+function registerSize(key: VueKey, width: number | null) {
   const clone = new Map(itemWidths.value);
 
   if (width === null) {
@@ -134,12 +135,12 @@ function registerSize(key: PropertyKey, width: number | null) {
   itemWidths.value = clone;
 }
 
-function registerOverflowSize(_: PropertyKey, width: number | null) {
+function registerOverflowSize(_: VueKey, width: number | null) {
   restWidth.value = width!;
   prevRestWidth.value = restWidth.value;
 }
 
-function registerSuffixSize(_: PropertyKey, width: number | null) {
+function registerSuffixSize(_: VueKey, width: number | null) {
   suffixWidth.value = width!;
 }
 

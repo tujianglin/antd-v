@@ -1,6 +1,7 @@
 import type { TokenType } from '@/vc-cssinjs';
+import type { VueKey } from '@/vc-util/type';
 
-export type TokenMap = Record<PropertyKey, any>;
+export type TokenMap = Record<VueKey, any>;
 
 export type TokenMapKey<CompTokenMap extends TokenMap> = Extract<keyof CompTokenMap, string>;
 

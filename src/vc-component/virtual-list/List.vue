@@ -1,11 +1,9 @@
 <script lang="tsx" setup generic="T">
-import { reactiveComputed } from '@vueuse/core';
+import { Render } from '@/components';
+import { falseToUndefined } from '@/vc-util/props';
 import clsx from 'clsx';
-import { computed, nextTick, onBeforeUnmount, ref, toRefs, watch, type CSSProperties } from 'vue';
-import { Render } from '../../components';
-import { falseToUndefined } from '../../vc-util/props';
-import type { ResizeObserverProps } from '../resize-observer';
-import ResizeObserver from '../resize-observer';
+import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch, watchEffect, type CSSProperties } from 'vue';
+import ResizeObserver, { type ResizeObserverProps } from '../resize-observer';
 import Filler from './Filler.vue';
 import useChildren from './hooks/useChildren';
 import useDiffItem from './hooks/useDiffItem';
@@ -55,34 +53,35 @@ const ScrollStyle: CSSProperties = {
 };
 
 // =============================== Item Key ===============================
-const getKey = (item: T) => {
-  if (typeof itemKey === 'function') {
-    return itemKey(item);
-  }
-  return item?.[itemKey as string];
+const itemKeyRef = shallowRef((_item: Record<string, any>) => undefined);
+watch(
+  () => itemKey,
+  (val) => {
+    if (typeof val === 'function') {
+      itemKeyRef.value = val as any;
+    } else {
+      itemKeyRef.value = (item) => item?.[val];
+    }
+  },
+  { immediate: true },
+);
+const getKey = (item: Record<string, any>) => {
+  return itemKeyRef.value(item);
 };
 
+const mergedData = computed<T[]>(() => data || EMPTY_DATA);
 // ================================ Height ================================
-const [setInstanceRef, collectHeight, heights, heightUpdatedMark] = useHeights(getKey, null, null);
+const [setInstanceRef, collectHeight, heights, heightUpdatedMark] = useHeights(mergedData, getKey, null, null);
 
 // ================================= MISC =================================
-const useVirtual = computed(() => {
-  return !!(virtual && height && itemHeight);
-});
-const containerHeight = computed(() => {
-  // eslint-disable-next-line no-unused-expressions
-  heights.value?.id;
-  return Object.values(heights.value?.maps).reduce((total, curr) => total + curr, 0);
-});
-
-const inVirtual = computed(() => {
-  return useVirtual.value && data && (Math.max(itemHeight * data.length, containerHeight.value) > height || !!scrollWidth);
-});
-
+const useVirtual = computed(() => !!(virtual && height && itemHeight));
+const containerHeight = computed(() => Object.values(heights.maps).reduce((total, curr) => total + curr, 0));
+const inVirtual = computed(
+  () => useVirtual.value && data && (Math.max(itemHeight * data.length, containerHeight.value) > height || !!scrollWidth),
+);
 const isRTL = computed(() => direction === 'rtl');
 
-const mergedClassName = computed(() => clsx(prefixCls, { [`${prefixCls}-rtl`]: isRTL.value }, className));
-const mergedData = computed(() => data || EMPTY_DATA);
+const mergedClassName = computed(() => clsx(prefixCls, { [`${prefixCls}-rtl`]: isRTL }, className));
 const componentRef = ref<HTMLDivElement>();
 const fillerInnerRef = ref();
 const containerRef = ref<HTMLDivElement>();
@@ -104,7 +103,6 @@ const sharedConfig: SharedConfig<T> = {
   getKey,
 };
 
-// ================================ Scroll ================================
 function syncScrollTop(newTop: number | ((prev: number) => number)) {
   let value: number;
   if (typeof newTop === 'function') {
@@ -115,10 +113,14 @@ function syncScrollTop(newTop: number | ((prev: number) => number)) {
 
   const alignedTop = keepInRange(value);
 
-  componentRef.value.scrollTop = alignedTop;
+  if (componentRef.value) {
+    componentRef.value.scrollTop = alignedTop;
+  }
   offsetTop.value = alignedTop;
 }
 
+// ================================ Legacy ================================
+// Put ref here since the range is generate by follow
 // ================================ Legacy ================================
 // Put ref here since the range is generate by follow
 const rangeRef = ref({ start: 0, end: 0 });
@@ -141,17 +143,13 @@ watch(
 );
 
 // ========================== Visible Calculation =========================
-const {
-  scrollHeight,
-  start,
-  end,
-  offset: fillerOffset,
-} = toRefs(
-  reactiveComputed(() => {
-    // eslint-disable-next-line no-unused-expressions
-    heightUpdatedMark.value;
-    // eslint-disable-next-line no-unused-expressions
-    height;
+const scrollHeight = ref();
+const start = ref(0);
+const end = ref(0);
+const fillerOffset = ref();
+watch(
+  [inVirtual, useVirtual, offsetTop, mergedData, heightUpdatedMark, () => height],
+  () => {
     if (!useVirtual.value) {
       return {
         scrollHeight: undefined,
@@ -172,26 +170,30 @@ const {
     }
 
     let itemTop = 0;
-    let startIndex: number;
-    let startOffset: number;
-    let endIndex: number;
-
+    let startIndex: number | undefined;
+    let startOffset: number | undefined;
+    let endIndex: number | undefined;
     const dataLen = mergedData.value.length;
+    const data = mergedData.value;
+    const scrollTop = offsetTop.value;
+    const scrollTopHeight = scrollTop + height;
     for (let i = 0; i < dataLen; i += 1) {
-      const item = mergedData.value[i];
+      const item = data[i];
       const key = getKey(item);
 
-      const cacheHeight = heights.value.get(key);
-      const currentItemBottom = itemTop + (cacheHeight === undefined ? itemHeight : cacheHeight);
+      let cacheHeight = heights.get(key);
+      if (cacheHeight === undefined) {
+        cacheHeight = itemHeight;
+      }
+      const currentItemBottom = itemTop + cacheHeight;
 
-      // Check item top in the range
-      if (currentItemBottom >= offsetTop.value && startIndex === undefined) {
+      if (startIndex === undefined && currentItemBottom >= scrollTop) {
         startIndex = i;
         startOffset = itemTop;
       }
 
       // Check item bottom in the range. We will render additional one item for motion usage
-      if (currentItemBottom > offsetTop.value + height && endIndex === undefined) {
+      if (endIndex === undefined && currentItemBottom > scrollTopHeight) {
         endIndex = i;
       }
 
@@ -202,27 +204,23 @@ const {
     if (startIndex === undefined) {
       startIndex = 0;
       startOffset = 0;
-
       endIndex = Math.ceil(height / itemHeight);
     }
     if (endIndex === undefined) {
-      endIndex = mergedData.value.length - 1;
+      endIndex = dataLen - 1;
     }
-
     // Give cache to improve scroll experience
-    endIndex = Math.min(endIndex + 1, mergedData.value.length - 1);
-
-    return {
-      scrollHeight: itemTop,
-      start: startIndex,
-      end: endIndex,
-      offset: startOffset,
-    };
-  }),
+    endIndex = Math.min(endIndex + 1, dataLen);
+    scrollHeight.value = itemTop;
+    start.value = startIndex;
+    end.value = endIndex;
+    fillerOffset.value = startOffset;
+  },
+  { immediate: true },
 );
 
 watch(
-  [() => start.value, () => end.value],
+  [start, end],
   () => {
     rangeRef.value.start = start.value;
     rangeRef.value.end = end.value;
@@ -237,7 +235,7 @@ watch(
   () => scrollHeight.value,
   async () => {
     await nextTick();
-    const changedRecord = heights.value.getRecord();
+    const changedRecord = heights.getRecord();
     if (changedRecord.size === 1) {
       const recordKey = Array.from(changedRecord.keys())[0];
       const prevCacheHeight = changedRecord.get(recordKey);
@@ -247,7 +245,7 @@ watch(
       if (startItem && prevCacheHeight === undefined) {
         const startIndexKey = getKey(startItem);
         if (startIndexKey === recordKey) {
-          const realStartHeight = heights.value.get(recordKey);
+          const realStartHeight = heights.get(recordKey);
           const diffHeight = realStartHeight - itemHeight;
           syncScrollTop((ori) => {
             return ori + diffHeight;
@@ -256,11 +254,10 @@ watch(
       }
     }
 
-    heights.value.resetRecord();
+    heights.resetRecord();
   },
   { flush: 'post', immediate: true },
 );
-
 // ================================= Size =================================
 const size = ref({ width: 0, height });
 watch(
@@ -426,7 +423,6 @@ useMobileTouchMove(useVirtual, componentRef, (isHorizontal, delta, smoothOffset,
 useScrollDrag(inVirtual, componentRef, (offset) => {
   syncScrollTop((top) => top + offset);
 });
-
 // Firefox only
 function onMozMousePixelScroll(e: WheelEvent) {
   // scrolling at top/bottom limit
@@ -436,26 +432,26 @@ function onMozMousePixelScroll(e: WheelEvent) {
     e.preventDefault();
   }
 }
-
-watch(
-  [() => useVirtual.value, () => isScrollAtTop.value, () => isScrollAtBottom.value],
-  async () => {
-    await nextTick();
-
-    const componentEle = componentRef.value;
-    componentEle?.addEventListener('wheel', onRawWheel, { passive: false });
-    componentEle?.addEventListener('DOMMouseScroll', onFireFoxScroll as any, { passive: true });
-    componentEle?.addEventListener('MozMousePixelScroll', onMozMousePixelScroll as any, { passive: false });
-  },
-  { flush: 'post', immediate: true },
-);
+const removeEventListener = () => {
+  if (componentRef.value) {
+    componentRef.value.removeEventListener('wheel', onRawWheel as any);
+    componentRef.value.removeEventListener('DOMMouseScroll', onFireFoxScroll as any);
+    componentRef.value.removeEventListener('MozMousePixelScroll', onMozMousePixelScroll as any);
+  }
+};
+watchEffect(() => {
+  nextTick(() => {
+    if (componentRef.value) {
+      removeEventListener();
+      componentRef.value.addEventListener('wheel', onRawWheel, { passive: false });
+      componentRef.value.addEventListener('DOMMouseScroll', onFireFoxScroll as any);
+      componentRef.value.addEventListener('MozMousePixelScroll', onMozMousePixelScroll as any);
+    }
+  });
+});
 
 onBeforeUnmount(() => {
-  const componentEle = componentRef.value;
-  if (!componentEle) return;
-  componentEle.removeEventListener('wheel', onRawWheel);
-  componentEle.removeEventListener('DOMMouseScroll', onFireFoxScroll as any);
-  componentEle.removeEventListener('MozMousePixelScroll', onMozMousePixelScroll as any);
+  removeEventListener();
 });
 
 // Sync scroll left
@@ -483,7 +479,7 @@ const scrollTo = useScrollTo<T>(
   heights,
   computed(() => itemHeight),
   getKey,
-  () => collectHeight(true),
+  () => collectHeight(),
   syncScrollTop,
   delayHideScrollBar,
 );
@@ -515,7 +511,7 @@ defineExpose({
 // ================================ Effect ================================
 /** We need told outside that some list not rendered */
 watch(
-  [() => start.value, () => end.value, () => mergedData.value],
+  [start, end, mergedData],
   async () => {
     await nextTick();
     if (onVisibleChange) {
@@ -524,7 +520,7 @@ watch(
       onVisibleChange(renderList, mergedData.value);
     }
   },
-  { flush: 'post', immediate: true },
+  { flush: 'post' },
 );
 
 // ================================ Extra =================================
@@ -608,9 +604,7 @@ const containerProps = computed(() => {
           :extra="extraContent"
         >
           <Render
-            :content="
-              useChildren < T > (mergedData, start, end, scrollWidth, offsetLeft, setInstanceRef, $slots.default, sharedConfig)
-            "
+            :content="useChildren(mergedData, start, end, scrollWidth, offsetLeft, setInstanceRef, $slots.default, sharedConfig)"
           />
         </Filler>
       </component>

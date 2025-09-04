@@ -1,6 +1,6 @@
+import raf from '@/vc-util/raf';
+import warning from '@/vc-util/warning';
 import { nextTick, ref, watch, type Ref } from 'vue';
-import raf from '../../../vc-util/raf';
-import warning from '../../../vc-util/warning';
 import type { GetKey } from '../interface';
 import type CacheMap from '../utils/CacheMap';
 
@@ -28,7 +28,7 @@ export type ScrollTarget =
 export default function useScrollTo<T>(
   containerRef: Ref<HTMLDivElement>,
   data: Ref<T[]>,
-  heights: Ref<CacheMap>,
+  heights: CacheMap,
   itemHeight: Ref<number>,
   getKey: GetKey<T>,
   collectHeight: () => void,
@@ -81,7 +81,7 @@ export default function useScrollTo<T>(
           for (let i = 0; i <= maxLen; i += 1) {
             const key = getKey(data.value[i]);
             itemTop = stackTop;
-            const cacheHeight = heights.value.get(key);
+            const cacheHeight = heights.get(key);
             itemBottom = itemTop + (cacheHeight === undefined ? itemHeight.value : cacheHeight);
 
             stackTop = itemBottom;
@@ -91,7 +91,7 @@ export default function useScrollTo<T>(
           let leftHeight = mergedAlign === 'top' ? offset : height - offset;
           for (let i = maxLen; i >= 0; i -= 1) {
             const key = getKey(data.value[i]);
-            const cacheHeight = heights.value.get(key);
+            const cacheHeight = heights.get(key);
 
             if (cacheHeight === undefined) {
               needCollectHeight = true;

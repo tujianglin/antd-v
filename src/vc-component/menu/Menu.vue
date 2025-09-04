@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import useMergedState from '@/components/_util/hooks/useMergedState';
+import useMergedState from '@/vc-util/hooks/useMergedState';
 import type { CSSMotionProps } from '@/vc-component/motion';
 import isEqual from '@/vc-util/isEqual';
 import warning from '@/vc-util/warning';

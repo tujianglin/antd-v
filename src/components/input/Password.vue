@@ -12,6 +12,7 @@ import Input from './index.vue';
 import { omit } from 'lodash-es';
 import Render from '../render';
 import isValidNode from '../_util/isValidNode';
+import type { VueKey } from '@/vc-util/type';
 
 interface VisibilityToggle {
   visible?: boolean;
@@ -45,7 +46,7 @@ function defaultIconRender(visible: boolean) {
   return visible ? <EyeOutlined /> : <EyeInvisibleOutlined />;
 }
 
-const actionMap: Record<PropertyKey, string> = {
+const actionMap: Record<VueKey, string> = {
   click: 'onClick',
   hover: 'onMouseOver',
 };

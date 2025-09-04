@@ -1,94 +1,64 @@
-import { onBeforeUnmount, ref, type Ref } from 'vue';
-import findDOMNode from '../../../vc-util/Dom/findDOMNode';
+import wrapperRaf from '@/vc-util/raf';
+import type { Ref, ShallowRef, VNodeProps } from 'vue';
+import { onUnmounted, ref, watch } from 'vue';
 import type { GetKey } from '../interface';
 import CacheMap from '../utils/CacheMap';
 
-function parseNumber(value: string) {
-  const num = parseFloat(value);
-  return isNaN(num) ? 0 : num;
-}
-
 export default function useHeights<T>(
+  mergedData: ShallowRef<any[]>,
   getKey: GetKey<T>,
-  onItemAdd?: (item: T) => void,
-  onItemRemove?: (item: T) => void,
-): [
-  setInstanceRef: (item: T, instance: HTMLElement) => void,
-  collectHeight: (sync?: boolean) => void,
-  cacheMap: Ref<CacheMap>,
-  updatedMark: Ref<number>,
-] {
-  const updatedMark = ref(0);
-  const instanceRef = ref(new Map<PropertyKey, HTMLElement>());
-  const heightsRef = ref(new CacheMap());
-
-  let promiseIdRef = 0;
+  onItemAdd?: ((item: T) => void) | null,
+  onItemRemove?: ((item: T) => void) | null,
+): [(item: T, instance: HTMLElement) => void, () => void, CacheMap, Ref<symbol>] {
+  const instance = new Map<VNodeProps['key'], HTMLElement>();
+  const heights = new CacheMap();
+  const updatedMark = ref(Symbol('update'));
+  watch(mergedData, () => {
+    updatedMark.value = Symbol('update');
+  });
+  let collectRaf: number;
 
   function cancelRaf() {
-    promiseIdRef += 1;
+    wrapperRaf.cancel(collectRaf);
   }
-
-  function collectHeight(sync = false) {
+  function collectHeight() {
     cancelRaf();
-    const doCollect = () => {
-      let changed = false;
-      instanceRef.value.forEach((element, key) => {
-        const dom = findDOMNode(element);
-        if (dom) {
-          const { offsetHeight } = dom;
-          const { marginTop, marginBottom } = getComputedStyle(dom);
-          const marginTopNum = parseNumber(marginTop);
-          const marginBottomNum = parseNumber(marginBottom);
-          const totalHeight = offsetHeight + marginTopNum + marginBottomNum;
-          if (heightsRef.value.get(key) !== totalHeight) {
-            heightsRef.value.set(key, totalHeight);
-            changed = true;
+    collectRaf = wrapperRaf(() => {
+      instance.forEach((element, key: any) => {
+        if (element && element.offsetParent) {
+          const { offsetHeight } = element;
+          if (heights.get(key) !== offsetHeight) {
+            updatedMark.value = Symbol('update');
+            heights.set(key, element.offsetHeight);
           }
         }
       });
-      // Always trigger update mark to tell parent that should re-calculate heights when resized
-      if (changed) {
-        updatedMark.value = updatedMark.value + 1;
-      }
-    };
-
-    if (sync) {
-      doCollect();
-    } else {
-      promiseIdRef += 1;
-      const id = promiseIdRef;
-      Promise.resolve().then(() => {
-        if (id === promiseIdRef) {
-          doCollect();
-        }
-      });
-    }
+    });
   }
 
-  function setInstanceRef(item: T, instance: HTMLElement) {
+  function setInstance(item: T, ins: HTMLElement) {
     const key = getKey(item);
-    const origin = instanceRef.value.get(key);
+    const origin = instance.get(key);
 
-    if (instance) {
-      instanceRef.value.set(key, instance);
+    if (ins) {
+      instance.set(key, (ins as any).$el || ins);
       collectHeight();
     } else {
-      instanceRef.value.delete(key);
+      instance.delete(key);
     }
 
     // Instance changed
-    if (!origin !== !instance) {
-      if (instance) {
+    if (!origin !== !ins) {
+      if (ins) {
         onItemAdd?.(item);
       } else {
         onItemRemove?.(item);
       }
     }
   }
-
-  onBeforeUnmount(() => {
+  onUnmounted(() => {
     cancelRaf();
   });
 
-  return [setInstanceRef, collectHeight, heightsRef, updatedMark];
+  return [setInstance, collectHeight, heights, updatedMark];
 }

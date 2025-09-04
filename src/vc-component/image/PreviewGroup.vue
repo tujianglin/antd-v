@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import useMergedState from '@/components/_util/hooks/useMergedState';
+import useMergedState from '@/vc-util/hooks/useMergedState';
 import { reactiveComputed } from '@vueuse/core';
 import { omit } from 'lodash-es';
 import { computed, ref, watch, type CSSProperties } from 'vue';

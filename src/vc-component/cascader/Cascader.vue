@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
-import useMergedState from '@/components/_util/hooks/useMergedState';
 import { BaseSelect, type BaseSelectProps, type BaseSelectPropsWithoutPrivate, type BaseSelectRef } from '@/vc-component/select';
 import type { DisplayValueType, Placement } from '@/vc-component/select/interface';
 import type { BuildInPlacements } from '@/vc-component/trigger';
+import useMergedState from '@/vc-util/hooks/useMergedState';
 import { toReactive } from '@vueuse/core';
 import { computed, getCurrentInstance, ref, toRefs, useId, type CSSProperties } from 'vue';
 import { CascaderContextProvider } from './context';

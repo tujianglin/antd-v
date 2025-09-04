@@ -27,7 +27,7 @@ export default function useChildren<T>(
 
     const key = getKey(item);
     return (
-      <Item key={key} setRef={(ele) => setNodeRef(item, ele)}>
+      <Item key={key} ref={(el: any) => setNodeRef(item, el?.el)}>
         {node}
       </Item>
     );

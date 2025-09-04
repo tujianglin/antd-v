@@ -2,6 +2,7 @@
 import { Render } from '@/components';
 import KeyCode from '@/vc-util/KeyCode';
 import pickAttrs from '@/vc-util/pickAttrs';
+import type { VueKey } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, getCurrentInstance, onBeforeUnmount, ref, watch, type CSSProperties } from 'vue';
 import type { NoticeConfig } from './interface';
@@ -10,10 +11,10 @@ export interface NoticeProps extends Omit<NoticeConfig, 'onClose'> {
   prefixCls: string;
   class?: string;
   style?: CSSProperties;
-  eventKey: PropertyKey;
+  eventKey: VueKey;
 
   onClick?: (e: MouseEvent) => void;
-  onNoticeClose?: (key: PropertyKey) => void;
+  onNoticeClose?: (key: VueKey) => void;
   hovering?: boolean;
 }
 

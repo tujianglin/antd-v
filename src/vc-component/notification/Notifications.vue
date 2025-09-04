@@ -4,6 +4,7 @@ import { computed, ref, watch, type CSSProperties } from 'vue';
 import type { InnerOpenConfig, OpenConfig, Placement, Placements, StackConfig } from './interface';
 import NoticeList from './NoticeList.vue';
 import { Render } from '@/components';
+import type { VueKey } from '@/vc-util/type';
 
 export interface NotificationsProps {
   prefixCls?: string;
@@ -14,12 +15,12 @@ export interface NotificationsProps {
   style?: (placement: Placement) => CSSProperties;
   onAllRemoved?: VoidFunction;
   stack?: StackConfig;
-  renderNotifications?: (node: any, info: { prefixCls: string; key: PropertyKey }) => any;
+  renderNotifications?: (node: any, info: { prefixCls: string; key: VueKey }) => any;
 }
 
 export interface NotificationsRef {
   open: (config: OpenConfig) => void;
-  close: (key: PropertyKey) => void;
+  close: (key: VueKey) => void;
   destroy: () => void;
 }
 
@@ -40,7 +41,7 @@ const {
 const configList = ref<any[]>([]);
 
 // ======================== Close =========================
-const onNoticeClose = (key: PropertyKey) => {
+const onNoticeClose = (key: VueKey) => {
   // Trigger close event
   const config = configList.value.find((item) => item.key === key);
   const closable = config?.closable;

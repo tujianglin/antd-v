@@ -1,3 +1,4 @@
+import type { VueKey } from '@/vc-util/type';
 import { assign, camelCase } from 'lodash-es';
 import type { Component, ComponentPublicInstance, FunctionalComponent, Ref, VNode, VNodeChild } from 'vue';
 import { Fragment, getCurrentInstance, isVNode } from 'vue';
@@ -5,7 +6,7 @@ import { Fragment, getCurrentInstance, isVNode } from 'vue';
 /** https://github.com/Microsoft/TypeScript/issues/29729 */
 export type LiteralUnion<T extends string> = T | (string & {});
 
-export type AnyObject = Record<PropertyKey, any>;
+export type AnyObject = Record<VueKey, any>;
 
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 declare type VNodeChildAtom = VNode | string | number | boolean | null | undefined | void;

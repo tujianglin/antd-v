@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import { isDOM } from '@/vc-util/Dom/findDOMNode';
-import { cloneVNode, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { getCurrentInstance, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import findDOMNode from '../../../vc-util/Dom/findDOMNode';
 import { useCollectionContextInject } from '../context';
 import type { ResizeObserverProps } from '../interface';
 import { observe, unobserve } from '../utils/observerUtil';
@@ -65,12 +65,14 @@ const onInternalResize = (target: HTMLElement) => {
 };
 
 const currentElement = ref();
+const wm = getCurrentInstance();
 const registerObserver = () => {
-  if (!isDOM(currentElement.value)) return;
-  if (currentElement?.value && !props.disabled) {
-    observe(currentElement?.value, onInternalResize as any);
+  const elementRef = findDOMNode(wm);
+  currentElement.value = elementRef;
+  if (currentElement.value && !props.disabled) {
+    observe(currentElement.value, onInternalResize as any);
   } else {
-    unobserve(currentElement?.value, onInternalResize as any);
+    unobserve(currentElement.value, onInternalResize as any);
   }
 };
 
@@ -91,10 +93,10 @@ onBeforeUnmount(() => {
 
 defineExpose({
   get el() {
-    return isDOM(currentElement.value) ? currentElement.value : {};
+    return currentElement.value;
   },
 });
 </script>
 <template>
-  <component :is="cloneVNode($slots.default?.()[0], { ref: (el) => (currentElement = el) })" />
+  <slot></slot>
 </template>

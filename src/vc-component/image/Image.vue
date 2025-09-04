@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import { Render } from '@/components';
-import useMergedState from '@/components/_util/hooks/useMergedState';
+import useMergedState from '@/vc-util/hooks/useMergedState';
 import { toPx } from '@/vc-util/setStyle';
 import { reactiveComputed, toReactive } from '@vueuse/core';
 import clsx from 'clsx';

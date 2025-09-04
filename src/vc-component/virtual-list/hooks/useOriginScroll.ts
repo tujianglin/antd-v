@@ -23,8 +23,8 @@ export default (
   const scrollPingRef = ref({
     top: isScrollAtTop.value,
     bottom: isScrollAtBottom.value,
-    left: isScrollAtLeft.value,
-    right: isScrollAtRight.value,
+    left: isScrollAtLeft?.value,
+    right: isScrollAtRight?.value,
   });
 
   watch(
@@ -33,8 +33,8 @@ export default (
       scrollPingRef.value = {
         top: isScrollAtTop.value,
         bottom: isScrollAtBottom.value,
-        left: isScrollAtLeft.value,
-        right: isScrollAtRight.value,
+        left: isScrollAtLeft?.value,
+        right: isScrollAtRight?.value,
       };
     },
     { immediate: true },

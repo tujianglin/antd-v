@@ -1,3 +1,4 @@
+import type { VueKey } from '@/vc-util/type';
 import { computed } from 'vue';
 import type { GlobalToken } from '../theme/internal';
 import { useToken } from '../theme/internal';
@@ -76,7 +77,7 @@ interface ResponsiveObserverType {
   register: () => void;
   unregister: () => void;
   matchHandlers: Record<
-    PropertyKey,
+    VueKey,
     {
       mql: MediaQueryList;
       listener: (this: MediaQueryList, ev: MediaQueryListEvent) => void;

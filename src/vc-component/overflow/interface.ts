@@ -1,3 +1,4 @@
+import type { VueKey } from '@/vc-util/type';
 import type { CSSProperties, HTMLAttributes } from 'vue';
 import type { RenderNode } from '../../components/_util/type';
 
@@ -9,7 +10,7 @@ export interface OverflowProps<ItemType> extends /** @vue-ignore */ HTMLAttribut
   class?: string;
   style?: CSSProperties;
   data?: ItemType[];
-  itemKey?: PropertyKey | ((item: ItemType) => PropertyKey);
+  itemKey?: VueKey | ((item: ItemType) => VueKey);
   /** Used for `responsive`. It will limit render node to avoid perf issue */
   itemWidth?: number;
   renderItem?: (item: ItemType, info: { index: number }) => RenderNode;

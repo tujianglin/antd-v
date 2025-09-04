@@ -555,7 +555,7 @@ const vm = getCurrentInstance();
 const onPopupMouseEnter = () => {};
 
 // >>> Selector
-const selectorNode = () => {
+const SelectorNode = () => {
   return (
     <SelectTrigger
       ref={triggerRef}
@@ -627,7 +627,7 @@ const selectorNode = () => {
       classNames,
     }"
   >
-    <Render v-if="customizeRawInputElement" :content="selectorNode" />
+    <SelectorNode v-if="customizeRawInputElement" />
 
     <div
       v-else
@@ -641,7 +641,7 @@ const selectorNode = () => {
       @blur.capture="onContainerBlur"
     >
       <Polite :visible="mockFocused && !mergedOpen" :values="displayValues" />
-      <Render :content="selectorNode" />
+      <SelectorNode />
       <Render :content="arrowNode" />
       <Render :content="mergedAllowClear && clearNode" />
     </div>

@@ -1,3 +1,4 @@
+import type { VueKey } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
 import { defineComponent, inject, provide, reactive, type InjectionKey, type PropType, type Reactive } from 'vue';
 
@@ -5,14 +6,14 @@ type OverflowContextProps = {
   prefixCls: string;
   responsive: boolean;
   order: number;
-  registerSize: (key: PropertyKey, width: number | null) => void;
+  registerSize: (key: VueKey, width: number | null) => void;
   display: boolean;
 
   invalidate: boolean;
 
   // Item Usage
   item?: any;
-  itemKey?: PropertyKey;
+  itemKey?: VueKey;
 
   // Rest Usage
   class?: string;

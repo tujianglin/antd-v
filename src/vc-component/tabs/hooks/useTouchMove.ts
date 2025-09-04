@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted, ref, type Ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue';
 
 type TouchEventHandler = (e: TouchEvent) => void;
 type WheelEventHandler = (e: WheelEvent) => void;
@@ -112,20 +112,25 @@ export default function useTouchMove(domRef: Ref<HTMLDivElement>, onOffset: (off
     touchEventsRef.value.onTouchend(e);
   }
 
-  onMounted(() => {
-    function onProxyTouchStart(e: TouchEvent) {
-      touchEventsRef.value.onTouchstart(e);
-    }
-    function onProxyWheel(e: WheelEvent) {
-      touchEventsRef.value.onWheel(e);
-    }
+  function onProxyTouchStart(e: TouchEvent) {
+    touchEventsRef.value.onTouchstart(e);
+  }
+  function onProxyWheel(e: WheelEvent) {
+    touchEventsRef.value.onWheel(e);
+  }
 
+  watch(
+    domRef,
+    () => {
+      // No need to clean up since element removed
+      domRef.value?.addEventListener?.('touchstart', onProxyTouchStart, { passive: true });
+      domRef.value?.addEventListener?.('wheel', onProxyWheel, { passive: false });
+    },
+    { deep: true },
+  );
+  onMounted(() => {
     document.addEventListener('touchmove', onProxyTouchMove, { passive: false });
     document.addEventListener('touchend', onProxyTouchEnd, { passive: true });
-
-    // No need to clean up since element removed
-    domRef.value?.addEventListener('touchstart', onProxyTouchStart, { passive: true });
-    domRef.value?.addEventListener('wheel', onProxyWheel, { passive: false });
   });
 
   onBeforeUnmount(() => {

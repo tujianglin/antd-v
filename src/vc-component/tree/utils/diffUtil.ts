@@ -1,6 +1,7 @@
+import type { VueKey } from '@/vc-util/type';
 import type { FlattenNode } from '../interface';
 
-export function findExpandedKeys(prev: PropertyKey[] = [], next: PropertyKey[] = []) {
+export function findExpandedKeys(prev: VueKey[] = [], next: VueKey[] = []) {
   const prevLen = prev.length;
   const nextLen = next.length;
 
@@ -8,8 +9,8 @@ export function findExpandedKeys(prev: PropertyKey[] = [], next: PropertyKey[] =
     return { add: false, key: null };
   }
 
-  function find(shorter: PropertyKey[], longer: PropertyKey[]) {
-    const cache: Map<PropertyKey, boolean> = new Map();
+  function find(shorter: VueKey[], longer: VueKey[]) {
+    const cache: Map<VueKey, boolean> = new Map();
     shorter.forEach((key) => {
       cache.set(key, true);
     });
@@ -32,7 +33,7 @@ export function findExpandedKeys(prev: PropertyKey[] = [], next: PropertyKey[] =
   };
 }
 
-export function getExpandRange(shorter: FlattenNode[], longer: FlattenNode[], key: PropertyKey) {
+export function getExpandRange(shorter: FlattenNode[], longer: FlattenNode[], key: VueKey) {
   const shorterStartIndex = shorter.findIndex((data) => data.key === key);
   const shorterEndNode = shorter[shorterStartIndex + 1];
   const longerStartIndex = longer.findIndex((data) => data.key === key);

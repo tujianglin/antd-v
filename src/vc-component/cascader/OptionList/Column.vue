@@ -9,20 +9,21 @@ import { isLeaf, toPathKey } from '../utils/commonUtil';
 import pickAttrs from '@/vc-util/pickAttrs';
 import Checkbox from './Checkbox.vue';
 import { Render } from '@/components';
+import type { VueKey } from '@/vc-util/type';
 export interface ColumnProps<OptionType extends DefaultOptionType = DefaultOptionType> {
   prefixCls: string;
   multiple?: boolean;
   options: OptionType[];
   /** Current Column opened item key */
-  activeValue?: PropertyKey;
+  activeValue?: VueKey;
   /** The value path before current column */
-  prevValuePath: PropertyKey[];
+  prevValuePath: VueKey[];
   onToggleOpen: (open: boolean) => void;
   onSelect: (valuePath: SingleValueType, leaf: boolean) => void;
   onActive: (valuePath: SingleValueType) => void;
-  checkedSet: Set<PropertyKey>;
-  halfCheckedSet: Set<PropertyKey>;
-  loadingKeys: PropertyKey[];
+  checkedSet: Set<VueKey>;
+  halfCheckedSet: Set<VueKey>;
+  loadingKeys: VueKey[];
   isSelectable: (option: DefaultOptionType) => boolean;
   disabled?: boolean;
 }

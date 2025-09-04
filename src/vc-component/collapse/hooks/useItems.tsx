@@ -1,9 +1,10 @@
+import type { VueKey } from '@/vc-util/type';
 import type { CollapsePanelProps, CollapseProps, ItemType } from '../interface';
 import CollapsePanel from '../Panel.vue';
 
 type Props = Pick<CollapsePanelProps, 'prefixCls' | 'onItemClick' | 'openMotion' | 'expandIcon' | 'classNames' | 'styles'> &
   Pick<CollapseProps, 'accordion' | 'collapsible' | 'destroyOnHidden'> & {
-    activeKey: PropertyKey[];
+    activeKey: VueKey[];
   };
 
 const convertItemsToNodes = (items: ItemType[], props: Props) => {
@@ -37,7 +38,7 @@ const convertItemsToNodes = (items: ItemType[], props: Props) => {
     const mergeCollapsible = rawCollapsible ?? collapsible;
     const mergedDestroyOnHidden = rawDestroyOnHidden ?? destroyOnHidden;
 
-    const handleItemClick = (value: PropertyKey) => {
+    const handleItemClick = (value: VueKey) => {
       if (mergeCollapsible === 'disabled') {
         return;
       }
