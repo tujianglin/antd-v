@@ -141,8 +141,8 @@ interface TraverseDataNodesConfig {
  * Traverse all the data by `treeData`.
  * Please not use it out of the `rc-tree` since we may refactor this code.
  */
-export function traverseDataNodes(
-  dataNodes: DataNode[],
+export function traverseDataNodes<TreeDataType extends BasicDataNode = DataNode>(
+  dataNodes: TreeDataType[],
   callback: (data: {
     node: DataNode;
     index: number;
@@ -237,8 +237,8 @@ interface Wrapper {
 /**
  * Convert `treeData` into entity records.
  */
-export function convertDataToEntities(
-  dataNodes: DataNode[],
+export function convertDataToEntities<TreeDataType extends BasicDataNode = DataNode>(
+  dataNodes: TreeDataType[],
   {
     initWrapper,
     processEntity,

@@ -315,7 +315,6 @@ const onInternalSelect = (valuePath: SingleValueType) => {
 // Display Value change logic
 const onDisplayValuesChange: BaseSelectProps['onDisplayValuesChange'] = (_, info) => {
   if (info.type === 'clear') {
-    console.log(1);
     triggerChange([]);
     return;
   }

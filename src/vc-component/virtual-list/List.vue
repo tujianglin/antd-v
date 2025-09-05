@@ -2,7 +2,7 @@
 import { Render } from '@/components';
 import { falseToUndefined } from '@/vc-util/props';
 import clsx from 'clsx';
-import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch, watchEffect, type CSSProperties } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, shallowRef, toRaw, watch, watchEffect, type CSSProperties } from 'vue';
 import ResizeObserver, { type ResizeObserverProps } from '../resize-observer';
 import Filler from './Filler.vue';
 import useChildren from './hooks/useChildren';
@@ -69,7 +69,16 @@ const getKey = (item: Record<string, any>) => {
   return itemKeyRef.value(item);
 };
 
-const mergedData = computed<T[]>(() => data || EMPTY_DATA);
+const dataRef = computed<T[]>(() => data || EMPTY_DATA);
+const mergedData = shallowRef([]);
+
+watch(
+  dataRef,
+  () => {
+    mergedData.value = toRaw(dataRef.value).slice();
+  },
+  { immediate: true },
+);
 // ================================ Height ================================
 const [setInstanceRef, collectHeight, heights, heightUpdatedMark] = useHeights(mergedData, getKey, null, null);
 
@@ -133,7 +142,7 @@ watch(
 );
 
 const diffItemRef = ref<T>();
-const [diffItem] = useDiffItem(mergedData, getKey);
+const [diffItem] = useDiffItem<T>(mergedData, getKey);
 watch(
   () => diffItem.value,
   (val) => {
@@ -151,22 +160,20 @@ watch(
   [inVirtual, useVirtual, offsetTop, mergedData, heightUpdatedMark, () => height],
   () => {
     if (!useVirtual.value) {
-      return {
-        scrollHeight: undefined,
-        start: 0,
-        end: mergedData.value.length - 1,
-        offset: undefined,
-      };
+      scrollHeight.value = undefined;
+      start.value = 0;
+      end.value = mergedData.value.length - 1;
+      fillerOffset.value = undefined;
+      return;
     }
 
     // Always use virtual scroll bar in avoid shaking
     if (!inVirtual.value) {
-      return {
-        scrollHeight: fillerInnerRef.value?.el?.offsetHeight || 0,
-        start: 0,
-        end: mergedData.value.length - 1,
-        offset: undefined,
-      };
+      scrollHeight.value = fillerInnerRef.value?.el?.offsetHeight || 0;
+      start.value = 0;
+      end.value = mergedData.value.length - 1;
+      fillerOffset.value = undefined;
+      return;
     }
 
     let itemTop = 0;
@@ -499,11 +506,14 @@ defineExpose({
       if (config.left !== undefined) {
         offsetLeft.value = keepInHorizontalRange(config.left);
       }
-
       // Scroll Y
       scrollTo(config.top);
     } else {
       scrollTo(config);
+      // Scroll again to fix
+      setTimeout(() => {
+        scrollTo(config);
+      });
     }
   },
 });
