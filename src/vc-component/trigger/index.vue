@@ -601,6 +601,7 @@ const onVnodeBeforeUnmount = (vnode: any) => {
         cloneVNode(flattenChildren(slots.default?.())[0], {
           ...omit(mergedChildrenProps, 'onTouchstart'),
           ...passedProps,
+          ...flattenChildren(slots.default?.())[0].props,
           onVnodeMounted,
           onVnodeBeforeUnmount,
         })
@@ -648,6 +649,3 @@ const onVnodeBeforeUnmount = (vnode: any) => {
     />
   </TriggerContextProvider>
 </template>
-<style lang="less">
-// @import './assets/index.less';
-</style>

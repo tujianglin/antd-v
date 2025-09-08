@@ -13,7 +13,7 @@ export default function useMergedState<T, R = Ref<T>>(
   const { defaultValue, value = ref() } = option || {};
   let initValue: T = typeof defaultStateValue === 'function' ? (defaultStateValue as any)() : defaultStateValue;
   if (value.value !== undefined) {
-    initValue = unref(value as any) as T;
+    initValue = unref(value.value as any) as T;
   }
   if (defaultValue !== undefined) {
     initValue = typeof defaultValue === 'function' ? (defaultValue as any)() : defaultValue;
