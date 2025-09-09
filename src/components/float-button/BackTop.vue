@@ -77,10 +77,10 @@ const scrollToTop = (e) => {
   onClick?.(e);
 };
 
-const config = useConfigContextInject();
+const { getPrefixCls } = toRefs(useConfigContextInject());
 
-const prefixCls = config.getPrefixCls(floatButtonPrefixCls, customizePrefixCls);
-const rootPrefixCls = config.getPrefixCls();
+const prefixCls = computed(() => getPrefixCls.value(floatButtonPrefixCls, customizePrefixCls));
+const rootPrefixCls = computed(() => getPrefixCls.value());
 
 const groupContext = useGroupContextInject();
 
@@ -88,7 +88,7 @@ const mergedShape = computed(() => groupContext.shape || shape);
 
 const contentProps = computed((): FloatButtonProps => {
   return {
-    prefixCls,
+    prefixCls: prefixCls.value,
     icon: mergedIcon.value,
     type,
     shape: mergedShape.value,

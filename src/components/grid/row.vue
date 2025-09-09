@@ -69,23 +69,23 @@ const screens = useBreakpoint(true, null);
 const mergedAlign = computed(() => useMergedPropByScreen(props.align, screens.value));
 const mergedJustify = computed(() => useMergedPropByScreen(props.justify, screens.value));
 
-const prefixCls = getPrefixCls?.value('row', props.prefixCls);
+const prefixCls = computed(() => getPrefixCls?.value('row', props.prefixCls));
 
 const [hashId, cssVarCls] = useRowStyle(prefixCls);
 
 const gutters = computed(() => useGutter(props.gutter, screens.value));
 const classes = computed(() => {
   return clsx(
-    prefixCls,
+    prefixCls.value,
     {
-      [`${prefixCls}-no-wrap`]: props.wrap === false,
-      [`${prefixCls}-${mergedJustify.value}`]: mergedJustify.value,
-      [`${prefixCls}-${mergedAlign.value}`]: mergedAlign.value,
-      [`${prefixCls}-rtl`]: direction?.value === 'rtl',
+      [`${prefixCls.value}-no-wrap`]: props.wrap === false,
+      [`${prefixCls.value}-${mergedJustify.value}`]: mergedJustify.value,
+      [`${prefixCls.value}-${mergedAlign.value}`]: mergedAlign.value,
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
     },
     props.class,
-    hashId,
-    cssVarCls,
+    hashId.value,
+    cssVarCls.value,
   );
 });
 

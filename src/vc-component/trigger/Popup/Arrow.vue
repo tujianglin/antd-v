@@ -55,12 +55,12 @@ const alignStyle = computed(() => {
       result.right = 0;
     }
   }
-
   return result;
 });
 </script>
 <template>
-  <div ref="arrowRef" :class="clsx(`${prefixCls}-arrow`, className)" :style="alignStyle">
+  <template v-if="!align || !align.points"></template>
+  <div v-else ref="arrowRef" :class="clsx(`${prefixCls}-arrow`, className)" :style="alignStyle">
     <Render :content="content" />
   </div>
 </template>

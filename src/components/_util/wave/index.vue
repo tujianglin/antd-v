@@ -2,7 +2,7 @@
 import { useConfigContextInject } from '@/components/config-provider';
 import findDOMNode from '@/vc-util/Dom/findDOMNode';
 import isVisible from '@/vc-util/Dom/isVisible';
-import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, useSlots, watch } from 'vue';
+import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, toRefs, useSlots, watch } from 'vue';
 import type { WaveProps } from '.';
 import useStyle from './style';
 import clsx from 'clsx';
@@ -12,13 +12,13 @@ const props = defineProps<WaveProps>();
 
 const instance = getCurrentInstance();
 
-const { getPrefixCls } = useConfigContextInject();
+const { getPrefixCls } = toRefs(useConfigContextInject());
 
-const prefixCls = getPrefixCls('wave');
-const [, hashId] = useStyle(prefixCls);
+const prefixCls = computed(() => getPrefixCls.value('wave'));
+const hashId = useStyle(prefixCls);
 
 const showWave = useWave(
-  computed(() => clsx(prefixCls, hashId)),
+  computed(() => clsx(prefixCls.value, hashId)),
   props.component,
   computed(() => props.colorSource),
 );

@@ -10,7 +10,7 @@ export interface ContentProps {
   bodyClassName?: string;
 }
 
-defineOptions({ name: 'Popup', inheritAttrs: false, compatConfig: { MODE: 3 } });
+defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { prefixCls, id, overlayInnerStyle: innerStyle, bodyClassName, class: className, style } = defineProps<ContentProps>();
 </script>

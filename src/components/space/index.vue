@@ -66,7 +66,7 @@ const { mergedOrientation, mergedVertical } = toRefs(
 
 const mergedAlign = computed(() => (align === undefined && !mergedVertical.value ? 'center' : align));
 
-const prefixCls = getPrefixCls.value('space', customizePrefixCls);
+const prefixCls = computed(() => getPrefixCls.value('space', customizePrefixCls));
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
@@ -79,24 +79,24 @@ const { mergedClassNames, mergedStyles } = toRefs(
 
 const rootClassNames = computed(() => {
   return clsx(
-    prefixCls,
+    prefixCls.value,
     contextClassName?.value,
-    hashId,
-    `${prefixCls}-${mergedOrientation.value}`,
+    hashId.value,
+    `${prefixCls.value}-${mergedOrientation.value}`,
     {
-      [`${prefixCls}-rtl`]: directionConfig?.value === 'rtl',
-      [`${prefixCls}-align-${mergedAlign.value}`]: mergedAlign.value,
-      [`${prefixCls}-gap-row-${verticalSize.value}`]: isPresetVerticalSize.value,
-      [`${prefixCls}-gap-col-${horizontalSize.value}`]: isPresetHorizontalSize.value,
+      [`${prefixCls.value}-rtl`]: directionConfig?.value === 'rtl',
+      [`${prefixCls.value}-align-${mergedAlign.value}`]: mergedAlign.value,
+      [`${prefixCls.value}-gap-row-${verticalSize.value}`]: isPresetVerticalSize.value,
+      [`${prefixCls.value}-gap-col-${horizontalSize.value}`]: isPresetHorizontalSize.value,
     },
     className,
     rootClassName,
-    cssVarCls,
+    cssVarCls.value,
     mergedClassNames.value?.root,
   );
 });
 
-const itemClassName = computed(() => clsx(`${prefixCls}-item`, mergedClassNames.value?.item));
+const itemClassName = computed(() => clsx(`${prefixCls.value}-item`, mergedClassNames.value?.item));
 
 const gapStyle = computed((): CSSProperties => {
   const gapStyle: CSSProperties = {};
@@ -106,11 +106,11 @@ const gapStyle = computed((): CSSProperties => {
   }
 
   if (!isPresetHorizontalSize.value && isValidHorizontalSize.value) {
-    gapStyle.columnGap = horizontalSize.value;
+    gapStyle.columnGap = `${horizontalSize.value}px`;
   }
 
   if (!isPresetVerticalSize.value && isValidVerticalSize.value) {
-    gapStyle.rowGap = verticalSize.value;
+    gapStyle.rowGap = `${verticalSize.value}px`;
   }
   return gapStyle;
 });

@@ -1,7 +1,6 @@
 <script lang="tsx" setup>
-import { ref, useTemplateRef } from 'vue';
+import { useTemplateRef } from 'vue';
 import { BaseInput } from '../input';
-import type { HolderRef } from '../input/BaseInput.vue';
 import { triggerFocus, type InputFocusOptions } from '../input/utils/commonUtils';
 import type { ValueType } from '../mini-decimal';
 import type { InputNumberProps } from './interface';
@@ -23,10 +22,11 @@ const {
   styles,
   ...rest
 } = defineProps<InputNumberProps>();
+
 const value = defineModel<ValueType>('value');
 
-const holderRef = ref<HolderRef>(null);
-const inputFocusRef = useTemplateRef('InternalInputNumberRef');
+const holderRef = useTemplateRef('holderRef');
+const inputFocusRef = useTemplateRef('internalInputNumberRef');
 
 const focus = (option?: InputFocusOptions) => {
   if (inputFocusRef.value?.input) {
@@ -70,7 +70,7 @@ defineExpose({
         v-model:value="value"
         :prefix-cls="prefixCls"
         :disabled="disabled"
-        ref="InternalInputNumberRef"
+        ref="internalInputNumberRef"
         :class="classNames?.input"
         :style="styles.input"
       />

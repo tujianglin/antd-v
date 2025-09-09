@@ -57,7 +57,7 @@ const sizes = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'] as const;
 const { getPrefixCls, direction } = toRefs(useConfigContextInject());
 const { gutter, wrap } = toRefs(useRowContextInject());
 
-const prefixCls = getPrefixCls?.value('col', props.prefixCls);
+const prefixCls = computed(() => getPrefixCls?.value('col', props.prefixCls));
 
 const [hashId, cssVarCls] = useColStyle(prefixCls);
 
@@ -76,18 +76,18 @@ const { sizeStyle, sizeClassObj } = reactiveComputed(() => {
 
     sizeClassObj = {
       ...sizeClassObj,
-      [`${prefixCls}-${size}-${sizeProps.span}`]: sizeProps.span !== undefined,
-      [`${prefixCls}-${size}-order-${sizeProps.order}`]: sizeProps.order || sizeProps.order === 0,
-      [`${prefixCls}-${size}-offset-${sizeProps.offset}`]: sizeProps.offset || sizeProps.offset === 0,
-      [`${prefixCls}-${size}-push-${sizeProps.push}`]: sizeProps.push || sizeProps.push === 0,
-      [`${prefixCls}-${size}-pull-${sizeProps.pull}`]: sizeProps.pull || sizeProps.pull === 0,
-      [`${prefixCls}-rtl`]: direction?.value === 'rtl',
+      [`${prefixCls.value}-${size}-${sizeProps.span}`]: sizeProps.span !== undefined,
+      [`${prefixCls.value}-${size}-order-${sizeProps.order}`]: sizeProps.order || sizeProps.order === 0,
+      [`${prefixCls.value}-${size}-offset-${sizeProps.offset}`]: sizeProps.offset || sizeProps.offset === 0,
+      [`${prefixCls.value}-${size}-push-${sizeProps.push}`]: sizeProps.push || sizeProps.push === 0,
+      [`${prefixCls.value}-${size}-pull-${sizeProps.pull}`]: sizeProps.pull || sizeProps.pull === 0,
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
     };
 
     // Responsive flex layout
     if (sizeProps.flex) {
-      sizeClassObj[`${prefixCls}-${size}-flex`] = true;
-      sizeStyle[`--${prefixCls}-${size}-flex`] = parseFlex(sizeProps.flex);
+      sizeClassObj[`${prefixCls.value}-${size}-flex`] = true;
+      sizeStyle[`--${prefixCls.value}-${size}-flex`] = parseFlex(sizeProps.flex);
     }
   });
   return {
@@ -99,18 +99,18 @@ const { sizeStyle, sizeClassObj } = reactiveComputed(() => {
 // ==================== Normal =====================
 const classes = computed(() => {
   return clsx(
-    prefixCls,
+    prefixCls.value,
     {
-      [`${prefixCls}-${props.span}`]: props.span !== undefined,
-      [`${prefixCls}-order-${props.order}`]: props.order,
-      [`${prefixCls}-offset-${props.offset}`]: props.offset,
-      [`${prefixCls}-push-${props.push}`]: props.push,
-      [`${prefixCls}-pull-${props.pull}`]: props.pull,
+      [`${prefixCls.value}-${props.span}`]: props.span !== undefined,
+      [`${prefixCls.value}-order-${props.order}`]: props.order,
+      [`${prefixCls.value}-offset-${props.offset}`]: props.offset,
+      [`${prefixCls.value}-push-${props.push}`]: props.push,
+      [`${prefixCls.value}-pull-${props.pull}`]: props.pull,
     },
     props.class,
     sizeClassObj,
-    hashId,
-    cssVarCls,
+    hashId.value,
+    cssVarCls.value,
   );
 });
 

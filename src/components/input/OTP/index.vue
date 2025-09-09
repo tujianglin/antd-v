@@ -2,7 +2,7 @@
 import useEvent from '@/vc-util/hooks/useEvent';
 import pickAttrs from '@/vc-util/pickAttrs';
 import clsx from 'clsx';
-import { computed, ref, toRefs, watch } from 'vue';
+import { computed, ref, toRefs, useTemplateRef, watch } from 'vue';
 import type { InputRef } from '..';
 import useMergeSemantic from '../../_util/hooks/useMergeSemantic';
 import { useComponentConfig } from '../../config-provider/context';
@@ -47,7 +47,7 @@ const {
   class: contextClassName,
 } = toRefs(useComponentConfig('otp'));
 
-const prefixCls = getPrefixCls.value('otp', customizePrefixCls);
+const prefixCls = computed(() => getPrefixCls.value('otp', customizePrefixCls));
 
 const { mergedClassNames, mergedStyles } = toRefs(
   useMergeSemantic(
@@ -66,9 +66,9 @@ const domAttrs = computed(() =>
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
-const mergedSize = computed(() => useSize((ctx) => customSize ?? ctx));
+const mergedSize = useSize(computed(() => (ctx) => customSize ?? ctx));
 
-const containerRef = ref<HTMLDivElement>(null);
+const containerRef = useTemplateRef('containerRef');
 const refs = ref<Record<number, InputRef | null>>({});
 
 const internalFormatter = computed(() => (txt: string) => (formatter ? formatter(txt) : txt));
@@ -139,7 +139,7 @@ const patchValue = useEvent((index: number, txt: string) => {
 });
 
 // ======================== Change ========================
-function onInputChange(index, txt) {
+function onInputChange(index: number, txt: string) {
   const nextCells = patchValue(index, txt);
 
   const nextIndex = Math.min(index + txt.length, length - 1);
@@ -172,7 +172,9 @@ defineExpose({
       refs.value[i]?.blur();
     }
   },
-  nativeElement: containerRef.value,
+  get nativeElement() {
+    return containerRef.value;
+  },
 });
 </script>
 

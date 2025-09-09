@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { cloneVNode, computed, ref, toRefs, type CSSProperties, type VNode } from 'vue';
+import { cloneVNode, computed, ref, toRefs, useTemplateRef, type CSSProperties, type VNode } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import { type RenderNode } from '../_util/type';
 import { useComponentConfig } from '../config-provider/context';
@@ -7,7 +7,6 @@ import useSize from '../config-provider/hooks/useSize';
 import { useCompactItemContext } from '../space/CompactContext';
 import type { InputProps } from './interface';
 import Input from './index.vue';
-import type { InputRef } from '../../vc-component/input';
 import { SearchOutlined } from '@ant-design/icons-vue';
 import Button from '../button';
 import Render from '../render';
@@ -84,18 +83,13 @@ const { mergedClassNames, mergedStyles } = toRefs(
   ),
 );
 
-const prefixCls = getPrefixCls.value('input-search', customizePrefixCls);
-const inputPrefix = getPrefixCls.value('input', customizeInputPrefixCls);
-const { compactSize } = toRefs(
-  useCompactItemContext(
-    prefixCls,
-    computed(() => direction.value),
-  ),
-);
+const prefixCls = computed(() => getPrefixCls.value('input-search', customizePrefixCls));
+const inputPrefix = computed(() => getPrefixCls.value('input', customizeInputPrefixCls));
+const { compactSize } = toRefs(useCompactItemContext(prefixCls, direction));
 
-const size = computed(() => useSize((ctx) => customizeSize ?? compactSize.value ?? ctx));
+const size = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
 
-const inputRef = ref<InputRef>(null);
+const inputRef = useTemplateRef('inputRef');
 const composedRef = ref(false);
 
 function onChange(e: Event) {
@@ -130,7 +124,7 @@ function handlePressEnter(e: KeyboardEvent) {
 }
 
 const searchIcon = computed(() => (typeof enterButton === 'boolean' ? <SearchOutlined /> : null));
-const btnClassName = computed(() => clsx(`${prefixCls}-button`, mergedClassNames?.value?.button?.root));
+const btnClassName = computed(() => clsx(`${prefixCls.value}-button`, mergedClassNames?.value?.button?.root));
 
 const button = computed(() => {
   let button;
@@ -185,11 +179,11 @@ const button = computed(() => {
 
 const mergedClassName = computed(() => {
   return clsx(
-    prefixCls,
+    prefixCls.value,
     {
-      [`${prefixCls}-rtl`]: direction.value === 'rtl',
-      [`${prefixCls}-${size.value}`]: !!size.value,
-      [`${prefixCls}-with-button`]: !!enterButton,
+      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-${size.value}`]: !!size.value,
+      [`${prefixCls.value}-with-button`]: !!enterButton,
     },
     className,
     mergedClassNames?.value?.root,

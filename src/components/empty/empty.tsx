@@ -1,11 +1,11 @@
 import { FastColor } from '@ant-design/fast-color';
-import { computed, defineComponent, toRefs } from 'vue';
+import { computed, defineComponent } from 'vue';
 import useLocale from '../locale/useLocale';
 import { useToken } from '../theme/internal';
 
 export default defineComponent({
   setup() {
-    const { token } = toRefs(useToken());
+    const [, token] = useToken();
     const [locale] = useLocale('Empty');
 
     // Dark Theme need more dark of this

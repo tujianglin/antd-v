@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, type CSSProperties } from 'vue';
+import { computed, toRefs, type CSSProperties } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import Button from '../button';
 import { useConfigContextInject } from '../config-provider';
@@ -30,64 +30,69 @@ const {
   ...restProps
 } = defineProps<FloatButtonProps>();
 
-const { getPrefixCls, direction } = useConfigContextInject();
-const groupContext = useGroupContextInject();
-const prefixCls = getPrefixCls(floatButtonPrefixCls, customizePrefixCls);
-const rootCls = useCSSVarCls(prefixCls);
-
 const {
   shape: contextShape,
   individual: contextIndividual,
   classNames: groupPassedClassNames,
   styles: groupPassedStyles,
-} = groupContext || {};
+} = toRefs(useGroupContextInject());
+const { getPrefixCls, direction } = toRefs(useConfigContextInject());
+const prefixCls = computed(() => getPrefixCls.value(floatButtonPrefixCls, customizePrefixCls));
+const rootCls = useCSSVarCls(prefixCls);
 
-const mergedShape = computed(() => contextShape || shape);
-const mergedIndividual = computed(() => contextIndividual ?? true);
+const mergedShape = computed(() => contextShape.value || shape);
+const mergedIndividual = computed(() => contextIndividual.value ?? true);
 
 const mergedContent = computed(() => content);
 
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
-const floatButtonClassNames = {
-  icon: `${prefixCls}-icon`,
-  content: `${prefixCls}-content`,
-};
+const floatButtonClassNames = computed(() => {
+  return {
+    icon: `${prefixCls.value}-icon`,
+    content: `${prefixCls.value}-content`,
+  };
+});
 
-const merged = useMergeSemantic(
-  computed(() => [
-    floatButtonClassNames,
-    // contextClassNames,
-    groupPassedClassNames,
-    classNames,
-  ]),
-  computed(() => [
-    // contextStyles,
-    groupPassedStyles,
-    styles,
-  ]),
+const { mergedClassNames, mergedStyles } = toRefs(
+  useMergeSemantic(
+    computed(() => [
+      floatButtonClassNames.value,
+      // contextClassNames,
+      groupPassedClassNames.value,
+      classNames,
+    ]),
+    computed(() => [
+      // contextStyles,
+      groupPassedStyles.value,
+      styles,
+    ]),
+  ),
 );
 
 const mergedIcon = computed(() => (!mergedContent.value && !icon ? <FileTextOutlined></FileTextOutlined> : icon));
 
-const [zIndex] = useZIndex('FloatButton', style?.zIndex as number);
+const [zIndex] = useZIndex(
+  'FloatButton',
+  computed(() => style?.zIndex as number),
+);
 
-const mergedStyle = computed((): CSSProperties => ({ ...style, zIndex }));
+const mergedStyle = computed((): CSSProperties => ({ ...style, zIndex: zIndex.value }));
 
 const classes = computed(() => {
   return clsx(
-    hashId,
-    cssVarCls,
-    rootCls,
-    prefixCls,
+    hashId.value,
+    cssVarCls.value,
+    rootCls.value,
+    prefixCls.value,
     className,
     rootClassName,
-    `${prefixCls}-${type}`,
-    `${prefixCls}-${mergedShape.value}`,
+    `${prefixCls.value}-${type}`,
+    `${prefixCls.value}-${mergedShape.value}`,
     {
-      [`${prefixCls}-rtl`]: direction === 'rtl',
-      [`${prefixCls}-individual`]: mergedIndividual,
-      [`${prefixCls}-icon-only`]: !mergedContent.value,
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
+      [`${prefixCls.value}-individual`]: mergedIndividual.value,
+      [`${prefixCls.value}-icon-only`]: !mergedContent.value,
     },
   );
 });
@@ -96,8 +101,8 @@ const classes = computed(() => {
   <Button
     v-bind="{ ...restProps }"
     :class="classes"
-    :class-names="merged.mergedClassNames"
-    :styles="merged.mergedStyles"
+    :class-names="mergedClassNames"
+    :styles="mergedStyles"
     :style="mergedStyle"
     :shape="mergedShape"
     :type="type"

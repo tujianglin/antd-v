@@ -1,5 +1,6 @@
 import { removeCSS, updateCSS } from '@/vc-util/Dom/dynamicCSS';
-import { computed } from 'vue';
+import { toReactive } from '@vueuse/core';
+import { computed, toRefs, type Ref } from 'vue';
 import { ATTR_MARK, ATTR_TOKEN, CSS_IN_JS_INSTANCE, useStyleInject } from '../StyleContext';
 import { isClientSide, toStyleStr } from '../util';
 import type { TokenWithCSSVar } from '../util/css-variables';
@@ -18,7 +19,7 @@ type CSSVarCacheValue<V, T extends Record<string, V> = Record<string, V>> = [
 ];
 
 const useCSSVarRegister = <V, T extends Record<string, V>>(
-  config: {
+  config: Ref<{
     path: string[];
     key: string;
     prefix?: string;
@@ -27,29 +28,29 @@ const useCSSVarRegister = <V, T extends Record<string, V>>(
     scope?: string;
     token: any;
     hashId?: string;
-  },
+  }>,
   fn: () => T,
 ) => {
-  const { key, prefix, unitless, ignore, token, hashId, scope = '' } = config;
+  const { key, prefix, unitless, ignore, token, hashId, scope } = toRefs(toReactive(config));
   const styleContext = useStyleInject();
-  const { _tokenKey: tokenKey } = token;
-  const stylePath = computed(() => [...config.path, key, scope, tokenKey]);
+  const { _tokenKey: tokenKey } = toRefs(toReactive(token));
+  const stylePath = computed(() => [...config.value.path, key.value, scope.value || '', tokenKey.value]);
 
   const cache = useGlobalCache<CSSVarCacheValue<V, T>>(
     CSS_VAR_PREFIX,
     computed(() => stylePath.value),
     () => {
       const originToken = fn();
-      const [mergedToken, cssVarsStr] = transformToken<V, T>(originToken, key, {
-        prefix,
-        unitless,
-        ignore,
-        scope,
+      const [mergedToken, cssVarsStr] = transformToken<V, T>(originToken, key.value, {
+        prefix: prefix.value,
+        unitless: unitless.value,
+        ignore: ignore.value,
+        scope: scope.value || '',
         hashPriority: styleContext.value.hashPriority,
-        hashCls: hashId,
+        hashCls: hashId?.value,
       });
       const styleId = uniqueHash(stylePath.value, cssVarsStr);
-      return [mergedToken, cssVarsStr, styleId, key];
+      return [mergedToken, cssVarsStr, styleId, key.value];
     },
     ([, , styleId]) => {
       if (isClientSide) {
@@ -70,7 +71,7 @@ const useCSSVarRegister = <V, T extends Record<string, V>>(
       (style as any)[CSS_IN_JS_INSTANCE] = styleContext.value.cache.instanceId;
 
       // Used for `useCacheToken` to remove on batch when token removed
-      style.setAttribute(ATTR_TOKEN, key);
+      style.setAttribute(ATTR_TOKEN, key.value);
     },
   );
 

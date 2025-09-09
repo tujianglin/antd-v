@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, h, toRefs, type VNode } from 'vue';
+import { computed, getCurrentInstance, h, toRefs, type ComponentInstance, type VNode } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import { useComponentConfig } from '../config-provider/context';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
@@ -11,10 +11,9 @@ import Render from '../render';
 import getAllowClear from '../_util/getAllowClear';
 import useVariant from '../form/hooks/useVariants';
 import clsx from 'clsx';
-import VcInput from '../../vc-component/input';
+import RcInput from '../../vc-component/input';
 import ContextIsolator from '../_util/ContextIsolator';
 import type { InputProps } from './interface';
-import { useComposeRef } from '../_util/type';
 
 type Slots = {
   addonBefore?: () => VNode[];
@@ -63,22 +62,20 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('input'));
 
-const prefixCls = getPrefixCls.value('input', customizePrefixCls);
+const prefixCls = computed(() => getPrefixCls.value('input', customizePrefixCls));
 
 // Style
 const rootCls = useCSSVarCls(prefixCls);
-const [hashId, cssVarCls] = useSharedStyle(prefixCls, rootClassName);
+const [hashId, cssVarCls] = useSharedStyle(
+  prefixCls,
+  computed(() => rootClassName),
+);
 useStyle(prefixCls, rootCls);
 
 // ===================== Compact Item =====================
-const { compactSize, compactItemClassnames } = toRefs(
-  useCompactItemContext(
-    prefixCls,
-    computed(() => direction.value),
-  ),
-);
+const { compactSize, compactItemClassnames } = toRefs(useCompactItemContext(prefixCls, direction));
 
-const mergedSize = computed(() => useSize((ctx) => customSize ?? compactSize.value ?? ctx));
+const mergedSize = useSize(computed(() => (ctx) => customSize ?? compactSize.value ?? ctx));
 
 const disabled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? disabled.value);
@@ -114,11 +111,17 @@ function handleFocus(e: FocusEvent) {
   onFocus?.(e);
 }
 
-const mergedRef = useComposeRef();
+const vm = getCurrentInstance();
+function changeRef(el) {
+  vm.exposed = el || {};
+  vm.exposeProxy = el || {};
+}
+
+defineExpose({} as ComponentInstance<typeof RcInput>);
 </script>
 <template>
-  <VcInput
-    :ref="mergedRef"
+  <RcInput
+    :ref="changeRef"
     :prefix-cls="prefixCls"
     :auto-complete="contextAutoComplete"
     v-bind="{ ...rest, ...$attrs }"

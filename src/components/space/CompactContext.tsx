@@ -1,16 +1,7 @@
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
 import { isEmpty } from 'lodash-es';
-import {
-  defineComponent,
-  inject,
-  provide,
-  reactive,
-  type ComputedRef,
-  type InjectionKey,
-  type PropType,
-  type Reactive,
-} from 'vue';
+import { defineComponent, inject, provide, reactive, type InjectionKey, type PropType, type Reactive, type Ref } from 'vue';
 import type { SizeType } from '../config-provider/SizeContext';
 import type { DirectionType } from '../config-provider/context';
 
@@ -31,17 +22,17 @@ export const useSpaceCompactItemContextProvider = (props: Reactive<SpaceCompactI
   provide(SpaceCompactItemContext, props);
 };
 
-export const useCompactItemContext = (prefixCls: string, direction: ComputedRef<DirectionType>) => {
+export const useCompactItemContext = (prefixCls: Ref<string>, direction: Ref<DirectionType>) => {
   const compactItemContext = useSpaceCompactItemContextInject();
 
   return reactiveComputed(() => {
     let compactItemClassnames = '';
     if (!isEmpty(compactItemContext)) {
       const separator = compactItemContext.compactDirection === 'vertical' ? '-vertical-' : '-';
-      compactItemClassnames = clsx(`${prefixCls}-compact${separator}item`, {
-        [`${prefixCls}-compact${separator}first-item`]: compactItemContext.isFirstItem,
-        [`${prefixCls}-compact${separator}last-item`]: compactItemContext.isLastItem,
-        [`${prefixCls}-compact${separator}item-rtl`]: direction.value === 'rtl',
+      compactItemClassnames = clsx(`${prefixCls.value}-compact${separator}item`, {
+        [`${prefixCls.value}-compact${separator}first-item`]: compactItemContext.isFirstItem,
+        [`${prefixCls.value}-compact${separator}last-item`]: compactItemContext.isLastItem,
+        [`${prefixCls.value}-compact${separator}item-rtl`]: direction.value === 'rtl',
       });
     }
     return {

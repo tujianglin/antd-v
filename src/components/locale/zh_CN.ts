@@ -1,4 +1,3 @@
-/* eslint-disable no-template-curly-in-string */
 import type { Locale } from '.';
 const typeTemplate = '${label}不是一个有效的${type}';
 

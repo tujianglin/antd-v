@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { isEmpty, omit } from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 import {
   cloneVNode,
   computed,
@@ -85,13 +85,12 @@ const {
 
   // Private
   mobile,
-
   ...restProps
 } = defineProps<TriggerProps>();
 
 const slots = defineSlots<{ popup?: () => VNode[]; default?: () => VNode[] }>();
 
-const slotPopup = computed(() => slots.popup || popup);
+const popupNode = computed(() => slots.popup || popup);
 
 // =========================== Mobile ===========================
 const isMobile = computed(() => !!mobile);
@@ -199,14 +198,14 @@ const internalTriggerOpen = (nextOpen: boolean) => {
   lastTriggerRef.value = [];
   nextTick(() => {
     setMergedOpen(nextOpen);
+    // Enter or Pointer will both trigger open state change
+    // We only need take one to avoid duplicated change event trigger
+    // Use `lastTriggerRef` to record last open type
+    if ((lastTriggerRef.value[lastTriggerRef.value.length - 1] ?? mergedOpen.value) !== nextOpen) {
+      lastTriggerRef.value.push(nextOpen);
+      onOpenChange?.(nextOpen);
+    }
   });
-  // Enter or Pointer will both trigger open state change
-  // We only need take one to avoid duplicated change event trigger
-  // Use `lastTriggerRef` to record last open type
-  if ((lastTriggerRef.value[lastTriggerRef.value.length - 1] ?? mergedOpen.value) !== nextOpen) {
-    lastTriggerRef.value.push(nextOpen);
-    onOpenChange?.(nextOpen);
-  }
 };
 
 // Trigger for delay
@@ -233,16 +232,16 @@ onBeforeUnmount(() => clearDelay());
 // ========================== Motion ============================
 const inMotion = ref(false);
 
-let isMount = false;
+const isMount = ref(false);
 
 onMounted(() => {
-  isMount = true;
+  isMount.value = true;
 });
 
 watch(
   () => mergedOpen.value,
   (val) => {
-    if (!isMount || val) {
+    if (!isMount.value || val) {
       inMotion.value = true;
     }
   },
@@ -513,30 +512,6 @@ const mergedChildrenProps = computed(() => ({
   ...cloneProps.value,
 }));
 
-const passedProps = computed(() => {
-  // Pass props into cloneProps for nest usage
-  const result: Record<string, any> = {};
-  const passedEventList = [
-    'onContextMenu',
-    'onClick',
-    'onMouseDown',
-    'onTouchStart',
-    'onMouseEnter',
-    'onMouseLeave',
-    'onFocus',
-    'onBlur',
-  ];
-  passedEventList.forEach((eventName) => {
-    if (restProps[eventName]) {
-      result[eventName] = (...args: any[]) => {
-        mergedChildrenProps[eventName]?.(...args);
-        restProps[eventName](...args);
-      };
-    }
-  });
-  return result;
-});
-
 const arrowPos = computed((): ArrowPos => {
   return {
     x: arrowX.value,
@@ -580,17 +555,56 @@ watch(
     }
   },
 );
+const children = computed(() => flattenChildren(slots.default?.())[0]);
+
+const passedProps = computed(() => {
+  // Pass props into cloneProps for nest usage
+  const result: Record<string, any> = {};
+  const passedEventList = [
+    'onContextmenu',
+    'onClick',
+    'onMousedown',
+    'onTouchstart',
+    'onMouseenter',
+    'onMouseleave',
+    'onFocus',
+    'onBlur',
+  ];
+  passedEventList.forEach((eventName) => {
+    result[eventName] = (...args: any[]) => {
+      children.value?.[eventName]?.(...args);
+      mergedChildrenProps.value[eventName]?.(...args);
+      restProps[eventName]?.(...args);
+    };
+  });
+  return result;
+});
+
 const onVnodeMounted = (vnode: any) => {
   const el = vnode.el as HTMLElement;
   if (el) {
-    el.addEventListener('touchstart', mergedChildrenProps.value.onTouchstart, { passive: true });
+    el.addEventListener('touchstart', passedProps.value.onTouchstart, { passive: true });
+    el.addEventListener('mousedown', passedProps.value.onMousedown, { passive: true });
+    el.addEventListener('mouseenter', passedProps.value.onMouseenter, { passive: true });
+    el.addEventListener('mouseleave', passedProps.value.onMouseleave, { passive: true });
+    el.addEventListener('click', passedProps.value.onClick, { passive: true });
+    el.addEventListener('focus', passedProps.value.onFocus, { passive: true });
+    el.addEventListener('blur', passedProps.value.onBlur, { passive: true });
+    el.addEventListener('contextmenu', passedProps.value.onContextmenu, { passive: true });
   }
 };
 
 const onVnodeBeforeUnmount = (vnode: any) => {
   const el = vnode.el as HTMLElement;
   if (el) {
-    el.removeEventListener('touchstart', mergedChildrenProps.value.onTouchstart);
+    el.removeEventListener('touchstart', passedProps.value.onTouchstart);
+    el.removeEventListener('mousedown', passedProps.value.onMousedown);
+    el.removeEventListener('mouseenter', passedProps.value.onMouseenter);
+    el.removeEventListener('mouseleave', passedProps.value.onMouseleave);
+    el.removeEventListener('click', passedProps.value.onClick);
+    el.removeEventListener('focus', passedProps.value.onFocus);
+    el.removeEventListener('blur', passedProps.value.onBlur);
+    el.removeEventListener('contextmenu', passedProps.value.onContextmenu);
   }
 };
 </script>
@@ -598,10 +612,7 @@ const onVnodeBeforeUnmount = (vnode: any) => {
   <ResizeObserver :disabled="!mergedOpen" :ref="setTargetRef" @resize="onTargetResize">
     <component
       :is="
-        cloneVNode(flattenChildren(slots.default?.())[0], {
-          ...omit(mergedChildrenProps, 'onTouchstart'),
-          ...passedProps,
-          ...flattenChildren(slots.default?.())[0].props,
+        cloneVNode(children, {
           onVnodeMounted,
           onVnodeBeforeUnmount,
         })
@@ -612,7 +623,7 @@ const onVnodeBeforeUnmount = (vnode: any) => {
     <Popup
       :ref="setPopupRef"
       :prefix-cls="prefixCls"
-      :popup="slotPopup"
+      :popup="popupNode"
       :class="clsx(popupClassName, !isMobile && alignedClassName)"
       :style="popupStyle"
       :target="targetEle"

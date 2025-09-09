@@ -48,12 +48,12 @@ const {
 
 const mergedCloseIcon = computed(() => closeIcon ?? contextCloseIcon?.value ?? <CloseOutlined />);
 
-const prefixCls = getPrefixCls.value(floatButtonPrefixCls, customizePrefixCls);
+const prefixCls = computed(() => getPrefixCls.value(floatButtonPrefixCls, customizePrefixCls));
 const rootCls = useCSSVarCls(prefixCls);
 
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
-const groupPrefixCls = `${prefixCls}-group`;
+const groupPrefixCls = computed(() => `${prefixCls.value}-group`);
 
 const isMenuMode = computed(() => trigger && ['click', 'hover'].includes(trigger));
 
@@ -70,7 +70,10 @@ const merged = useMergeSemantic(
   })),
 );
 
-const [zIndex] = useZIndex('FloatButton', style?.zIndex as number);
+const [zIndex] = useZIndex(
+  'FloatButton',
+  computed(() => style?.zIndex as number),
+);
 
 const floatButtonGroupRef = useTemplateRef('floatButtonGroupRef');
 
@@ -149,7 +152,7 @@ const triggerContext = computed(() => ({
 }));
 
 // ========================= Render =========================
-const listCls = `${groupPrefixCls}-list`;
+const listCls = computed(() => `${groupPrefixCls.value}-list`);
 </script>
 <template>
   <GroupContextProvider :value="listContext">
@@ -179,9 +182,10 @@ const listCls = `${groupPrefixCls}-list`;
     >
       <template v-if="isMenuMode">
         <CSSMotion :visible="open" :motion-name="`${listCls}-motion`">
-          <template #default="{ class: motionClassName }">
+          <template #default="{ class: motionClassName, ref: motionRef }">
             <component
               :is="individual ? Flex : Space.Compact"
+              :ref="motionRef"
               :vertical="mergedPlacement === 'top' || mergedPlacement === 'bottom'"
               :style="merged.mergedStyles.list"
               :class="clsx(listCls, merged.mergedClassNames.list, motionClassName)"

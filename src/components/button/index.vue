@@ -107,7 +107,7 @@ const {
 
 const mergedInsertSpace = computed(() => autoInsertSpace ?? contextAutoInsertSpace.value ?? true);
 
-const prefixCls = getPrefixCls.value('btn', customizePrefixCls);
+const prefixCls = computed(() => getPrefixCls.value('btn', customizePrefixCls));
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
@@ -172,16 +172,11 @@ const handleClick = (e) => {
 };
 
 // ========================== Size ==========================
-const { compactSize, compactItemClassnames } = toRefs(
-  useCompactItemContext(
-    prefixCls,
-    computed(() => direction.value),
-  ),
-);
+const { compactSize, compactItemClassnames } = toRefs(useCompactItemContext(prefixCls, direction));
 
 const sizeClassNameMap = { large: 'lg', small: 'sm', middle: undefined };
 
-const sizeFullName = computed(() => useSize((ctxSize) => customizeSize ?? compactSize.value ?? ctxSize));
+const sizeFullName = useSize(computed(() => (ctxSize) => customizeSize ?? compactSize.value ?? ctxSize));
 
 const sizeCls = computed(() => (sizeFullName.value ? (sizeClassNameMap[sizeFullName.value] ?? '') : ''));
 
@@ -191,25 +186,25 @@ const linkButtonRestProps = computed(() => omit(rest as ButtonProps & { navigate
 
 const classes = computed(() => {
   return clsx(
-    prefixCls,
-    hashId,
-    cssVarCls,
+    prefixCls.value,
+    hashId.value,
+    cssVarCls.value,
     {
-      [`${prefixCls}-${shape.value}`]: shape.value !== 'default' && shape.value !== 'square' && shape.value,
+      [`${prefixCls.value}-${shape.value}`]: shape.value !== 'default' && shape.value !== 'square' && shape.value,
       // Compatible with versions earlier than 5.21.0
-      [`${prefixCls}-${type}`]: type,
-      [`${prefixCls}-dangerous`]: danger,
+      [`${prefixCls.value}-${type}`]: type,
+      [`${prefixCls.value}-dangerous`]: danger,
 
-      [`${prefixCls}-color-${mergedColorText.value}`]: mergedColorText.value,
-      [`${prefixCls}-variant-${mergedVariant.value}`]: mergedVariant.value,
-      [`${prefixCls}-${sizeCls.value}`]: sizeCls.value,
-      [`${prefixCls}-icon-only`]: !defaultSlot.value && defaultSlot.value.length !== 0 && !!iconType?.value,
-      [`${prefixCls}-background-ghost`]: ghost && !isUnBorderedButtonVariant(mergedVariant.value),
-      [`${prefixCls}-loading`]: innerLoading.value,
-      [`${prefixCls}-two-chinese-chars`]: hasTwoCNChar?.value && mergedInsertSpace.value && !innerLoading?.value,
-      [`${prefixCls}-block`]: block,
-      [`${prefixCls}-rtl`]: direction?.value === 'rtl',
-      [`${prefixCls}-icon-end`]: iconPosition === 'end',
+      [`${prefixCls.value}-color-${mergedColorText.value}`]: mergedColorText.value,
+      [`${prefixCls.value}-variant-${mergedVariant.value}`]: mergedVariant.value,
+      [`${prefixCls.value}-${sizeCls.value}`]: sizeCls.value,
+      [`${prefixCls.value}-icon-only`]: !defaultSlot.value && defaultSlot.value.length !== 0 && !!iconType?.value,
+      [`${prefixCls.value}-background-ghost`]: ghost && !isUnBorderedButtonVariant(mergedVariant.value),
+      [`${prefixCls.value}-loading`]: innerLoading.value,
+      [`${prefixCls.value}-two-chinese-chars`]: hasTwoCNChar?.value && mergedInsertSpace.value && !innerLoading?.value,
+      [`${prefixCls.value}-block`]: block,
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
+      [`${prefixCls.value}-icon-end`]: iconPosition === 'end',
     },
     compactItemClassnames?.value,
     className,
@@ -234,17 +229,17 @@ const mergedRef = useComposeRef();
 
 const iconNode = () => {
   return iconSlot.value && !innerLoading.value ? (
-    <IconWrapper prefixCls={prefixCls} {...iconSharedProps}>
+    <IconWrapper prefixCls={prefixCls.value} {...iconSharedProps}>
       <Render content={iconSlot.value}></Render>
     </IconWrapper>
   ) : loading && typeof loading === 'object' && loading.icon ? (
-    <IconWrapper prefixCls={prefixCls} {...iconSharedProps}>
+    <IconWrapper prefixCls={prefixCls.value} {...iconSharedProps}>
       <Render content={loading.icon}></Render>
     </IconWrapper>
   ) : (
     <DefaultLoadingIcon
       existIcon={!!iconSlot.value}
-      prefixCls={prefixCls}
+      prefixCls={prefixCls.value}
       loading={innerLoading.value}
       mount={isMountRef.value}
       {...iconSharedProps}
@@ -277,7 +272,7 @@ const buttonNode = () => {
     >
       <Render content={iconNode}></Render>
       <Render content={contentNode}></Render>
-      {compactItemClassnames.value && <Compact prefixCls={prefixCls}></Compact>}
+      {compactItemClassnames.value && <Compact prefixCls={prefixCls.value}></Compact>}
     </button>
   );
 };

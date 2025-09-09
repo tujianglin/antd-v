@@ -1,4 +1,4 @@
-import { onBeforeUnmount, shallowRef, watch, watchEffect, type Ref, type ShallowRef } from 'vue';
+import { shallowRef, watch, watchEffect, type Ref, type ShallowRef } from 'vue';
 import { pathKey, type KeyType } from '../Cache';
 import { useStyleInject } from '../StyleContext';
 import useHMR from './useHMR';
@@ -61,19 +61,19 @@ export default function useGlobalCache<CacheType>(
 
   watch(
     fullPathStr,
-    (newStr, oldStr) => {
+    (newStr, oldStr, onCleanup) => {
       if (oldStr) clearCache(oldStr);
       buildCache();
 
       cacheEntity.value = styleContext.value.cache.opGet(newStr) as any;
       cacheContent.value = cacheEntity.value![1];
       onCacheEffect(cacheContent.value);
+      onCleanup(() => {
+        clearCache(fullPathStr.value);
+      });
     },
     { immediate: true },
   );
 
-  onBeforeUnmount(() => {
-    clearCache(fullPathStr.value);
-  });
   return cacheContent;
 }

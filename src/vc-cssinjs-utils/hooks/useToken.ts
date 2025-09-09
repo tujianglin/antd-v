@@ -1,5 +1,6 @@
 import type { Theme, TokenType } from '@/vc-cssinjs';
 
+import type { Ref } from 'vue';
 import type { GlobalToken, OverrideTokenMap, TokenMap } from '../interface';
 
 export type TokenMapWithTheme<CompTokenMap extends TokenMap, AliasToken extends TokenType, DesignToken extends TokenType> = {
@@ -9,17 +10,17 @@ export type TokenMapWithTheme<CompTokenMap extends TokenMap, AliasToken extends 
 };
 
 export interface UseTokenReturn<CompTokenMap extends TokenMap, AliasToken extends TokenType, DesignToken extends TokenType> {
-  token: GlobalToken<CompTokenMap, AliasToken>;
-  realToken?: GlobalToken<CompTokenMap, AliasToken>;
-  theme?: Theme<DesignToken, AliasToken>;
-  components?: TokenMapWithTheme<CompTokenMap, DesignToken, AliasToken>;
-  hashId?: string;
-  hashed?: string | boolean;
-  cssVar?: {
+  token: Ref<GlobalToken<CompTokenMap, AliasToken>>;
+  realToken?: Ref<GlobalToken<CompTokenMap, AliasToken>>;
+  theme?: Ref<Theme<DesignToken, AliasToken>>;
+  components?: Ref<TokenMapWithTheme<CompTokenMap, DesignToken, AliasToken>>;
+  hashId?: Ref<string>;
+  hashed?: Ref<string | boolean>;
+  cssVar?: Ref<{
     prefix?: string;
     key?: string;
-  };
-  zeroRuntime?: boolean;
+  }>;
+  zeroRuntime?: Ref<boolean>;
 }
 
 export type UseToken<

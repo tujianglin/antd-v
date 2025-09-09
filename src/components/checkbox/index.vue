@@ -2,8 +2,7 @@
 import VcCheckbox from '@/vc-component/checkbox/index.vue';
 import clsx from 'clsx';
 import { isEmpty } from 'lodash-es';
-import { computed, onBeforeUnmount, onMounted, ref, toRefs, useSlots, watch } from 'vue';
-import { useComposeRef } from '../_util/type';
+import { computed, onBeforeUnmount, onMounted, toRefs, useSlots, useTemplateRef, watch } from 'vue';
 import { Wave } from '../_util/wave';
 import { TARGET_CLS } from '../_util/wave/interface';
 import { useComponentConfig } from '../config-provider/context';
@@ -47,9 +46,7 @@ const mergedDisabled = computed(() => (checkboxGroup?.disabled || disabled) ?? c
 
 const value = defineModel('value');
 
-const checkboxRef = ref();
-
-const mergedRef = useComposeRef({}, checkboxRef);
+const checkboxRef = useTemplateRef('checkboxRef');
 
 onMounted(() => {
   checkboxGroup?.registerValue?.(restProps.value);
@@ -81,7 +78,7 @@ watch(
   { immediate: true, deep: true },
 );
 
-const prefixCls = getPrefixCls.value('checkbox', customizePrefixCls);
+const prefixCls = computed(() => getPrefixCls.value('checkbox', customizePrefixCls));
 const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
@@ -104,29 +101,29 @@ const checkboxProps = computed(() => {
 
 const classString = computed(() => {
   return clsx(
-    `${prefixCls}-wrapper`,
+    `${prefixCls.value}-wrapper`,
     {
-      [`${prefixCls}-rtl`]: direction.value === 'rtl',
-      [`${prefixCls}-wrapper-checked`]: checkboxProps.value.checked,
-      [`${prefixCls}-wrapper-disabled`]: mergedDisabled.value,
+      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-wrapper-checked`]: checkboxProps.value.checked,
+      [`${prefixCls.value}-wrapper-disabled`]: mergedDisabled.value,
     },
     contextClassName?.value,
     className,
     contextClassNames.value.root,
     checkboxClassNames?.root,
     rootClassName,
-    cssVarCls,
-    rootCls,
-    hashId,
+    cssVarCls.value,
+    rootCls.value,
+    hashId.value,
   );
 });
 const checkboxClass = computed(() => {
   return clsx(
     checkboxClassNames?.icon,
     contextClassNames.value.icon,
-    { [`${prefixCls}-indeterminate`]: indeterminate },
+    { [`${prefixCls.value}-indeterminate`]: indeterminate },
     TARGET_CLS,
-    hashId,
+    hashId.value,
   );
 });
 
@@ -154,7 +151,7 @@ const [onLabelClick, onInputClick] = useBubbleLock(checkboxProps.value.onClick);
         :class="checkboxClass"
         :style="{ ...contextStyles.icon, ...styles?.icon }"
         :disabled="mergedDisabled"
-        :ref="mergedRef"
+        ref="checkboxRef"
       />
       <span
         v-if="$slots.default"

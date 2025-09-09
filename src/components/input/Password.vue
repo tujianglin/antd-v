@@ -1,6 +1,5 @@
 <script lang="tsx" setup>
-import { cloneVNode, computed, ref, toRefs, useAttrs, watch, type VNode } from 'vue';
-import type { InputRef } from '.';
+import { cloneVNode, computed, ref, toRefs, useAttrs, useTemplateRef, watch, type VNode } from 'vue';
 import type { RenderNode } from '../_util/type';
 import { useConfigContextInject } from '../config-provider';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
@@ -63,7 +62,7 @@ watch(
   },
   { immediate: true, deep: true },
 );
-const inputRef = ref<InputRef>(null);
+const inputRef = useTemplateRef('inputRef');
 
 // Remove Password value
 const removePasswordTimeout = useRemovePasswordTimeout(inputRef);

@@ -4,6 +4,7 @@ import type { BaseInputProps } from './interface';
 import { hasAddon, hasPrefixSuffix } from './utils/commonUtils';
 import Render from '@/components/render/render';
 import clsx from 'clsx';
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 
 export interface HolderRef {
   /** Provider holder ref. Will return `null` if not wrap anything */
@@ -60,7 +61,8 @@ defineExpose<HolderRef>({
 });
 
 const Content = computed(() => {
-  let element: any = cloneVNode(slots.default?.()[0], {
+  const children = flattenChildren(slots.default?.())[0];
+  let element: any = cloneVNode(children, {
     class: clsx(!hasAffix.value && classNames?.variant),
   });
 

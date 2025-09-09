@@ -86,11 +86,11 @@ interface ResponsiveObserverType {
 }
 
 const useResponsiveObserver = () => {
-  const { token } = useToken();
-  const responsiveMap = getResponsiveMap(validateBreakpoints(token));
+  const [, token] = useToken();
 
   // To avoid repeat create instance, we add `useMemo` here.
   return computed((): ResponsiveObserverType => {
+    const responsiveMap = getResponsiveMap(validateBreakpoints(token.value));
     const subscribers = new Map<number, SubscribeFunc>();
     let subUid = -1;
     let screens: Partial<Record<Breakpoint, boolean>> = {};

@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { computed, ref, toRefs, useId } from 'vue';
+import { computed, toRefs, useId } from 'vue';
 import { useConfigContextInject } from '../config-provider';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useSize from '../config-provider/hooks/useSize';
@@ -33,7 +33,6 @@ const {
 } = defineProps<RadioGroupProps>();
 const value = defineModel('value');
 const { getPrefixCls, direction } = toRefs(useConfigContextInject());
-const domRef = ref<HTMLDivElement>(null);
 
 const onRadioChange = (event: RadioChangeEvent) => {
   const lastValue = value.value;
@@ -44,29 +43,29 @@ const onRadioChange = (event: RadioChangeEvent) => {
   }
 };
 
-const prefixCls = getPrefixCls.value('radio', customizePrefixCls);
-const groupPrefixCls = `${prefixCls}-group`;
+const prefixCls = computed(() => getPrefixCls.value('radio', customizePrefixCls));
+const groupPrefixCls = computed(() => `${prefixCls.value}-group`);
 
 // Style
 const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
-const mergedSize = computed(() => useSize(customizeSize));
+const mergedSize = useSize(computed(() => customizeSize));
 
 const classString = computed(() => {
   return clsx(
-    groupPrefixCls,
-    `${groupPrefixCls}-${buttonStyle}`,
+    groupPrefixCls.value,
+    `${groupPrefixCls.value}-${buttonStyle}`,
     {
-      [`${groupPrefixCls}-${mergedSize.value}`]: mergedSize.value,
-      [`${groupPrefixCls}-rtl`]: direction?.value === 'rtl',
-      [`${groupPrefixCls}-block`]: block,
+      [`${groupPrefixCls.value}-${mergedSize.value}`]: mergedSize.value,
+      [`${groupPrefixCls.value}-rtl`]: direction?.value === 'rtl',
+      [`${groupPrefixCls.value}-block`]: block,
     },
     className,
     rootClassName,
-    hashId,
-    cssVarCls,
-    rootCls,
+    hashId.value,
+    cssVarCls.value,
+    rootCls.value,
   );
 });
 const memoizedValue = computed(() => ({ onChange: onRadioChange, value: value.value, disabled, name, optionType, block }));
@@ -81,7 +80,6 @@ const memoizedValue = computed(() => ({ onChange: onRadioChange, value: value.va
     @focus="onFocus"
     @blur="onBlur"
     :id="id"
-    ref="domRef"
   >
     <RadioGroupContextProvider :value="memoizedValue">
       <template v-if="options?.length > 0">
@@ -110,6 +108,7 @@ const memoizedValue = computed(() => ({ onChange: onRadioChange, value: value.va
               :id="option.id"
               :required="option.required"
             >
+              {{ prefixCls }}
               <Render :content="option.label" />
             </Radio>
           </template>

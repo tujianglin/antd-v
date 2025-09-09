@@ -1,7 +1,6 @@
 import { genStyleUtils } from '@/vc-cssinjs-utils';
 import type { GetCompUnitless } from '@/vc-cssinjs-utils/util/genStyleUtils';
-import { reactiveComputed } from '@vueuse/core';
-import { toRefs, unref } from 'vue';
+import { unref } from 'vue';
 import { defaultIconPrefixCls, useConfigContextInject } from '../../config-provider/context';
 import { genCommonStyle, genIconStyle, genLinkStyle } from '../../style';
 import type { AliasToken, ComponentTokenMap, SeedToken } from '../interface';
@@ -23,14 +22,8 @@ export const { genStyleHooks, genComponentStyleHook, genSubStyleComponent } = ge
     };
   },
   useToken: () => {
-    const { theme, token: realToken, hashId, realToken: token, cssVar } = toRefs(useLocalToken());
-    return reactiveComputed(() => ({
-      theme: theme.value as any,
-      realToken: realToken.value,
-      hashId: hashId.value,
-      token: token.value,
-      cssVar: cssVar.value,
-    }));
+    const [theme, realToken, hashId, token, cssVar, zeroRuntime] = useLocalToken();
+    return { theme, realToken, hashId, token, cssVar, zeroRuntime };
   },
   useCSP: () => {
     const context = useConfigContextInject();

@@ -6,7 +6,7 @@ import useToken from '../theme/useToken';
 
 export default defineComponent({
   setup() {
-    const { token } = toRefs(useToken());
+    const [, token] = useToken();
     const [locale] = useLocale('Empty');
 
     const { colorFill, colorFillTertiary, colorFillQuaternary, colorBgContainer } = toRefs(token.value);

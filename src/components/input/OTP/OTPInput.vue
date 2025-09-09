@@ -58,10 +58,10 @@ function onInternalKeyDown(event) {
 }
 
 const vm = getCurrentInstance();
-function changeRef(instance) {
-  inputRef.value = instance;
-  vm.exposed = instance || {};
-  vm.exposeProxy = instance || {};
+function changeRef(el) {
+  inputRef.value = el;
+  vm.exposed = el || {};
+  vm.exposeProxy = el || {};
 }
 </script>
 <template>

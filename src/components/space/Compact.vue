@@ -42,19 +42,19 @@ const { mergedOrientation, mergedVertical } = toRefs(
     computed(() => vertical),
   ),
 );
-const mergedSize = computed(() => useSize((ctx) => size ?? ctx));
+const mergedSize = useSize(computed(() => (ctx) => size ?? ctx));
 
-const prefixCls = getPrefixCls.value('space-compact', customizePrefixCls);
+const prefixCls = computed(() => getPrefixCls.value('space-compact', customizePrefixCls));
 const [hashId] = useStyle(prefixCls);
 
 const cls = computed(() => {
   return clsx(
-    prefixCls,
-    hashId,
+    prefixCls.value,
+    hashId.value,
     {
-      [`${prefixCls}-rtl`]: directionConfig?.value === 'rtl',
-      [`${prefixCls}-block`]: block,
-      [`${prefixCls}-vertical`]: mergedVertical.value,
+      [`${prefixCls.value}-rtl`]: directionConfig?.value === 'rtl',
+      [`${prefixCls.value}-block`]: block,
+      [`${prefixCls.value}-vertical`]: mergedVertical.value,
     },
     className,
     rootClassName,
@@ -68,7 +68,7 @@ const slots = useSlots();
 const nodes = computed(() => {
   const childNodes = slots.default?.() || [];
   return childNodes.map((child, i) => {
-    const key = child?.key || `${prefixCls}-item-${i}`;
+    const key = child?.key || `${prefixCls.value}-item-${i}`;
     return (
       <CompactItem
         key={key}

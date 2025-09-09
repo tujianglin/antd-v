@@ -6,6 +6,7 @@ import Trigger from '@/vc-component/trigger';
 import clsx from 'clsx';
 import placements from './placements';
 import { Render } from '@/components';
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 
 export interface TooltipProps
   extends Pick<
@@ -76,9 +77,9 @@ const {
   ...restProps
 } = defineProps<TooltipProps>();
 
-const slots = defineSlots<{ overlay?: () => VNode; default?: () => VNode }>();
+const slots = defineSlots<{ overlay?: () => VNode[]; default?: () => VNode[] }>();
 
-const overlaySlot = computed(() => slots.overlay?.() || overlay);
+const overlayNode = computed(() => slots.overlay || overlay);
 
 const mergedId = useId();
 const triggerRef = ref<TriggerRef>(null);
@@ -108,20 +109,12 @@ const getPopupElement = () => {
       bodyClassName={tooltipClassNames?.body}
       overlayInnerStyle={{ ...tooltipStyles?.body }}
     >
-      <Render content={overlaySlot.value}></Render>
+      <Render content={overlayNode.value}></Render>
     </Popup>
   );
 };
 
-const getChildren = () => {
-  const child = slots.default()[0];
-  const originalProps = child?.props || {};
-  const childProps = {
-    ...originalProps,
-    'aria-describedby': overlaySlot.value ? mergedId : null,
-  };
-  return cloneVNode(child, childProps) as any;
-};
+const children = computed(() => flattenChildren(slots.default())[0]);
 </script>
 <template>
   <Trigger
@@ -134,7 +127,7 @@ const getChildren = () => {
     ref="triggerRef"
     :popup-align="align"
     :get-popup-container="getTooltipContainer"
-    :on-open-change="onVisibleChange"
+    @open-change="onVisibleChange"
     :after-open-change="afterVisibleChange"
     :popup-motion="motion"
     :default-popup-visible="defaultVisible"
@@ -145,6 +138,13 @@ const getChildren = () => {
     :arrow="showArrow"
     v-bind="extraProps"
   >
-    <getChildren />
+    <component
+      v-if="children"
+      :is="
+        cloneVNode(children, {
+          'aria-describedby': overlayNode ? mergedId : null,
+        })
+      "
+    />
   </Trigger>
 </template>

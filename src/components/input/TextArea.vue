@@ -84,23 +84,21 @@ defineExpose({
   blur: () => innerRef.value?.blur(),
 });
 
-const prefixCls = getPrefixCls.value('input', customizePrefixCls);
+const prefixCls = computed(() => getPrefixCls.value('input', customizePrefixCls));
 
 // ==================== Style =====================
 const rootCls = useCSSVarCls(prefixCls);
-const [hashId, cssVarCls] = useSharedStyle(prefixCls, rootClassName);
+const [hashId, cssVarCls] = useSharedStyle(
+  prefixCls,
+  computed(() => rootClassName),
+);
 useStyle(prefixCls, rootCls);
 
 // ================= Compact Item =================
-const { compactSize, compactItemClassnames } = toRefs(
-  useCompactItemContext(
-    prefixCls,
-    computed(() => direction.value),
-  ),
-);
+const { compactSize, compactItemClassnames } = toRefs(useCompactItemContext(prefixCls, direction));
 
 // ===================== Size =====================
-const mergedSize = computed(() => useSize((ctx) => customizeSize ?? compactSize.value ?? ctx));
+const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
 
 const { variant, enableVariantCls } = toRefs(
   useVariant(

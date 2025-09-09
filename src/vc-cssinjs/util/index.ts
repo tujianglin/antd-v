@@ -20,7 +20,7 @@ export function memoResult<T extends object, R>(callback: () => R, deps: T[]): R
   }
 
   if (!current.has(RESULT_VALUE)) {
-    current.set(RESULT_VALUE, callback());
+    current?.set(RESULT_VALUE, callback());
   }
 
   return current.get(RESULT_VALUE);

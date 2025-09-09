@@ -26,7 +26,7 @@ const {
 
 const { flex: ctxFlex, direction: ctxDirection, getPrefixCls } = toRefs(useConfigContextInject());
 
-const prefixCls = getPrefixCls.value('flex', customizePrefixCls);
+const prefixCls = computed(() => getPrefixCls.value('flex', customizePrefixCls));
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
@@ -44,14 +44,14 @@ const mergedCls = computed(() => {
     className,
     rootClassName,
     ctxFlex?.value?.class,
-    prefixCls,
-    hashId,
-    cssVarCls,
-    createFlexClassNames(prefixCls, vm.props),
+    prefixCls.value,
+    hashId.value,
+    cssVarCls.value,
+    createFlexClassNames(prefixCls.value, vm.props),
     {
-      [`${prefixCls}-rtl`]: ctxDirection?.value === 'rtl',
-      [`${prefixCls}-gap-${gap}`]: isPresetSize(gap),
-      [`${prefixCls}-vertical`]: mergedVertical.value,
+      [`${prefixCls.value}-rtl`]: ctxDirection?.value === 'rtl',
+      [`${prefixCls.value}-gap-${gap}`]: isPresetSize(gap),
+      [`${prefixCls.value}-vertical`]: mergedVertical.value,
     },
   );
 });

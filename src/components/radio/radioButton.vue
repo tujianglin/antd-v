@@ -1,6 +1,5 @@
 <script lang="tsx" setup>
-import { toRefs } from 'vue';
-import { useComposeRef } from '../_util/type';
+import { computed, getCurrentInstance, toRefs } from 'vue';
 import type { AbstractCheckboxProps } from '../checkbox/interface';
 import { useConfigContextInject } from '../config-provider';
 import { RadioOptionTypeContextProvider } from './context';
@@ -14,13 +13,18 @@ defineOptions({ name: 'RadioButton', inheritAttrs: false, compatConfig: { MODE: 
 const { prefixCls: customizePrefixCls, ...radioProps } = defineProps<RadioButtonProps>();
 
 const { getPrefixCls } = toRefs(useConfigContextInject());
-const prefixCls = getPrefixCls.value('radio', customizePrefixCls);
+const prefixCls = computed(() => getPrefixCls.value('radio', customizePrefixCls));
 
-const mergeRef = useComposeRef();
+const vm = getCurrentInstance();
+
+function changeRef(el) {
+  vm.exposed = el || {};
+  vm.exposeProxy = el || {};
+}
 </script>
 <template>
   <RadioOptionTypeContextProvider value="button">
-    <Radio :prefix-cls="prefixCls" v-bind="radioProps" type="radio" :ref="mergeRef">
+    <Radio :prefix-cls="prefixCls" v-bind="radioProps" type="radio" :ref="changeRef">
       <slot></slot>
     </Radio>
   </RadioOptionTypeContextProvider>

@@ -10,7 +10,7 @@ interface SemanticContextProps {
 const semanticContextProviderKey: InjectionKey<Reactive<SemanticContextProps>> = Symbol('semanticContextProvider');
 
 export const useSemanticContextInject = () => {
-  return inject(semanticContextProviderKey, reactive<SemanticContextProps>(null));
+  return inject(semanticContextProviderKey, reactive<SemanticContextProps>({}));
 };
 
 export const useSemanticContextProvider = (props: Reactive<SemanticContextProps>) => {

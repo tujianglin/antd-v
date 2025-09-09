@@ -1,4 +1,3 @@
-/* eslint-disable no-template-curly-in-string */
 import type { Locale } from '.';
 
 const typeTemplate = '${label} is not a valid ${type}';

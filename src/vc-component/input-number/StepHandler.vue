@@ -1,7 +1,6 @@
 <script lang="tsx" setup>
 import { Render } from '@/components';
 import type { RenderNode } from '@/components/_util/type';
-import useMobile from '@/vc-util/hooks/useMobile';
 import raf from '@/vc-util/raf';
 import clsx from 'clsx';
 import { computed, onMounted, ref, toRefs } from 'vue';
@@ -56,18 +55,17 @@ function onStepMouseDown(e: MouseEvent, up: boolean) {
 }
 
 // ======================= Render =======================
-const isMobile = useMobile();
 
-const handlerClassName = `${prefixCls}-handler`;
+const handlerClassName = computed(() => `${prefixCls}-handler`);
 
 const upClassName = computed(() =>
-  clsx(handlerClassName, `${handlerClassName}-up`, {
-    [`${handlerClassName}-up-disabled`]: upDisabled,
+  clsx(handlerClassName.value, `${handlerClassName.value}-up`, {
+    [`${handlerClassName.value}-up-disabled`]: upDisabled,
   }),
 );
 const downClassName = computed(() =>
-  clsx(handlerClassName, `${handlerClassName}-down`, {
-    [`${handlerClassName}-down-disabled`]: downDisabled,
+  clsx(handlerClassName.value, `${handlerClassName.value}-down`, {
+    [`${handlerClassName.value}-down-disabled`]: downDisabled,
   }),
 );
 
@@ -81,12 +79,12 @@ const safeOnStopStep = () => frameIds.value.push(raf(onStopStep));
 const sharedHandlerProps = {
   unselectable: 'on' as const,
   role: 'button',
-  onMouseUp: safeOnStopStep,
-  onMouseLeave: safeOnStopStep,
+  onMouseup: safeOnStopStep,
+  onMouseleave: safeOnStopStep,
 };
 </script>
 <template>
-  <div v-if="!isMobile" :class="clsx(`${handlerClassName}-wrap`, classNames?.actions)" :style="styles?.actions">
+  <div :class="clsx(`${handlerClassName}-wrap`, classNames?.actions)" :style="styles?.actions">
     <span
       v-bind="sharedHandlerProps"
       @mousedown="(e) => onStepMouseDown(e, true)"

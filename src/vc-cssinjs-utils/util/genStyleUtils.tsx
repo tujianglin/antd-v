@@ -13,7 +13,7 @@ import getDefaultComponentToken from './getDefaultComponentToken';
 import genMaxMin from './maxmin';
 import statisticToken, { merge as mergeToken } from './statistic';
 
-import { computed, defineComponent, onMounted, onUpdated, toRefs, type Reactive } from 'vue';
+import { computed, defineComponent, onMounted, onUpdated, type Ref } from 'vue';
 import useUniqueMemo from '../_util/hooks/useUniqueMemo';
 import type { UseCSP } from '../hooks/useCSP';
 import useDefaultCSP from '../hooks/useCSP';
@@ -95,7 +95,7 @@ export type GetCompUnitless<CompTokenMap extends TokenMap, AliasToken extends To
 
 function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenType, DesignToken extends TokenType>(config: {
   usePrefix: UsePrefix;
-  useToken: Reactive<UseToken<CompTokenMap, AliasToken, DesignToken>>;
+  useToken: UseToken<CompTokenMap, AliasToken, DesignToken>;
   useCSP?: UseCSP;
   getResetStyles?: GetResetStyles<AliasToken>;
   getCommonStyle?: (token: AliasToken, componentPrefixCls: string, rootCls?: string, resetFont?: boolean) => CSSObject;
@@ -164,7 +164,7 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
 
     const useCSSVar = genCSSVarRegister(componentName, getDefaultToken, mergedOptions);
 
-    return (prefixCls: string, rootCls: string = prefixCls) => {
+    return (prefixCls: Ref<string>, rootCls: Ref<string> = prefixCls) => {
       const hashId = useStyle(prefixCls, rootCls);
       const cssVarCls = useCSSVar(rootCls);
       return [hashId, cssVarCls] as const;
@@ -184,19 +184,19 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
   ) {
     const { unitless: compUnitless, prefixToken, ignore } = options;
 
-    return (rootCls: string) => {
-      const { cssVar, realToken } = toRefs(useToken());
+    return (rootCls: Ref<string>) => {
+      const { cssVar, realToken } = useToken();
 
       useCSSVarRegister(
-        {
+        computed(() => ({
           path: [component],
           prefix: cssVar.value.prefix,
           key: cssVar.value.key!,
           unitless: compUnitless,
           ignore,
-          token: realToken,
-          scope: rootCls,
-        },
+          token: realToken.value,
+          scope: rootCls.value,
+        })),
         () => {
           const defaultToken = getDefaultComponentToken<CompTokenMap, AliasToken, C>(component, realToken.value, getDefaultToken);
           const componentToken = getComponentToken<CompTokenMap, AliasToken, C>(component, realToken.value, defaultToken, {
@@ -213,7 +213,7 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
         },
       );
 
-      return cssVar.value?.key;
+      return computed(() => cssVar.value?.key);
     };
   }
 
@@ -248,12 +248,12 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
     };
 
     // Return new style hook
-    return (prefixCls: string, rootCls: string = prefixCls): string => {
-      const { theme, realToken, hashId, token, cssVar, zeroRuntime } = toRefs(useToken());
+    return (prefixCls: Ref<string>, rootCls: Ref<string> = prefixCls): Ref<string> => {
+      const { theme, realToken, hashId, token, cssVar, zeroRuntime } = useToken();
       // Update of `disabledRuntimeStyle` would cause React hook error, so memoized it and never update.
-      const memoizedZeroRuntime = computed(() => zeroRuntime);
+      const memoizedZeroRuntime = computed(() => zeroRuntime.value);
       if (memoizedZeroRuntime.value) {
-        return hashId.value;
+        return hashId;
       }
 
       const { rootPrefixCls, iconPrefixCls } = usePrefix();
@@ -278,7 +278,7 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
       // Shared config
       const sharedConfig: Omit<Parameters<typeof useStyleRegister>[0]['value'], 'path'> = {
         theme: theme.value,
-        token,
+        token: token.value,
         hashId: hashId.value,
         nonce: () => csp.nonce!,
         clientOnly: options.clientOnly,
@@ -297,7 +297,7 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
         );
       }
       useStyleRegister(
-        computed(() => ({ ...sharedConfig, path: [concatComponent, prefixCls, iconPrefixCls] })),
+        computed(() => ({ ...sharedConfig, path: [concatComponent, prefixCls.value, iconPrefixCls] })),
         () => {
           if (options.injectStyle === false) {
             return [];
@@ -311,7 +311,7 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
             getDefaultToken,
           );
 
-          const componentCls = `.${prefixCls}`;
+          const componentCls = `.${prefixCls.value}`;
           const componentToken = getComponentToken<CompTokenMap, AliasToken, C>(
             component,
             realToken.value,
@@ -341,17 +341,19 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
           );
           const styleInterpolation = styleFn(mergedToken, {
             hashId: hashId.value,
-            prefixCls,
+            prefixCls: prefixCls.value,
             rootPrefixCls,
             iconPrefixCls,
           });
           flush(component, componentToken);
           const commonStyle =
-            typeof getCommonStyle === 'function' ? getCommonStyle(mergedToken, prefixCls, rootCls, options.resetFont) : null;
+            typeof getCommonStyle === 'function'
+              ? getCommonStyle(mergedToken, prefixCls.value, rootCls.value, options.resetFont)
+              : null;
           return [options.resetStyle === false ? null : commonStyle, styleInterpolation];
         },
       );
-      return hashId.value;
+      return hashId;
     };
   }
 
@@ -400,7 +402,10 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
         if (!options.clientOnly || typeof window !== 'undefined') {
           // 在挂载和更新时调用 useStyle
           const applyStyle = () => {
-            useStyle(props.prefixCls, props.rootCls || props.prefixCls);
+            useStyle(
+              computed(() => props.prefixCls),
+              computed(() => props.rootCls || props.prefixCls),
+            );
           };
 
           onMounted(applyStyle);

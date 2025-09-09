@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import type { TriggerProps } from '@/vc-component/trigger';
 import type { ActionType, AlignType, AnimationType, BuildInPlacements } from '@/vc-component/trigger/interface';
-import { cloneVNode, computed, ref, type CSSProperties } from 'vue';
+import { cloneVNode, computed, ref, useSlots, type CSSProperties } from 'vue';
 import useAccessibility from './hooks/useAccessibility';
 import Placements from './placements';
 import Overlay from './Overlay.vue';
@@ -122,6 +122,10 @@ const triggerHideAction = computed(() => {
   }
   return result;
 });
+
+const slots = useSlots();
+
+const children = computed(() => flattenChildren(slots.default?.())[0]);
 </script>
 <template>
   <Trigger
@@ -150,8 +154,8 @@ const triggerHideAction = computed(() => {
   >
     <component
       :is="
-        cloneVNode(flattenChildren($slots.default?.())[0], {
-          class: clsx(flattenChildren($slots.default?.())[0].props?.className, mergedVisible && getOpenClassName),
+        cloneVNode(children, {
+          class: clsx(children.props?.class, mergedVisible && getOpenClassName),
         })
       "
     />

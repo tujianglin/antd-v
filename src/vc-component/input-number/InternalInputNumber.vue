@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { computed, onBeforeUnmount, shallowRef, watch } from 'vue';
+import { computed, onBeforeUnmount, shallowRef, useTemplateRef, watch } from 'vue';
 import type { DecimalClass, ValueType } from '../mini-decimal';
 import getMiniDecimal, { getNumberPrecision, num2str, toFixed, validateNumber } from '../mini-decimal';
 import useCursor from './hooks/useCursor';
@@ -40,8 +40,8 @@ const value = defineModel<ValueType>('value');
 
 const inputClassName = `${prefixCls}-input`;
 
-const inputRef = shallowRef<HTMLInputElement>(null);
-const domRef = shallowRef<HTMLDivElement>(null);
+const inputRef = useTemplateRef('inputRef');
+const domRef = useTemplateRef('domRef');
 
 const focus = shallowRef(false);
 const userTypingRef = shallowRef(false);
@@ -476,10 +476,10 @@ onBeforeUnmount(() => {
 
 defineExpose({
   get domRef() {
-    return domRef.value as HTMLDivElement;
+    return domRef.value;
   },
   get input() {
-    return inputRef.value as HTMLInputElement;
+    return inputRef.value;
   },
 });
 </script>

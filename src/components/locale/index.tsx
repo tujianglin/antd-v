@@ -1,12 +1,14 @@
+import type { PaginationLocale } from '@/vc-component/pagination';
 import { computed, defineComponent, type PropType } from 'vue';
 import { devUseWarning } from '../_util/warning';
+import type { PickerLocale as DatePickerLocale } from '../date-picker/generatePicker';
 import { LocaleContextProvider, type LocaleContextProps } from './context';
 
 export const ANT_MARK = 'internalMark';
 export interface Locale {
   locale: string;
-  // Pagination?: PaginationLocale;
-  // DatePicker?: DatePickerLocale;
+  Pagination?: PaginationLocale;
+  DatePicker?: DatePickerLocale;
   TimePicker?: Record<string, any>;
   Calendar?: Record<string, any>;
   Table?: any;
@@ -32,7 +34,7 @@ export interface Locale {
   };
   Form?: {
     optional?: string;
-    defaultValidateMessages: Record<string, any>;
+    defaultValidateMessages: any;
   };
   Image?: {
     preview: string;
@@ -79,7 +81,6 @@ export const LocaleProvider = defineComponent({
     //   () => props.locale,
     //   () => {
     //     const clearLocale = changeConfirmLocale(locale?.Modal);
-    //     return clearLocale;
     //   },
     //   { deep: true, immediate: true },
     // );

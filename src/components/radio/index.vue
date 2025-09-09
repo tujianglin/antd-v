@@ -1,9 +1,8 @@
 <script lang="tsx" setup>
-import VcCheckbox from '@/vc-component/checkbox/index.vue';
+import RcCheckbox from '@/vc-component/checkbox/index.vue';
 import clsx from 'clsx';
 import { isEmpty } from 'lodash-es';
-import { computed, toRefs } from 'vue';
-import { useComposeRef } from '../_util/type';
+import { computed, getCurrentInstance, toRefs } from 'vue';
 import { Wave } from '../_util/wave';
 import { TARGET_CLS } from '../_util/wave/interface';
 import useBubbleLock from '../checkbox/useBubbleLock';
@@ -40,16 +39,16 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('radio'));
 
-const radioPrefixCls = getPrefixCls.value('radio', customizePrefixCls);
+const radioPrefixCls = computed(() => getPrefixCls.value('radio', customizePrefixCls));
 const isButtonType = computed(() => (groupContext?.optionType || radioOptionTypeContext.value) === 'button');
-const prefixCls = computed(() => (isButtonType.value ? `${radioPrefixCls}-button` : radioPrefixCls));
+const prefixCls = computed(() => (isButtonType.value ? `${radioPrefixCls.value}-button` : radioPrefixCls.value));
 
 // Style
 const rootCls = useCSSVarCls(radioPrefixCls);
 const [hashId, cssVarCls] = useStyle(radioPrefixCls, rootCls);
 const disabled = useDisabledContextInject();
 
-const radioProps = computed((): RadioProps => {
+const radioProps = computed(() => {
   const result: RadioProps = {};
   if (!isEmpty(groupContext)) {
     result.name = groupContext.name;
@@ -58,7 +57,7 @@ const radioProps = computed((): RadioProps => {
     result.disabled = restProps.disabled ?? groupContext.disabled;
   }
   result.disabled = restProps.disabled ?? disabled.value;
-  return { ...restProps, ...result };
+  return { ...restProps, ...result } as any;
 });
 
 const wrapperClassString = computed(() => {
@@ -75,9 +74,9 @@ const wrapperClassString = computed(() => {
     rootClassName,
     contextClassNames.value?.root,
     radioClassNames?.root,
-    hashId,
-    cssVarCls,
-    rootCls,
+    hashId.value,
+    cssVarCls.value,
+    rootCls.value,
   );
 });
 
@@ -87,7 +86,11 @@ function onChange(e: RadioChangeEvent) {
 }
 const [onLabelClick, onInputClick] = useBubbleLock(radioProps.value.onClick);
 
-const mergedRef = useComposeRef();
+const vm = getCurrentInstance();
+function changeRef(el) {
+  vm.exposed = el || {};
+  vm.exposeProxy = el || {};
+}
 </script>
 <template>
   <Wave component="Radio" :disabled="radioProps.disabled">
@@ -99,8 +102,8 @@ const mergedRef = useComposeRef();
       :title="title"
       @click="onLabelClick"
     >
-      <VcCheckbox
-        v-bind="{...radioProps as any, ...$attrs}"
+      <RcCheckbox
+        v-bind="{ ...radioProps, ...$attrs }"
         :class="
           clsx(radioClassNames?.icon, contextClassNames.icon, {
             [TARGET_CLS]: !isButtonType,
@@ -109,7 +112,7 @@ const mergedRef = useComposeRef();
         :style="{ ...contextStyles.icon, ...styles?.icon }"
         type="radio"
         :prefix-cls="prefixCls"
-        :ref="mergedRef"
+        :ref="changeRef"
         @click="onInputClick"
       />
       <span

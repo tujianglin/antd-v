@@ -14,7 +14,7 @@ const useWave = (
 ) => {
   const instance = getCurrentInstance();
   const { wave } = toRefs(useConfigContextInject());
-  const { token, hashId } = useToken();
+  const [, token, hashId] = useToken();
 
   const showWave: ShowWave = (event) => {
     const node = findDOMNode(instance);
@@ -24,10 +24,10 @@ const useWave = (
     const { showEffect } = wave?.value || {};
     (showEffect || showWaveEffect)(targetNode, {
       className: className.value,
-      token,
+      token: token.value,
       component,
       event,
-      hashId,
+      hashId: hashId.value,
       colorSource: colorSource.value,
     });
   };

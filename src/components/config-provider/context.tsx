@@ -8,10 +8,10 @@ import {
   type PropType,
   type Reactive,
 } from 'vue';
-// import type { WarningContextProps } from '../_util/warning';
-// import type { ShowWaveEffect } from '../_util/wave/interface';
-// import type { AlertProps } from '../alert';
-// import type { AnchorProps } from '../anchor';
+import type { WarningContextProps } from '../_util/warning';
+import type { ShowWaveEffect } from '../_util/wave/interface';
+import type { AlertProps } from '../alert';
+import type { AnchorProps } from '../anchor';
 // import type { BadgeProps } from '../badge';
 // import type { RibbonProps } from '../badge/Ribbon';
 // import type { BreadcrumbProps } from '../breadcrumb';
@@ -45,7 +45,7 @@ import type { OTPProps } from '../input/OTP/interface';
 // import type { ArgsProps as NotificationProps } from '../notification';
 // import type { PaginationProps } from '../pagination';
 // import type { PopconfirmProps } from '../popconfirm';
-// import type { PopoverProps } from '../popover';
+import type { PopoverProps } from '../popover';
 // import type { ProgressProps } from '../progress';
 // import type { QRCodeProps } from '../qr-code';
 import type { RadioProps } from '../radio';
@@ -64,21 +64,18 @@ import type { SpaceProps } from '../space';
 // import type { TabsProps } from '../tabs';
 // import type { TagProps } from '../tag';
 import { reactiveComputed } from '@vueuse/core';
-import type { WarningContextProps } from '../_util/warning';
-import type { ShowWaveEffect } from '../_util/wave/interface';
 import type { ButtonProps } from '../button';
 import type { Locale } from '../locale';
 import type { AliasToken, MappingAlgorithm, OverrideToken } from '../theme/interface';
 import type { RenderEmptyHandler } from './defaultRenderEmpty.vue';
 // import type { TimePickerProps } from '../time-picker';
 // import type { TimelineProps } from '../timeline';
-// import type { TooltipProps } from '../tooltip';
+import type { TooltipProps } from '../tooltip';
 // import type { TourProps } from '../tour/interface';
 // import type { TransferProps } from '../transfer';
 // import type { TreeProps } from '../tree';
 // import type { TreeSelectProps } from '../tree-select';
 // import type { UploadProps } from '../upload';
-// import type { RenderEmptyHandler } from './defaultRenderEmpty';
 
 export const defaultPrefixCls = 'ant';
 export const defaultIconPrefixCls = 'anticon';
@@ -192,9 +189,9 @@ export type CheckboxConfig = ComponentStyleConfig & Pick<CheckboxProps, 'classNa
 // export type TabsConfig = ComponentStyleConfig &
 //   Pick<TabsProps, 'indicator' | 'indicatorSize' | 'more' | 'moreIcon' | 'addIcon' | 'removeIcon' | 'classNames' | 'styles'>;
 
-// export type AnchorStyleConfig = ComponentStyleConfig & Pick<AnchorProps, 'classNames' | 'styles'>;
+export type AnchorStyleConfig = ComponentStyleConfig & Pick<AnchorProps, 'classNames' | 'styles'>;
 
-// export type AlertConfig = ComponentStyleConfig & Pick<AlertProps, 'closable' | 'closeIcon' | 'classNames' | 'styles'>;
+export type AlertConfig = ComponentStyleConfig & Pick<AlertProps, 'closable' | 'closeIcon' | 'classNames' | 'styles'>;
 
 // export type BadgeConfig = ComponentStyleConfig & Pick<BadgeProps, 'classNames' | 'styles'>;
 
@@ -254,9 +251,9 @@ export type FloatButtonGroupConfig = ComponentStyleConfig & Pick<FloatButtonGrou
 
 export type SpaceConfig = ComponentStyleConfig & Pick<SpaceProps, 'size' | 'classNames' | 'styles'>;
 
-// export type TooltipConfig = Pick<TooltipProps, 'className' | 'style' | 'styles' | 'classNames' | 'arrow'>;
+export type TooltipConfig = Pick<TooltipProps, 'class' | 'style' | 'styles' | 'classNames' | 'arrow'>;
 
-// export type PopoverConfig = Pick<PopoverProps, 'className' | 'style' | 'styles' | 'classNames' | 'arrow'>;
+export type PopoverConfig = Pick<PopoverProps, 'class' | 'style' | 'styles' | 'classNames' | 'arrow'>;
 
 // export type PopconfirmConfig = Pick<PopconfirmProps, 'className' | 'style' | 'styles' | 'classNames' | 'arrow'>;
 
@@ -337,9 +334,9 @@ export interface ConfigComponentProps {
   // splitter?: ComponentStyleConfig & Pick<SplitterProps, 'classNames' | 'styles'>;
   // form?: FormConfig;
   // select?: SelectConfig;
-  // alert?: AlertConfig;
-  // affix?: ComponentStyleConfig;
-  // anchor?: AnchorStyleConfig;
+  alert?: AlertConfig;
+  affix?: ComponentStyleConfig;
+  anchor?: AnchorStyleConfig;
   button?: ButtonConfig;
   // divider?: DividerConfig;
   // drawer?: DrawerConfig;
@@ -375,7 +372,7 @@ export interface ConfigComponentProps {
   // rate?: ComponentStyleConfig;
   // switch?: SwitchStyleConfig;
   // transfer?: TransferConfig;
-  // avatar?: ComponentStyleConfig;
+  avatar?: ComponentStyleConfig;
   // message?: MessageConfig;
   // tag?: TagConfig;
   // table?: TableConfig;
@@ -385,8 +382,8 @@ export interface ConfigComponentProps {
   // timeline?: TimelineConfig;
   // timePicker?: TimePickerConfig;
   // tour?: TourConfig;
-  // tooltip?: TooltipConfig;
-  // popover?: PopoverConfig;
+  tooltip?: TooltipConfig;
+  popover?: PopoverConfig;
   // popconfirm?: PopconfirmConfig;
   // upload?: UploadConfig;
   // notification?: NotificationConfig;

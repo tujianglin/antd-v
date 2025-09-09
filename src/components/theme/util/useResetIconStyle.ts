@@ -1,12 +1,12 @@
 import { useStyleRegister } from '@/vc-cssinjs';
 
-import { computed, toRefs, type ComputedRef } from 'vue';
+import { computed, type ComputedRef } from 'vue';
 import type { CSPConfig } from '../../config-provider';
 import { genIconStyle } from '../../style';
 import useToken from '../useToken';
 
 const useResetIconStyle = (iconPrefixCls: ComputedRef<string>, csp?: ComputedRef<CSPConfig>) => {
-  const { theme, token } = toRefs(useToken());
+  const [theme, token] = useToken();
   // Generate style for icons
   return useStyleRegister(
     computed(() => ({

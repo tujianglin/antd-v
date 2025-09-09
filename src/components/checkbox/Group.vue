@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import { computed, ref, toRefs, type CSSProperties } from 'vue';
+import { computed, ref, toRefs, useTemplateRef, type CSSProperties } from 'vue';
 import type { RenderNode } from '../_util/type';
 import { useConfigContextInject } from '../config-provider';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
@@ -54,7 +54,7 @@ const {
 const { getPrefixCls, direction } = toRefs(useConfigContextInject());
 const value = defineModel<InternalCheckboxValueType[]>('value');
 const registeredValues = ref([]);
-const domRef = ref();
+const domRef = useTemplateRef('domRef');
 
 const memoizedOptions = computed(() =>
   options.map<CheckboxOptionType>((option: any) => {
@@ -93,8 +93,8 @@ const toggleOption: CheckboxGroupContext['toggleOption'] = (option) => {
   );
 };
 
-const prefixCls = getPrefixCls.value('checkbox', customizePrefixCls);
-const groupPrefixCls = `${prefixCls}-group`;
+const prefixCls = computed(() => getPrefixCls.value('checkbox', customizePrefixCls));
+const groupPrefixCls = computed(() => `${prefixCls.value}-group`);
 
 const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
@@ -111,20 +111,22 @@ const memoizedContext = computed(() => ({
 
 const classString = computed(() => {
   return clsx(
-    groupPrefixCls,
+    groupPrefixCls.value,
     {
-      [`${groupPrefixCls}-rtl`]: direction.value === 'rtl',
+      [`${groupPrefixCls.value}-rtl`]: direction.value === 'rtl',
     },
     className,
     rootClassName,
-    cssVarCls,
-    rootCls,
-    hashId,
+    cssVarCls.value,
+    rootCls.value,
+    hashId.value,
   );
 });
 
 defineExpose({
-  $el: () => domRef.value,
+  get el() {
+    return domRef.value;
+  },
 });
 </script>
 

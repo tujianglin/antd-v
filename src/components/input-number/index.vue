@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, getCurrentInstance, h, toRefs, type VNode } from 'vue';
+import { computed, getCurrentInstance, h, toRefs, type ComponentInstance, type VNode } from 'vue';
 import { useComponentConfig } from '../config-provider/context';
 import type { InputNumberProps } from './interface';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
@@ -12,7 +12,7 @@ import useSize from '../config-provider/hooks/useSize';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import useVariant from '../form/hooks/useVariants';
 import clsx from 'clsx';
-import VcInputNumber from '@/vc-component/input-number';
+import RcInputNumber from '@/vc-component/input-number';
 import ContextIsolator from '../_util/ContextIsolator';
 import Render from '../render';
 import type { ValueType } from '@/vc-component/mini-decimal';
@@ -36,6 +36,7 @@ const {
   classNames,
   styles,
   changeOnBlur = true,
+  keyboard = true,
   ...others
 } = defineProps<InputNumberProps>();
 
@@ -69,39 +70,38 @@ const { mergedClassNames, mergedStyles } = toRefs(
   ),
 );
 
-const prefixCls = getPrefixCls.value('input-number', customizePrefixCls);
+const prefixCls = computed(() => getPrefixCls.value('input-number', customizePrefixCls));
 
 // Style
 const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
-const { compactSize, compactItemClassnames } = toRefs(
-  useCompactItemContext(
-    prefixCls,
-    computed(() => direction.value),
-  ),
-);
+const { compactSize, compactItemClassnames } = toRefs(useCompactItemContext(prefixCls, direction));
 const controlsTemp = computed(() => (typeof controls === 'boolean' ? controls : undefined));
 
 const { upIcon, downIcon } = toRefs(
   reactiveComputed(() => {
-    let upIcon = <UpOutlined class={`${prefixCls}-handler-up-inner`} />;
-    let downIcon = <DownOutlined class={`${prefixCls}-handler-down-inner`} />;
+    let upIcon = <UpOutlined class={`${prefixCls.value}-handler-up-inner`} />;
+    let downIcon = <DownOutlined class={`${prefixCls.value}-handler-down-inner`} />;
     if (typeof controls === 'object') {
       upIcon =
-        typeof controls.upIcon === 'undefined' ? upIcon : <span class={`${prefixCls}-handler-up-inner`}>{controls.upIcon}</span>;
+        typeof controls.upIcon === 'undefined' ? (
+          upIcon
+        ) : (
+          <span class={`${prefixCls.value}-handler-up-inner`}>{controls.upIcon}</span>
+        );
       downIcon =
         typeof controls.downIcon === 'undefined' ? (
           downIcon
         ) : (
-          <span class={`${prefixCls}-handler-down-inner`}>{controls.downIcon}</span>
+          <span class={`${prefixCls.value}-handler-down-inner`}>{controls.downIcon}</span>
         );
     }
     return { upIcon, downIcon };
   }),
 );
 
-const mergedSize = computed(() => useSize((ctx) => customizeSize ?? compactSize.value ?? ctx));
+const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
 
 // ===================== Disabled =====================
 const disabled = useDisabledContextInject();
@@ -117,25 +117,28 @@ const { variant, enableVariantCls } = toRefs(
 const inputNumberClass = computed(() => {
   return clsx(
     {
-      [`${prefixCls}-lg`]: mergedSize.value === 'large',
-      [`${prefixCls}-sm`]: mergedSize.value === 'small',
-      [`${prefixCls}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-lg`]: mergedSize.value === 'large',
+      [`${prefixCls.value}-sm`]: mergedSize.value === 'small',
+      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
     },
-    hashId,
+    hashId.value,
     mergedClassNames.value?.input,
   );
 });
-const wrapperClassName = `${prefixCls}-group`;
+const wrapperClassName = `${prefixCls.value}-group`;
 
 const vm = getCurrentInstance();
-function changeRef(instance) {
-  vm.exposed = instance || {};
-  vm.exposeProxy = instance || {};
+function changeRef(el) {
+  vm.exposed = el || {};
+  vm.exposeProxy = el || {};
 }
+
+defineExpose({} as ComponentInstance<typeof RcInputNumber>);
 </script>
 <template>
-  <VcInputNumber
+  <RcInputNumber
     v-bind="{ ...others, ...$attrs }"
+    :keyboard="keyboard"
     :ref="changeRef"
     v-model:value="value"
     :disabled="mergedDisabled"

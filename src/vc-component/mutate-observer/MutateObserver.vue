@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import { supportNodeRef } from '@/vc-util/ref';
-import { cloneVNode, computed, ref } from 'vue';
+import { cloneVNode, computed, ref, useSlots } from 'vue';
 import type { MutationObserverProps } from './interface';
 import useMutateObserver from './useMutateObserver';
 
@@ -18,10 +18,14 @@ useMutateObserver(
   callback,
   computed(() => options),
 );
+
+const slots = useSlots();
+
+const children = computed(() => flattenChildren(slots.default?.())[0]);
 </script>
 <template>
-  <template v-if="supportNodeRef(flattenChildren($slots.default?.())[0])">
-    <component :is="cloneVNode(flattenChildren($slots.default?.())[0], { ref: (el) => (target = el) })" />
+  <template v-if="supportNodeRef(children)">
+    <component :is="cloneVNode(children, { ref: (el) => (target = el) })" />
   </template>
   <template v-else> <slot></slot> </template>
 </template>

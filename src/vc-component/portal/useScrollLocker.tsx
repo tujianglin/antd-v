@@ -8,7 +8,7 @@ export default function useScrollLocker(lock?: Ref<boolean>) {
 
   let uuid = 0;
 
-  const mergedLock = computed(() => !!lock);
+  const mergedLock = computed(() => !!lock.value);
   const id = computed(() => {
     uuid += 1;
     return `${UNIQUE_ID.value}_${uuid}`;

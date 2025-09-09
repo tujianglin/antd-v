@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import { falseToUndefined } from '@/vc-util/props';
 import clsx from 'clsx';
-import { computed, getCurrentInstance, shallowRef, type CSSProperties, type InputHTMLAttributes } from 'vue';
+import { computed, getCurrentInstance, useTemplateRef, type CSSProperties, type InputHTMLAttributes } from 'vue';
 
 export interface CheckboxChangeEvent {
   target: CheckboxChangeEventTarget;
@@ -45,8 +45,8 @@ const {
 } = defineProps<CheckboxProps>();
 const vm = getCurrentInstance();
 
-const inputRef = shallowRef<HTMLInputElement>(null);
-const holderRef = shallowRef<HTMLElement>(null);
+const inputRef = useTemplateRef('inputRef');
+const holderRef = useTemplateRef('holderRef');
 
 const value = defineModel<boolean>('checked');
 defineExpose({
@@ -56,8 +56,12 @@ defineExpose({
   blur: () => {
     inputRef.value?.blur();
   },
-  input: () => inputRef.value,
-  nativeElement: () => holderRef.value,
+  get input() {
+    return inputRef.value;
+  },
+  get nativeElement() {
+    return holderRef.value;
+  },
 });
 
 const classString = computed(() => {
