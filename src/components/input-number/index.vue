@@ -165,7 +165,7 @@ function changeRef(instance) {
           [`${prefixCls}-affix-wrapper-sm`]: mergedSize === 'small',
           [`${prefixCls}-affix-wrapper-lg`]: mergedSize === 'large',
           [`${prefixCls}-affix-wrapper-rtl`]: direction === 'rtl',
-          [`${prefixCls}-affix-wrapper-without-controls`]: controls === false || mergedDisabled,
+          [`${prefixCls}-affix-wrapper-without-controls`]: controls === false || mergedDisabled || readonly,
         },
         hashId,
       ),

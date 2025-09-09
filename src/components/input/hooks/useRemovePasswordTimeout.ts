@@ -9,10 +9,10 @@ export function useRemovePasswordTimeout(inputRef: Ref<InputRef | null>, trigger
       setTimeout(() => {
         if (
           inputRef.value?.input &&
-          inputRef.value?.input().getAttribute('type') === 'password' &&
-          inputRef.value?.input().hasAttribute('value')
+          inputRef.value?.input.getAttribute('type') === 'password' &&
+          inputRef.value?.input.hasAttribute('value')
         ) {
-          inputRef.value?.input().removeAttribute('value');
+          inputRef.value?.input.removeAttribute('value');
         }
       }),
     );

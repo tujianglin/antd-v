@@ -34,7 +34,7 @@ function onInternalChange(e) {
 
 function syncSelection() {
   raf(() => {
-    const inputEle = inputRef.value?.input();
+    const inputEle = inputRef.value?.input;
     if (document.activeElement === inputEle && inputEle) {
       inputEle.select();
     }
@@ -50,14 +50,10 @@ function onInternalKeyDown(event) {
     onActiveChange(index + 1);
   } else if (key === 'z' && (ctrlKey || metaKey)) {
     event.preventDefault();
-  }
-  syncSelection();
-}
-
-function onInternalKeyUp(e) {
-  if (e.key === 'Backspace' && !value.value) {
+  } else if (key === 'Backspace' && !value.value) {
     onActiveChange(index - 1);
   }
+
   syncSelection();
 }
 
@@ -84,7 +80,6 @@ function changeRef(instance) {
       @input="onInternalChange"
       @focus="syncSelection"
       @keydown="onInternalKeyDown"
-      @keyup="onInternalKeyUp"
       @mousedown="syncSelection"
       @mouseup="syncSelection"
       :class="

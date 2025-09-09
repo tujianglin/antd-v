@@ -12,13 +12,13 @@ export type { ComponentToken };
 
 // ============================== Shared ==============================
 const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSSObject => {
-  const { componentCls, iconCls, fontWeight, opacityLoading, motionDurationSlow, motionEaseInOut, marginXS, calc } = token;
+  const { componentCls, iconCls, fontWeight, opacityLoading, motionDurationSlow, motionEaseInOut, iconGap, calc } = token;
   return {
     [componentCls]: {
       outline: 'none',
       position: 'relative',
       display: 'inline-flex',
-      gap: token.marginXS,
+      gap: iconGap,
       alignItems: 'center',
       justifyContent: 'center',
       fontWeight,
@@ -84,7 +84,7 @@ const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSS
       [`&:not(${componentCls}-icon-end)`]: {
         [`${componentCls}-loading-icon-motion`]: {
           '&-appear-start, &-enter-start': {
-            marginInlineEnd: calc(marginXS).mul(-1).equal(),
+            marginInlineEnd: calc(iconGap).mul(-1).equal(),
           },
           '&-appear-active, &-enter-active': {
             marginInlineEnd: 0,
@@ -93,7 +93,7 @@ const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSS
             marginInlineEnd: 0,
           },
           '&-leave-active': {
-            marginInlineEnd: calc(marginXS).mul(-1).equal(),
+            marginInlineEnd: calc(iconGap).mul(-1).equal(),
           },
         },
       },
@@ -103,7 +103,7 @@ const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSS
 
         [`${componentCls}-loading-icon-motion`]: {
           '&-appear-start, &-enter-start': {
-            marginInlineStart: calc(marginXS).mul(-1).equal(),
+            marginInlineStart: calc(iconGap).mul(-1).equal(),
           },
           '&-appear-active, &-enter-active': {
             marginInlineStart: 0,
@@ -112,7 +112,7 @@ const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSS
             marginInlineStart: 0,
           },
           '&-leave-active': {
-            marginInlineStart: calc(marginXS).mul(-1).equal(),
+            marginInlineStart: calc(iconGap).mul(-1).equal(),
           },
         },
       },
@@ -123,15 +123,13 @@ const genSharedButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token): CSS
 // ============================== Shape ===============================
 const genCircleButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token) => ({
   minWidth: token.controlHeight,
-  paddingInlineStart: 0,
-  paddingInlineEnd: 0,
+  paddingInline: 0,
   borderRadius: '50%',
 });
 
 const genRoundButtonStyle: GenerateStyle<ButtonToken, CSSObject> = (token) => ({
   borderRadius: token.controlHeight,
-  paddingInlineStart: token.calc(token.controlHeight).div(2).equal(),
-  paddingInlineEnd: token.calc(token.controlHeight).div(2).equal(),
+  paddingInline: token.buttonPaddingHorizontal ?? token.calc(token.controlHeight).div(2).equal(),
 });
 
 // =============================== Size ===============================

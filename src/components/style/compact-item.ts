@@ -1,5 +1,4 @@
 import type { CSSInterpolation, CSSObject } from '@/vc-cssinjs';
-
 import type { AliasToken, CSSUtil, FullToken, OverrideComponent } from '../theme/internal';
 
 interface CompactItemOptions {
@@ -17,27 +16,37 @@ interface CompactItemOptions {
 }
 
 // handle border collapse
-function compactItemBorder(token: AliasToken & CSSUtil, parentCls: string, options: CompactItemOptions): CSSObject {
+function compactItemBorder(
+  token: AliasToken & CSSUtil,
+  parentCls: string,
+  options: CompactItemOptions,
+  prefixCls: string,
+): CSSObject {
   const { focusElCls, focus, borderElCls } = options;
   const childCombinator = borderElCls ? '> *' : '';
   const hoverEffects = ['hover', focus ? 'focus' : null, 'active']
     .filter(Boolean)
     .map((n) => `&:${n} ${childCombinator}`)
     .join(',');
+
   return {
     [`&-item:not(${parentCls}-last-item)`]: {
       marginInlineEnd: token.calc(token.lineWidth).mul(-1).equal(),
     },
 
+    [`&-item:not(${prefixCls}-status-success)`]: {
+      zIndex: 2,
+    },
+
     '&-item': {
       [hoverEffects]: {
-        zIndex: 2,
+        zIndex: 3,
       },
 
       ...(focusElCls
         ? {
             [`&${focusElCls}`]: {
-              zIndex: 2,
+              zIndex: 3,
             },
           }
         : {}),
@@ -85,7 +94,7 @@ export function genCompactItemStyle<T extends OverrideComponent>(
 
   return {
     [compactCls]: {
-      ...compactItemBorder(token as any, compactCls, options),
+      ...compactItemBorder(token, compactCls, options, componentCls),
       ...compactItemBorderRadius(componentCls, compactCls, options),
     },
   };

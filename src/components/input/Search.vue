@@ -108,14 +108,14 @@ function onChange(e: Event) {
 }
 
 function onMouseDown(e: MouseEvent) {
-  if (document.activeElement === inputRef.value?.input()) {
+  if (document.activeElement === inputRef.value?.input) {
     e.preventDefault();
   }
 }
 
 function handleSearch(e: MouseEvent | KeyboardEvent) {
   if (customOnSearch) {
-    customOnSearch(inputRef.value.input().value, e, {
+    customOnSearch(inputRef.value.input.value, e, {
       source: 'input',
     });
   }

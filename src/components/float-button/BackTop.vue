@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, onBeforeUnmount, onMounted, ref, type ButtonHTMLAttributes, type CSSProperties } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, toRefs, type ButtonHTMLAttributes, type CSSProperties } from 'vue';
 import getScroll from '../_util/getScroll';
 import scrollTo from '../_util/scrollTo';
 import { useConfigContextInject } from '../config-provider';
@@ -11,6 +11,7 @@ import clsx from 'clsx';
 import { throttle } from 'lodash-es';
 import CSSMotion from '@/vc-component/motion';
 import { composeRef } from '@/vc-util/ref';
+import { useComponentConfig } from '../config-provider/context';
 export interface BackTopProps extends Omit<FloatButtonProps, 'target'> {
   visibilityHeight?: number;
   onClick?: ButtonHTMLAttributes['onClick'];
@@ -30,12 +31,18 @@ const {
   type = 'default',
   shape = 'circle',
   visibilityHeight = 400,
-  icon = <VerticalAlignTopOutlined />,
+  icon,
   target,
   onClick,
   duration = 450,
   ...restProps
 } = defineProps<BackTopProps>();
+
+const defaultIcon = <VerticalAlignTopOutlined />;
+
+const { backTopIcon: contextIcon } = toRefs(useComponentConfig('floatButton'));
+
+const mergedIcon = computed(() => icon ?? contextIcon?.value ?? defaultIcon);
 
 const visible = ref<boolean>(visibilityHeight === 0);
 
@@ -82,7 +89,7 @@ const mergedShape = computed(() => groupContext.shape || shape);
 const contentProps = computed((): FloatButtonProps => {
   return {
     prefixCls,
-    icon,
+    icon: mergedIcon.value,
     type,
     shape: mergedShape.value,
     ...restProps,

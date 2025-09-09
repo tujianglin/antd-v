@@ -123,8 +123,8 @@ export interface InputRef {
   blur: () => void;
   setSelectionRange: (start: number, end: number, direction?: 'forward' | 'backward' | 'none') => void;
   select: () => void;
-  input: () => HTMLInputElement | null;
-  nativeElement: () => HTMLElement | null;
+  input: HTMLInputElement | null;
+  nativeElement: HTMLElement | null;
 }
 
 export interface ChangeEventInfo {

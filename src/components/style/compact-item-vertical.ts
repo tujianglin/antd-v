@@ -1,17 +1,20 @@
 import type { CSSInterpolation, CSSObject } from '@/vc-cssinjs';
-
 import type { AliasToken, CSSUtil, FullToken, OverrideComponent } from '../theme/internal';
 
-function compactItemVerticalBorder(token: AliasToken & CSSUtil, parentCls: string): CSSObject {
+function compactItemVerticalBorder(token: AliasToken & CSSUtil, parentCls: string, prefixCls: string): CSSObject {
   return {
     // border collapse
     [`&-item:not(${parentCls}-last-item)`]: {
       marginBottom: token.calc(token.lineWidth).mul(-1).equal(),
     },
 
+    [`&-item:not(${prefixCls}-status-success)`]: {
+      zIndex: 2,
+    },
+
     '&-item': {
       '&:hover,&:focus,&:active': {
-        zIndex: 2,
+        zIndex: 3,
       },
 
       '&[disabled]': {
@@ -48,7 +51,7 @@ export function genCompactItemVerticalStyle<T extends OverrideComponent>(token: 
 
   return {
     [compactCls]: {
-      ...compactItemVerticalBorder(token as any, compactCls),
+      ...compactItemVerticalBorder(token, compactCls, token.componentCls),
       ...compactItemBorderVerticalRadius(token.componentCls, compactCls),
     },
   };

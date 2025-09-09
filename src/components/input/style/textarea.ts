@@ -122,7 +122,7 @@ export default genStyleHooks(
   (token) => {
     const inputToken = mergeToken<InputToken>(token, initInputToken(token));
 
-    return [genTextAreaStyle(inputToken)];
+    return genTextAreaStyle(inputToken);
   },
   initComponentToken,
   {

@@ -29,7 +29,7 @@ import type { CheckboxProps } from '../checkbox';
 // import type { DropdownProps } from '../dropdown';
 // import type { EmptyProps } from '../empty';
 import type { FlexProps } from '../flex/interface';
-import type { FloatButtonGroupProps, FloatButtonProps } from '../float-button/interface';
+import type { FloatButtonGroupProps } from '../float-button/interface';
 // import type { FormProps } from '../form/Form';
 // import type { ImageProps } from '../image';
 import type { InputProps, SearchProps, TextAreaProps } from '../input';
@@ -210,7 +210,8 @@ export type TextAreaConfig = ComponentStyleConfig &
 
 export type OTPConfig = ComponentStyleConfig & Pick<OTPProps, 'classNames' | 'styles'>;
 
-export type ButtonConfig = ComponentStyleConfig & ButtonProps;
+export type ButtonConfig = ComponentStyleConfig &
+  Pick<ButtonProps, 'classNames' | 'styles' | 'autoInsertSpace' | 'variant' | 'color' | 'shape'>;
 
 // export type MessageConfig = ComponentStyleConfig & Pick<MessageProps, 'classNames' | 'styles'>;
 
@@ -239,7 +240,9 @@ export type FlexConfig = ComponentStyleConfig & Pick<FlexProps, 'vertical'>;
 // export type FormConfig = ComponentStyleConfig &
 //   Pick<FormProps, 'requiredMark' | 'colon' | 'scrollToFirstError' | 'validateMessages' | 'variant' | 'classNames' | 'styles'>;
 
-export type FloatButtonConfig = ComponentStyleConfig & Pick<FloatButtonProps, 'classNames' | 'styles'>;
+export type FloatButtonConfig = {
+  backTopIcon?: any;
+};
 
 export type FloatButtonGroupConfig = ComponentStyleConfig & Pick<FloatButtonGroupProps, 'closeIcon' | 'classNames' | 'styles'>;
 
@@ -463,7 +466,6 @@ type ComponentReturnType<T extends keyof ConfigComponentProps> = Omit<
   getPrefixCls: ConfigConsumerProps['getPrefixCls'];
   direction: ConfigConsumerProps['direction'];
   getPopupContainer: ConfigConsumerProps['getPopupContainer'];
-  renderEmpty: ConfigConsumerProps['renderEmpty'];
 };
 
 /**

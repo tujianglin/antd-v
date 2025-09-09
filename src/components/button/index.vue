@@ -29,7 +29,7 @@ const {
   variant,
   type = 'default',
   danger = false,
-  shape = 'default',
+  shape: customizeShape,
   size: customizeSize,
   disabled: customDisabled,
   class: className,
@@ -54,6 +54,8 @@ const iconSlot = computed(() => slots.icon || icon);
 const defaultSlot = computed(() => slots.default?.() || []);
 
 const { button } = toRefs(useConfigContextInject());
+
+const shape = computed(() => customizeShape || button?.value?.shape || 'default');
 
 const parsed = computed((): ColorVariantPairType => {
   // >>>>> Local
@@ -193,7 +195,7 @@ const classes = computed(() => {
     hashId,
     cssVarCls,
     {
-      [`${prefixCls}-${shape}`]: shape !== 'default' && shape !== 'square' && shape,
+      [`${prefixCls}-${shape.value}`]: shape.value !== 'default' && shape.value !== 'square' && shape.value,
       // Compatible with versions earlier than 5.21.0
       [`${prefixCls}-${type}`]: type,
       [`${prefixCls}-dangerous`]: danger,

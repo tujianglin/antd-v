@@ -1,13 +1,17 @@
 import type { Locale } from '../locale';
 import type {
+  CheckboxConfig,
   ComponentStyleConfig,
   ConfigConsumerProps,
   CSPConfig,
   DirectionType,
+  FloatButtonConfig,
+  FloatButtonGroupConfig,
   InputConfig,
   InputNumberConfig,
   InputSearchConfig,
   OTPConfig,
+  RadioConfig,
   TextAreaConfig,
   ThemeConfig,
   Variant,
@@ -108,13 +112,13 @@ export interface ConfigProviderProps {
   breadcrumb?: ComponentStyleConfig;
   // masonry?: MasonryConfig;
   // menu?: MenuConfig;
-  // floatButton?: FloatButtonConfig;
-  // floatButtonGroup?: FloatButtonGroupConfig;
-  // checkbox?: CheckboxConfig;
+  floatButton?: FloatButtonConfig;
+  floatButtonGroup?: FloatButtonGroupConfig;
+  checkbox?: CheckboxConfig;
   descriptions?: ComponentStyleConfig;
   // empty?: EmptyConfig;
   // badge?: BadgeConfig;
-  // radio?: RadioConfig;
+  radio?: RadioConfig;
   rate?: ComponentStyleConfig;
   // ribbon?: RibbonConfig;
   switch?: ComponentStyleConfig;

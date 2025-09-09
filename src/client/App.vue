@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import {} from 'vue';
+import demo from './demo/radio';
 </script>
 <template>
-  <div></div>
+  <demo />
 </template>
