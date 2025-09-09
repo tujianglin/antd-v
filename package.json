@@ -81,7 +81,7 @@
     "stylis": "^4.3.6",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
-    "vite": "^7.0.4",
+    "vite": "^7.0.7",
     "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^3.0.3"
   },
