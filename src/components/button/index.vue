@@ -133,11 +133,9 @@ const needInserted = computed(
   () => defaultSlot.value.length === 1 && !iconSlot.value && !isUnBorderedButtonVariant(mergedVariant.value),
 );
 
-const { mergedClassNames, mergedStyles } = toRefs(
-  useMergeSemantic(
-    computed(() => [_skipSemantic ? undefined : contextClassNames.value, buttonClassNames]),
-    computed(() => [_skipSemantic ? undefined : contextStyles.value, styles]),
-  ),
+const [mergedClassNames, mergedStyles] = useMergeSemantic(
+  computed(() => [_skipSemantic ? undefined : contextClassNames.value, buttonClassNames]),
+  computed(() => [_skipSemantic ? undefined : contextStyles.value, styles]),
 );
 
 // ========================= Mount ==========================

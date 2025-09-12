@@ -1,5 +1,5 @@
 import { isArray } from 'lodash-es';
-import { Fragment, isVNode, type VNode } from 'vue';
+import { Comment, Fragment, isVNode, type VNode } from 'vue';
 import { isEmptyElement, isValid } from '../props';
 
 export default function findDOMNode(instance: any): HTMLDivElement {
@@ -14,6 +14,11 @@ export default function findDOMNode(instance: any): HTMLDivElement {
   return node;
 }
 
+function isRenderableNode(vnode: VNode): boolean {
+  if (vnode.type === Comment) return false;
+  if (vnode.type === Text && String(vnode.children).trim() === '') return false;
+  return true;
+}
 export const skipFlattenKey = Symbol('skipFlatten');
 export const flattenChildren = (children = [], filterEmpty = true): VNode[] => {
   const temp = Array.isArray(children) ? children : [children];
@@ -37,6 +42,7 @@ export const flattenChildren = (children = [], filterEmpty = true): VNode[] => {
       res.push(child);
     }
   });
+  res.some(isRenderableNode);
   return res;
 };
 

@@ -1,12 +1,10 @@
 <script lang="tsx" setup>
 import type { ActionType, AlignType, ArrowType, TriggerProps, TriggerRef } from '@/vc-component/trigger';
-import { cloneVNode, computed, getCurrentInstance, ref, useId, type CSSProperties, type VNode } from 'vue';
-import Popup from './Popup.vue';
 import Trigger from '@/vc-component/trigger';
 import clsx from 'clsx';
+import { computed, getCurrentInstance, ref, useId, type CSSProperties } from 'vue';
 import placements from './placements';
-import { Render } from '@/components';
-import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
+import Popup from './Popup.vue';
 
 export interface TooltipProps
   extends Pick<
@@ -28,7 +26,7 @@ export interface TooltipProps
   visible?: boolean;
   onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
-  overlay?: any;
+  overlay?: string;
   getTooltipContainer?: (node: HTMLElement) => HTMLElement;
   destroyOnHidden?: boolean;
   align?: AlignType;
@@ -77,10 +75,6 @@ const {
   ...restProps
 } = defineProps<TooltipProps>();
 
-const slots = defineSlots<{ overlay?: () => VNode[]; default?: () => VNode[] }>();
-
-const overlayNode = computed(() => slots.overlay || overlay);
-
 const mergedId = useId();
 const triggerRef = ref<TriggerRef>(null);
 
@@ -99,28 +93,11 @@ const extraProps = computed(() => {
   }
   return res;
 });
-
-const getPopupElement = () => {
-  return (
-    <Popup
-      key="content"
-      prefixCls={prefixCls}
-      id={mergedId}
-      bodyClassName={tooltipClassNames?.body}
-      overlayInnerStyle={{ ...tooltipStyles?.body }}
-    >
-      <Render content={overlayNode.value}></Render>
-    </Popup>
-  );
-};
-
-const children = computed(() => flattenChildren(slots.default())[0]);
 </script>
 <template>
   <Trigger
     :popup-class-name="clsx(tooltipClassNames?.root)"
     :prefix-cls="prefixCls"
-    :popup="getPopupElement"
     :action="trigger"
     :builtin-placements="placements"
     :popup-placement="placement"
@@ -138,13 +115,19 @@ const children = computed(() => flattenChildren(slots.default())[0]);
     :arrow="showArrow"
     v-bind="extraProps"
   >
-    <component
-      v-if="children"
-      :is="
-        cloneVNode(children, {
-          'aria-describedby': overlayNode ? mergedId : null,
-        })
-      "
-    />
+    <template #default="props">
+      <slot :aria-describedby="$slots.overlay || overlay ? mergedId : null" v-bind="props"></slot>
+    </template>
+    <template #popup>
+      <Popup
+        key="content"
+        :prefix-cls="prefixCls"
+        :id="mergedId"
+        :body-class-name="tooltipClassNames?.body"
+        :overlay-inner-style="{ ...tooltipStyles?.body }"
+      >
+        <slot name="overlay" a="1">{{ overlay }}</slot>
+      </Popup>
+    </template>
   </Trigger>
 </template>

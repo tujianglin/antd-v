@@ -2,7 +2,7 @@
 import { Render } from '@/components';
 import KeyCode from '@/vc-util/KeyCode';
 import clsx from 'clsx';
-import { computed, effect, ref, type CSSProperties, type HTMLAttributes } from 'vue';
+import { computed, ref, type CSSProperties, type HTMLAttributes } from 'vue';
 export type SwitchChangeEventHandler = (checked: boolean, event: MouseEvent | KeyboardEvent) => void;
 export type SwitchClickEventHandler = SwitchChangeEventHandler;
 
@@ -42,7 +42,6 @@ const {
 const innerChecked = defineModel<boolean>('checked', { default: false });
 
 function triggerChange(newChecked: boolean, event: MouseEvent | KeyboardEvent) {
-  console.log(newChecked);
   let mergedChecked = innerChecked.value;
 
   if (!disabled) {
@@ -53,9 +52,6 @@ function triggerChange(newChecked: boolean, event: MouseEvent | KeyboardEvent) {
 
   return mergedChecked;
 }
-effect(() => {
-  console.log(innerChecked.value);
-});
 function onInternalKeyDown(e: KeyboardEvent) {
   if (e.which === KeyCode.LEFT) {
     triggerChange(false, e);
@@ -81,7 +77,6 @@ const switchClassName = computed(() => {
 const domRef = ref(null);
 </script>
 <template>
-  {{ console.log(restProps) }}
   <button
     v-bind="{ ...restProps, ...$attrs }"
     type="button"

@@ -118,7 +118,7 @@ const mergedStyle = computed(() => {
   const mergedStyle: CSSProperties = {};
   if (gutter.value && gutter.value[0] > 0) {
     const horizontalGutter = gutter.value[0] / 2;
-    mergedStyle.paddingInline = horizontalGutter;
+    mergedStyle.paddingInline = `${horizontalGutter}px`;
   }
 
   if (props.flex) {

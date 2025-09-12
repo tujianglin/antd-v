@@ -1,14 +1,12 @@
 <script lang="tsx" setup>
-import { computed, ref, useAttrs, watch } from 'vue';
-import type { ChangeEventInfo, InputProps } from './interface';
-import type { HolderRef } from './BaseInput.vue';
+import { computed, ref, useTemplateRef, watch } from 'vue';
+import type { ChangeEventInfo, InputProps, ValueType } from './interface';
 import { resolveOnChange, triggerFocus, type InputFocusOptions } from './utils/commonUtils';
 import useCount from './hooks/useCount';
 import BaseInput from './BaseInput.vue';
 import { Render } from '../../components';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import { falseToUndefined } from '@/vc-util/props';
 
 defineOptions({ inheritAttrs: false });
 
@@ -17,7 +15,7 @@ const {
   onChange,
   onFocus,
   onBlur,
-  onPressEnter,
+  onPressenter,
   onKeydown,
   onKeyup,
   prefixCls = 'rc-input',
@@ -35,14 +33,13 @@ const {
   onCompositionend,
   ...rest
 } = defineProps<InputProps>();
-const attrs = useAttrs();
 
 const focused = ref(false);
 const compositionRef = ref(false);
 const keyLockRef = ref(false);
 
-const inputRef = ref<HTMLInputElement>(null);
-const holderRef = ref<HolderRef>(null);
+const inputRef = useTemplateRef('inputRef');
+const holderRef = useTemplateRef('holderRef');
 
 function focus(option?: InputFocusOptions) {
   if (inputRef.value) {
@@ -51,7 +48,7 @@ function focus(option?: InputFocusOptions) {
 }
 
 // ====================== Value =======================
-const value = defineModel<string>('value');
+const value = defineModel<ValueType>('value');
 
 const formatValue = computed(() => (value.value === undefined || value.value === null ? '' : String(value.value)));
 
@@ -152,9 +149,9 @@ function onInternalCompositionEnd(e) {
 }
 
 function handleKeyDown(e) {
-  if (onPressEnter && e.key === 'Enter' && !keyLockRef.value && !e.nativeEvent.isComposing) {
+  if (onPressenter && e.key === 'Enter' && !keyLockRef.value && !e.nativeEvent.isComposing) {
     keyLockRef.value = true;
-    onPressEnter?.(e);
+    onPressenter?.(e);
   }
   onKeydown?.(e);
 }
@@ -188,37 +185,6 @@ function handleReset(e) {
 
 // ====================== Input =======================
 const outOfRangeCls = computed(() => isOutOfRange.value && `${prefixCls}-out-of-range`);
-
-const InputElement = () => {
-  return (
-    <input
-      autocomplete={autocomplete}
-      {...omit({ ...falseToUndefined(attrs), disabled, maxlength }, ['action'])}
-      v-model={value.value}
-      onInput={onInternalChange}
-      onFocus={handleFocus}
-      onBlur={handleBlur}
-      onKeydown={handleKeyDown}
-      onKeyup={handleKeyUp}
-      class={clsx(
-        prefixCls,
-        {
-          [`${prefixCls}-disabled`]: disabled,
-        },
-        classNames?.input,
-      )}
-      style={styles?.input}
-      ref={inputRef}
-      size={htmlSize}
-      type={type}
-      onCompositionstart={(e) => {
-        compositionRef.value = true;
-        onCompositionstart?.(e);
-      }}
-      onCompositionend={onInternalCompositionEnd}
-    />
-  );
-};
 
 const getSuffix = () => {
   // Max length value
@@ -273,6 +239,53 @@ const getSuffix = () => {
     :styles="styles"
     ref="holderRef"
   >
-    <InputElement />
+    <input
+      v-bind="{
+        ...omit($props, [
+          'value',
+          'prefixCls',
+          'onPressenter',
+          'addonBefore',
+          'addonAfter',
+          'prefix',
+          'suffix',
+          'allowClear',
+          'showCount',
+          'count',
+          'htmlSize',
+          'styles',
+          'classNames',
+          'onClear',
+        ]),
+        ...$attrs,
+      }"
+      :autocomplete="autocomplete"
+      v-model="value"
+      @input="onInternalChange"
+      @focus="handleFocus"
+      @blur="handleBlur"
+      @keydown="handleKeyDown"
+      @keyup="handleKeyUp"
+      :class="
+        clsx(
+          prefixCls,
+          {
+            [`${prefixCls}-disabled`]: disabled,
+          },
+          classNames?.input,
+        )
+      "
+      :style="styles?.input"
+      ref="inputRef"
+      :size="htmlSize"
+      :type="type"
+      @compositionstart="
+        (e) => {
+          compositionRef = true;
+          onCompositionstart?.(e);
+        }
+      "
+      @compositionend="onInternalCompositionEnd"
+    />
   </BaseInput>
 </template>

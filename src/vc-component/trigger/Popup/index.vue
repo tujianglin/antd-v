@@ -4,7 +4,6 @@ import { composeRef } from '@/vc-util/ref';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
 import { computed, ref, toRefs, type CSSProperties } from 'vue';
-import { Render } from '../../../components';
 import Portal from '../../portal';
 import ResizeObserver from '../../resize-observer';
 import Arrow from './Arrow.vue';
@@ -15,7 +14,6 @@ import PopupContent from './PopupContent.vue';
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
-  popup,
   class: className,
   prefixCls,
   style,
@@ -219,7 +217,7 @@ defineExpose({
           >
             <Arrow v-if="arrow" :prefix-cls="prefixCls" :arrow="arrow" :arrow-pos="arrowPos" :align="align" />
             <PopupContent :cache="!open && !fresh">
-              <Render :content="popup" />
+              <slot name="popup"></slot>
             </PopupContent>
           </div>
         </template>

@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import { reactiveComputed } from '@vueuse/core';
-import { computed, effect, ref, toRefs, watch, watchEffect } from 'vue';
+import { computed, ref, toRefs, watch, watchEffect } from 'vue';
 import { useQRCode } from './hooks/useQRCode';
 import type { ImageSettings, QRPropsCanvas } from './interface';
 import {
@@ -43,7 +43,6 @@ const isImageLoaded = ref(false);
 const { margin, cells, numCells, calculatedImageSettings } = toRefs(
   useQRCode(
     reactiveComputed(() => {
-      console.log(imageSettings);
       return {
         value,
         level,
@@ -56,10 +55,6 @@ const { margin, cells, numCells, calculatedImageSettings } = toRefs(
     }),
   ),
 );
-
-effect(() => {
-  console.log(value);
-});
 
 watchEffect(() => {
   if (_canvas.value) {

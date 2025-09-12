@@ -30,11 +30,9 @@ const prefixCls = computed(() => getPrefixCls.value('flex', customizePrefixCls))
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
-const { mergedVertical } = toRefs(
-  useOrientation(
-    computed(() => orientation),
-    computed(() => vertical ?? ctxFlex?.value?.vertical),
-  ),
+const [, mergedVertical] = useOrientation(
+  computed(() => orientation),
+  computed(() => vertical ?? ctxFlex?.value?.vertical),
 );
 
 const vm = getCurrentInstance();

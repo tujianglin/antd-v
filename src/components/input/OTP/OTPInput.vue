@@ -1,10 +1,10 @@
 <script lang="tsx" setup>
-import type { InputRef } from '@/vc-component/input/interface';
+import type { InputRef, ValueType } from '@/vc-component/input/interface';
 import clsx from 'clsx';
 import { computed, getCurrentInstance, ref, toRefs, useAttrs } from 'vue';
 import { useConfigContextInject } from '../../../components/config-provider';
 import raf from '../../../vc-util/raf';
-import Input from '../index.vue';
+import Input from '../Input.vue';
 import type { InputProps } from '../interface';
 
 export interface OTPInputProps extends Omit<InputProps, 'onChange'> {
@@ -21,7 +21,7 @@ defineOptions({ name: 'OTPInput', inheritAttrs: false, compatConfig: { MODE: 3 }
 const { class: className, onChange, onActiveChange, index, mask, ...restProps } = defineProps<OTPInputProps>();
 const attrs = useAttrs();
 
-const value = defineModel<string>('value');
+const value = defineModel<ValueType>('value');
 
 const { getPrefixCls } = toRefs(useConfigContextInject());
 const prefixCls = getPrefixCls.value('otp');

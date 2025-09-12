@@ -1,7 +1,7 @@
+import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 import type { InputNumberProps as VcInputNumberProps } from '../../vc-component/input-number';
 import type { InputStatus } from '../_util/statusUtils';
-import type { RenderNode } from '../_util/type';
 import type { Variant } from '../config-provider/context';
 import type { SizeType } from '../config-provider/SizeContext';
 
@@ -12,14 +12,14 @@ export interface InputNumberProps extends Omit<VcInputNumberProps, 'prefix' | 's
   rootClassName?: string;
   classNames?: Partial<Record<SemanticName, string>>;
   styles?: Partial<Record<SemanticName, CSSProperties>>;
-  addonBefore?: RenderNode;
-  addonAfter?: RenderNode;
-  prefix?: RenderNode;
-  suffix?: RenderNode;
+  addonBefore?: VueNode;
+  addonAfter?: VueNode;
+  prefix?: VueNode;
+  suffix?: VueNode;
   readonly?: boolean;
   size?: SizeType;
   disabled?: boolean;
   status?: InputStatus;
-  controls?: boolean | { upIcon?: RenderNode; downIcon?: RenderNode };
+  controls?: boolean | { upIcon?: VueNode; downIcon?: VueNode };
   variant?: Variant;
 }

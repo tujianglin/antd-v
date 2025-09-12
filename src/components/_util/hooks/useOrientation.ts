@@ -1,5 +1,4 @@
-import { reactiveComputed } from '@vueuse/core';
-import type { ComputedRef } from 'vue';
+import { computed, type ComputedRef } from 'vue';
 
 export type Orientation = 'horizontal' | 'vertical';
 
@@ -11,19 +10,19 @@ export default function useOrientation(
   orientation?: ComputedRef<Orientation>,
   vertical?: ComputedRef<boolean>,
   legacyDirection?: ComputedRef<Orientation>,
-): { mergedOrientation: Orientation; mergedVertical: boolean } {
-  return reactiveComputed(() => {
+) {
+  const mergedOrientation = computed(() => {
     const validOrientation = isValidOrientation(orientation.value);
-    let mergedOrientation: Orientation;
+    let result: Orientation;
     if (validOrientation) {
-      mergedOrientation = orientation.value;
+      result = orientation.value;
     } else if (typeof vertical.value === 'boolean') {
-      mergedOrientation = vertical.value ? 'vertical' : 'horizontal';
+      result = vertical.value ? 'vertical' : 'horizontal';
     } else {
       const validLegacyDirection = isValidOrientation(legacyDirection?.value);
-      mergedOrientation = validLegacyDirection ? legacyDirection?.value : 'horizontal';
+      result = validLegacyDirection ? legacyDirection?.value : 'horizontal';
     }
-
-    return { mergedOrientation, mergedVertical: mergedOrientation === 'vertical' };
+    return result;
   });
+  return [mergedOrientation, computed(() => mergedOrientation.value === 'vertical')] as const;
 }

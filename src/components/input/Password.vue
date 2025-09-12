@@ -7,7 +7,7 @@ import type { InputProps } from './interface';
 import { useRemovePasswordTimeout } from './hooks/useRemovePasswordTimeout';
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
-import Input from './index.vue';
+import Input from './Input.vue';
 import { omit } from 'lodash-es';
 import Render from '../render';
 import isValidNode from '../_util/isValidNode';

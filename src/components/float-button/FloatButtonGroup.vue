@@ -57,9 +57,9 @@ const groupPrefixCls = computed(() => `${prefixCls.value}-group`);
 
 const isMenuMode = computed(() => trigger && ['click', 'hover'].includes(trigger));
 
-const merged = useMergeSemantic(
-  computed(() => [contextClassNames.value, classNames]),
-  computed(() => [contextStyles.value, styles]),
+const [mergedClassNames, mergedStyles] = useMergeSemantic(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
   computed(() => ({
     item: {
       _default: 'root',
@@ -140,15 +140,15 @@ const individual = computed(() => shape === 'circle');
 const listContext = computed(() => ({
   shape,
   individual: individual.value,
-  classNames: merged.mergedClassNames?.item,
-  styles: merged.mergedStyles?.item,
+  classNames: mergedClassNames?.value?.item,
+  styles: mergedStyles?.value?.item,
 }));
 
 const triggerContext = computed(() => ({
   ...listContext.value,
   individual: true,
-  classNames: merged.mergedClassNames?.trigger,
-  styles: merged.mergedStyles?.trigger,
+  classNames: mergedClassNames?.value?.trigger,
+  styles: mergedStyles?.value?.trigger,
 }));
 
 // ========================= Render =========================
@@ -158,24 +158,14 @@ const listCls = computed(() => `${groupPrefixCls.value}-list`);
   <GroupContextProvider :value="listContext">
     <div
       :class="
-        clsx(
-          groupPrefixCls,
-          hashId,
-          cssVarCls,
-          rootCls,
-          contextClassName,
-          merged.mergedClassNames.root,
-          className,
-          rootClassName,
-          {
-            [`${groupPrefixCls}-rtl`]: direction === 'rtl',
-            [`${groupPrefixCls}-individual`]: individual,
-            [`${groupPrefixCls}-${mergedPlacement}`]: isMenuMode,
-            [`${groupPrefixCls}-menu-mode`]: isMenuMode,
-          },
-        )
+        clsx(groupPrefixCls, hashId, cssVarCls, rootCls, contextClassName, mergedClassNames.root, className, rootClassName, {
+          [`${groupPrefixCls}-rtl`]: direction === 'rtl',
+          [`${groupPrefixCls}-individual`]: individual,
+          [`${groupPrefixCls}-${mergedPlacement}`]: isMenuMode,
+          [`${groupPrefixCls}-menu-mode`]: isMenuMode,
+        })
       "
-      :style="{ ...contextStyle, zIndex, ...merged.mergedStyles.root, ...style }"
+      :style="{ ...contextStyle, zIndex, ...mergedStyles.root, ...style }"
       ref="floatButtonGroupRef"
       @mouseenter="onMouseEnter"
       @mouseleave="onMouseLeave"
@@ -187,8 +177,8 @@ const listCls = computed(() => `${groupPrefixCls.value}-list`);
               :is="individual ? Flex : Space.Compact"
               :ref="motionRef"
               :vertical="mergedPlacement === 'top' || mergedPlacement === 'bottom'"
-              :style="merged.mergedStyles.list"
-              :class="clsx(listCls, merged.mergedClassNames.list, motionClassName)"
+              :style="mergedStyles.list"
+              :class="clsx(listCls, mergedClassNames.list, motionClassName)"
             >
               <slot></slot>
             </component>
@@ -209,8 +199,8 @@ const listCls = computed(() => `${groupPrefixCls.value}-list`);
         v-else
         :is="individual ? Flex : Space.Compact"
         :vertical="mergedPlacement === 'top' || mergedPlacement === 'bottom'"
-        :style="merged.mergedStyles.list"
-        :class="clsx(listCls, merged.mergedClassNames.list)"
+        :style="mergedStyles.list"
+        :class="clsx(listCls, mergedClassNames.list)"
       >
         <slot></slot>
       </component>

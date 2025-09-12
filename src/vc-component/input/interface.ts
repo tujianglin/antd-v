@@ -1,18 +1,16 @@
-import type { CSSProperties, HtmlHTMLAttributes, InputHTMLAttributes } from 'vue';
-import type { RenderNode } from '../../components/_util/type';
+import type { VueNode } from '@/vc-util/type';
+import type { CSSProperties, InputHTMLAttributes } from 'vue';
 import type { InputFocusOptions } from './utils/commonUtils';
 import type { LiteralUnion } from './utils/types';
-
-export type InputChangeEvnet = Event & { target?: HTMLInputElement };
 
 export interface CommonInputProps {
   class?: string;
   style?: CSSProperties;
   disabled?: boolean;
-  prefix?: RenderNode;
-  suffix?: RenderNode;
-  addonBefore?: RenderNode;
-  addonAfter?: RenderNode;
+  prefix?: VueNode;
+  suffix?: VueNode;
+  addonBefore?: VueNode;
+  addonAfter?: VueNode;
   classNames?: {
     affixWrapper?: string;
     prefix?: string;
@@ -26,19 +24,21 @@ export interface CommonInputProps {
     prefix?: CSSProperties;
     suffix?: CSSProperties;
   };
-  allowClear?: boolean | { clearIcon?: RenderNode };
+  allowClear?: boolean | { clearIcon?: VueNode };
   maxlength?: number;
-  onChange?: (e: Event) => void;
 }
 
 type DataAttr = Record<`data-${string}`, string>;
 
+export type ValueType = string | number | bigint | readonly string[] | undefined;
+
 export interface BaseInputProps extends CommonInputProps {
+  value?: ValueType;
   prefixCls?: string;
   focused?: boolean;
   triggerFocus?: () => void;
-  readOnly?: boolean;
-  handleReset?: HtmlHTMLAttributes['onClick'];
+  readonly?: boolean;
+  handleReset?: (e: MouseEvent) => void;
   onClear?: () => void;
   hidden?: boolean;
   dataAttrs?: {
@@ -52,7 +52,7 @@ export interface BaseInputProps extends CommonInputProps {
   };
 }
 
-export type ShowCountFormatter = (args: { value: string; count: number; maxlength?: number }) => RenderNode;
+export type ShowCountFormatter = (args: { value: ValueType; count: number; maxlength?: number }) => VueNode;
 
 export type ExceedFormatter = (value: string, config: { max: number }) => string;
 
@@ -66,10 +66,12 @@ export interface CountConfig {
 
 export interface InputProps
   extends CommonInputProps,
-    /* @vue-ignore */ Omit<
+    /** @vue-ignore */ Omit<
       InputHTMLAttributes,
-      'size' | 'prefix' | 'type' | 'class' | 'style' | 'disabled' | 'value' | 'onChange' | 'maxlength' | 'hidden'
+      'class' | 'maxlength' | 'style' | 'disabled' | 'size' | 'prefix' | 'type' | 'value'
     > {
+  hidden?: boolean;
+  readonly?: boolean;
   prefixCls?: string;
   // ref: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#%3Cinput%3E_types
   type?: LiteralUnion<
@@ -97,6 +99,7 @@ export interface InputProps
     | 'week',
     string
   >;
+  onPressenter?: (e: KeyboardEvent) => void;
   /** It's better to use `count.show` instead */
   showCount?:
     | boolean
@@ -114,7 +117,6 @@ export interface InputProps
     count?: CSSProperties;
   };
   count?: CountConfig;
-  onPressEnter?: InputHTMLAttributes['onKeypress'];
   onClear?: () => void;
 }
 

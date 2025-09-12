@@ -54,20 +54,18 @@ const floatButtonClassNames = computed(() => {
   };
 });
 
-const { mergedClassNames, mergedStyles } = toRefs(
-  useMergeSemantic(
-    computed(() => [
-      floatButtonClassNames.value,
-      // contextClassNames,
-      groupPassedClassNames.value,
-      classNames,
-    ]),
-    computed(() => [
-      // contextStyles,
-      groupPassedStyles.value,
-      styles,
-    ]),
-  ),
+const [mergedClassNames, mergedStyles] = useMergeSemantic(
+  computed(() => [
+    floatButtonClassNames.value,
+    // contextClassNames,
+    groupPassedClassNames.value,
+    classNames,
+  ]),
+  computed(() => [
+    // contextStyles,
+    groupPassedStyles.value,
+    styles,
+  ]),
 );
 
 const mergedIcon = computed(() => (!mergedContent.value && !icon ? <FileTextOutlined></FileTextOutlined> : icon));

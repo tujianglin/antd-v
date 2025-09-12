@@ -88,7 +88,7 @@ const handleProps = computed(() => {
     onOffsetChange,
     render: handleRender,
     onFocus: onHandleFocus,
-    onMouseEnter: onHandleMouseEnter,
+    onMouseenter: onHandleMouseEnter,
     ...restProps,
   };
 });

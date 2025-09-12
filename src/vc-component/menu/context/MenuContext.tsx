@@ -28,7 +28,7 @@ export interface MenuContextProps {
   overflowDisabled?: boolean;
 
   // Active
-  activeKey: string;
+  activeKey: string | undefined;
   onActive: (key: string) => void;
   onInactive: (key: string) => void;
 

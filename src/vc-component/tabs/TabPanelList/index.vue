@@ -7,7 +7,7 @@ import { useTabContextInject } from '../TabContext';
 import TabPane from './TabPane.vue';
 
 export interface TabPanelListProps {
-  activeKey: string;
+  activeKey: string | undefined;
   id: any;
   animated?: AnimatedConfig;
   tabPosition?: TabPosition;

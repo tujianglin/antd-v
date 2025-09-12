@@ -1,15 +1,15 @@
 <script lang="tsx" setup>
 import { Render } from '@/components';
-import type { RenderNode } from '@/components/_util/type';
 import raf from '@/vc-util/raf';
+import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, onMounted, ref, toRefs } from 'vue';
 import { useSemanticContextInject } from './SemanticContext';
 
 export interface StepHandlerProps {
   prefixCls: string;
-  upNode?: RenderNode;
-  downNode?: RenderNode;
+  upNode?: VueNode;
+  downNode?: VueNode;
   upDisabled?: boolean;
   downDisabled?: boolean;
   onStep: (up: boolean, emitter: 'handler' | 'keyboard' | 'wheel') => void;
@@ -92,9 +92,7 @@ const sharedHandlerProps = {
       :aria-disabled="upDisabled"
       :class="upClassName"
     >
-      <template v-if="upNode">
-        <Render :content="upNode" />
-      </template>
+      <Render v-if="upNode" :content="upNode" />
       <span v-else unselectable="on" :class="`${prefixCls}-handler-up-inner`"></span>
     </span>
     <span
@@ -104,9 +102,7 @@ const sharedHandlerProps = {
       :aria-disabled="downDisabled"
       :class="downClassName"
     >
-      <template v-if="downNode">
-        <Render :content="downNode" />
-      </template>
+      <Render v-if="downNode" :content="downNode" />
       <span v-else unselectable="on" :class="`${prefixCls}-handler-down-inner`"></span>
     </span>
   </div>

@@ -24,9 +24,7 @@ export const useQRCode = (opt: Reactive<Options>) => {
 
   return reactiveComputed(() => {
     const cs = memoizedQrcode.value.getModules();
-    console.log(includeMargin.value, marginSize.value);
     const mg = getMarginSize(includeMargin.value, marginSize.value);
-    console.log(mg);
     const ncs = cs.length + mg * 2;
     const cis = getImageSettings(cs, size.value, mg, imageSettings.value);
     return {

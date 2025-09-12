@@ -583,7 +583,6 @@ defineExpose({
 });
 </script>
 <template>
-  {{ console.log(open) }}
   <TreeSelectContextProvider :value="treeSelectContext">
     <LegacySelectContextProvider :value="legacyContext">
       <BaseSelect

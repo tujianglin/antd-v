@@ -1,6 +1,7 @@
 import type { CSSInterpolation, DerivativeFunc } from '@/vc-cssinjs';
 
-import type { AnyObject, VueNode } from '../../_util/type';
+import type { VueNode } from '@/vc-util/type';
+import type { AnyObject } from '../../_util/type';
 import type { AliasToken } from './alias';
 import type { MapToken } from './maps';
 import type { SeedToken } from './seeds';

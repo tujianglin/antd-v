@@ -4,9 +4,18 @@ import { NoCompactStyle } from '../space/context';
 const ContextIsolator = defineComponent({
   props: {
     space: Boolean,
+    form: Boolean,
   },
   setup(props, { slots }) {
-    return () => <>{props.space ? <NoCompactStyle>{slots.default?.()}</NoCompactStyle> : <>{slots.default?.()}</>}</>;
+    return () => {
+      if (props.form) {
+        return <NoCompactStyle>{slots.default?.()}</NoCompactStyle>;
+      }
+      if (props.space) {
+        return <NoCompactStyle>{slots.default?.()}</NoCompactStyle>;
+      }
+      return slots.default?.();
+    };
   },
 });
 

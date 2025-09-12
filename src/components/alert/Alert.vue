@@ -16,6 +16,7 @@ import CSSMotion from '@/vc-component/motion';
 import { composeRef } from '@/vc-util/ref';
 import Render from '../render';
 import { keysToCamelCaseShallow } from '@/vc-util/props';
+import type { VueNode } from '@/vc-util/type';
 
 export interface AlertRef {
   nativeElement: HTMLDivElement;
@@ -26,11 +27,11 @@ export interface AlertProps {
   /** Type of Alert styles, options:`success`, `info`, `warning`, `error` */
   type?: 'success' | 'info' | 'warning' | 'error';
   /** Whether Alert can be closed */
-  closable?: boolean | ({ closeIcon?: any } & AriaAttributes);
+  closable?: boolean | ({ closeIcon?: VueNode } & AriaAttributes);
   /** Content of Alert */
-  title?: any;
+  title?: VueNode;
   /** Additional content of Alert */
-  description?: any;
+  description?: VueNode;
   /** Callback when close Alert */
   onClose?: (e: MouseEvent) => void;
   /** Trigger when animation ending of Alert */
@@ -46,13 +47,12 @@ export interface AlertProps {
   styles?: Partial<Record<SemanticName, CSSProperties>>;
   rootClassName?: string;
   banner?: boolean;
-  icon?: any;
-  closeIcon?: any;
-  action?: any;
+  icon?: VueNode;
+  closeIcon?: VueNode | boolean;
+  action?: VueNode;
   onMouseenter?: (e: MouseEvent) => void;
   onMouseleave?: (e: MouseEvent) => void;
   onClick?: (e: MouseEvent) => void;
-
   id?: string;
 }
 
@@ -97,12 +97,7 @@ const {
   ...otherProps
 } = defineProps<AlertProps>();
 
-const slots = defineSlots<{
-  action?: () => VNode[];
-  description?: () => VNode[];
-  icon?: () => VNode[];
-  title?: () => VNode[];
-}>();
+const slots = defineSlots<{ action?: () => VNode[]; description?: () => VNode[]; icon?: () => VNode[]; title?: () => VNode[] }>();
 
 const iconMapFilled = {
   success: CheckCircleFilled,

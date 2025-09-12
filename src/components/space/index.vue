@@ -57,11 +57,9 @@ const isValidVerticalSize = computed(() => isValidGapNumber(verticalSize.value))
 
 const isValidHorizontalSize = computed(() => isValidGapNumber(horizontalSize.value));
 
-const { mergedOrientation, mergedVertical } = toRefs(
-  useOrientation(
-    computed(() => orientation),
-    computed(() => vertical),
-  ),
+const [mergedOrientation, mergedVertical] = useOrientation(
+  computed(() => orientation),
+  computed(() => vertical),
 );
 
 const mergedAlign = computed(() => (align === undefined && !mergedVertical.value ? 'center' : align));
@@ -70,11 +68,9 @@ const prefixCls = computed(() => getPrefixCls.value('space', customizePrefixCls)
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
-const { mergedClassNames, mergedStyles } = toRefs(
-  useMergeSemantic(
-    computed(() => [contextClassNames.value, spaceClassNames]),
-    computed(() => [contextStyles.value, styles]),
-  ),
+const [mergedClassNames, mergedStyles] = useMergeSemantic(
+  computed(() => [contextClassNames.value, spaceClassNames]),
+  computed(() => [contextStyles.value, styles]),
 );
 
 const rootClassNames = computed(() => {

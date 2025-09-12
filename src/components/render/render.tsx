@@ -1,13 +1,14 @@
+import type { VueNode } from '@/vc-util/type';
 import { isArray, isBoolean } from 'lodash-es';
-import { cloneVNode, defineComponent, h, isVNode, type PropType } from 'vue';
-import { isComponent, type RenderNode } from '../_util/type';
+import { cloneVNode, defineComponent, h, isVNode, type Component, type PropType } from 'vue';
+import { isComponent } from '../_util/type';
 
 export default defineComponent({
   inheritAttrs: false,
-  name: 'RenderContent',
+  name: 'Render',
   props: {
     content: {
-      type: [Object, Boolean, String, Number, Function] as PropType<RenderNode>,
+      type: [Object, Boolean, String, Number, Function] as PropType<VueNode>,
       default: undefined,
     },
   },
@@ -17,7 +18,7 @@ export default defineComponent({
         return null;
       }
       if (isComponent(props.content) && !isArray(props.content)) {
-        return h(props.content as never, { ...attrs }, slots);
+        return h(props.content as Component, { ...attrs }, slots);
       }
       if (isVNode(props.content)) {
         return cloneVNode(props.content, { ...attrs });

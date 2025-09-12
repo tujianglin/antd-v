@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { computed, ref, type CSSProperties, type VNode } from 'vue';
+import { computed, type CSSProperties, type VNode } from 'vue';
 import { Color } from './color';
 import ColorBlock from './components/ColorBlock.vue';
 import Picker from './components/Picker.vue';
@@ -19,7 +19,7 @@ export interface ColorPickerProps extends Omit<BaseColorPickerProps, 'color'> {
   components?: Components;
 }
 
-defineOptions({ name: 'ColorPicker', inheritAttrs: false, compatConfig: { MODE: 3 } });
+defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
   prefixCls = ColorPickerPrefixCls,
@@ -124,7 +124,6 @@ const sharedSliderProps = computed(() => {
     color: colorValue.value,
   };
 });
-const domRef = ref(null);
 
 const defaultPanel = () => {
   const res = (
@@ -173,7 +172,7 @@ const defaultPanel = () => {
 };
 </script>
 <template>
-  <div :class="mergeCls" :style="style" ref="domRef">
+  <div :class="mergeCls" :style="style">
     <defaultPanel />
   </div>
 </template>

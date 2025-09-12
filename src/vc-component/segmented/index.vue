@@ -31,7 +31,7 @@ export interface SegmentedProps<ValueType = SegmentedValue>
   class?: string;
   style?: CSSProperties;
   options?: SegmentedOptions<ValueType>;
-  onChange?: (value: ValueType) => void;
+  onChange?: (value: any) => void;
   disabled?: boolean;
   prefixCls?: string;
   direction?: 'ltr' | 'rtl';

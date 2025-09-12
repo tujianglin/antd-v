@@ -1,34 +1,34 @@
-import { reactiveComputed } from '@vueuse/core';
-import type { ComputedRef } from 'vue';
+import { computed, toRefs, type ComputedRef } from 'vue';
 import { useConfigContextInject, Variants, type Variant } from '../../config-provider/context';
 import type { ConfigProviderProps } from '../../config-provider/interface';
 import { useVariantContextInject } from '../context';
 
-type VariantComponents = keyof Pick<ConfigProviderProps, 'input' | 'textArea' | 'inputNumber'>;
-
+type VariantComponents = keyof Pick<ConfigProviderProps, 'input' | 'inputNumber' | 'textArea' | 'card'>;
 /**
  * Compatible for legacy `bordered` prop.
  */
 const useVariant = (
   component: VariantComponents,
   variant: ComputedRef<Variant | undefined>,
-): { variant: Variant; enableVariantCls: boolean } => {
-  const { variant: configVariant, [component]: componentConfig } = useConfigContextInject();
+): [ComputedRef<Variant>, ComputedRef<boolean>] => {
+  const { variant: configVariant, [component]: componentConfig } = toRefs(useConfigContextInject());
   const ctxVariant = useVariantContextInject();
-  return reactiveComputed(() => {
-    const configComponentVariant = componentConfig?.variant;
 
-    let mergedVariant: Variant;
+  const configComponentVariant = computed(() => componentConfig?.value?.variant);
+
+  const mergedVariant = computed(() => {
+    let result;
     if (typeof variant.value !== 'undefined') {
-      mergedVariant = variant.value;
+      result = variant.value;
     } else {
       // form variant > component global variant > global variant
-      mergedVariant = ctxVariant.value ?? configComponentVariant ?? configVariant ?? 'outlined';
+      result = ctxVariant?.value ?? configComponentVariant?.value ?? configVariant?.value ?? 'outlined';
     }
-
-    const enableVariantCls = Variants.includes(mergedVariant);
-    return { variant: mergedVariant, enableVariantCls };
+    return result;
   });
+
+  const enableVariantCls = computed(() => Variants.includes(mergedVariant.value));
+  return [mergedVariant, enableVariantCls];
 };
 
 export default useVariant;

@@ -1,5 +1,6 @@
 <script lang="tsx" setup>
 import { Render } from '@/components';
+import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { useTemplateRef, type CSSProperties } from 'vue';
 
@@ -8,11 +9,11 @@ export interface TabPaneProps {
   class?: string;
   style?: CSSProperties;
   disabled?: boolean;
-  children?: any;
+  children?: VueNode;
   forceRender?: boolean;
   closable?: boolean;
-  closeIcon?: any;
-  icon?: any;
+  closeIcon?: VueNode;
+  icon?: VueNode;
 
   // Pass by TabPaneList
   prefixCls?: string;

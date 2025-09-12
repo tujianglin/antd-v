@@ -1,13 +1,13 @@
 import type { DropdownProps } from '@/vc-component/dropdown';
 import type { CSSMotionProps } from '@/vc-component/motion';
-import type { VueKey } from '@/vc-util/type';
+import type { VueKey, VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 import type { TabPaneProps } from './TabPanelList/TabPane.vue';
 
 export type TriggerProps = {
   trigger?: 'hover' | 'click';
 };
-export type moreIcon = any;
+export type moreIcon = VueNode;
 export type MoreProps = {
   icon?: moreIcon;
 } & Omit<DropdownProps, 'children'>;
@@ -30,12 +30,12 @@ export type TabPosition = 'left' | 'right' | 'top' | 'bottom';
 
 export interface Tab extends Omit<TabPaneProps, 'tab'> {
   key: string;
-  label: any;
+  label: VueNode;
 }
 
 type RenderTabBarProps = {
   id: string;
-  activeKey: string;
+  activeKey: string | undefined;
   animated: AnimatedConfig;
   tabPosition: TabPosition;
   rtl: boolean;
@@ -61,8 +61,8 @@ export interface TabsLocale {
 export interface EditableConfig {
   onEdit: (type: 'add' | 'remove', info: { key?: string; event: MouseEvent | KeyboardEvent }) => void;
   showAdd?: boolean;
-  removeIcon?: any;
-  addIcon?: any;
+  removeIcon?: VueNode;
+  addIcon?: VueNode;
 }
 
 export interface AnimatedConfig {
@@ -75,6 +75,6 @@ export type OnTabScroll = (info: { direction: 'left' | 'right' | 'top' | 'bottom
 
 export type TabBarExtraPosition = 'left' | 'right';
 
-export type TabBarExtraMap = Partial<Record<TabBarExtraPosition, any>>;
+export type TabBarExtraMap = Partial<Record<TabBarExtraPosition, VueNode>>;
 
-export type TabBarExtraContent = any | TabBarExtraMap;
+export type TabBarExtraContent = VueNode | TabBarExtraMap;

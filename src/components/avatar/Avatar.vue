@@ -13,6 +13,7 @@ import { useAvatarContextInject, type AvatarSize } from './AvatarContext';
 import useStyle from './style';
 import ResizeObserver from '@/vc-component/resize-observer';
 import Render from '../render';
+import type { VueNode } from '@/vc-util/type';
 
 export interface AvatarProps {
   /** Shape of avatar, options: `circle`, `square` */
@@ -24,12 +25,12 @@ export interface AvatarProps {
   size?: AvatarSize;
   gap?: number;
   /** Src of image avatar */
-  src?: any;
+  src?: VueNode;
   /** Srcset of image avatar */
   srcset?: string;
   draggable?: boolean | 'true' | 'false';
   /** Icon to be used in avatar */
-  icon?: any;
+  icon?: VueNode;
   style?: CSSProperties;
   prefixCls?: string;
   class?: string;

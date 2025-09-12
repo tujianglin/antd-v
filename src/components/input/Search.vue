@@ -6,12 +6,13 @@ import { useComponentConfig } from '../config-provider/context';
 import useSize from '../config-provider/hooks/useSize';
 import { useCompactItemContext } from '../space/CompactContext';
 import type { InputProps } from './interface';
-import Input from './index.vue';
+import Input from './Input.vue';
 import { SearchOutlined } from '@ant-design/icons-vue';
 import Button from '../button';
 import Render from '../render';
 import clsx from 'clsx';
 import type { ButtonSemanticName } from '../button/interface';
+import type { ValueType } from '@/vc-component/input/interface';
 
 type SemanticName = 'root' | 'input' | 'prefix' | 'suffix' | 'count';
 
@@ -60,6 +61,8 @@ const {
 
 const slots = defineSlots<{ suffix?: () => VNode[]; addonAfter?: () => VNode[]; enterButton?: () => VNode[] }>();
 
+const value = defineModel<ValueType>('value');
+
 const suffixSlot = computed(() => slots.suffix || suffix);
 const addonAfterSlot = computed(() => slots.addonAfter || addonAfter);
 const enterButtonSlot = computed(() => slots.enterButton || enterButton);
@@ -71,16 +74,14 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('inputSearch'));
 
-const { mergedClassNames, mergedStyles } = toRefs(
-  useMergeSemantic(
-    computed(() => [contextClassNames.value, classNames]),
-    computed(() => [contextStyles.value, styles]),
-    computed(() => ({
-      button: {
-        _default: 'root',
-      },
-    })),
-  ),
+const [mergedClassNames, mergedStyles] = useMergeSemantic(
+  computed(() => [contextClassNames.value, classNames]),
+  computed(() => [contextStyles.value, styles]),
+  computed(() => ({
+    button: {
+      _default: 'root',
+    },
+  })),
 );
 
 const prefixCls = computed(() => getPrefixCls.value('input-search', customizePrefixCls));
@@ -204,6 +205,7 @@ const handleOnCompositionEnd = (e: CompositionEvent) => {
   <Input
     ref="inputRef"
     v-bind="{ ...restProps, ...$attrs }"
+    v-model:value="value"
     :class="mergedClassName"
     :class-names="mergedClassNames"
     :styles="mergedStyles"

@@ -3,7 +3,7 @@ import { Render } from '@/components';
 import pickAttrs from '@/vc-util/pickAttrs';
 import type { VueKey } from '@/vc-util/type';
 import clsx from 'clsx';
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 import useItems from './hooks/useItems';
 import type { CollapseProps } from './interface';
 
@@ -77,12 +77,9 @@ const mergedChildren = () => {
     styles,
   });
 };
-
-const domRef = ref(null);
 </script>
 <template>
   <div
-    ref="domRef"
     :class="collapseClassName"
     :style="style"
     :role="accordion ? 'tablist' : undefined"

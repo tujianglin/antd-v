@@ -3,6 +3,7 @@ import { isValidElement } from '@/components/_util/isValidNode';
 import { ref } from 'vue';
 import type { TabBarExtraContent, TabBarExtraMap, TabBarExtraPosition } from '../interface';
 import { Render } from '@/components';
+import type { VueNode } from '@/vc-util/type';
 
 interface ExtraContentProps {
   position: TabBarExtraPosition;
@@ -19,9 +20,9 @@ const Content = () => {
   // Parse extra
   let assertExtra: TabBarExtraMap = {};
   if (typeof extra === 'object' && !isValidElement(extra)) {
-    assertExtra = (<Render content={extra}></Render>) as TabBarExtraMap;
+    assertExtra = extra as TabBarExtraMap;
   } else {
-    assertExtra.right = <Render content={extra}></Render>;
+    assertExtra.right = <Render content={extra as VueNode}></Render>;
   }
 
   if (position === 'right') {

@@ -11,6 +11,7 @@ import type {
   OnTabScroll,
   RenderTabBar,
   Tab,
+  TabBarExtraContent,
   TabPosition,
   TabsLocale,
 } from './interface';
@@ -45,7 +46,7 @@ export interface TabsProps {
   direction?: 'ltr' | 'rtl';
   animated?: boolean | AnimatedConfig;
   renderTabBar?: RenderTabBar;
-  tabBarExtraContent?: any;
+  tabBarExtraContent?: TabBarExtraContent;
   tabBarGutter?: number;
   tabBarStyle?: CSSProperties;
   tabPosition?: TabPosition;
@@ -115,7 +116,7 @@ onMounted(() => {
 });
 
 // ====================== Active Key ======================
-const mergedActiveKey = defineModel<string>('activeKey', {});
+const mergedActiveKey = defineModel<string | undefined>('activeKey');
 mergedActiveKey.value = mergedActiveKey.value || tabs?.value?.[0]?.key;
 const activeIndex = ref<number>(0);
 activeIndex.value = tabs.value.findIndex((tab) => tab.key === mergedActiveKey.value);

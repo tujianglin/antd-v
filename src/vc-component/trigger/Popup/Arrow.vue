@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { reactiveComputed } from '@vueuse/core';
+import { reactiveComputed, toReactive } from '@vueuse/core';
 import clsx from 'clsx';
 import { computed, ref, toRefs, type CSSProperties } from 'vue';
 import { Render } from '../../../components';
@@ -13,7 +13,7 @@ export interface ArrowProps {
 
 const { prefixCls, align, arrow, arrowPos } = defineProps<ArrowProps>();
 
-const { className, content } = toRefs(reactiveComputed(() => arrow || {}));
+const { class: className, content } = toRefs(toReactive(arrow || {}));
 const { x, y } = toRefs(reactiveComputed(() => arrowPos));
 
 const arrowRef = ref<HTMLDivElement>(null);

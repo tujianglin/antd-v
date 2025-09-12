@@ -13,18 +13,18 @@ interface RenderProps {
   draggingDelete: boolean;
 }
 
-export interface HandleProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'onFocus' | 'onMouseEnter'> {
+export interface HandleProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'onFocus' | 'onMouseenter'> {
   prefixCls: string;
   style?: CSSProperties;
   value: number;
-  valueIndex: number;
+  valueIndex: number | null;
   dragging: boolean;
   draggingDelete: boolean;
   onStartMove: OnStartMove;
   onDelete?: (index: number) => void;
   onOffsetChange: (value: number | 'min' | 'max', valueIndex: number) => void;
   onFocus: (e: FocusEvent, index: number) => void;
-  onMouseEnter: (e: MouseEvent, index: number) => void;
+  onMouseenter: (e: MouseEvent, index: number) => void;
   render?: (origin: any, props: RenderProps) => any;
   onChangeComplete?: () => void;
   mock?: boolean;
@@ -45,7 +45,7 @@ const {
   onOffsetChange,
   onChangeComplete,
   onFocus,
-  onMouseEnter,
+  onMouseenter,
   ...restProps
 } = defineProps<HandleProps>();
 
@@ -56,7 +56,7 @@ const {
   disabled,
   keyboard,
   range,
-  tabIndex,
+  tabindex,
   ariaLabelForHandle,
   ariaLabelledByForHandle,
   ariaRequired,
@@ -79,7 +79,7 @@ const onInternalFocus = (e: FocusEvent) => {
 };
 
 const onInternalMouseEnter = (e: MouseEvent) => {
-  onMouseEnter(e, valueIndex);
+  onMouseenter(e, valueIndex);
 };
 
 // =========================== Keyboard ===========================
@@ -160,7 +160,7 @@ const divProps = computed(() => {
 
   if (valueIndex !== null) {
     result = {
-      tabindex: disabled.value ? null : getIndex(tabIndex.value, valueIndex),
+      tabindex: disabled.value ? null : getIndex(tabindex.value, valueIndex),
       role: 'slider',
       'aria-valuemin': min.value,
       'aria-valuemax': max.value,
@@ -210,7 +210,6 @@ const HandleNode = () => {
       {...restProps}
     />
   );
-
   // Customize
   if (render) {
     handleNode = render(handleNode, {
@@ -221,7 +220,6 @@ const HandleNode = () => {
       draggingDelete,
     });
   }
-
   return handleNode;
 };
 </script>

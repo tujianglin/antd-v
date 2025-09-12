@@ -1,10 +1,10 @@
 <script lang="tsx" setup>
 import RcTooltip from '@/vc-component/tooltip';
 import type { placements as Placements } from '@/vc-component/tooltip/placements';
-import type { TooltipProps as RcTooltipProps, TooltipRef as RcTooltipRef } from '@/vc-component/tooltip/Tooltip.vue';
+import type { TooltipProps as RcTooltipProps } from '@/vc-component/tooltip/Tooltip.vue';
 import type { BuildInPlacements } from '@/vc-component/trigger';
 import clsx from 'clsx';
-import { cloneVNode, computed, getCurrentInstance, h, ref, toRefs, useAttrs, type CSSProperties, type VNode } from 'vue';
+import { cloneVNode, computed, getCurrentInstance, h, toRefs, useAttrs, useSlots, useTemplateRef, type CSSProperties } from 'vue';
 import type { PresetColorType } from '../_util/colors';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import type { AdjustOverflow, PlacementsConfig } from '../_util/placements';
@@ -82,23 +82,14 @@ export interface AbstractTooltipProps extends LegacyTooltipProps {
   arrow?: boolean | { pointAtCenter?: boolean };
   autoAdjustOverflow?: boolean | AdjustOverflow;
   getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
+  title?: string | number;
   /**
    * @since 5.25.0
    */
   destroyOnHidden?: boolean;
 }
 
-export interface TooltipPropsWithOverlay extends AbstractTooltipProps {
-  title?: any;
-  overlay?: any;
-}
-
-export interface TooltipPropsWithTitle extends AbstractTooltipProps {
-  title: any;
-  overlay?: any;
-}
-
-export declare type TooltipProps = TooltipPropsWithTitle | TooltipPropsWithOverlay;
+export declare type TooltipProps = AbstractTooltipProps;
 
 defineOptions({ name: 'Tooltip', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -110,8 +101,7 @@ const {
   afterOpenChange,
   arrow: tooltipArrow,
   destroyOnHidden,
-  title: defaultTitle,
-  overlay: defaultOverlay,
+  title,
   builtinPlacements,
   autoAdjustOverflow = true,
   motion,
@@ -125,11 +115,6 @@ const {
   onOpenChange,
   ...restProps
 } = defineProps<TooltipProps>();
-
-const slots = defineSlots<{ default?: () => VNode[]; overlay?: () => VNode[]; title?: () => VNode[] }>();
-
-const title = computed(() => slots.title || defaultTitle);
-const overlay = computed(() => slots.overlay || defaultOverlay);
 
 const vm = getCurrentInstance();
 
@@ -166,30 +151,28 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-const tooltipRef = ref<RcTooltipRef>(null);
+const tooltipRef = useTemplateRef('tooltipRef');
 
 const forceAlign = () => {
-  tooltipRef.value?.forceAlign();
+  tooltipRef.value?.el?.forceAlign();
 };
 
 defineExpose({
   forceAlign,
   get nativeElement() {
-    return tooltipRef.value?.nativeElement;
+    return tooltipRef.value?.el?.nativeElement;
   },
   get popupElement() {
-    return tooltipRef.value?.popupElement;
+    return tooltipRef.value?.el?.popupElement;
   },
 });
 
 // ============================== Open ==============================
 const open = defineModel('open', { default: false });
 
-const noTitle = computed(() => !title.value && !overlay.value && title.value !== 0); // overlay for old version compatibility
-
 const onInternalOpenChange = (vis: boolean) => {
-  open.value = noTitle.value ? false : vis;
-  if (!noTitle.value && onOpenChange) {
+  open.value = vis;
+  if (onOpenChange) {
     onOpenChange(vis);
   }
 };
@@ -208,13 +191,6 @@ const tooltipPlacements = computed<BuildInPlacements>(() => {
   );
 });
 
-const memoOverlay = computed<TooltipProps['overlay']>(() => {
-  if (title.value === 0) {
-    return title.value;
-  }
-  return overlay.value || title.value || '';
-});
-
 const prefixCls = computed(() => getPrefixCls.value('tooltip', customizePrefixCls));
 const rootPrefixCls = computed(() => getPrefixCls.value());
 const attrs = useAttrs();
@@ -224,7 +200,7 @@ const injectFromPopover = computed(() => (attrs as any)['data-popover-inject']);
 const tempOpen = computed(() => {
   let result = open.value;
   // Hide tooltip when there is no title
-  if (!('open' in vm.props) && noTitle.value) {
+  if (!('open' in vm.props)) {
     result = false;
   }
   return result;
@@ -258,29 +234,12 @@ const [zIndex, contextZIndex] = useZIndex(
   computed(() => restProps.zIndex),
 );
 
-const memoOverlayWrapper = () => (
-  <ContextIsolator space>{typeof memoOverlay.value === 'function' ? memoOverlay.value() : memoOverlay.value}</ContextIsolator>
-);
-
 // ============================= Render =============================
-const child = () => {
-  const children = flattenChildren(slots?.default?.());
-  return isValidElement(children) && !isFragment(children) && children.length === 1 ? (
-    children[0]
-  ) : (
-    <span>{slots?.default?.()}</span>
-  );
+const slots = useSlots();
+const children = () => {
+  const result = flattenChildren(slots?.default?.());
+  return isValidElement(result) && !isFragment(result) && result.length === 1 ? result[0] : <span>{slots?.default?.()}</span>;
 };
-
-const childProps = computed(() => {
-  return child()?.props;
-});
-
-const childCls = computed(() => {
-  return !childProps.value?.class || typeof childProps.value?.class === 'string'
-    ? clsx(openClassName || `${prefixCls.value}-open`)
-    : childProps.value?.class;
-});
 </script>
 <template>
   <ZIndexContextProvider :value="contextZIndex">
@@ -309,7 +268,6 @@ const childCls = computed(() => {
       :get-tooltip-container="getPopupContainer || getTooltipContainer || getContextPopupContainer"
       ref="tooltipRef"
       :builtin-placements="tooltipPlacements"
-      :overlay="memoOverlayWrapper"
       :visible="tempOpen"
       @visible-change="onInternalOpenChange"
       :after-visible-change="afterOpenChange"
@@ -324,8 +282,18 @@ const childCls = computed(() => {
       }"
       :destroy-on-hidden="destroyOnHidden"
     >
-      <component v-if="tempOpen" :is="cloneVNode(child(), { class: childCls })" />
-      <component v-else :is="child()" />
+      <template #default="props">
+        <component :is="cloneVNode(children(), { class: clsx(openClassName || `${prefixCls}-open`), ...props })" />
+      </template>
+      <template #overlay>
+        <ContextIsolator space>
+          <slot name="overlay">
+            <slot name="title">
+              {{ title }}
+            </slot>
+          </slot>
+        </ContextIsolator>
+      </template>
     </RcTooltip>
   </ZIndexContextProvider>
 </template>

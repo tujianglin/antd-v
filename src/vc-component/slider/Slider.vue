@@ -93,7 +93,7 @@ export interface SliderProps<ValueType = number | number[]> {
   track?: boolean;
 
   // Accessibility
-  tabIndex?: number | number[];
+  tabindex?: number | number[];
   ariaLabelForHandle?: string | string[];
   ariaLabelledByForHandle?: string | string[];
   ariaRequired?: boolean;
@@ -157,7 +157,7 @@ const {
   track,
 
   // Accessibility
-  tabIndex = 0,
+  tabindex = 0,
   ariaLabelForHandle,
   ariaLabelledByForHandle,
   ariaRequired,
@@ -504,7 +504,7 @@ const context = computed((): SliderContextProps => {
     includedStart: includedStart.value,
     includedEnd: includedEnd.value,
     range: rangeEnabled.value,
-    tabIndex,
+    tabindex,
     ariaLabelForHandle,
     ariaLabelledByForHandle,
     ariaRequired,
@@ -537,7 +537,7 @@ const context = computed((): SliderContextProps => {
         :style="styles?.tracks"
         :values="rawValues"
         :start-point="startPoint"
-        @start-move="mergedDraggableTrack ? onStartMove : undefined"
+        :on-start-move="mergedDraggableTrack ? onStartMove : undefined"
       />
       <Steps :prefix-cls="prefixCls" :marks="markList" :dots="dots" :style="dotStyle" :active-style="activeDotStyle" />
       <Handles
@@ -554,7 +554,7 @@ const context = computed((): SliderContextProps => {
         :handle-render="handleRender"
         :active-handle-render="activeHandleRender"
         @change-complete="finishChange"
-        @delete="rangeEditable ? onDelete : undefined"
+        :on-delete="rangeEditable ? onDelete : undefined"
       />
       <Marks :prefix-cls="prefixCls" :marks="markList" @click="changeToCloseValue" />
     </div>

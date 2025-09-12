@@ -4,6 +4,8 @@ import { devUseWarning } from '../_util/warning';
 import type { PickerLocale as DatePickerLocale } from '../date-picker/generatePicker';
 import { LocaleContextProvider, type LocaleContextProps } from './context';
 
+export { default as useLocale } from './useLocale';
+
 export const ANT_MARK = 'internalMark';
 export interface Locale {
   locale: string;

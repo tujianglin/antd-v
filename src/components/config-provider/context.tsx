@@ -20,11 +20,11 @@ import type { AnchorProps } from '../anchor';
 // import type { CardMetaProps } from '../card/Meta';
 // import type { CascaderProps } from '../cascader';
 import type { CheckboxProps } from '../checkbox';
-// import type { CollapseProps } from '../collapse';
-// import type { ColorPickerProps } from '../color-picker';
+import type { CollapseProps } from '../collapse';
+import type { ColorPickerProps } from '../color-picker';
 // import type { DatePickerProps, RangePickerProps } from '../date-picker';
 // import type { DescriptionsProps } from '../descriptions';
-// import type { DividerProps } from '../divider';
+import type { DividerProps } from '../divider';
 // import type { DrawerProps } from '../drawer';
 // import type { DropdownProps } from '../dropdown';
 // import type { EmptyProps } from '../empty';
@@ -50,18 +50,18 @@ import type { PopoverProps } from '../popover';
 // import type { QRCodeProps } from '../qr-code';
 import type { RadioProps } from '../radio';
 // import type { ResultProps } from '../result';
-// import type { SegmentedProps } from '../segmented';
+import type { SegmentedProps } from '../segmented';
 // import type { SelectProps } from '../select';
-// import type { SkeletonProps } from '../skeleton';
-// import type { SliderProps } from '../slider';
+import type { SkeletonProps } from '../skeleton';
+import type { SliderProps } from '../slider';
 import type { SpaceProps } from '../space';
-// import type { SpinProps } from '../spin';
+import type { SpinProps } from '../spin';
 // import type { SplitterProps } from '../splitter';
 // import type { StatisticProps } from '../statistic';
 // import type { StepsProps } from '../steps';
 // import type { SwitchProps } from '../switch';
 // import type { TableProps } from '../table';
-// import type { TabsProps } from '../tabs';
+import type { TabsProps } from '../tabs';
 // import type { TagProps } from '../tag';
 import { reactiveComputed } from '@vueuse/core';
 import type { ButtonProps } from '../button';
@@ -70,6 +70,9 @@ import type { AliasToken, MappingAlgorithm, OverrideToken } from '../theme/inter
 import type { RenderEmptyHandler } from './defaultRenderEmpty.vue';
 // import type { TimePickerProps } from '../time-picker';
 // import type { TimelineProps } from '../timeline';
+import type { BadgeProps } from '../badge';
+import type { RibbonProps } from '../badge/Ribbon.vue';
+import type { CardMetaProps, CardProps } from '../card';
 import type { TooltipProps } from '../tooltip';
 // import type { TourProps } from '../tour/interface';
 // import type { TransferProps } from '../transfer';
@@ -169,7 +172,7 @@ export interface ComponentStyleConfig {
 //     preview?: Partial<Record<'closeIcon', React.ReactNode>> & Pick<ImageProps, 'classNames' | 'styles'>;
 //   };
 
-// export type CollapseConfig = ComponentStyleConfig & Pick<CollapseProps, 'expandIcon' | 'classNames' | 'styles'>;
+export type CollapseConfig = ComponentStyleConfig & Pick<CollapseProps, 'expandIcon' | 'classNames' | 'styles'>;
 
 export type CheckboxConfig = ComponentStyleConfig & Pick<CheckboxProps, 'classNames' | 'styles'>;
 
@@ -186,14 +189,14 @@ export type CheckboxConfig = ComponentStyleConfig & Pick<CheckboxProps, 'classNa
 // export type ModalConfig = ComponentStyleConfig &
 //   Pick<ModalProps, 'classNames' | 'styles' | 'closeIcon' | 'closable' | 'centered' | 'okButtonProps' | 'cancelButtonProps'>;
 
-// export type TabsConfig = ComponentStyleConfig &
-//   Pick<TabsProps, 'indicator' | 'indicatorSize' | 'more' | 'moreIcon' | 'addIcon' | 'removeIcon' | 'classNames' | 'styles'>;
+export type TabsConfig = ComponentStyleConfig &
+  Pick<TabsProps, 'indicator' | 'more' | 'moreIcon' | 'addIcon' | 'removeIcon' | 'classNames' | 'styles'>;
 
 export type AnchorStyleConfig = ComponentStyleConfig & Pick<AnchorProps, 'classNames' | 'styles'>;
 
 export type AlertConfig = ComponentStyleConfig & Pick<AlertProps, 'closable' | 'closeIcon' | 'classNames' | 'styles'>;
 
-// export type BadgeConfig = ComponentStyleConfig & Pick<BadgeProps, 'classNames' | 'styles'>;
+export type BadgeConfig = ComponentStyleConfig & Pick<BadgeProps, 'classNames' | 'styles'>;
 
 // export type BreadcrumbConfig = ComponentStyleConfig & Pick<BreadcrumbProps, 'classNames' | 'styles'>;
 
@@ -216,17 +219,17 @@ export type ButtonConfig = ComponentStyleConfig &
 
 // export type TagConfig = ComponentStyleConfig & Pick<TagProps, 'variant' | 'closeIcon' | 'closable' | 'classNames' | 'styles'>;
 
-// export type CardConfig = ComponentStyleConfig & Pick<CardProps, 'classNames' | 'styles' | 'variant'>;
+export type CardConfig = ComponentStyleConfig & Pick<CardProps, 'classNames' | 'styles' | 'variant'>;
 
-// export type ColorPickerConfig = ComponentStyleConfig & Pick<ColorPickerProps, 'classNames' | 'styles'>;
+export type ColorPickerConfig = ComponentStyleConfig & Pick<ColorPickerProps, 'classNames' | 'styles'>;
 
 // export type CalendarConfig = ComponentStyleConfig & Pick<CalendarProps<AnyObject>, 'classNames' | 'styles'>;
 
-// export type CardMetaConfig = ComponentStyleConfig & Pick<CardMetaProps, 'classNames' | 'styles'>;
+export type CardMetaConfig = ComponentStyleConfig & Pick<CardMetaProps, 'classNames' | 'styles'>;
 
 // export type DrawerConfig = ComponentStyleConfig & Pick<DrawerProps, 'classNames' | 'styles' | 'closeIcon' | 'closable'>;
 
-// export type DividerConfig = ComponentStyleConfig & Pick<DividerProps, 'classNames' | 'styles'>;
+export type DividerConfig = ComponentStyleConfig & Pick<DividerProps, 'classNames' | 'styles'>;
 
 // export type DropdownConfig = ComponentStyleConfig & Pick<DropdownProps, 'classNames' | 'styles'>;
 
@@ -259,15 +262,15 @@ export type PopoverConfig = Pick<PopoverProps, 'class' | 'style' | 'styles' | 'c
 
 // export type QRcodeConfig = ComponentStyleConfig & Pick<QRCodeProps, 'classNames' | 'styles'>;
 
-// export type SliderConfig = ComponentStyleConfig & Pick<SliderProps, 'styles' | 'classNames'>;
+export type SliderConfig = ComponentStyleConfig & Pick<SliderProps, 'styles' | 'classNames'>;
 
-// export type SkeletonConfig = ComponentStyleConfig & Pick<SkeletonProps, 'styles' | 'classNames'>;
+export type SkeletonConfig = ComponentStyleConfig & Pick<SkeletonProps, 'styles' | 'classNames'>;
 
-// export type SegmentedConfig = ComponentStyleConfig & Pick<SegmentedProps, 'classNames' | 'styles'>;
+export type SegmentedConfig = ComponentStyleConfig & Pick<SegmentedProps, 'classNames' | 'styles'>;
 
 // export type StepsConfig = ComponentStyleConfig & Pick<StepsProps, 'classNames' | 'styles'>;
 
-// export type SpinConfig = ComponentStyleConfig & Pick<SpinProps, 'indicator' | 'classNames' | 'styles'>;
+export type SpinConfig = ComponentStyleConfig & Pick<SpinProps, 'indicator' | 'classNames' | 'styles'>;
 
 // export type StatisticConfig = ComponentStyleConfig & Pick<StatisticProps, 'classNames' | 'styles'>;
 
@@ -297,7 +300,7 @@ export type InputNumberConfig = ComponentStyleConfig & Pick<InputNumberProps, 'v
 
 // export type UploadConfig = ComponentStyleConfig & Pick<UploadProps, 'classNames' | 'styles'>;
 
-// export type RibbonConfig = ComponentStyleConfig & Pick<RibbonProps, 'classNames' | 'styles'>;
+export type RibbonConfig = ComponentStyleConfig & Pick<RibbonProps, 'classNames' | 'styles'>;
 
 export type PopupOverflow = 'viewport' | 'scroll';
 
@@ -338,19 +341,19 @@ export interface ConfigComponentProps {
   affix?: ComponentStyleConfig;
   anchor?: AnchorStyleConfig;
   button?: ButtonConfig;
-  // divider?: DividerConfig;
+  divider?: DividerConfig;
   // drawer?: DrawerConfig;
   // calendar?: CalendarConfig;
   // carousel?: ComponentStyleConfig;
   // cascader?: CascaderConfig;
   // treeSelect?: TreeSelectConfig;
-  // collapse?: CollapseConfig;
+  collapse?: CollapseConfig;
   floatButton?: FloatButtonConfig;
   floatButtonGroup?: FloatButtonGroupConfig;
   // typography?: ComponentStyleConfig;
-  // skeleton?: SkeletonConfig;
-  // spin?: SpinConfig;
-  // segmented?: SegmentedConfig;
+  skeleton?: SkeletonConfig;
+  spin?: SpinConfig;
+  segmented?: SegmentedConfig;
   // steps?: StepsConfig;
   // statistic?: StatisticConfig;
   // image?: ImageConfig;
@@ -360,14 +363,14 @@ export interface ConfigComponentProps {
   // modal?: ModalConfig;
   // progress?: ProgressConfig;
   // result?: ResultConfig;
-  // slider?: SliderConfig;
+  slider?: SliderConfig;
   // breadcrumb?: BreadcrumbConfig;
   // masonry?: MasonryConfig;
   // menu?: MenuConfig;
   checkbox?: CheckboxConfig;
   // descriptions?: DescriptionsConfig;
   // empty?: EmptyConfig;
-  // badge?: BadgeConfig;
+  badge?: BadgeConfig;
   radio?: RadioConfig;
   // rate?: ComponentStyleConfig;
   // switch?: SwitchStyleConfig;
@@ -376,9 +379,9 @@ export interface ConfigComponentProps {
   // message?: MessageConfig;
   // tag?: TagConfig;
   // table?: TableConfig;
-  // card?: CardConfig;
-  // cardMeta?: CardMetaConfig;
-  // tabs?: TabsConfig;
+  card?: CardConfig;
+  cardMeta?: CardMetaConfig;
+  tabs?: TabsConfig;
   // timeline?: TimelineConfig;
   // timePicker?: TimePickerConfig;
   // tour?: TourConfig;
@@ -388,10 +391,10 @@ export interface ConfigComponentProps {
   // upload?: UploadConfig;
   // notification?: NotificationConfig;
   // tree?: TreeConfig;
-  // colorPicker?: ColorPickerConfig;
+  colorPicker?: ColorPickerConfig;
   // datePicker?: DatePickerConfig;
   // rangePicker?: RangePickerConfig;
-  // ribbon?: RibbonConfig;
+  ribbon?: RibbonConfig;
   // dropdown?: DropdownConfig;
   flex?: FlexConfig;
   wave?: WaveConfig;

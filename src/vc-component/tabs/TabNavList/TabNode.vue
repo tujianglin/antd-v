@@ -72,7 +72,7 @@ function onRemoveTab(event: MouseEvent | KeyboardEvent) {
   editable.onEdit('remove', { key: key?.value, event });
 }
 
-const LabelNode = () => (icon?.value && typeof label?.value === 'string' ? <span>{label?.value}</span> : label?.value);
+const labelNode = () => (icon?.value && typeof label?.value === 'string' ? <span>{label?.value}</span> : label?.value);
 
 const btnRef = ref<HTMLDivElement>(null);
 
@@ -125,7 +125,7 @@ const Node = () => (
         </div>
       )}
       {icon?.value && <span class={`${tabPrefix.value}-icon`}>{icon.value}</span>}
-      {label?.value && <LabelNode></LabelNode>}
+      {label?.value && <Render content={labelNode}></Render>}
     </div>
 
     {/* Remove Button */}

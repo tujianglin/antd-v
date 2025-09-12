@@ -1,5 +1,5 @@
 export type { InputRef } from '../../vc-component/input';
-import InternalInput from './index.vue';
+import InternalInput from './Input.vue';
 import OTP from './OTP/index.vue';
 import Password from './Password.vue';
 import Search from './Search.vue';

@@ -1,4 +1,4 @@
-import { Fragment } from 'vue';
+import { Comment, Fragment, type Slots, type VNode } from 'vue';
 
 export function falseToUndefined(obj: Record<string, any>): Record<string, any> {
   return Object.fromEntries(Object.entries(obj).map(([key, value]) => [key, value === false ? undefined : value]));
@@ -54,4 +54,19 @@ export function normalizeEventProps(props) {
   });
 
   return normalized;
+}
+
+function isRenderableNode(vnode: VNode): boolean {
+  if (vnode.type === Comment) return false;
+  if (vnode.type === Text && String(vnode.children).trim() === '') return false;
+  return true;
+}
+
+/**
+ * 判断插槽是否有实际可渲染内容
+ */
+export function hasSlotContent(slots: Slots, name = 'default'): boolean {
+  if (!slots[name]) return false;
+  const children = slots[name]!() ?? [];
+  return children.some(isRenderableNode);
 }

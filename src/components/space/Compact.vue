@@ -36,11 +36,9 @@ const {
 
 const { getPrefixCls, direction: directionConfig } = toRefs(useConfigContextInject());
 
-const { mergedOrientation, mergedVertical } = toRefs(
-  useOrientation(
-    computed(() => orientation),
-    computed(() => vertical),
-  ),
+const [mergedOrientation, mergedVertical] = useOrientation(
+  computed(() => orientation),
+  computed(() => vertical),
 );
 const mergedSize = useSize(computed(() => (ctx) => size ?? ctx));
 

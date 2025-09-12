@@ -1,5 +1,6 @@
 import type { Locale } from '../locale';
 import type {
+  CardConfig,
   CheckboxConfig,
   ComponentStyleConfig,
   ConfigConsumerProps,
@@ -127,7 +128,7 @@ export interface ConfigProviderProps {
   // message?: MessageConfig;
   // tag?: TagConfig;
   // table?: TableConfig;
-  // card?: CardConfig;
+  card?: CardConfig;
   // cardMeta?: CardMetaConfig;
   // tabs?: TabsConfig;
   timeline?: ComponentStyleConfig;

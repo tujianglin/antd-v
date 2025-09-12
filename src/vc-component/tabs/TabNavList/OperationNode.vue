@@ -16,7 +16,7 @@ export interface OperationNodeProps {
   tabs: Tab[];
   rtl: boolean;
   tabBarGutter?: number;
-  activeKey: string;
+  activeKey: string | undefined;
   mobile: boolean;
   more?: MoreProps;
   editable?: EditableConfig;
@@ -228,18 +228,21 @@ defineExpose({
       :get-popup-container="getPopupContainer"
       v-bind="moreProps"
     >
-      <button
-        type="button"
-        :class="`${prefixCls}-nav-more`"
-        :style="moreStyle"
-        aria-haspopup="listbox"
-        :aria-controls="popupId"
-        :id="`${id}-more`"
-        :aria-expanded="open"
-        @keydown="onKeyDown"
-      >
-        <Render :content="moreIcon" />
-      </button>
+      <template #default="props">
+        <button
+          type="button"
+          :class="`${prefixCls}-nav-more`"
+          :style="moreStyle"
+          aria-haspopup="listbox"
+          :aria-controls="popupId"
+          :id="`${id}-more`"
+          :aria-expanded="open"
+          @keydown="onKeyDown"
+          v-bind="props"
+        >
+          <Render :content="moreIcon" />
+        </button>
+      </template>
     </Dropdown>
   </div>
 </template>

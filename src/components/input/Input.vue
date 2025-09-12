@@ -14,6 +14,7 @@ import clsx from 'clsx';
 import RcInput from '../../vc-component/input';
 import ContextIsolator from '../_util/ContextIsolator';
 import type { InputProps } from './interface';
+import type { ValueType } from '@/vc-component/input/interface';
 
 type Slots = {
   addonBefore?: () => VNode[];
@@ -44,7 +45,7 @@ const {
 } = defineProps<InputProps>();
 const slots = defineSlots<Slots>();
 
-const value = defineModel<string>('value');
+const value = defineModel<ValueType>('value');
 
 // Slots
 const addonBeforeSlot = computed(() => slots.addonBefore || addonBefore);
@@ -80,11 +81,9 @@ const mergedSize = useSize(computed(() => (ctx) => customSize ?? compactSize.val
 const disabled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 
-const { mergedClassNames, mergedStyles } = toRefs(
-  useMergeSemantic(
-    computed(() => [contextClassNames.value, classNames]),
-    computed(() => [contextStyles.value, styles]),
-  ),
+const [mergedClassNames, mergedStyles] = useMergeSemantic(
+  computed(() => [contextClassNames.value, classNames]),
+  computed(() => [contextStyles.value, styles]),
 );
 
 const suffixNode = computed(() => {
@@ -93,11 +92,9 @@ const suffixNode = computed(() => {
 
 const mergedAllowClear = computed(() => getAllowClear((contextAllowClear?.value as any) ?? allowClear));
 
-const { variant, enableVariantCls } = toRefs(
-  useVariant(
-    'input',
-    computed(() => customVariant),
-  ),
+const [variant, enableVariantCls] = useVariant(
+  'input',
+  computed(() => customVariant),
 );
 function handleChange(e) {
   onChange?.(e);

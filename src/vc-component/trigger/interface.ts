@@ -1,5 +1,5 @@
+import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
-import type { VueNode } from '../../components/_util/type';
 import type { CSSMotionProps } from '../motion';
 import type { MobileConfig } from './Popup/interface';
 
@@ -94,7 +94,7 @@ export interface AlignType {
 }
 
 export interface ArrowTypeOuter {
-  className?: string;
+  class?: string;
   content?: VueNode;
 }
 
@@ -168,7 +168,6 @@ export interface TriggerProps {
   blurDelay?: number;
 
   // ==================== Popup ====================
-  popup?: any;
   popupPlacement?: string;
   builtinPlacements?: BuildInPlacements;
   popupAlign?: AlignType;

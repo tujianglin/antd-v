@@ -8,11 +8,6 @@ export type LiteralUnion<T extends string> = T | (string & {});
 
 export type AnyObject = Record<VueKey, any>;
 
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-declare type VNodeChildAtom = VNode | string | number | boolean | null | undefined | void;
-
-export type VueNode = VNodeChildAtom | VNodeChildAtom[] | VNode;
-
 export type RenderNode =
   | VNodeChild // 支持 VNode、string、number、array 等
   | VNode // 显式支持单个 VNode

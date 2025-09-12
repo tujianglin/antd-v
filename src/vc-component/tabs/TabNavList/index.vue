@@ -32,7 +32,7 @@ import OperationNode from './OperationNode.vue';
 export interface TabNavListProps {
   id: any;
   tabPosition: TabPosition;
-  activeKey: string;
+  activeKey: any;
   rtl: boolean;
   animated?: AnimatedConfig;
   extra?: any;

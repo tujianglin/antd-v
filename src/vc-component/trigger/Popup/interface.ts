@@ -14,7 +14,6 @@ export interface PopupProps {
   prefixCls: string;
   class?: string;
   style?: CSSProperties;
-  popup?: TriggerProps['popup'];
   target: HTMLElement;
   onMouseenter?: (e: MouseEvent) => void;
   onMouseleave?: (e: MouseEvent) => void;

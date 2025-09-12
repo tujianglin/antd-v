@@ -1,13 +1,13 @@
 <script lang="tsx" setup>
 import type { TriggerProps } from '@/vc-component/trigger';
-import type { ActionType, AlignType, AnimationType, BuildInPlacements } from '@/vc-component/trigger/interface';
-import { cloneVNode, computed, ref, useSlots, type CSSProperties } from 'vue';
-import useAccessibility from './hooks/useAccessibility';
-import Placements from './placements';
-import Overlay from './Overlay.vue';
 import Trigger from '@/vc-component/trigger';
+import type { ActionType, AlignType, AnimationType, BuildInPlacements } from '@/vc-component/trigger/interface';
+import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
+import { computed, ref, useTemplateRef, type CSSProperties } from 'vue';
+import useAccessibility from './hooks/useAccessibility';
+import Overlay from './Overlay.vue';
+import Placements from './placements';
 
 export interface DropdownProps
   extends Pick<
@@ -27,7 +27,7 @@ export interface DropdownProps
   overlayStyle?: CSSProperties;
   placement?: keyof typeof Placements;
   placements?: BuildInPlacements;
-  overlay?: any;
+  overlay?: VueNode;
   trigger?: ActionType | ActionType[];
   alignPoint?: boolean;
   showAction?: ActionType[];
@@ -63,8 +63,8 @@ const triggerVisible = ref<boolean>();
 const mergedVisible = computed(() => visible || triggerVisible.value);
 const mergedMotionName = computed(() => (animation ? `${prefixCls}-${animation}` : transitionName));
 
-const triggerRef = ref(null);
-const overlayRef = ref(null);
+const triggerRef = useTemplateRef('triggerRef');
+const overlayRef = useTemplateRef('overlayRef');
 const childRef = ref(null);
 defineExpose({
   ...triggerRef.value,
@@ -84,22 +84,12 @@ useAccessibility({
 });
 
 const onClick = (e) => {
-  console.log(e);
   const { onOverlayClick } = otherProps;
   triggerVisible.value = false;
 
   if (onOverlayClick) {
     onOverlayClick(e);
   }
-};
-
-const getMenuElement = () => <Overlay ref={overlayRef} overlay={overlay} prefixCls={prefixCls} arrow={arrow} />;
-
-const getMenuElementOrLambda = () => {
-  if (typeof overlay === 'function') {
-    return getMenuElement();
-  }
-  return getMenuElement();
 };
 
 const getMinOverlayWidthMatchTrigger = computed(() => {
@@ -122,10 +112,6 @@ const triggerHideAction = computed(() => {
   }
   return result;
 });
-
-const slots = useSlots();
-
-const children = computed(() => flattenChildren(slots.default?.())[0]);
 </script>
 <template>
   <Trigger
@@ -147,20 +133,15 @@ const children = computed(() => flattenChildren(slots.default?.())[0]);
     :popup-motion="{ motionName: mergedMotionName }"
     :popup-visible="mergedVisible"
     :stretch="getMinOverlayWidthMatchTrigger ? 'minWidth' : ''"
-    :popup="getMenuElementOrLambda"
     @open-change="handleVisibleChange"
     @popup-click="onClick"
     :get-popup-container="getPopupContainer"
   >
-    <component
-      :is="
-        cloneVNode(children, {
-          class: clsx(children.props?.class, mergedVisible && getOpenClassName),
-        })
-      "
-    />
+    <template #popup>
+      <Overlay ref="overlayRef" :overlay="overlay" :prefix-cls="prefixCls" :arrow="arrow" />
+    </template>
+    <template #default="props">
+      <slot v-bind="{ ...props, class: clsx(props?.class, mergedVisible && getOpenClassName) }"></slot>
+    </template>
   </Trigger>
 </template>
-<style lang="less">
-@import './assets/index.less';
-</style>

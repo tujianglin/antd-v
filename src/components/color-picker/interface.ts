@@ -57,14 +57,9 @@ export type ColorPickerProps = Omit<
   'onChange' | 'value' | 'defaultValue' | 'panelRender' | 'disabledAlpha' | 'onChangeComplete' | 'components'
 > & {
   mode?: ModeType | ModeType[];
-  value?: ColorValueType;
-  defaultValue?: ColorValueType;
-  open?: boolean;
   disabled?: boolean;
   placement?: TriggerPlacement;
   trigger?: TriggerType;
-  format?: ColorFormatType;
-  defaultFormat?: ColorFormatType;
   allowClear?: boolean;
   presets?: PresetsItem[];
   arrow?: boolean | { pointAtCenter: boolean };

@@ -7,7 +7,6 @@ export function getOffset(value: number, min: number, max: number) {
 
 export function getDirectionStyle(direction: Direction, value: number, min: number, max: number) {
   const offset = getOffset(value, min, max);
-
   const positionStyle: CSSProperties = {};
 
   switch (direction) {
@@ -31,7 +30,6 @@ export function getDirectionStyle(direction: Direction, value: number, min: numb
       positionStyle.transform = 'translateX(-50%)';
       break;
   }
-
   return positionStyle;
 }
 

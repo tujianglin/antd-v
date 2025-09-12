@@ -1,4 +1,4 @@
-import { computed, type Ref } from 'vue';
+import { computed } from 'vue';
 import type { Locale } from '.';
 import { useLocaleContextInject } from './context';
 import defaultLocaleData from './en_US';
@@ -8,7 +8,7 @@ export type LocaleComponentName = Exclude<keyof Locale, 'locale'>;
 const useLocale = <C extends LocaleComponentName = LocaleComponentName>(
   componentName: C,
   defaultLocale?: Locale[C] | (() => Locale[C]),
-): readonly [NonNullable<Locale[C]>, Ref<string>] => {
+) => {
   const fullLocale = useLocaleContextInject();
 
   const getLocale = computed((): NonNullable<Locale[C]> => {

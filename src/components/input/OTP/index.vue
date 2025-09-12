@@ -49,11 +49,9 @@ const {
 
 const prefixCls = computed(() => getPrefixCls.value('otp', customizePrefixCls));
 
-const { mergedClassNames, mergedStyles } = toRefs(
-  useMergeSemantic(
-    computed(() => [contextClassNames.value, classNames]),
-    computed(() => [contextStyles.value, styles]),
-  ),
+const [mergedClassNames, mergedStyles] = useMergeSemantic(
+  computed(() => [contextClassNames.value, classNames]),
+  computed(() => [contextStyles.value, styles]),
 );
 
 const domAttrs = computed(() =>

@@ -1,6 +1,5 @@
-import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import type { CSSProperties, Ref } from 'vue';
+import { computed, type CSSProperties, type Ref } from 'vue';
 import type { ValidChar } from './interface';
 
 type TemplateSemanticClassNames<T extends string> = Partial<Record<T, string>>;
@@ -88,15 +87,20 @@ export default function useMergeSemantic<ClassNamesType extends object, StylesTy
   stylesList: Ref<(StylesType | undefined)[]>,
   schema?: Ref<SemanticSchema>,
 ) {
-  return reactiveComputed(() => {
-    const mergedClassNames = useSemanticClassNames(schema?.value, ...classNamesList.value) as ClassNamesType;
-    const mergedStyles = useSemanticStyles(...stylesList.value) as StylesType;
-    if (!schema) {
-      return { mergedClassNames, mergedStyles } as const;
+  const mergedClassNames = computed(() => {
+    const result = useSemanticClassNames(schema?.value, ...classNamesList.value) as ClassNamesType;
+    if (!schema?.value) {
+      return result;
     }
-    return {
-      mergedClassNames: fillObjectBySchema(mergedClassNames, schema.value) as ClassNamesType,
-      mergedStyles: fillObjectBySchema(mergedStyles, schema.value) as StylesType,
-    } as const;
+    return fillObjectBySchema(result, schema.value) as ClassNamesType;
   });
+
+  const mergedStyles = computed(() => {
+    const result = useSemanticStyles(...stylesList.value) as StylesType;
+    if (!schema?.value) {
+      return result;
+    }
+    return fillObjectBySchema(result, schema.value) as StylesType;
+  });
+  return [mergedClassNames, mergedStyles] as const;
 }

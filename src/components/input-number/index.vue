@@ -63,11 +63,9 @@ const {
   classNames: contextClassNames,
 } = toRefs(useComponentConfig('inputNumber'));
 
-const { mergedClassNames, mergedStyles } = toRefs(
-  useMergeSemantic(
-    computed(() => [contextClassNames.value, classNames]),
-    computed(() => [contextStyles.value, styles]),
-  ),
+const [mergedClassNames, mergedStyles] = useMergeSemantic(
+  computed(() => [contextClassNames.value, classNames]),
+  computed(() => [contextStyles.value, styles]),
 );
 
 const prefixCls = computed(() => getPrefixCls.value('input-number', customizePrefixCls));
@@ -107,11 +105,9 @@ const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.
 const disabled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 
-const { variant, enableVariantCls } = toRefs(
-  useVariant(
-    'inputNumber',
-    computed(() => customVariant),
-  ),
+const [variant, enableVariantCls] = useVariant(
+  'inputNumber',
+  computed(() => customVariant),
 );
 
 const inputNumberClass = computed(() => {

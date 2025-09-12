@@ -1,20 +1,8 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
 import { isEmpty } from 'lodash-es';
-import {
-  cloneVNode,
-  computed,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  toRefs,
-  useId,
-  watch,
-  type HTMLAttributes,
-  type VNode,
-} from 'vue';
-import { flattenChildren, isDOM } from '../../vc-util/Dom/findDOMNode';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRefs, useId, watch, type HTMLAttributes } from 'vue';
+import { isDOM } from '../../vc-util/Dom/findDOMNode';
 import { getShadowRoot } from '../../vc-util/Dom/shadow';
 import ResizeObserver from '../resize-observer';
 import { TriggerContextProvider, useTriggerContextInject, type TriggerContextProps } from './context';
@@ -59,7 +47,6 @@ const {
   autoDestroy,
 
   // Popup
-  popup,
   popupClassName,
   popupStyle,
 
@@ -87,10 +74,6 @@ const {
   mobile,
   ...restProps
 } = defineProps<TriggerProps>();
-
-const slots = defineSlots<{ popup?: () => VNode[]; default?: () => VNode[] }>();
-
-const popupNode = computed(() => slots.popup || popup);
 
 // =========================== Mobile ===========================
 const isMobile = computed(() => !!mobile);
@@ -555,7 +538,6 @@ watch(
     }
   },
 );
-const children = computed(() => flattenChildren(slots.default?.())[0]);
 
 const passedProps = computed(() => {
   // Pass props into cloneProps for nest usage
@@ -572,58 +554,21 @@ const passedProps = computed(() => {
   ];
   passedEventList.forEach((eventName) => {
     result[eventName] = (...args: any[]) => {
-      children.value?.[eventName]?.(...args);
       mergedChildrenProps.value[eventName]?.(...args);
       restProps[eventName]?.(...args);
     };
   });
   return result;
 });
-
-const onVnodeMounted = (vnode: any) => {
-  const el = vnode.el as HTMLElement;
-  if (el) {
-    el.addEventListener('touchstart', passedProps.value.onTouchstart, { passive: true });
-    el.addEventListener('mousedown', passedProps.value.onMousedown, { passive: true });
-    el.addEventListener('mouseenter', passedProps.value.onMouseenter, { passive: true });
-    el.addEventListener('mouseleave', passedProps.value.onMouseleave, { passive: true });
-    el.addEventListener('click', passedProps.value.onClick, { passive: true });
-    el.addEventListener('focus', passedProps.value.onFocus, { passive: true });
-    el.addEventListener('blur', passedProps.value.onBlur, { passive: true });
-    el.addEventListener('contextmenu', passedProps.value.onContextmenu, { passive: true });
-  }
-};
-
-const onVnodeBeforeUnmount = (vnode: any) => {
-  const el = vnode.el as HTMLElement;
-  if (el) {
-    el.removeEventListener('touchstart', passedProps.value.onTouchstart);
-    el.removeEventListener('mousedown', passedProps.value.onMousedown);
-    el.removeEventListener('mouseenter', passedProps.value.onMouseenter);
-    el.removeEventListener('mouseleave', passedProps.value.onMouseleave);
-    el.removeEventListener('click', passedProps.value.onClick);
-    el.removeEventListener('focus', passedProps.value.onFocus);
-    el.removeEventListener('blur', passedProps.value.onBlur);
-    el.removeEventListener('contextmenu', passedProps.value.onContextmenu);
-  }
-};
 </script>
 <template>
   <ResizeObserver :disabled="!mergedOpen" :ref="setTargetRef" @resize="onTargetResize">
-    <component
-      :is="
-        cloneVNode(children, {
-          onVnodeMounted,
-          onVnodeBeforeUnmount,
-        })
-      "
-    />
+    <slot v-bind="{ ...mergedChildrenProps, ...passedProps }"></slot>
   </ResizeObserver>
   <TriggerContextProvider v-if="rendedRef" :value="context">
     <Popup
       :ref="setPopupRef"
       :prefix-cls="prefixCls"
-      :popup="popupNode"
       :class="clsx(popupClassName, !isMobile && alignedClassName)"
       :style="popupStyle"
       :target="targetEle"
@@ -657,6 +602,10 @@ const onVnodeBeforeUnmount = (vnode: any) => {
       :target-width="targetWidth / scaleX"
       :target-height="targetHeight / scaleY"
       :mobile="mobile"
-    />
+    >
+      <template #popup>
+        <slot name="popup"></slot>
+      </template>
+    </Popup>
   </TriggerContextProvider>
 </template>

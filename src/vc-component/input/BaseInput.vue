@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import { cloneVNode, computed, getCurrentInstance, ref, useSlots } from 'vue';
-import type { BaseInputProps } from './interface';
+import type { BaseInputProps, ValueType } from './interface';
 import { hasAddon, hasPrefixSuffix } from './utils/commonUtils';
 import Render from '@/components/render/render';
 import clsx from 'clsx';
@@ -22,7 +22,7 @@ const {
   class: className,
   style,
   disabled,
-  readOnly,
+  readonly,
   focused,
   triggerFocus,
   allowClear,
@@ -37,7 +37,7 @@ const {
 
 const slots = useSlots();
 
-const value = defineModel('value');
+const value = defineModel<ValueType>('value');
 
 const AffixWrapperComponent = computed(() => components?.affixWrapper || 'span');
 const GroupWrapperComponent = computed(() => components?.groupWrapper || 'span');
@@ -54,15 +54,15 @@ function onInputClick(e: MouseEvent) {
 
 const hasAffix = computed(() => hasPrefixSuffix({ prefix, suffix, allowClear }));
 
-defineExpose<HolderRef>({
+defineExpose({
   get nativeElement() {
-    return vm.vnode?.el as HTMLElement;
+    return vm.vnode?.el;
   },
 });
 
-const Content = computed(() => {
+const Content = computed<any>(() => {
   const children = flattenChildren(slots.default?.())[0];
-  let element: any = cloneVNode(children, {
+  let element = cloneVNode(children, {
     class: clsx(!hasAffix.value && classNames?.variant),
   });
 
@@ -71,7 +71,7 @@ const Content = computed(() => {
     // ================== Clear Icon ================== //
     let clearIcon = null;
     if (allowClear) {
-      const needClear = !disabled && !readOnly && value.value;
+      const needClear = !disabled && !readonly && value.value;
       const clearIconCls = `${prefixCls}-clear-icon`;
       const iconNode = typeof allowClear === 'object' && allowClear?.clearIcon ? allowClear.clearIcon : '✖';
 
@@ -102,7 +102,7 @@ const Content = computed(() => {
         [`${prefixCls}-disabled`]: disabled,
         [`${affixWrapperPrefixCls}-disabled`]: disabled, // Not used, but keep it
         [`${affixWrapperPrefixCls}-focused`]: focused, // Not used, but keep it
-        [`${affixWrapperPrefixCls}-readonly`]: readOnly,
+        [`${affixWrapperPrefixCls}-readonly`]: readonly,
         [`${affixWrapperPrefixCls}-input-with-clear-btn`]: suffix && allowClear,
       },
       classNames?.affixWrapper,

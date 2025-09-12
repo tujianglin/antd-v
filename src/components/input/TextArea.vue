@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { computed, ref, toRefs, type CSSProperties } from 'vue';
+import { computed, ref, toRefs, useTemplateRef, type CSSProperties } from 'vue';
 import { triggerFocus, type InputFocusOptions } from '../../vc-component/input/utils/commonUtils';
-import type { TextAreaProps as VcTextAreaProps, TextAreaRef as VcTextAreaRef } from '../../vc-component/textarea';
+import type { TextAreaProps as VcTextAreaProps } from '../../vc-component/textarea';
 import VcTextArea from '../../vc-component/textarea';
 import getAllowClear from '../_util/getAllowClear';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
@@ -66,14 +66,12 @@ const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 
 // ==================== Status ====================
 
-const { mergedClassNames, mergedStyles } = toRefs(
-  useMergeSemantic(
-    computed(() => [contextClassNames.value, classNames]),
-    computed(() => [contextStyles.value, styles]),
-  ),
+const [mergedClassNames, mergedStyles] = useMergeSemantic(
+  computed(() => [contextClassNames.value, classNames]),
+  computed(() => [contextStyles.value, styles]),
 );
 // ===================== Ref ======================
-const innerRef = ref<VcTextAreaRef>(null);
+const innerRef = useTemplateRef('innerRef');
 defineExpose({
   get resizableTextArea() {
     return innerRef.value?.resizableTextArea;
@@ -100,11 +98,9 @@ const { compactSize, compactItemClassnames } = toRefs(useCompactItemContext(pref
 // ===================== Size =====================
 const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
 
-const { variant, enableVariantCls } = toRefs(
-  useVariant(
-    'textArea',
-    computed(() => customVariant),
-  ),
+const [variant, enableVariantCls] = useVariant(
+  'textArea',
+  computed(() => customVariant),
 );
 
 const mergedAllowClear = computed(() => getAllowClear(allowClear ?? (contextAllowClear.value as any)));

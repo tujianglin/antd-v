@@ -9,7 +9,7 @@ import type { InternalInputNumberProps } from './interface';
 import StepHandler from './StepHandler.vue';
 import { getDecupleSteps } from './utils/numberUtil';
 
-defineOptions({ inheritAttrs: false });
+defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 const {
   prefixCls,
   class: className,
@@ -21,7 +21,7 @@ const {
   readonly,
   upHandler,
   downHandler,
-  keyboard,
+  keyboard = true,
   changeOnWheel,
   controls = true,
   stringMode,
@@ -216,7 +216,6 @@ const getDecimalValue = (stringMode: boolean, decimalValue: DecimalClass) => {
  */
 function triggerValueUpdate(newValue: DecimalClass, userTyping: boolean): DecimalClass {
   let updateValue = newValue;
-
   let isRangeValidate = isInRange(updateValue) || updateValue.isEmpty();
 
   // Skip align value when trigger value is empty.
@@ -243,7 +242,6 @@ function triggerValueUpdate(newValue: DecimalClass, userTyping: boolean): Decima
     if (!updateValue.equals(decimalValue.value)) {
       setUncontrolledDecimalValue(updateValue);
       onChange?.(updateValue.isEmpty() ? null : getDecimalValue(stringMode, updateValue));
-
       // Reformat input if value is not controlled
       if (value.value === undefined) {
         setInputValue(updateValue, userTyping);
@@ -327,7 +325,6 @@ const onInternalStep = (up: boolean, emitter: 'handler' | 'keyboard' | 'wheel') 
   }
 
   const target = (decimalValue.value || getMiniDecimal(0)).add(stepDecimal.toString());
-
   const updatedValue = triggerValueUpdate(target, false);
   onStep?.(getDecimalValue(stringMode, updatedValue), {
     offset: shiftKeyRef.value ? getDecupleSteps(step) : step,

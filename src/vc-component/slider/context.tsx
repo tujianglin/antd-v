@@ -13,7 +13,7 @@ export interface SliderContextProps {
   included?: boolean;
   step: number | null;
   range?: boolean;
-  tabIndex: number | number[];
+  tabindex: number | number[];
   ariaLabelForHandle?: string | string[];
   ariaLabelledByForHandle?: string | string[];
   ariaRequired?: boolean;
@@ -34,7 +34,7 @@ export const useSliderContextInject = () => {
       step: 1,
       includedStart: 0,
       includedEnd: 0,
-      tabIndex: 0,
+      tabindex: 0,
       keyboard: true,
       styles: {},
       classNames: {},

@@ -1,6 +1,5 @@
 <script lang="tsx" setup>
-import { cloneVNode, computed, getCurrentInstance, toRefs, useSlots, type CSSProperties } from 'vue';
-import { devUseWarning } from '../_util/warning';
+import { cloneVNode, computed, toRefs, useSlots, type CSSProperties } from 'vue';
 import { useConfigContextInject } from '../config-provider';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import type { PopoverProps } from '../popover/index.vue';
@@ -41,21 +40,7 @@ const {
   max,
 } = defineProps<AvatarGroupProps>();
 
-const vm = getCurrentInstance();
-
 const { getPrefixCls, direction } = toRefs(useConfigContextInject());
-
-if (process.env.NODE_ENV !== 'production') {
-  const warning = devUseWarning('Avatar.Group');
-  [
-    ['maxCount', 'max={{ count: number }}'],
-    ['maxStyle', 'max={{ style: CSSProperties }}'],
-    ['maxPopoverPlacement', 'max={{ popover: PopoverProps }}'],
-    ['maxPopoverTrigger', 'max={{ popover: PopoverProps }}'],
-  ].forEach(([deprecatedName, newName]) => {
-    warning.deprecated(!(deprecatedName in vm.props), deprecatedName, newName);
-  });
-}
 
 const prefixCls = computed(() => getPrefixCls.value('avatar', customizePrefixCls));
 const groupPrefixCls = computed(() => `${prefixCls.value}-group`);

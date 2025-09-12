@@ -1,4 +1,4 @@
-import type { RenderNode } from '@/components/_util/type';
+import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties, InputHTMLAttributes } from 'vue';
 import type { BaseInputProps } from '../input/interface';
 import type { InputFocusOptions } from '../input/utils/commonUtils';
@@ -20,18 +20,18 @@ export interface InputNumberProps
   min?: ValueType;
   max?: ValueType;
   step?: ValueType;
-  tabIndex?: number;
+  tabindex?: number;
   controls?: boolean;
-  prefix?: RenderNode;
-  suffix?: RenderNode;
-  addonBefore?: RenderNode;
-  addonAfter?: RenderNode;
+  prefix?: VueNode;
+  suffix?: VueNode;
+  addonBefore?: VueNode;
+  addonAfter?: VueNode;
   classNames?: BaseInputProps['classNames'] & Partial<Record<SemanticName, string>>;
   styles?: BaseInputProps['styles'] & Partial<Record<SemanticName, CSSProperties>>;
 
   // Customize handler node
-  upHandler?: RenderNode;
-  downHandler?: RenderNode;
+  upHandler?: VueNode;
+  downHandler?: VueNode;
   keyboard?: boolean;
   changeOnWheel?: boolean;
 
