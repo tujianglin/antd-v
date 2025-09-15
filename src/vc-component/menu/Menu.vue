@@ -232,12 +232,9 @@ const {
 } = defineProps<LegacyMenuProps>();
 const EMPTY_LIST: string[] = [];
 
-const { childList, measureChildList } = toRefs(
-  reactiveComputed(() => ({
-    childList: parseItems(items, EMPTY_LIST, _internalComponents, prefixCls),
-    measureChildList: parseItems(items, EMPTY_LIST, {}, prefixCls),
-  })),
-);
+const childList = computed(() => parseItems(items, EMPTY_LIST, _internalComponents, prefixCls));
+
+const measureChildList = computed(() => parseItems(items, EMPTY_LIST, {}, prefixCls));
 
 const mounted = ref(false);
 
@@ -258,7 +255,9 @@ if (process.env.NODE_ENV !== 'production') {
 // ========================= Open =========================
 const mergedOpenKeys = defineModel('openKeys', {
   default: undefined,
-  get: (val) => val || EMPTY_LIST,
+  get: (val) => {
+    return val || EMPTY_LIST;
+  },
 });
 
 // ref: https://github.com/ant-design/ant-design/issues/38818
@@ -295,21 +294,24 @@ const isInlineMode = computed(() => mergedMode.value === 'inline');
 const internalMode = ref(mergedMode.value);
 const internalInlineCollapsed = ref(mergedInlineCollapsed.value);
 
-watch([mergedMode, mergedInlineCollapsed], () => {
-  internalMode.value = mergedMode.value;
-  internalInlineCollapsed.value = mergedInlineCollapsed.value;
-
-  if (!mountRef.value) {
-    return;
-  }
-  // Synchronously update MergedOpenKeys
-  if (isInlineMode.value) {
-    mergedOpenKeys.value = inlineCacheOpenKeys.value;
-  } else {
-    // Trigger open event in case its in control
-    triggerOpenKeys(EMPTY_LIST);
-  }
-});
+watch(
+  [mergedMode, mergedInlineCollapsed],
+  () => {
+    internalMode.value = mergedMode.value;
+    internalInlineCollapsed.value = mergedInlineCollapsed.value;
+    if (!mountRef.value) {
+      return;
+    }
+    // Synchronously update MergedOpenKeys
+    if (isInlineMode.value) {
+      mergedOpenKeys.value = inlineCacheOpenKeys.value;
+    } else {
+      // Trigger open event in case its in control
+      triggerOpenKeys(EMPTY_LIST);
+    }
+  },
+  { immediate: true },
+);
 
 // ====================== Responsive ======================
 const lastVisibleIndex = ref(0);
@@ -446,7 +448,6 @@ const triggerSelection = (info: MenuInfo) => {
       ...info,
       selectedKeys: newSelectKeys,
     };
-
     if (exist) {
       onDeselect?.(selectInfo);
     } else {

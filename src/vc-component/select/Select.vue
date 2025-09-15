@@ -1,10 +1,10 @@
 <script lang="tsx" setup>
 import isValidNode from '@/components/_util/isValidNode';
-import useMergedState from '@/vc-util/hooks/useMergedState';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 import warning from '@/vc-util/warning';
-import { reactiveComputed } from '@vueuse/core';
+import { toReactive } from '@vueuse/core';
 import { isEmpty } from 'lodash-es';
-import { computed, ref, toRefs, useId, useSlots, watchEffect, type VNode } from 'vue';
+import { computed, ref, toRefs, useId, useSlots, watch, type VNode } from 'vue';
 import BaseSelect from './BaseSelect/index.vue';
 import { isMultiple, type BaseSelectProps } from './BaseSelect/interface';
 import useCache from './hooks/useCache';
@@ -47,7 +47,7 @@ const {
   optionRender,
   defaultActiveFirstOption,
   menuItemSelectedIcon,
-  virtual,
+  virtual = true,
   direction,
   listHeight = 200,
   listItemHeight = 20,
@@ -64,9 +64,9 @@ const {
 
 const open = defineModel('open', { default: false });
 
-const { filterOption, searchValue, optionFilterProp, filterSort, onSearch, autoClearSearchValue } = toRefs(
-  reactiveComputed(() => showSearch || {}),
-);
+const { filterOption, searchValue, optionFilterProp, filterSort, onSearch } = toRefs(toReactive(showSearch || {}));
+
+const autoClearSearchValue = computed(() => showSearch.autoClearSearchValue ?? true);
 
 const mergedId = useId();
 const multiple = computed(() => isMultiple(mode));
@@ -84,10 +84,9 @@ const mergedFilterOption = computed(() => {
 const mergedFieldNames = computed(() => fillFieldNames(fieldNames, childrenAsData.value));
 
 // =========================== Search ===========================
-const [mergedSearchValue, setSearchValue] = useMergedState('', {
-  value: searchValue,
-  postState: (search) => search || '',
-});
+const [internalSearchValue, setSearchValue] = useControlledState('', searchValue);
+const mergedSearchValue = computed(() => internalSearchValue.value || '');
+
 // =========================== Option ===========================
 const parsedOptions = useOptions(
   computed(() => options),
@@ -186,14 +185,15 @@ const displayValues = computed(() => {
 /** Convert `displayValues` to raw value type set */
 const rawValues = computed(() => new Set(mergedValues.value?.map((val) => val.value)));
 
-watchEffect(
+watch(
+  mergedValues,
   () => {
     if (mode === 'combobox') {
       const strValue = mergedValues.value[0]?.value;
       setSearchValue(hasValue(strValue) ? String(strValue) : '');
     }
   },
-  { flush: 'post' },
+  { deep: true, immediate: true },
 );
 
 // ======================= Display Option =======================
@@ -246,7 +246,7 @@ const filledSearchOptions = computed(() => {
   if (
     mode !== 'tags' ||
     !mergedSearchValue.value ||
-    filteredOptions.value.some((item) => item[optionFilterProp.value || 'value'] === mergedSearchValue.value)
+    filteredOptions.value.some((item) => item[optionFilterProp?.value || 'value'] === mergedSearchValue.value)
   ) {
     return filteredOptions.value;
   }
@@ -450,7 +450,7 @@ const onInternalSearchSplit: BaseSelectProps['onSearchSplit'] = (words) => {
 
 // ========================== Context ===========================
 const selectContext = computed((): SelectContextProps => {
-  const realVirtual = !virtual && popupMatchSelectWidth !== false;
+  const realVirtual = virtual && popupMatchSelectWidth !== false;
   return {
     ...parsedOptions.value,
     flattenOptions: displayOptions.value,
@@ -471,7 +471,6 @@ const selectContext = computed((): SelectContextProps => {
     styles,
   };
 });
-const domRef = ref();
 const OMIT_DOM_PROPS = ['inputValue'];
 </script>
 <template>
@@ -482,7 +481,6 @@ const OMIT_DOM_PROPS = ['inputValue'];
       show-scroll-bar="optional"
       :id="mergedId"
       :prefix-cls="prefixCls"
-      ref="domRef"
       :omit-dom-props="OMIT_DOM_PROPS"
       :mode="mode"
       :class-names="classNames"

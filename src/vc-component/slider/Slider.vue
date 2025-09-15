@@ -52,7 +52,7 @@ export interface SliderProps<ValueType = number | number[]> {
   // Status
   disabled?: boolean;
   keyboard?: boolean;
-  autoFocus?: boolean;
+  autofocus?: boolean;
   onFocus?: (e: FocusEvent) => void;
   onBlur?: (e: FocusEvent) => void;
 
@@ -119,7 +119,7 @@ const {
   // Status
   disabled = false,
   keyboard = true,
-  autoFocus,
+  autofocus,
   onFocus,
   onBlur,
 
@@ -487,7 +487,7 @@ defineExpose({
 
 // ========================== Auto Focus ==========================
 onMounted(() => {
-  if (autoFocus) {
+  if (autofocus) {
     handlesRef.value.focus(0);
   }
 });

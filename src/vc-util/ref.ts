@@ -70,3 +70,11 @@ export function composeRef(...refs) {
     });
   };
 }
+
+// 在全局维护活跃 popup 列表
+export const activePopups = new Map<HTMLElement, (e: MouseEvent) => void>();
+
+export function registerPopup(el: HTMLElement, fn) {
+  activePopups.set(el, fn);
+  return () => activePopups.delete(el);
+}

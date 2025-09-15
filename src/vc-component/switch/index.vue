@@ -1,8 +1,9 @@
 <script lang="tsx" setup>
 import { Render } from '@/components';
 import KeyCode from '@/vc-util/KeyCode';
+import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { computed, ref, type CSSProperties, type HTMLAttributes } from 'vue';
+import { computed, type CSSProperties, type HTMLAttributes } from 'vue';
 export type SwitchChangeEventHandler = (checked: boolean, event: MouseEvent | KeyboardEvent) => void;
 export type SwitchClickEventHandler = SwitchChangeEventHandler;
 
@@ -10,13 +11,13 @@ interface SwitchProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'onChange'
   class?: string;
   prefixCls?: string;
   disabled?: boolean;
-  checkedChildren?: any;
-  unCheckedChildren?: any;
+  checkedChildren?: VueNode;
+  unCheckedChildren?: VueNode;
   onChange?: SwitchChangeEventHandler;
   onKeydown?: (e: KeyboardEvent) => void;
   onClick?: SwitchClickEventHandler;
   tabindex?: number;
-  loadingIcon?: any;
+  loadingIcon?: VueNode;
   style?: CSSProperties;
   title?: string;
   styles?: { content: CSSProperties };
@@ -73,8 +74,6 @@ const switchClassName = computed(() => {
     [`${prefixCls}-disabled`]: disabled,
   });
 });
-
-const domRef = ref(null);
 </script>
 <template>
   <button
@@ -84,17 +83,22 @@ const domRef = ref(null);
     :aria-checked="innerChecked"
     :disabled="disabled"
     :class="switchClassName"
-    ref="domRef"
     @keydown="onInternalKeyDown"
     @click="onInternalClick"
   >
-    <Render :content="loadingIcon" />
+    <slot name="loadingIcon">
+      <Render :content="loadingIcon" />
+    </slot>
     <span :class="`${prefixCls}-inner`">
       <span :class="clsx(`${prefixCls}-inner-checked`, switchClassNames?.content)" :style="styles?.content">
-        <Render :content="checkedChildren" />
+        <slot name="checkedChildren">
+          <Render :content="checkedChildren" />
+        </slot>
       </span>
       <span :class="clsx(`${prefixCls}-inner-unchecked`, switchClassNames?.content)" :style="styles?.content">
-        <Render :content="unCheckedChildren" />
+        <slot name="unCheckedChildren">
+          <Render :content="unCheckedChildren" />
+        </slot>
       </span>
     </span>
   </button>

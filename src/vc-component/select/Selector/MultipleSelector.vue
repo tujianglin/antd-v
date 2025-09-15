@@ -1,5 +1,4 @@
 <script lang="tsx" setup>
-import type { RenderNode } from '@/components/_util/type';
 import { computed, getCurrentInstance, nextTick, ref, watch } from 'vue';
 import type { CustomTagProps } from '../BaseSelect/interface';
 import type { DisplayValueType, RawValueType } from '../interface';
@@ -11,17 +10,18 @@ import Input from './Input.vue';
 import pickAttrs from '@/vc-util/pickAttrs';
 import Overflow from '@/vc-component/overflow';
 import { Render } from '@/components';
+import type { VueNode } from '@/vc-util/type';
 
 interface SelectorProps extends InnerSelectorProps {
   // Icon
-  removeIcon?: RenderNode;
+  removeIcon?: VueNode;
 
   // Tags
   maxTagCount?: number | 'responsive';
   maxTagTextLength?: number;
   maxTagPlaceholder?: any | ((omittedValues: DisplayValueType[]) => any);
   tokenSeparators?: string[];
-  tagRender?: (props: CustomTagProps) => RenderNode;
+  tagRender?: (props: CustomTagProps) => VueNode;
   onToggleOpen: (open?: boolean) => void;
 
   // Motion
@@ -78,6 +78,7 @@ const selectionPrefixCls = `${prefixCls}-selection`;
 const inputValue = computed(() =>
   open || (mode === 'multiple' && autoClearSearchValue === false) || mode === 'tags' ? searchValue : '',
 );
+
 const inputEditable = computed(
   (): boolean =>
     mode === 'tags' || (mode === 'multiple' && autoClearSearchValue === false) || (showSearch && (open || focused.value)),
@@ -102,7 +103,7 @@ const onPreventMouseDown = (event: MouseEvent) => {
 // >>> Render Selector Node. Includes Item & Rest
 const defaultRenderSelector = (
   item: DisplayValueType,
-  content: RenderNode,
+  content: VueNode,
   itemDisabled: boolean,
   closable?: boolean,
   onClose?: (e: MouseEvent) => void,
@@ -129,7 +130,7 @@ const defaultRenderSelector = (
 
 const customizeRenderSelector = (
   value: RawValueType,
-  content: RenderNode,
+  content: VueNode,
   itemDisabled: boolean,
   closable?: boolean,
   onClose?: (e: MouseEvent) => void,

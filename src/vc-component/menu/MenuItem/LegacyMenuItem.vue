@@ -1,27 +1,28 @@
 <script lang="tsx" setup>
 import Overflow from '@/vc-component/overflow';
 import type { RawItemProps } from '@/vc-component/overflow/RawItem.vue';
-import { composeRef } from '@/vc-util/ref';
 import { omit } from 'lodash-es';
-import { ref, useAttrs } from 'vue';
+import { useAttrs, useTemplateRef } from 'vue';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const props = defineProps<RawItemProps>();
 
+const { Item } = Overflow;
+
 const attrs = useAttrs() as any;
 
-const domRef = ref();
+const domRef = useTemplateRef('domRef');
 
 defineExpose({
   get el() {
-    return domRef.value || {};
+    return domRef.value?.el;
   },
 });
 </script>
 <template>
-  <Overflow.Item
-    :ref="composeRef((el) => (domRef = el?.el))"
+  <Item
+    ref="domRef"
     v-bind="{
       ...props,
       ...attrs,
@@ -30,5 +31,5 @@ defineExpose({
     :title="typeof attrs?.title === 'string' ? attrs?.title : undefined"
   >
     <slot></slot>
-  </Overflow.Item>
+  </Item>
 </template>

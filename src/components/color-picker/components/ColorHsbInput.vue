@@ -24,7 +24,6 @@ const handleHsbChange = (step: number, type: keyof HSB) => {
   const hsb = hsbValue.value.toHsb();
   hsb[type] = type === 'h' ? step : (step || 0) / 100;
   const genColor = generateColor(hsb);
-
   internalValue.value = genColor;
 
   onChange?.(genColor);
@@ -45,19 +44,19 @@ const handleHsbChange = (step: number, type: keyof HSB) => {
     <ColorSteppers
       :max="100"
       :min="0"
-      :value="Number(hsbValue.toHsb().s)"
+      :value="Number(hsbValue.toHsb().s * 100)"
       :prefix-cls="prefixCls"
       :class="colorHsbInputPrefixCls"
-      :formatter="(step) => getRoundNumber(step as number || 0).toString()"
+      :formatter="(step) => `${getRoundNumber(step as number || 0) }%`"
       @change="(step) => handleHsbChange(Number(step), 's')"
     />
     <ColorSteppers
       :max="100"
       :min="0"
-      :value="Number(hsbValue.toHsb().b)"
+      :value="Number(hsbValue.toHsb().b * 100)"
       :prefix-cls="prefixCls"
       :class="colorHsbInputPrefixCls"
-      :formatter="(step) => getRoundNumber(step as number || 0).toString()"
+      :formatter="(step) => `${getRoundNumber(step as number || 0) }%`"
       @change="(step) => handleHsbChange(Number(step), 'b')"
     />
   </div>

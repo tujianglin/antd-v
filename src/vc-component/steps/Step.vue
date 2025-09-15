@@ -96,14 +96,14 @@ const clickable = computed(() => !!(onClick || onItemClick) && !disabled);
 const accessibilityProps = computed(() => {
   const result: {
     role?: string;
-    tabIndex?: number;
+    tabindex?: number;
     onClick?: (e: MouseEvent) => void;
     onKeydown?: (e: KeyboardEvent) => void;
   } = {};
 
   if (clickable.value) {
     result.role = 'button';
-    result.tabIndex = 0;
+    result.tabindex = 0;
     result.onClick = (e) => {
       onItemClick.value?.(e);
       onClick(index);

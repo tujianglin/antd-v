@@ -126,7 +126,7 @@ const extraProps = computed(() => {
         :body-class-name="tooltipClassNames?.body"
         :overlay-inner-style="{ ...tooltipStyles?.body }"
       >
-        <slot name="overlay" a="1">{{ overlay }}</slot>
+        <slot name="overlay">{{ overlay }}</slot>
       </Popup>
     </template>
   </Trigger>

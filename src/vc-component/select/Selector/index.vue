@@ -2,7 +2,7 @@
 import { Render } from '@/components';
 import KeyCode from '@/vc-util/KeyCode';
 import clsx from 'clsx';
-import { computed, ref } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 import useLock from '../hooks/useLock';
 import { isValidateOpenKey } from '../utils/keyUtil';
 import type { SelectorProps } from './interface';
@@ -35,7 +35,7 @@ const inputRef = ref<HTMLInputElement>(null);
 const compositionStatusRef = ref<boolean>(false);
 
 // ======================= Ref =======================
-const containerRef = ref<HTMLDivElement>(null);
+const containerRef = useTemplateRef('containerRef');
 
 defineExpose({
   focus: (options) => {
@@ -185,7 +185,11 @@ const sharedProps = computed(() => ({
         <Render :content="prefix" />
       </div>
     </template>
-    <MultipleSelector ref="inputRef" v-if="mode === 'multiple' || mode === 'tags'" v-bind="{ ...$props, ...sharedProps }" />
+    <MultipleSelector
+      ref="inputRef"
+      v-if="mode === 'multiple' || mode === 'tags'"
+      v-bind="{ ...$props, ...sharedProps as any }"
+    />
     <SingleSelector ref="inputRef" v-else v-bind="{ ...$props, ...sharedProps }" />
   </div>
 </template>

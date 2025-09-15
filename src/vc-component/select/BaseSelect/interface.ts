@@ -1,6 +1,6 @@
-import type { RenderNode } from '@/components/_util/type';
 import type { AlignType, BuildInPlacements } from '@/vc-component/trigger/interface';
 import type { ScrollConfig, ScrollTo } from '@/vc-component/virtual-list/interface';
+import type { VueNode } from '@/vc-util/type';
 import type { AriaAttributes, CSSProperties } from 'vue';
 import type { DisplayInfoType, DisplayValueType, Mode, Placement, RenderDOMFunc } from '../interface';
 
@@ -11,14 +11,14 @@ export const DEFAULT_OMIT_PROPS = [
   'onChange',
   'removeIcon',
   'placeholder',
-  'autoFocus',
+  'autofocus',
   'maxTagCount',
   'maxTagTextLength',
   'maxTagPlaceholder',
   'choiceTransitionName',
   'onInputKeyDown',
   'onPopupScroll',
-  'tabIndex',
+  'tabindex',
 ] as const;
 export interface RefOptionListProps {
   onKeydown: (e: KeyboardEvent) => void;
@@ -27,7 +27,7 @@ export interface RefOptionListProps {
 }
 
 export type CustomTagProps = {
-  label: RenderNode;
+  label: VueNode;
   value: any;
   disabled: boolean;
   onClose: (event?: MouseEvent) => void;
@@ -98,16 +98,16 @@ interface CommonSelectProps {
 
   // Selector
   showSearch?: boolean;
-  tagRender?: (props: CustomTagProps) => RenderNode;
+  tagRender?: (props: CustomTagProps) => VueNode;
   direction?: 'ltr' | 'rtl';
   autofocus?: boolean;
-  placeholder?: RenderNode;
+  placeholder?: VueNode;
   maxCount?: number;
 
   // MISC
   title?: string;
   tabindex?: number;
-  notFoundContent?: RenderNode;
+  notFoundContent?: VueNode;
   onClear?: () => void;
   maxlength?: number;
   showScrollBar?: boolean | 'optional';
@@ -126,24 +126,24 @@ interface CommonSelectProps {
 
   // >>> Customize Input
   /** @private Internal usage. Do not use in your production. */
-  getInputElement?: () => RenderNode;
+  getInputElement?: () => VueNode;
   /** @private Internal usage. Do not use in your production. */
-  getRawInputElement?: () => RenderNode;
+  getRawInputElement?: () => VueNode;
 
   // >>> Selector
   maxTagTextLength?: number;
   maxTagCount?: number | 'responsive';
-  maxTagPlaceholder?: RenderNode | ((omittedValues: DisplayValueType[]) => RenderNode);
+  maxTagPlaceholder?: VueNode | ((omittedValues: DisplayValueType[]) => VueNode);
 
   // >>> Search
   tokenSeparators?: string[];
 
   // >>> Icons
-  allowClear?: boolean | { clearIcon?: RenderNode };
-  prefix?: RenderNode;
-  suffixIcon?: RenderNode;
+  allowClear?: boolean | { clearIcon?: VueNode };
+  prefix?: VueNode;
+  suffixIcon?: VueNode;
   /** Selector remove icon */
-  removeIcon?: RenderNode;
+  removeIcon?: VueNode;
 
   // >>> Dropdown/Popup
   animation?: string;
@@ -152,7 +152,7 @@ interface CommonSelectProps {
   popupStyle?: CSSProperties;
   popupClassName?: string;
   popupMatchSelectWidth?: boolean | number;
-  popupRender?: (menu: RenderNode) => RenderNode;
+  popupRender?: (menu: VueNode) => VueNode;
   popupAlign?: AlignType;
 
   placement?: Placement;

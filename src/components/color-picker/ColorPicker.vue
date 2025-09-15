@@ -182,7 +182,7 @@ const onInternalModeChange = (newMode: ModeType) => {
 // ================== Form Status ==================
 
 // ==================== Compact ====================
-const { compactSize, compactItemClassnames } = toRefs(useCompactItemContext(prefixCls, direction));
+const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
 
 // ===================== Style =====================
 const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));

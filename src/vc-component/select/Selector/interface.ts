@@ -1,5 +1,5 @@
-import type { RenderNode } from '@/components/_util/type';
 import type { ScrollTo } from '@/vc-component/virtual-list/interface';
+import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 import type { CustomTagProps } from '../BaseSelect/interface';
 import type { DisplayValueType, Mode } from '../interface';
@@ -10,7 +10,7 @@ export interface InnerSelectorProps {
   mode: Mode;
   title?: string;
 
-  placeholder?: RenderNode;
+  placeholder?: VueNode;
   disabled?: boolean;
   autofocus?: boolean;
   autocomplete?: string;
@@ -52,22 +52,22 @@ export interface SelectorProps {
   searchValue: string;
   activeValue: string;
   autoClearSearchValue: boolean;
-  inputElement: RenderNode;
+  inputElement: VueNode;
   maxLength?: number;
 
-  autoFocus?: boolean;
+  autofocus?: boolean;
   activeDescendantId?: string;
-  tabIndex?: number;
+  tabindex?: number;
   disabled?: boolean;
-  placeholder?: RenderNode;
-  removeIcon?: RenderNode;
-  prefix?: RenderNode;
+  placeholder?: VueNode;
+  removeIcon?: VueNode;
+  prefix?: VueNode;
 
   // Tags
   maxTagCount?: number | 'responsive';
   maxTagTextLength?: number;
-  maxTagPlaceholder?: RenderNode | ((omittedValues: DisplayValueType[]) => RenderNode);
-  tagRender?: (props: CustomTagProps) => RenderNode;
+  maxTagPlaceholder?: VueNode | ((omittedValues: DisplayValueType[]) => VueNode);
+  tagRender?: (props: CustomTagProps) => VueNode;
 
   /** Check if `tokenSeparators` contains `\n` or `\r\n` */
   tokenWithEnter?: boolean;

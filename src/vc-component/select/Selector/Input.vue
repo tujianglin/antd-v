@@ -1,15 +1,15 @@
 <script lang="tsx" setup>
-import type { RenderNode } from '@/components/_util/type';
 import { cloneVNode, computed, getCurrentInstance, toRefs, type VNode } from 'vue';
 import { useBaseSelectContextInject } from '../hooks/useBaseProps';
 import clsx from 'clsx';
 import composeProps from '@/vc-util/composeProps';
 import { falseToUndefined } from '@/vc-util/props';
+import type { VueNode } from '@/vc-util/type';
 
 interface InputProps {
   prefixCls: string;
   id: string;
-  inputElement: RenderNode;
+  inputElement: VueNode;
   disabled: boolean;
   autofocus: boolean;
   autocomplete?: string;

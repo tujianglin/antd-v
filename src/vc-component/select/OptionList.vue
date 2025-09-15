@@ -2,7 +2,7 @@
 import { Render } from '@/components';
 import type { ListRef, ScrollConfig } from '@/vc-component/virtual-list/interface';
 import KeyCode from '@/vc-util/KeyCode';
-import { computed, onBeforeUnmount, ref, toRefs, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, toRefs, watch, withModifiers } from 'vue';
 import { useBaseSelectContextInject } from './hooks/useBaseProps';
 import type { BaseOptionType, FlattenOptionData, RawValueType } from './interface';
 import { useSelectContextInject } from './SelectContext';
@@ -51,7 +51,17 @@ const {
 
 const itemPrefixCls = `${prefixCls.value}-item`;
 
-const memoFlattenOptions = computed(() => flattenOptions.value);
+const memoFlattenOptions = ref(flattenOptions.value);
+
+watch(
+  [open, flattenOptions],
+  (next, prev) => {
+    if (next[0] && prev[1] !== next[1]) {
+      memoFlattenOptions.value = next[1]; // 更新
+    }
+  },
+  { immediate: true },
+);
 
 // =========================== List ===========================
 const listRef = ref<ListRef>(null);
@@ -172,7 +182,9 @@ const onSelectValue = (value: RawValueType) => {
 
   // Single mode should always close by select
   if (!multiple.value) {
-    toggleOpen.value(false);
+    setTimeout(() => {
+      toggleOpen.value(false);
+    });
   }
 };
 
@@ -336,7 +348,6 @@ const ListNode = () => {
         const mergedLabel = getLabel(item);
 
         const iconVisible = !menuItemSelectedIcon.value || typeof menuItemSelectedIcon.value === 'function' || selected;
-
         // https://github.com/ant-design/ant-design/issues/34145
         const content = typeof mergedLabel === 'number' ? mergedLabel : mergedLabel || value;
         // https://github.com/ant-design/ant-design/issues/26717
@@ -347,7 +358,6 @@ const ListNode = () => {
         if (title) {
           optionTitle = title;
         }
-
         return (
           <div
             {...pickAttrs(passedProps)}
@@ -361,11 +371,11 @@ const ListNode = () => {
               }
               setActive(itemIndex);
             }}
-            onMousedown={() => {
+            onMousedown={withModifiers(() => {
               if (!mergedDisabled) {
                 onSelectValue(value);
               }
-            }}
+            }, ['stop'])}
             style={{ ...contextStyles.value?.popup?.listItem, ...style }}
           >
             <div class={`${optionPrefixCls}-content`}>

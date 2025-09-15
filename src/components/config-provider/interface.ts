@@ -13,6 +13,7 @@ import type {
   InputSearchConfig,
   OTPConfig,
   RadioConfig,
+  SelectConfig,
   TextAreaConfig,
   ThemeConfig,
   Variant,
@@ -40,7 +41,7 @@ export const PASSED_PROPS: Exclude<keyof ConfigConsumerProps, 'rootPrefixCls' | 
   // 'input',
   // 'pagination',
   // 'form',
-  // 'select',
+  'select',
   // 'button',
 ];
 
@@ -58,7 +59,7 @@ export interface ConfigProviderProps {
   otp?: OTPConfig;
   inputNumber?: InputNumberConfig;
   textArea?: TextAreaConfig;
-  // select?: SelectConfig;
+  select?: SelectConfig;
   // pagination?: PaginationConfig;
   /**
    * @descCN 语言包配置，语言包可到 `antd/locale` 目录下寻找。

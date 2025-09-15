@@ -170,7 +170,7 @@ const handleClick = (e) => {
 };
 
 // ========================== Size ==========================
-const { compactSize, compactItemClassnames } = toRefs(useCompactItemContext(prefixCls, direction));
+const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
 
 const sizeClassNameMap = { large: 'lg', small: 'sm', middle: undefined };
 

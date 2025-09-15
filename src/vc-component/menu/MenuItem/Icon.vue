@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import { createVNode, useSlots } from 'vue';
-import type { RenderIconInfo, RenderIconType } from './interface';
+import type { RenderIconInfo, RenderIconType } from '../interface';
 
 export interface IconProps {
   icon?: RenderIconType;

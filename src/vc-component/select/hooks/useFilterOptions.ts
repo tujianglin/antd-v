@@ -29,8 +29,8 @@ export default (
       ? (filterOption.value as any)
       : (_: string, option: DefaultOptionType) => {
           // Use provided `optionFilterProp`
-          if (optionFilterProp.value) {
-            return includes(option[optionFilterProp.value], upperSearch);
+          if (optionFilterProp?.value) {
+            return includes(option[optionFilterProp?.value], upperSearch);
           }
 
           // Auto select `label` or `value` by option type

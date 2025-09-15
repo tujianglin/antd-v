@@ -1,10 +1,11 @@
 import { Fragment, isVNode, type VNode } from 'vue';
+import type { VueNode } from '../type';
 
 export interface Option {
   keepEmpty?: boolean;
 }
 
-export function toArray(children: VNode[] | VNode | null | undefined, option: Option = {}): VNode[] {
+export function toArray(children: VueNode, option: Option = {}): VNode[] {
   const ret: VNode[] = [];
 
   const loop = (child: any): void => {

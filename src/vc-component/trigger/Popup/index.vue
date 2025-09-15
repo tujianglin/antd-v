@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
 import CSSMotion, { type CSSMotionProps } from '@/vc-component/motion';
-import { composeRef } from '@/vc-util/ref';
+import { activePopups, composeRef, registerPopup } from '@/vc-util/ref';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, ref, toRefs, type CSSProperties } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, toRefs, type CSSProperties } from 'vue';
 import Portal from '../../portal';
 import ResizeObserver from '../../resize-observer';
 import Arrow from './Arrow.vue';
@@ -157,6 +157,23 @@ defineExpose({
     return domRef.value;
   },
 });
+
+onMounted(() => {
+  const unregister = registerPopup(domRef.value!, onMouseleave);
+  onBeforeUnmount(() => {
+    unregister();
+  });
+});
+
+function onMouseout(e: MouseEvent) {
+  const related = e.relatedTarget as Node | null;
+  const stillInside = [...activePopups.keys()].some((popup) => popup.contains(related));
+  if (!stillInside) {
+    for (const onMouseleave of activePopups.values()) {
+      onMouseleave?.(e);
+    }
+  }
+}
 </script>
 <template>
   <Portal
@@ -210,7 +227,7 @@ defineExpose({
               ...style,
             }"
             @mouseenter="onMouseenter"
-            @mouseleave="onMouseleave"
+            @mouseout="onMouseout"
             @pointerenter="onPointerEnter"
             @click="onClick"
             @pointerdown.capture="onPointerDownCapture"
@@ -225,4 +242,3 @@ defineExpose({
     </ResizeObserver>
   </Portal>
 </template>
-<style lang="less"></style>

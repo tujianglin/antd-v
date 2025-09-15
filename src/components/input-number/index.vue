@@ -74,7 +74,7 @@ const prefixCls = computed(() => getPrefixCls.value('input-number', customizePre
 const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
-const { compactSize, compactItemClassnames } = toRefs(useCompactItemContext(prefixCls, direction));
+const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
 const controlsTemp = computed(() => (typeof controls === 'boolean' ? controls : undefined));
 
 const { upIcon, downIcon } = toRefs(

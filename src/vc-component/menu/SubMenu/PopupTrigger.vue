@@ -1,4 +1,5 @@
 <script lang="tsx" setup>
+import { Render } from '@/components';
 import type { CSSMotionProps } from '@/vc-component/motion';
 import Trigger from '@/vc-component/trigger';
 import raf from '@/vc-util/raf';
@@ -115,6 +116,11 @@ onBeforeUnmount(() => {
     :popup-motion="mergedMotion"
     fresh
   >
-    <slot></slot>
+    <template #popup>
+      <Render :content="popup" />
+    </template>
+    <template #default="props">
+      <slot v-bind="props"></slot>
+    </template>
   </Trigger>
 </template>

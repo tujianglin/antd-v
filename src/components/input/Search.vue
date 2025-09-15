@@ -86,7 +86,7 @@ const [mergedClassNames, mergedStyles] = useMergeSemantic(
 
 const prefixCls = computed(() => getPrefixCls.value('input-search', customizePrefixCls));
 const inputPrefix = computed(() => getPrefixCls.value('input', customizeInputPrefixCls));
-const { compactSize } = toRefs(useCompactItemContext(prefixCls, direction));
+const { compactSize } = useCompactItemContext(prefixCls, direction);
 
 const size = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
 

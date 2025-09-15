@@ -2,7 +2,19 @@
 import { getDOM } from '@/vc-util/Dom/findDOMNode';
 import isMobile from '@/vc-util/isMobile';
 import { reactiveComputed } from '@vueuse/core';
-import { cloneVNode, computed, getCurrentInstance, h, onBeforeUnmount, onMounted, ref, toRefs, watch, type VNode } from 'vue';
+import {
+  cloneVNode,
+  computed,
+  getCurrentInstance,
+  h,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  toRefs,
+  useTemplateRef,
+  watch,
+  type VNode,
+} from 'vue';
 import { BaseSelectContextProvider } from '../hooks/useBaseProps';
 import useDelayReset from '../hooks/useDelayReset';
 import useLock from '../hooks/useLock';
@@ -18,8 +30,8 @@ import clsx from 'clsx';
 import { useAllowClear } from '../hooks/useAllowClear';
 import { omit } from 'lodash-es';
 import Render from '@/components/render/render';
-import Polite from './Polite.vue';
 import { falseToUndefined } from '@/vc-util/props';
+import Polite from './Polite.vue';
 
 defineOptions({ name: 'BaseSelect', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -127,7 +139,7 @@ onMounted(() => {
 });
 
 // ============================== Refs ==============================
-const containerRef = ref<HTMLDivElement>(null);
+const containerRef = useTemplateRef('containerRef');
 const triggerRef = ref<RefTriggerProps>(null);
 const selectorRef = ref<RefSelectorProps>(null);
 const listRef = ref<RefOptionListProps>(null);
@@ -193,7 +205,6 @@ const { mergedOpen, triggerOpen } = toRefs(
 
 const onToggleOpen = (newOpen?: boolean) => {
   const nextOpen = newOpen !== undefined ? newOpen : !mergedOpen.value;
-
   if (!disabled) {
     if (mergedOpen.value !== nextOpen) {
       onPopupVisibleChange?.(nextOpen);
@@ -393,7 +404,6 @@ const onContainerFocus = (e) => {
       onToggleOpen(true);
     }
   }
-
   focusRef.value = true;
 };
 
@@ -401,6 +411,7 @@ const onContainerBlur = (e) => {
   blurRef.value = true;
 
   setMockFocused(false, () => {
+    if (focusRef.value) return;
     focusRef.value = false;
     blurRef.value = false;
     onToggleOpen(false);
@@ -459,11 +470,11 @@ const onInternalMouseDown = (event) => {
 };
 
 // // ============================ Dropdown ============================
-// const [, forceUpdate] = React.useState({});
-// // We need force update here since popup dom is render async
-// function onPopupMouseEnter() {
-//   forceUpdate({});
-// }
+const forceUpdate = ref(Symbol('update'));
+// We need force update here since popup dom is render async
+function onPopupMouseEnter() {
+  forceUpdate.value = Symbol('update');
+}
 
 // Used for raw custom input trigger
 const onTriggerVisibleChange = computed((): null | ((newOpen: boolean) => void) => {
@@ -491,26 +502,6 @@ useSelectTriggerControl(
 
 // ============================= Arrow ==============================
 const showSuffixIcon = computed(() => !!suffixIcon || loading);
-const arrowNode = () => {
-  if (showSuffixIcon.value) {
-    return (
-      <TransBtn
-        class={clsx(`${prefixCls}-arrow`, classNames?.suffix, {
-          [`${prefixCls}-arrow-loading`]: loading,
-        })}
-        style={styles?.suffix}
-        customizeIcon={suffixIcon as any}
-        customizeIconProps={{
-          loading,
-          searchValue: mergedSearchValue.value,
-          open: mergedOpen.value,
-          focused: mockFocused.value,
-          showSearch: mergedShowSearch.value,
-        }}
-      />
-    );
-  }
-};
 
 // ============================= Clear ==============================
 const onClearMouseDown = () => {
@@ -552,7 +543,6 @@ const mergedClassName = computed(() => {
 });
 
 const vm = getCurrentInstance();
-const onPopupMouseEnter = () => {};
 
 // >>> Selector
 const SelectorNode = () => {
@@ -578,35 +568,43 @@ const SelectorNode = () => {
       onPopupVisibleChange={onTriggerVisibleChange.value}
       onPopupMouseEnter={onPopupMouseEnter}
     >
-      {customizeRawInputElement.value ? (
-        cloneVNode(customizeRawInputElement.value, { ref: customizeRawInputRef })
-      ) : (
-        <Selector
-          {...omit(vm.props, ['onSearch'])}
-          prefixClassName={classNames?.prefix || ''}
-          prefixStyle={styles?.prefix || {}}
-          prefixCls={prefixCls}
-          inputElement={customizeInputElement.value}
-          ref={selectorRef}
-          id={id}
-          prefix={prefix}
-          showSearch={mergedShowSearch.value}
-          autoClearSearchValue={autoClearSearchValue}
-          mode={mode}
-          activeDescendantId={activeDescendantId}
-          tagRender={tagRender}
-          values={displayValues}
-          open={mergedOpen.value}
-          onToggleOpen={onToggleOpen}
-          activeValue={activeValue || ''}
-          searchValue={mergedSearchValue.value}
-          onSearch={onInternalSearch}
-          onSearchSubmit={onInternalSearchSubmit}
-          onRemove={onSelectorRemove}
-          tokenWithEnter={tokenWithEnter.value}
-          onInputBlur={onInputBlur}
-        />
-      )}
+      {{
+        default: (props) => {
+          return (
+            <>
+              {customizeRawInputElement.value ? (
+                cloneVNode(customizeRawInputElement.value, { ref: customizeRawInputRef, ...props })
+              ) : (
+                <Selector
+                  {...omit({ ...vm.props, ...props }, ['onSearch'])}
+                  prefixClassName={classNames?.prefix || ''}
+                  prefixStyle={styles?.prefix || {}}
+                  prefixCls={prefixCls}
+                  inputElement={customizeInputElement.value}
+                  ref={selectorRef}
+                  id={id}
+                  prefix={prefix}
+                  showSearch={mergedShowSearch.value}
+                  autoClearSearchValue={autoClearSearchValue}
+                  mode={mode}
+                  activeDescendantId={activeDescendantId}
+                  tagRender={tagRender}
+                  values={displayValues}
+                  open={mergedOpen.value}
+                  onToggleOpen={onToggleOpen}
+                  activeValue={activeValue || ''}
+                  searchValue={mergedSearchValue.value}
+                  onSearch={onInternalSearch}
+                  onSearchSubmit={onInternalSearchSubmit}
+                  onRemove={onSelectorRemove}
+                  tokenWithEnter={tokenWithEnter.value}
+                  onInputBlur={onInputBlur}
+                />
+              )}
+            </>
+          );
+        },
+      }}
     </SelectTrigger>
   );
 };
@@ -637,12 +635,28 @@ const SelectorNode = () => {
       @mousedown="onInternalMouseDown"
       @keydown.capture="onInternalKeyDown"
       @keyup.capture="onInternalKeyUp"
-      @focus.capture="onContainerFocus"
-      @blur.capture="onContainerBlur"
+      @focusin="onContainerFocus"
+      @focusout="onContainerBlur"
     >
       <Polite :visible="mockFocused && !mergedOpen" :values="displayValues" />
       <SelectorNode />
-      <Render :content="arrowNode" />
+      <TransBtn
+        v-if="showSuffixIcon"
+        :class="
+          clsx(`${prefixCls}-arrow`, classNames?.suffix, {
+            [`${prefixCls}-arrow-loading`]: loading,
+          })
+        "
+        :style="styles?.suffix"
+        :customize-icon="suffixIcon"
+        :customize-icon-props="{
+          loading,
+          searchValue: mergedSearchValue,
+          open: mergedOpen,
+          focused: mockFocused,
+          showSearch: mergedShowSearch,
+        }"
+      />
       <Render :content="mergedAllowClear && clearNode" />
     </div>
   </BaseSelectContextProvider>

@@ -9,7 +9,7 @@ import useActive from '../hooks/useActive';
 import useDirectionStyle from '../hooks/useDirectionStyle';
 import useMemoCallback from '../hooks/useMemoCallback';
 import type { SubMenuProps } from './index.vue';
-import Icon from '../Icon.vue';
+import Icon from '../MenuItem/Icon.vue';
 import Overflow from '@/vc-component/overflow';
 import clsx from 'clsx';
 import type { MenuInfo } from '../interface';
@@ -107,6 +107,7 @@ const mergedExpandIcon = computed(() => expandIcon ?? contextExpandIcon?.value);
 
 // ================================ Open ================================
 const originOpen = computed(() => openKeys?.value?.includes(eventKey));
+
 const open = computed(() => !overflowDisabled?.value && originOpen.value);
 
 // =============================== Select ===============================
@@ -323,7 +324,9 @@ const ListNode = () => {
           disabled={mergedDisabled?.value}
           onVisibleChange={onPopupVisibleChange}
         >
-          <TitleNode></TitleNode>
+          {{
+            default: (props) => <TitleNode {...props}></TitleNode>,
+          }}
         </PopupTrigger>
       ) : (
         <TitleNode></TitleNode>

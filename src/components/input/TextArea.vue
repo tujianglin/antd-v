@@ -93,7 +93,7 @@ const [hashId, cssVarCls] = useSharedStyle(
 useStyle(prefixCls, rootCls);
 
 // ================= Compact Item =================
-const { compactSize, compactItemClassnames } = toRefs(useCompactItemContext(prefixCls, direction));
+const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
 
 // ===================== Size =====================
 const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));

@@ -18,7 +18,7 @@ export interface AbstractCheckboxProps<T> {
   onFocus?: (e: FocusEvent) => void;
   onBlur?: (e: FocusEvent) => void;
   value?: any;
-  tabIndex?: number;
+  tabindex?: number;
   name?: string;
   id?: string;
   autofocus?: boolean;

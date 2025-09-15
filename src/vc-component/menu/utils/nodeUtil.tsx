@@ -1,7 +1,7 @@
 import Divider from '../Divider.vue';
 import type { Components, ItemType } from '../interface';
-import MenuItem from '../MenuItem.vue';
-import MenuItemGroup from '../MenuItemGroup.vue';
+import MenuItem from '../MenuItem/MenuItem.vue';
+import MenuItemGroup from '../MenuItemGroup/index.vue';
 import SubMenu from '../SubMenu/index.vue';
 import { parseChildren } from './commonUtil';
 
@@ -13,7 +13,6 @@ function convertItemsToNodes(list: ItemType[], components: Required<Components>,
       if (opt && typeof opt === 'object') {
         const { label, children, key, type, extra, ...restProps } = opt as any;
         const mergedKey = key ?? `tmp-${index}`;
-
         // MenuItemGroup & SubMenuItem
         if (children || type === 'group') {
           if (type === 'group') {
@@ -60,6 +59,5 @@ export function parseItems(items: ItemType[] | undefined, keyPath: string[], com
   };
 
   const childNodes = convertItemsToNodes(items, mergedComponents, prefixCls);
-
   return parseChildren(childNodes, keyPath);
 }

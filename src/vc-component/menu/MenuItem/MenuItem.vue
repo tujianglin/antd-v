@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
-import { computed, onBeforeUnmount, ref, watch, type HTMLAttributes } from 'vue';
-import { useFullPath, usePathRegisterContextInject } from './context/PathContext';
-import type { MenuItemType } from './interface';
+import { computed, onBeforeUnmount, useTemplateRef, watch, type HTMLAttributes } from 'vue';
+import { useFullPath, usePathRegisterContextInject } from '../context/PathContext';
+import type { MenuItemType } from '../interface';
 import InternalMenuItem from './InternalMenuItem.vue';
 
 export interface MenuItemProps
@@ -36,17 +36,17 @@ onBeforeUnmount(() => {
   measure?.unregisterPath(eventKey, connectedKeyPath.value);
 });
 
-const domRef = ref();
+const domRef = useTemplateRef('domRef');
 
 defineExpose({
   get el() {
-    return domRef.value || {};
+    return domRef.value?.el;
   },
 });
 </script>
 <template>
   <template v-if="measure"></template>
-  <InternalMenuItem v-bind="{ ...$props, ...$attrs }" :ref="(el:any) => (domRef = el?.el)">
+  <InternalMenuItem v-bind="{ ...$props, ...$attrs }" ref="domRef">
     <slot></slot>
   </InternalMenuItem>
 </template>

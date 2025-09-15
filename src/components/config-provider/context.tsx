@@ -39,7 +39,7 @@ import type { OTPProps } from '../input/OTP/interface';
 // import type { Locale } from '../locale';
 // import type { MasonryProps } from '../masonry';
 // import type { MentionsProps } from '../mentions';
-// import type { MenuProps } from '../menu';
+import type { MenuProps } from '../menu';
 // import type { ArgsProps as MessageProps } from '../message';
 // import type { ModalProps } from '../modal';
 // import type { ArgsProps as NotificationProps } from '../notification';
@@ -51,7 +51,7 @@ import type { PopoverProps } from '../popover';
 import type { RadioProps } from '../radio';
 // import type { ResultProps } from '../result';
 import type { SegmentedProps } from '../segmented';
-// import type { SelectProps } from '../select';
+import type { SelectProps } from '../select';
 import type { SkeletonProps } from '../skeleton';
 import type { SliderProps } from '../slider';
 import type { SpaceProps } from '../space';
@@ -59,7 +59,7 @@ import type { SpinProps } from '../spin';
 // import type { SplitterProps } from '../splitter';
 // import type { StatisticProps } from '../statistic';
 // import type { StepsProps } from '../steps';
-// import type { SwitchProps } from '../switch';
+import type { SwitchProps } from '../switch';
 // import type { TableProps } from '../table';
 import type { TabsProps } from '../tabs';
 // import type { TagProps } from '../tag';
@@ -178,7 +178,7 @@ export type CheckboxConfig = ComponentStyleConfig & Pick<CheckboxProps, 'classNa
 
 // export type MasonryConfig = ComponentStyleConfig & Pick<MasonryProps, 'classNames' | 'styles'>;
 
-// export type MenuConfig = ComponentStyleConfig & Pick<MenuProps, 'expandIcon' | 'classNames' | 'styles'>;
+export type MenuConfig = ComponentStyleConfig & Pick<MenuProps, 'expandIcon' | 'classNames' | 'styles'>;
 
 // export type TourConfig = ComponentStyleConfig & Pick<TourProps, 'closeIcon' | 'classNames' | 'styles'>;
 
@@ -250,7 +250,7 @@ export type FloatButtonGroupConfig = ComponentStyleConfig & Pick<FloatButtonGrou
 
 // export type ProgressConfig = ComponentStyleConfig & Pick<ProgressProps, 'classNames' | 'styles'>;
 
-// export type SelectConfig = ComponentStyleConfig & Pick<SelectProps, 'showSearch' | 'variant' | 'classNames' | 'styles'>;
+export type SelectConfig = ComponentStyleConfig & Pick<SelectProps, 'showSearch' | 'variant' | 'classNames' | 'styles'>;
 
 export type SpaceConfig = ComponentStyleConfig & Pick<SpaceProps, 'size' | 'classNames' | 'styles'>;
 
@@ -274,7 +274,7 @@ export type SpinConfig = ComponentStyleConfig & Pick<SpinProps, 'indicator' | 'c
 
 // export type StatisticConfig = ComponentStyleConfig & Pick<StatisticProps, 'classNames' | 'styles'>;
 
-// export type SwitchStyleConfig = ComponentStyleConfig & Pick<SwitchProps, 'classNames' | 'styles'>;
+export type SwitchStyleConfig = ComponentStyleConfig & Pick<SwitchProps, 'classNames' | 'styles'>;
 
 // export type ResultConfig = ComponentStyleConfig & Pick<ResultProps, 'classNames' | 'styles'>;
 
@@ -336,7 +336,7 @@ export interface ConfigComponentProps {
   space?: SpaceConfig;
   // splitter?: ComponentStyleConfig & Pick<SplitterProps, 'classNames' | 'styles'>;
   // form?: FormConfig;
-  // select?: SelectConfig;
+  select?: SelectConfig;
   alert?: AlertConfig;
   affix?: ComponentStyleConfig;
   anchor?: AnchorStyleConfig;
@@ -357,7 +357,7 @@ export interface ConfigComponentProps {
   // steps?: StepsConfig;
   // statistic?: StatisticConfig;
   // image?: ImageConfig;
-  // layout?: ComponentStyleConfig;
+  layout?: ComponentStyleConfig;
   // list?: ListConfig;
   // mentions?: MentionsConfig;
   // modal?: ModalConfig;
@@ -366,14 +366,14 @@ export interface ConfigComponentProps {
   slider?: SliderConfig;
   // breadcrumb?: BreadcrumbConfig;
   // masonry?: MasonryConfig;
-  // menu?: MenuConfig;
+  menu?: MenuConfig;
   checkbox?: CheckboxConfig;
   // descriptions?: DescriptionsConfig;
   // empty?: EmptyConfig;
   badge?: BadgeConfig;
   radio?: RadioConfig;
   // rate?: ComponentStyleConfig;
-  // switch?: SwitchStyleConfig;
+  switch?: SwitchStyleConfig;
   // transfer?: TransferConfig;
   avatar?: ComponentStyleConfig;
   // message?: MessageConfig;

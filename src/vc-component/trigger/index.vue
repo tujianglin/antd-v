@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
 import { isEmpty } from 'lodash-es';
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRefs, useId, watch, type HTMLAttributes } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, toRefs, useId, watch, type HTMLAttributes } from 'vue';
 import { isDOM } from '../../vc-util/Dom/findDOMNode';
 import { getShadowRoot } from '../../vc-util/Dom/shadow';
 import ResizeObserver from '../resize-observer';
@@ -157,7 +157,7 @@ const inPopupOrChild = (ele: EventTarget) => {
 const internalOpen = ref(defaultPopupVisible);
 
 // Render still use props as first priority
-const mergedOpen = computed(() => popupVisible || internalOpen.value);
+const mergedOpen = computed(() => popupVisible ?? internalOpen.value);
 
 // We use effect sync here in case `popupVisible` back to `undefined`
 const setMergedOpen = (nextOpen: boolean) => {
@@ -175,20 +175,18 @@ watch(
   { immediate: true },
 );
 
-const lastTriggerRef = ref<boolean[]>([]);
+const lastTriggerRef = shallowRef([]);
 
 const internalTriggerOpen = (nextOpen: boolean) => {
   lastTriggerRef.value = [];
-  nextTick(() => {
-    setMergedOpen(nextOpen);
-    // Enter or Pointer will both trigger open state change
-    // We only need take one to avoid duplicated change event trigger
-    // Use `lastTriggerRef` to record last open type
-    if ((lastTriggerRef.value[lastTriggerRef.value.length - 1] ?? mergedOpen.value) !== nextOpen) {
-      lastTriggerRef.value.push(nextOpen);
-      onOpenChange?.(nextOpen);
-    }
-  });
+  // Enter or Pointer will both trigger open state change
+  // We only need take one to avoid duplicated change event trigger
+  // Use `lastTriggerRef` to record last open type
+  if ((lastTriggerRef.value[lastTriggerRef.value.length - 1] ?? mergedOpen.value) !== nextOpen) {
+    lastTriggerRef.value.push(nextOpen);
+    onOpenChange?.(nextOpen);
+  }
+  setMergedOpen(nextOpen);
 };
 
 // Trigger for delay

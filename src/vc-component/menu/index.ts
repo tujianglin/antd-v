@@ -1,10 +1,10 @@
 import Divider from './Divider.vue';
 import type { MenuProps } from './Menu.vue';
 import Menu from './Menu.vue';
-import type { MenuItemProps } from './MenuItem.vue';
-import MenuItem from './MenuItem.vue';
-import type { MenuItemGroupProps } from './MenuItemGroup.vue';
-import MenuItemGroup from './MenuItemGroup.vue';
+import type { MenuItemProps } from './MenuItem/MenuItem.vue';
+import MenuItem from './MenuItem/MenuItem.vue';
+import type { MenuItemGroupProps } from './MenuItemGroup/index.vue';
+import MenuItemGroup from './MenuItemGroup/index.vue';
 import type { SubMenuProps } from './SubMenu/index.vue';
 import SubMenu from './SubMenu/index.vue';
 import { useFullPath } from './context/PathContext';

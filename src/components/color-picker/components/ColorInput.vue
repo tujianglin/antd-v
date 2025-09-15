@@ -1,7 +1,6 @@
 <script lang="tsx" setup>
 import Select from '@/components/select';
-import useMergedState from '@/vc-util/hooks/useMergedState';
-import { computed } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import type { DefaultOptionType } from '../../select/index.vue';
 import type { AggregationColor } from '../color';
 import type { ColorFormatType } from '../interface';
@@ -29,15 +28,17 @@ const selectOptions = computed(() =>
     label: format.toUpperCase(),
   })),
 );
-const [colorFormat, setColorFormat] = useMergedState(FORMAT_HEX, {
-  value: computed(() => format),
-  onChange: onFormatChange,
+
+const colorFormat = ref(format || FORMAT_HEX);
+
+watchEffect(() => {
+  onFormatChange(colorFormat.value);
 });
 
 const colorInputPrefixCls = computed(() => `${prefixCls}-input`);
 
 const handleFormatChange = (newFormat: ColorFormatType) => {
-  setColorFormat(newFormat);
+  colorFormat.value = newFormat;
 };
 
 const inputProps = computed(() => ({ value, prefixCls, onChange }));
@@ -46,12 +47,12 @@ const inputProps = computed(() => ({ value, prefixCls, onChange }));
   <div :class="`${colorInputPrefixCls}-container`">
     <Select
       v-if="!disabledFormat"
-      :value="colorFormat"
+      v-model:value="colorFormat"
       variant="borderless"
       :get-popup-container="(current) => current"
       :popup-match-select-width="68"
       placement="bottomRight"
-      @change="handleFormatChange"
+      @select="handleFormatChange"
       :class="`${prefixCls}-format-select`"
       size="small"
       :options="selectOptions"

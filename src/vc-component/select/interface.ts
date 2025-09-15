@@ -1,11 +1,10 @@
-import type { RenderNode } from '@/components/_util/type';
-import type { VueKey } from '@/vc-util/type';
+import type { VueKey, VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 import type { BaseSelectPropsWithoutPrivate, BaseSelectSemanticName } from './BaseSelect/interface';
 
 export type RawValueType = string | number;
 export interface FlattenOptionData<OptionType> {
-  label?: RenderNode;
+  label?: VueNode;
   data: OptionType;
   key: VueKey;
   value?: RawValueType;
@@ -16,8 +15,8 @@ export interface FlattenOptionData<OptionType> {
 export interface DisplayValueType {
   key?: VueKey;
   value?: RawValueType;
-  label?: RenderNode;
-  title?: RenderNode;
+  label?: VueNode;
+  title?: VueNode;
   disabled?: boolean;
   index?: number;
 }
@@ -35,7 +34,7 @@ export type OnActiveValue = (active: RawValueType, index: number, info?: { sourc
 export type OnInternalSelect = (value: RawValueType, info: { selected: boolean }) => void;
 
 export interface LabelInValueType {
-  label: RenderNode;
+  label: VueNode;
   value: RawValueType;
 }
 
@@ -62,7 +61,7 @@ export interface BaseOptionType {
 }
 
 export interface DefaultOptionType extends BaseOptionType {
-  label?: RenderNode;
+  label?: VueNode;
   value?: string | number | null;
   children?: Omit<DefaultOptionType, 'children'>[];
 }
@@ -109,16 +108,16 @@ export interface SelectProps<ValueType = any, OptionType extends BaseOptionType 
   optionLabelProp?: string;
 
   options?: OptionType[];
-  optionRender?: (oriOption: FlattenOptionData<OptionType>, info: { index: number }) => RenderNode;
+  optionRender?: (oriOption: FlattenOptionData<OptionType>, info: { index: number }) => VueNode;
   defaultActiveFirstOption?: boolean;
   virtual?: boolean;
   direction?: 'ltr' | 'rtl';
   listHeight?: number;
   listItemHeight?: number;
-  labelRender?: (props: LabelInValueType) => RenderNode;
+  labelRender?: (props: LabelInValueType) => VueNode;
 
   // >>> Icon
-  menuItemSelectedIcon?: RenderNode;
+  menuItemSelectedIcon?: VueNode;
 
   mode?: 'combobox' | 'multiple' | 'tags';
   labelInValue?: boolean;

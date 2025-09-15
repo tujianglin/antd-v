@@ -170,9 +170,11 @@ defineExpose({
 // ============================== Open ==============================
 const open = defineModel('open', { default: false });
 
+const noTitle = computed(() => !title && title !== 0);
+
 const onInternalOpenChange = (vis: boolean) => {
-  open.value = vis;
-  if (onOpenChange) {
+  open.value = noTitle.value ? false : vis;
+  if (!noTitle.value && onOpenChange) {
     onOpenChange(vis);
   }
 };

@@ -1,8 +1,10 @@
 <script lang="tsx" setup>
+import { Render } from '@/components';
 import Trigger from '@/vc-component/trigger';
-import type { AlignType, BuildInPlacements, TriggerRef } from '@/vc-component/trigger/interface';
+import type { AlignType, BuildInPlacements } from '@/vc-component/trigger/interface';
+import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { computed, h, ref, type CSSProperties } from 'vue';
+import { computed, useTemplateRef, type CSSProperties } from 'vue';
 import type { Placement, RenderDOMFunc } from './interface';
 
 export interface RefTriggerProps {
@@ -13,7 +15,7 @@ export interface SelectTriggerProps {
   prefixCls: string;
   disabled: boolean;
   visible: boolean;
-  popupElement: any;
+  popupElement: VueNode;
 
   animation?: string;
   transitionName?: string;
@@ -23,7 +25,7 @@ export interface SelectTriggerProps {
   popupClassName?: string;
   direction?: string;
   popupMatchSelectWidth?: boolean | number;
-  popupRender?: (menu: any) => any;
+  popupRender?: (menu: VueNode) => VueNode;
   getPopupContainer?: RenderDOMFunc;
   popupAlign?: AlignType;
   empty: boolean;
@@ -143,7 +145,7 @@ const mergedPopupStyle = computed(() => {
 });
 
 // ======================= Ref =======================
-const triggerPopupRef = ref<TriggerRef>(null);
+const triggerPopupRef = useTemplateRef('triggerPopupRef');
 
 defineExpose({
   get getPopupElement() {
@@ -160,7 +162,6 @@ defineExpose({
     :builtin-placements="mergedBuiltinPlacements"
     :prefix-cls="popupPrefixCls"
     :popup-motion="{ motionName: mergedTransitionName }"
-    :popup="h('div', { onMousedown: onPopupMouseEnter }, h(popupNode))"
     ref="triggerPopupRef"
     :stretch="stretch"
     :popup-align="popupAlign"
@@ -174,6 +175,11 @@ defineExpose({
     :popup-style="mergedPopupStyle"
     @open-change="onPopupVisibleChange"
   >
-    <slot></slot>
+    <template #popup>
+      <div @mousedown="onPopupMouseEnter"><Render :content="popupNode" /></div>
+    </template>
+    <template #default="props">
+      <slot v-bind="props"></slot>
+    </template>
   </Trigger>
 </template>
