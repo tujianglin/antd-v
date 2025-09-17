@@ -1,4 +1,5 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, CSSProperties, HTMLAttributes, VNode } from 'vue';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
 import type { RenderNode } from '../_util/type';
 import type { SizeType } from '../config-provider/SizeContext';
 import { PresetColors } from '../theme/internal';
@@ -23,6 +24,9 @@ export type LegacyButtonType = ButtonType | 'danger';
 
 export type ButtonSemanticName = 'root' | 'icon' | 'content';
 
+export type ButtonClassNamesType = SemanticClassNamesType<BaseButtonProps, ButtonSemanticName>;
+export type ButtonStylesType = SemanticStylesType<BaseButtonProps, ButtonSemanticName>;
+
 export interface BaseButtonProps {
   type?: ButtonType;
   color?: ButtonColorType;
@@ -40,8 +44,8 @@ export interface BaseButtonProps {
   danger?: boolean;
   block?: boolean;
   [key: `data-${string}`]: string;
-  classNames?: Partial<Record<ButtonSemanticName, string>>;
-  styles?: Partial<Record<ButtonSemanticName, CSSProperties>>;
+  classNames?: ButtonClassNamesType;
+  styles?: ButtonStylesType;
 
   // FloatButton reuse the Button as sub component,
   // But this should not consume context semantic classNames and styles.

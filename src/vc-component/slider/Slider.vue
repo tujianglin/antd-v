@@ -560,6 +560,3 @@ const context = computed((): SliderContextProps => {
     </div>
   </SliderContextProvider>
 </template>
-<style lang="less">
-@import './assets/index.less';
-</style>

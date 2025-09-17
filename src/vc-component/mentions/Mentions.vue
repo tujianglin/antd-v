@@ -114,14 +114,14 @@ const handleReset = () => {
     @clear="onClear"
   >
     <InternalMentions
+      ref="mentionRef"
+      v-bind="{ ...rest, ...$attrs }"
       :class="mentionsClassNames?.mentions"
       :styles="styles"
       :class-names="mentionsClassNames"
       :prefix-cls="prefixCls"
-      ref="mentionRef"
       @change="triggerChange"
       :disabled="disabled"
-      v-bind="{ ...rest, ...$attrs }"
     />
   </BaseInput>
 </template>

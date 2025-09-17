@@ -4,7 +4,7 @@ import RcMenu from '@/vc-component/menu';
 import type { VueNode } from '@/vc-util/type';
 import { EllipsisOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { isEmpty, omit } from 'lodash-es';
 import { computed, getCurrentInstance, h, toRefs, type CSSProperties } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import { isValidElement } from '../_util/isValidNode';
@@ -155,7 +155,7 @@ const defaultMotions = computed<MenuProps['defaultMotions']>(() => ({
 
 const prefixCls = computed(() => getPrefixCls.value('menu', customizePrefixCls || overrideObj.prefixCls));
 const rootCls = useCSSVarCls(prefixCls);
-const [hashId, cssVarCls] = useStyle(prefixCls, rootCls, !!overrideObj);
+const [hashId, cssVarCls] = useStyle(prefixCls, rootCls, isEmpty(overrideObj));
 const menuClassName = computed(() => clsx(`${prefixCls.value}-${theme}`, contextClassName?.value, className));
 
 // ====================== ExpandIcon ========================

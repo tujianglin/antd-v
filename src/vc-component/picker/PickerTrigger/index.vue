@@ -1,4 +1,5 @@
 <script lang="tsx" setup>
+import { Render } from '@/components';
 import type { AlignType, BuildInPlacements } from '@/vc-component/trigger';
 import Trigger from '@/vc-component/trigger';
 import clsx from 'clsx';
@@ -58,7 +59,6 @@ const realPlacement = computed(() => getRealPlacement(placement, direction === '
     :builtin-placements="builtinPlacements"
     :prefix-cls="dropdownPrefixCls"
     :popup-motion="{ motionName: transitionName }"
-    :popup="popupElement"
     :popup-align="popupAlign"
     :popup-visible="visible"
     :popup-class-name="
@@ -78,6 +78,9 @@ const realPlacement = computed(() => getRealPlacement(placement, direction === '
       }
     "
   >
+    <template #popup>
+      <Render :content="popupElement" />
+    </template>
     <slot></slot>
   </Trigger>
 </template>

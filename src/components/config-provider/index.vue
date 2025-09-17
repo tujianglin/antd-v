@@ -1,5 +1,4 @@
 <script lang="tsx" setup>
-import {} from 'vue';
 import { useLocaleContextInject } from '../locale/context';
 import ProviderChildren from './ProviderChildren.vue';
 import { useConfigContextInject } from './context';

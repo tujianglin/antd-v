@@ -1,6 +1,7 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { computed, toRefs, useSlots, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, toRefs, useSlots, type CSSProperties } from 'vue';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import type { Orientation } from '../_util/hooks/useOrientation';
 import useOrientation from '../_util/hooks/useOrientation';
@@ -19,6 +20,9 @@ export type TitlePlacement =
   | 'start' // 👈 5.24.0+
   | 'end'; // 👈 5.24.0+
 
+export type DividerClassNamesType = SemanticClassNamesType<DividerProps, SemanticName>;
+export type DividerStylesType = SemanticStylesType<DividerProps, SemanticName>;
+
 export interface DividerProps {
   prefixCls?: string;
   orientation?: Orientation;
@@ -35,8 +39,8 @@ export interface DividerProps {
   style?: CSSProperties;
   size?: SizeType;
   plain?: boolean;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: DividerClassNamesType;
+  styles?: DividerStylesType;
 }
 
 const {
@@ -73,10 +77,6 @@ const {
 
 const prefixCls = computed(() => getPrefixCls.value('divider', customizePrefixCls));
 const railCls = computed(() => `${prefixCls.value}-rail`);
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [contextClassNames?.value, classNames]),
-  computed(() => [contextStyles?.value, styles]),
-);
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
@@ -103,6 +103,24 @@ const hasMarginEnd = computed(() => mergedTitlePlacement.value === 'end');
 const [mergedOrientation, mergedVertical] = useOrientation(
   computed(() => orientation),
   computed(() => vertical),
+);
+
+// ========================= Semantic =========================
+const vm = getCurrentInstance();
+const mergedProps = computed<DividerProps>(() => {
+  return {
+    ...vm.props,
+    orientation: mergedOrientation.value,
+    titlePlacement: mergedTitlePlacement.value,
+    size: sizeFullName.value,
+  };
+});
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<DividerClassNamesType, DividerStylesType, DividerProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  undefined,
+  computed(() => ({ props: mergedProps.value })),
 );
 
 const classString = computed(() =>

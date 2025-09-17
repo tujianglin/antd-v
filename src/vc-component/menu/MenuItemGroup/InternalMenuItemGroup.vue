@@ -7,7 +7,7 @@ import type { MenuItemGroupProps } from './index.vue';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { class: className, title, ...restProps } = defineProps<MenuItemGroupProps>();
+const { class: className, title, children: _, ...restProps } = defineProps<MenuItemGroupProps>();
 
 const { prefixCls, classNames: menuClassNames, styles } = toRefs(useMenuContextInject());
 

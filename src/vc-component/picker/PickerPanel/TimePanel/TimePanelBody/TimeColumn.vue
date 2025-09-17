@@ -60,7 +60,9 @@ watch(
   [() => value, () => optionalValue, flatUnits],
   async () => {
     await nextTick();
-    syncScroll();
+    setTimeout(() => {
+      syncScroll();
+    }, 100);
     clearDelayCheck();
   },
   { immediate: true, deep: true, flush: 'post' },

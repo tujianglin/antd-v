@@ -14,7 +14,7 @@ import type { AlertProps } from '../alert';
 import type { AnchorProps } from '../anchor';
 // import type { BadgeProps } from '../badge';
 // import type { RibbonProps } from '../badge/Ribbon';
-// import type { BreadcrumbProps } from '../breadcrumb';
+import type { BreadcrumbProps } from '../breadcrumb';
 // import type { CalendarProps } from '../calendar';
 // import type { CardProps } from '../card';
 // import type { CardMetaProps } from '../card/Meta';
@@ -22,11 +22,11 @@ import type { AnchorProps } from '../anchor';
 import type { CheckboxProps } from '../checkbox';
 import type { CollapseProps } from '../collapse';
 import type { ColorPickerProps } from '../color-picker';
-// import type { DatePickerProps, RangePickerProps } from '../date-picker';
+import type { DatePickerProps, RangePickerProps } from '../date-picker';
 // import type { DescriptionsProps } from '../descriptions';
 import type { DividerProps } from '../divider';
 // import type { DrawerProps } from '../drawer';
-// import type { DropdownProps } from '../dropdown';
+import type { DropdownProps } from '../dropdown';
 // import type { EmptyProps } from '../empty';
 import type { FlexProps } from '../flex/interface';
 import type { FloatButtonGroupProps } from '../float-button/interface';
@@ -38,7 +38,7 @@ import type { OTPProps } from '../input/OTP/interface';
 // import type { ListItemProps } from '../list';
 // import type { Locale } from '../locale';
 // import type { MasonryProps } from '../masonry';
-// import type { MentionsProps } from '../mentions';
+import type { MentionsProps } from '../mentions';
 import type { MenuProps } from '../menu';
 // import type { ArgsProps as MessageProps } from '../message';
 // import type { ModalProps } from '../modal';
@@ -67,8 +67,8 @@ import { reactiveComputed } from '@vueuse/core';
 import type { ButtonProps } from '../button';
 import type { Locale } from '../locale';
 import type { AliasToken, MappingAlgorithm, OverrideToken } from '../theme/interface';
+import type { TimePickerProps } from '../time-picker';
 import type { RenderEmptyHandler } from './defaultRenderEmpty.vue';
-// import type { TimePickerProps } from '../time-picker';
 // import type { TimelineProps } from '../timeline';
 import type { BadgeProps } from '../badge';
 import type { RibbonProps } from '../badge/Ribbon.vue';
@@ -198,7 +198,7 @@ export type AlertConfig = ComponentStyleConfig & Pick<AlertProps, 'closable' | '
 
 export type BadgeConfig = ComponentStyleConfig & Pick<BadgeProps, 'classNames' | 'styles'>;
 
-// export type BreadcrumbConfig = ComponentStyleConfig & Pick<BreadcrumbProps, 'classNames' | 'styles'>;
+export type BreadcrumbConfig = ComponentStyleConfig & Pick<BreadcrumbProps, 'classNames' | 'styles'>;
 
 export type InputConfig = ComponentStyleConfig &
   Pick<InputProps, 'autocomplete' | 'classNames' | 'styles' | 'allowClear' | 'variant'>;
@@ -231,7 +231,7 @@ export type CardMetaConfig = ComponentStyleConfig & Pick<CardMetaProps, 'classNa
 
 export type DividerConfig = ComponentStyleConfig & Pick<DividerProps, 'classNames' | 'styles'>;
 
-// export type DropdownConfig = ComponentStyleConfig & Pick<DropdownProps, 'classNames' | 'styles'>;
+export type DropdownConfig = ComponentStyleConfig & Pick<DropdownProps, 'classNames' | 'styles'>;
 
 export type FlexConfig = ComponentStyleConfig & Pick<FlexProps, 'vertical'>;
 
@@ -288,15 +288,15 @@ export type InputNumberConfig = ComponentStyleConfig & Pick<InputNumberProps, 'v
 
 // export type TreeConfig = ComponentStyleConfig & Pick<TreeProps, 'classNames' | 'styles'>;
 
-// export type DatePickerConfig = ComponentStyleConfig & Pick<DatePickerProps, 'variant' | 'classNames' | 'styles'>;
+export type DatePickerConfig = ComponentStyleConfig & Pick<DatePickerProps, 'variant' | 'classNames' | 'styles'>;
 
-// export type RangePickerConfig = ComponentStyleConfig & Pick<RangePickerProps, 'variant'>;
+export type RangePickerConfig = ComponentStyleConfig & Pick<RangePickerProps, 'variant'>;
 
-// export type TimePickerConfig = ComponentStyleConfig & Pick<TimePickerProps, 'variant' | 'classNames' | 'styles'>;
+export type TimePickerConfig = ComponentStyleConfig & Pick<TimePickerProps, 'variant' | 'classNames' | 'styles'>;
 
 // export type TimelineConfig = ComponentStyleConfig & Pick<TimelineProps, 'classNames' | 'styles'>;
 
-// export type MentionsConfig = ComponentStyleConfig & Pick<MentionsProps, 'variant' | 'classNames' | 'styles'>;
+export type MentionsConfig = ComponentStyleConfig & Pick<MentionsProps, 'variant' | 'classNames' | 'styles'>;
 
 // export type UploadConfig = ComponentStyleConfig & Pick<UploadProps, 'classNames' | 'styles'>;
 
@@ -359,12 +359,12 @@ export interface ConfigComponentProps {
   // image?: ImageConfig;
   layout?: ComponentStyleConfig;
   // list?: ListConfig;
-  // mentions?: MentionsConfig;
+  mentions?: MentionsConfig;
   // modal?: ModalConfig;
   // progress?: ProgressConfig;
   // result?: ResultConfig;
   slider?: SliderConfig;
-  // breadcrumb?: BreadcrumbConfig;
+  breadcrumb?: BreadcrumbConfig;
   // masonry?: MasonryConfig;
   menu?: MenuConfig;
   checkbox?: CheckboxConfig;
@@ -372,7 +372,7 @@ export interface ConfigComponentProps {
   // empty?: EmptyConfig;
   badge?: BadgeConfig;
   radio?: RadioConfig;
-  // rate?: ComponentStyleConfig;
+  rate?: ComponentStyleConfig;
   switch?: SwitchStyleConfig;
   // transfer?: TransferConfig;
   avatar?: ComponentStyleConfig;
@@ -383,7 +383,7 @@ export interface ConfigComponentProps {
   cardMeta?: CardMetaConfig;
   tabs?: TabsConfig;
   // timeline?: TimelineConfig;
-  // timePicker?: TimePickerConfig;
+  timePicker?: TimePickerConfig;
   // tour?: TourConfig;
   tooltip?: TooltipConfig;
   popover?: PopoverConfig;
@@ -392,10 +392,10 @@ export interface ConfigComponentProps {
   // notification?: NotificationConfig;
   // tree?: TreeConfig;
   colorPicker?: ColorPickerConfig;
-  // datePicker?: DatePickerConfig;
-  // rangePicker?: RangePickerConfig;
+  datePicker?: DatePickerConfig;
+  rangePicker?: RangePickerConfig;
   ribbon?: RibbonConfig;
-  // dropdown?: DropdownConfig;
+  dropdown?: DropdownConfig;
   flex?: FlexConfig;
   wave?: WaveConfig;
   // qrcode?: QRcodeConfig;

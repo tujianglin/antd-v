@@ -2,6 +2,7 @@
 <script lang="tsx" setup>
 import { Render } from '@/components';
 import ResizeObserver from '@/vc-component/resize-observer';
+import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, getCurrentInstance, ref, toRefs, watch, type CSSProperties } from 'vue';
 import type { SelectorProps } from '../../interface';
@@ -25,7 +26,7 @@ export interface RangeSelectorProps<DateType = any> extends SelectorProps<DateTy
 
   activeIndex: number | null;
 
-  separator?: any;
+  separator?: VueNode;
 
   value?: [DateType?, DateType?];
   onChange: (date: DateType, index?: number) => void;

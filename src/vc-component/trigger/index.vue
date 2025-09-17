@@ -170,6 +170,7 @@ watch(
   () => popupVisible,
   async (val) => {
     await nextTick();
+    if (typeof val !== 'boolean') return;
     internalOpen.value = val;
   },
   { immediate: true },

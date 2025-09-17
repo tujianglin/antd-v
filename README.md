@@ -30,7 +30,7 @@
 
 ## Layout 布局
 
-- [ ] 完成
+- [x] 完成
 
 ## Masonry 瀑布流
 
@@ -51,16 +51,15 @@
 
 ## Breadcrumb 面包屑
 
-- [ ] 完成
+- [x] 完成
 
 ## Dropdown 下拉菜单
 
-- [ ] 完成
+- [x] 完成
 
 ## Menu 导航菜单
 
-- [ ] 完成
-- [ ] hover 状态下, mouseleave 事件触发异常
+- [x] 完成
 
 ## Pagination 分页
 
@@ -76,7 +75,7 @@
 
 ## AutoComplate 自动完成
 
-- [ ] 完成
+- [x] 完成
 
 ## Cascader 级联选择
 
@@ -93,6 +92,7 @@
 ## DatePicker 日期选择器
 
 - [ ] 完成
+- [ ] 多选功能
 
 ## Form 表单
 
@@ -108,7 +108,7 @@
 
 ## Mentions 提及
 
-- [ ] 完成
+- [x] 完成
 
 ## Radio 单选框
 
@@ -116,7 +116,7 @@
 
 ## Rate 评分
 
-- [ ] 完成
+- [x] 完成
 
 ## Select 选择器
 
@@ -132,7 +132,7 @@
 
 ## TimePicker 时间选择框
 
-- [ ] 完成
+- [x] 完成
 
 ## Transfer 穿梭框
 

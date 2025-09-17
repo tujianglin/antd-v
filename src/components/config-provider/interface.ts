@@ -5,17 +5,21 @@ import type {
   ComponentStyleConfig,
   ConfigConsumerProps,
   CSPConfig,
+  DatePickerConfig,
   DirectionType,
   FloatButtonConfig,
   FloatButtonGroupConfig,
   InputConfig,
   InputNumberConfig,
   InputSearchConfig,
+  MentionsConfig,
   OTPConfig,
   RadioConfig,
+  RangePickerConfig,
   SelectConfig,
   TextAreaConfig,
   ThemeConfig,
+  TimePickerConfig,
   Variant,
   WaveConfig,
 } from './context';
@@ -106,7 +110,7 @@ export interface ConfigProviderProps {
   // image?: ImageConfig;
   layout?: ComponentStyleConfig;
   // list?: ListConfig;
-  // mentions?: MentionsConfig;
+  mentions?: MentionsConfig;
   // modal?: ModalConfig;
   progress?: ComponentStyleConfig;
   result?: ComponentStyleConfig;
@@ -133,13 +137,13 @@ export interface ConfigProviderProps {
   // cardMeta?: CardMetaConfig;
   // tabs?: TabsConfig;
   timeline?: ComponentStyleConfig;
-  // timePicker?: TimePickerConfig;
+  timePicker?: TimePickerConfig;
   upload?: ComponentStyleConfig;
   // notification?: NotificationConfig;
   tree?: ComponentStyleConfig;
   colorPicker?: ComponentStyleConfig;
-  // datePicker?: DatePickerConfig;
-  // rangePicker?: RangePickerConfig;
+  datePicker?: DatePickerConfig;
+  rangePicker?: RangePickerConfig;
   dropdown?: ComponentStyleConfig;
   // flex?: FlexConfig;
   /**

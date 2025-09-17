@@ -130,11 +130,11 @@ export function useInnerValue<ValueType extends DateType[], DateType extends obj
   const triggerCalendarChange: TriggerCalendarChange<ValueType> = (nextCalendarValues: ValueType) => {
     let clone = [...nextCalendarValues] as ValueType;
 
-    if (rangeValue) {
+    if (rangeValue.value) {
       for (let i = 0; i < 2; i += 1) {
         clone[i] = clone[i] || null;
       }
-    } else if (order) {
+    } else if (order.value) {
       clone = orderDates(clone.filter((date) => date) as ValueType, generateConfig.value);
     }
 
@@ -278,12 +278,14 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
       setInnerValue(clone);
 
       const [isSameMergedDates] = isSameDates(clone, mergedValue.value);
+
       // Trigger `onChange` if needed
-      if (onChange?.value && !isSameMergedDates) {
+      if (onChange.value && !isSameMergedDates) {
+        const everyEmpty = clone.every((val) => !val);
         onChange?.value(
           // Return null directly if all date are empty
-          isNullValue && clone.every((val) => !val) ? null : clone,
-          getDateTexts(clone),
+          isNullValue && everyEmpty ? null : clone,
+          everyEmpty ? null : getDateTexts(clone),
         );
       }
     }

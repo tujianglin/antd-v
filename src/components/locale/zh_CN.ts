@@ -1,8 +1,18 @@
+import Pagination from '@/vc-component/pagination/locale/zh_CN';
+
 import type { Locale } from '.';
+import Calendar from '../calendar/locale/zh_CN';
+import DatePicker from '../date-picker/locale/zh_CN';
+import TimePicker from '../time-picker/locale/zh_CN';
+
 const typeTemplate = '${label}不是一个有效的${type}';
 
 const localeValues: Locale = {
   locale: 'zh-cn',
+  Pagination,
+  DatePicker,
+  TimePicker,
+  Calendar,
   // locales for all components
   global: {
     placeholder: '请选择',

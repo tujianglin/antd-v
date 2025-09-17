@@ -224,6 +224,7 @@ const showClear = computed(() => !!(clearIcon && value.length && !disabled));
       <ClearIcon v-if="showClear" :icon="clearIcon" @clear="onClear" />
     </template>
     <Input
+      v-else
       ref="inputRef"
       v-bind="getInputProps()"
       :autofocus="autofocus"

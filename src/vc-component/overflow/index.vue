@@ -98,7 +98,7 @@ const getKey = (item: ItemType, index: number) => {
   return (itemKey && (item as any)?.[itemKey]) ?? index;
 };
 
-const mergedRenderItem = renderItem || ((item: ItemType) => item);
+const mergedRenderItem = computed(() => renderItem || ((item: ItemType) => item));
 
 function updateDisplayCount(count: number, suffixFixedStartVal: number, notReady?: boolean) {
   // React 18 will sync render even when the value is same in some case.
@@ -265,7 +265,7 @@ const internalRenderItemNode = () => {
             order={index}
             key={key}
             item={item}
-            renderItem={mergedRenderItem}
+            renderItem={mergedRenderItem.value}
             itemKey={key}
             registerSize={registerSize}
             display={index <= mergedDisplayCount.value}

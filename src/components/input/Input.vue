@@ -13,7 +13,7 @@ import useVariant from '../form/hooks/useVariants';
 import clsx from 'clsx';
 import RcInput from '../../vc-component/input';
 import ContextIsolator from '../_util/ContextIsolator';
-import type { InputProps } from './interface';
+import type { InputClassNamesType, InputProps, InputStylesType } from './interface';
 import type { ValueType } from '@/vc-component/input/interface';
 
 type Slots = {
@@ -81,9 +81,21 @@ const mergedSize = useSize(computed(() => (ctx) => customSize ?? compactSize.val
 const disabled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+// =========== Merged Props for Semantic ==========
+const vm = getCurrentInstance();
+const mergedProps = computed(() => {
+  return {
+    ...vm.props,
+    size: mergedSize.value,
+    disabled: mergedDisabled.value,
+  } as InputProps;
+});
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<InputClassNamesType, InputStylesType, InputProps>(
   computed(() => [contextClassNames.value, classNames]),
   computed(() => [contextStyles.value, styles]),
+  undefined,
+  computed(() => ({ props: mergedProps.value })),
 );
 
 const suffixNode = computed(() => {
@@ -108,7 +120,6 @@ function handleFocus(e: FocusEvent) {
   onFocus?.(e);
 }
 
-const vm = getCurrentInstance();
 function changeRef(el) {
   vm.exposed = el || {};
   vm.exposeProxy = el || {};

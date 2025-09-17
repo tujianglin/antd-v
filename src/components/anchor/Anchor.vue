@@ -2,7 +2,7 @@
 import type { VueKey } from '@/vc-util/type';
 import clsx from 'clsx';
 import scrollIntoView from 'scroll-into-view-if-needed';
-import { computed, nextTick, onBeforeUnmount, ref, toRefs, watch, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, nextTick, onBeforeUnmount, ref, toRefs, watch, type CSSProperties } from 'vue';
 import { Affix } from '..';
 import getScroll from '../_util/getScroll';
 import scrollTo from '../_util/scrollTo';
@@ -14,6 +14,8 @@ import type { AnchorLinkBaseProps } from './AnchorLink.vue';
 import { AnchorContextProvider } from './context';
 import useStyle from './style';
 import AnchorLink from './AnchorLink.vue';
+import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
 
 export interface AnchorLinkItemProps extends AnchorLinkBaseProps {
   key: VueKey;
@@ -28,13 +30,15 @@ interface Section {
 }
 
 type SemanticName = 'root' | 'item' | 'title' | 'indicator';
+export type AnchorClassNamesType = SemanticClassNamesType<AnchorProps, SemanticName>;
+export type AnchorStylesType = SemanticStylesType<AnchorProps, SemanticName>;
 export interface AnchorProps {
   prefixCls?: string;
   class?: string;
   rootClassName?: string;
   style?: CSSProperties;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: AnchorClassNamesType;
+  styles?: AnchorStylesType;
   offsetTop?: number;
   bounds?: number;
   affix?: boolean | Omit<AffixProps, 'offsetTop' | 'target' | 'children'>;
@@ -268,6 +272,24 @@ const handleScrollTo = (link) => {
   });
 };
 
+// =========== Merged Props for Semantic ==========
+const vm = getCurrentInstance();
+const mergedProps = computed<AnchorProps>(() => {
+  return {
+    ...vm.props,
+    direction: anchorDirection,
+  };
+});
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<AnchorClassNamesType, AnchorStylesType, AnchorProps>(
+  computed(() => [contextClassNames?.value, anchorClassNames]),
+  computed(() => [contextStyles?.value, styles]),
+  undefined,
+  computed(() => ({
+    props: mergedProps.value,
+  })),
+);
+
 const wrapperClass = computed(() => {
   return clsx(
     hashId.value,
@@ -281,8 +303,7 @@ const wrapperClass = computed(() => {
     },
     className,
     contextClassName?.value,
-    contextClassNames?.value?.root,
-    anchorClassNames?.root,
+    mergedClassNames?.value?.root,
   );
 });
 
@@ -293,7 +314,7 @@ const anchorClass = computed(() =>
 );
 
 const inkClass = computed(() =>
-  clsx(`${prefixCls.value}-ink`, contextClassNames?.value?.indicator, anchorClassNames?.indicator, {
+  clsx(`${prefixCls.value}-ink`, mergedClassNames?.value?.indicator, {
     [`${prefixCls.value}-ink-visible`]: activeLink?.value,
   }),
 );
@@ -302,8 +323,7 @@ const wrapperStyle = computed(
   () =>
     ({
       maxHeight: offsetTop ? `calc(100vh - ${offsetTop}px)` : '100vh',
-      ...contextStyles?.value.root,
-      ...styles?.root,
+      ...mergedStyles?.value?.root,
       ...contextStyle?.value,
       ...style,
     }) as CSSProperties,
@@ -343,16 +363,6 @@ watch(
   { immediate: true, deep: true },
 );
 
-const mergedStyles = computed(() => ({
-  title: { ...contextStyles?.value?.title, ...styles?.title },
-  item: { ...contextStyles?.value?.item, ...styles?.item },
-}));
-
-const mergedClassNames = computed(() => ({
-  title: clsx(contextClassNames?.value?.title, anchorClassNames?.title),
-  item: clsx(contextClassNames?.value?.item, anchorClassNames?.item),
-}));
-
 const memoizedContextValue = computed<AntAnchor>(() => ({
   registerLink,
   unregisterLink,
@@ -378,7 +388,7 @@ const AnchorContent = () => {
   return (
     <div ref={wrapperRef} class={wrapperClass.value} style={wrapperStyle.value}>
       <div class={anchorClass.value}>
-        <span class={inkClass.value} ref={spanLinkNode} style={{ ...contextStyles?.value?.indicator, ...styles?.indicator }} />
+        <span class={inkClass.value} ref={spanLinkNode} style={mergedStyles?.value?.indicator} />
         {createNestedLink(items)}
       </div>
     </div>

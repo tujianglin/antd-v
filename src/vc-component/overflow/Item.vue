@@ -63,10 +63,10 @@ onBeforeUnmount(() => {
 // ================================ Render ================================
 const slots = useSlots();
 
-const childNode = computed(() => (renderItem && item !== UNDEFINED ? renderItem(item, { index: order }) : slots.default));
+const childNode = () => (renderItem && item !== UNDEFINED ? renderItem(item, { index: order }) : slots.default?.());
 
 const overflowStyle = computed(() => {
-  if (!invalidate) {
+  if (invalidate) {
     return {
       opacity: mergedHidden.value ? 0 : 1,
       height: mergedHidden.value ? 0 : UNDEFINED,

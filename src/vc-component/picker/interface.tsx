@@ -1,4 +1,5 @@
 import type { AlignType, BuildInPlacements } from '@/vc-component/trigger';
+import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 import type { GenerateConfig } from './generate';
 
@@ -110,7 +111,7 @@ export interface BaseInfo {
 export interface CellRenderInfo<DateType> extends BaseInfo {
   prefixCls: string;
   // The cell wrapper element
-  originNode: any;
+  originNode: VueNode;
   today: DateType;
   type: PanelMode;
   locale?: Locale;
@@ -123,7 +124,7 @@ export type CellRender<DateType, CurrentType = DateType | number | string> = (
 ) => any;
 
 export interface ValueDate<DateType = any> {
-  label: any;
+  label: VueNode;
   value: DateType | (() => DateType);
 }
 
@@ -252,10 +253,10 @@ export interface SharedPanelProps<DateType extends object = any> {
   showWeek?: boolean;
 
   // Icons
-  prevIcon?: any;
-  nextIcon?: any;
-  superPrevIcon?: any;
-  superNextIcon?: any;
+  prevIcon?: VueNode;
+  nextIcon?: VueNode;
+  superPrevIcon?: VueNode;
+  superNextIcon?: VueNode;
 }
 
 export type Components = Partial<
@@ -339,12 +340,12 @@ export interface SharedPickerProps<DateType extends object = any>
       };
 
   // Icons
-  prefix?: any;
-  suffixIcon?: any;
+  prefix?: VueNode;
+  suffixIcon?: VueNode;
   allowClear?:
     | boolean
     | {
-        clearIcon?: any;
+        clearIcon?: VueNode;
       };
 
   // Active
@@ -436,9 +437,9 @@ export type OnOpenChange = (open: boolean, config?: OpenConfig) => void;
 export interface SelectorProps<DateType = any> extends SharedHTMLAttrs {
   picker: PickerMode;
 
-  prefix?: any;
-  clearIcon?: any;
-  suffixIcon?: any;
+  prefix?: VueNode;
+  clearIcon?: VueNode;
+  suffixIcon?: VueNode;
   class?: string;
   style?: CSSProperties;
   /** Add `-placeholder` className as a help info */

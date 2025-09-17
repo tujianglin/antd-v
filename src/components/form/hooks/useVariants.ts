@@ -3,7 +3,10 @@ import { useConfigContextInject, Variants, type Variant } from '../../config-pro
 import type { ConfigProviderProps } from '../../config-provider/interface';
 import { useVariantContextInject } from '../context';
 
-type VariantComponents = keyof Pick<ConfigProviderProps, 'input' | 'inputNumber' | 'select' | 'textArea' | 'card'>;
+type VariantComponents = keyof Pick<
+  ConfigProviderProps,
+  'input' | 'inputNumber' | 'select' | 'datePicker' | 'rangePicker' | 'timePicker' | 'textArea' | 'card' | 'mentions'
+>;
 /**
  * Compatible for legacy `bordered` prop.
  */

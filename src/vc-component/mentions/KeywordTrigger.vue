@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
+import Trigger from '@/vc-component/trigger';
 import type { CSSProperties } from 'vue';
 import { computed } from 'vue';
-import type { DataDrivenOptionProps, Direction, Placement } from './Mentions.vue';
 import DropdownMenu from './DropdownMenu.vue';
-import Trigger from '@/vc-component/trigger';
+import type { DataDrivenOptionProps, Direction, Placement } from './Mentions.vue';
 
 interface KeywordTriggerProps {
   loading?: boolean;
@@ -60,10 +60,6 @@ const BUILT_IN_PLACEMENTS = {
 
 const dropdownPrefix = computed(() => `${prefixCls}-dropdown`);
 
-const dropdownElement = () => {
-  return <DropdownMenu prefixCls={dropdownPrefix.value} options={options} />;
-};
-
 const dropdownPlacement = computed(() => {
   let popupPlacement;
   if (direction === 'rtl') {
@@ -78,7 +74,6 @@ const dropdownPlacement = computed(() => {
   <Trigger
     :prefix-cls="dropdownPrefix"
     :popup-visible="visible"
-    :popup="dropdownElement"
     :popup-placement="dropdownPlacement"
     :popup-motion="{ motionName: transitionName }"
     :builtin-placements="BUILT_IN_PLACEMENTS"
@@ -86,6 +81,9 @@ const dropdownPlacement = computed(() => {
     :popup-class-name="popupClassName"
     :popup-style="popupStyle"
   >
+    <template #popup>
+      <DropdownMenu :prefix-cls="dropdownPrefix" :options="options" />
+    </template>
     <slot></slot>
   </Trigger>
 </template>

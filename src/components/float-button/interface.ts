@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, Component, CSSProperties, HtmlHTMLAttributes, VNode } from 'vue';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
 import type { RenderNode } from '../_util/type';
 import type { ButtonHTMLType, ButtonSemanticName } from '../button/interface';
 
@@ -18,6 +19,9 @@ export type FloatButtonGroupTrigger = 'click' | 'hover';
 
 export type FloatButtonSemanticName = ButtonSemanticName;
 
+export type FloatButtonClassNamesType = SemanticClassNamesType<FloatButtonProps, FloatButtonSemanticName>;
+export type FloatButtonStylesType = SemanticStylesType<FloatButtonProps, FloatButtonSemanticName>;
+
 type HTMLAttributeAnchorTarget = '_self' | '_blank' | '_parent' | '_top' | (string & {});
 
 export interface FloatButtonProps {
@@ -26,8 +30,8 @@ export interface FloatButtonProps {
   style?: CSSProperties;
   prefixCls?: string;
   rootClassName?: string;
-  classNames?: Partial<Record<FloatButtonSemanticName, string>>;
-  styles?: Partial<Record<FloatButtonSemanticName, CSSProperties>>;
+  classNames?: FloatButtonClassNamesType;
+  styles?: FloatButtonStylesType;
 
   // Others
   icon?: RenderNode;
@@ -52,18 +56,23 @@ export interface FloatButtonProps {
 export const floatButtonPrefixCls = 'float-btn';
 
 // FloatButton
-type InternalFloatButtonGroupSemanticName = 'root' | 'list';
+type InternalFloatButtonGroupSemanticName =
+  | 'root'
+  | 'list'
+  | 'item'
+  | 'itemIcon'
+  | 'itemContent'
+  | 'trigger'
+  | 'triggerIcon'
+  | 'triggerContent';
+
+export type FloatButtonGroupClassNamesType = SemanticClassNamesType<FloatButtonGroupProps, InternalFloatButtonGroupSemanticName>;
+export type FloatButtonGroupStylesType = SemanticStylesType<FloatButtonGroupProps, InternalFloatButtonGroupSemanticName>;
 
 export interface FloatButtonGroupProps extends FloatButtonProps {
   // Styles
-  classNames?: Partial<Record<InternalFloatButtonGroupSemanticName, string>> & {
-    item?: FloatButtonProps['classNames'];
-    trigger?: FloatButtonProps['classNames'];
-  };
-  styles?: Partial<Record<InternalFloatButtonGroupSemanticName, CSSProperties>> & {
-    item?: FloatButtonProps['styles'];
-    trigger?: FloatButtonProps['styles'];
-  };
+  classNames?: FloatButtonGroupClassNamesType;
+  styles?: FloatButtonGroupStylesType;
 
   // Control
   trigger?: FloatButtonGroupTrigger;

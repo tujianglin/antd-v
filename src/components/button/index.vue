@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, toRefs, useAttrs, watch } from 'vue';
+import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, toRefs, useAttrs, watch } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import isValidNode from '../_util/isValidNode';
 import { useComposeRef } from '../_util/type';
@@ -12,7 +12,15 @@ import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import useSize from '../config-provider/hooks/useSize';
 import { useCompactItemContext } from '../space/CompactContext';
 import { ButtonTypeMap, getLoadingConfig, isUnBorderedButtonVariant, spaceChildren } from './buttonHelpers';
-import type { ButtonProps, ButtonSlots, ColorVariantPairType, LoadingConfigType } from './interface';
+import type {
+  BaseButtonProps,
+  ButtonClassNamesType,
+  ButtonProps,
+  ButtonSlots,
+  ButtonStylesType,
+  ColorVariantPairType,
+  LoadingConfigType,
+} from './interface';
 import useStyle from './style';
 import Compact from './style/compact';
 import IconWrapper from './IconWrapper.vue';
@@ -133,11 +141,6 @@ const needInserted = computed(
   () => defaultSlot.value.length === 1 && !iconSlot.value && !isUnBorderedButtonVariant(mergedVariant.value),
 );
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [_skipSemantic ? undefined : contextClassNames.value, buttonClassNames]),
-  computed(() => [_skipSemantic ? undefined : contextStyles.value, styles]),
-);
-
 // ========================= Mount ==========================
 // Record for mount status.
 // This will help to no to show the animation of loading on the first mount.
@@ -181,6 +184,30 @@ const sizeCls = computed(() => (sizeFullName.value ? (sizeClassNameMap[sizeFullN
 const iconType = computed(() => (innerLoading.value ? 'loading' : iconSlot.value));
 
 const linkButtonRestProps = computed(() => omit(rest as ButtonProps & { navigate: any }, ['navigate']));
+
+// =========== Merged Props for Semantic ===========
+const vm = getCurrentInstance();
+const mergedProps = computed<BaseButtonProps>(() => {
+  return {
+    ...vm.props,
+    color: mergedColor.value,
+    variant: mergedVariant.value,
+    danger: isDanger.value,
+    shape: shape.value,
+    size: sizeFullName.value,
+    disabled: mergedDisabled.value,
+    loading: innerLoading.value,
+  };
+});
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<ButtonClassNamesType, ButtonStylesType, BaseButtonProps>(
+  computed(() => [_skipSemantic ? undefined : contextClassNames.value, buttonClassNames]),
+  computed(() => [_skipSemantic ? undefined : contextStyles.value, styles]),
+  undefined,
+  computed(() => ({
+    props: mergedProps.value,
+  })),
+);
 
 const classes = computed(() => {
   return clsx(

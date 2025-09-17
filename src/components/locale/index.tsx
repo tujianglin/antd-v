@@ -1,6 +1,5 @@
 import type { PaginationLocale } from '@/vc-component/pagination';
 import { computed, defineComponent, type PropType } from 'vue';
-import { devUseWarning } from '../_util/warning';
 import type { PickerLocale as DatePickerLocale } from '../date-picker/generatePicker';
 import { LocaleContextProvider, type LocaleContextProps } from './context';
 
@@ -69,16 +68,6 @@ export const LocaleProvider = defineComponent({
     _ANT_MARK__: String,
   },
   setup(props, { slots }) {
-    if (process.env.NODE_ENV !== 'production') {
-      const warning = devUseWarning('LocaleProvider');
-
-      warning(
-        props._ANT_MARK__ === ANT_MARK,
-        'deprecated',
-        '`LocaleProvider` is deprecated. Please use `locale` with `ConfigProvider` instead: http://u.ant.design/locale',
-      );
-    }
-
     // watch(
     //   () => props.locale,
     //   () => {
@@ -88,6 +77,7 @@ export const LocaleProvider = defineComponent({
     // );
 
     const getMemoizedContextValue = computed((): LocaleContextProps => ({ ...props.locale, exist: true }));
+
     return () => <LocaleContextProvider value={getMemoizedContextValue.value}>{slots.default?.()}</LocaleContextProvider>;
   },
 });

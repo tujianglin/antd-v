@@ -176,7 +176,7 @@ const RenderNode = ({ style }) => {
         },
         className,
       )}
-      onClick={onInternalClick}
+      onMousedown={onInternalClick}
       onKeydown={onInternalKeyDown}
       onFocus={onInternalFocus}
     >

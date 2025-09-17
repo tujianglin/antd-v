@@ -36,6 +36,7 @@ import { PickerContextProvider } from './context';
 import PickerTrigger from '../PickerTrigger/index.vue';
 import { pickTriggerProps } from '../PickerTrigger/util';
 import clsx from 'clsx';
+import type { VueNode } from '@/vc-util/type';
 
 export type RangeValueType<DateType> = [start: DateType | null | undefined, end: DateType | null | undefined];
 
@@ -46,7 +47,7 @@ export interface BaseRangePickerProps<DateType extends object> extends Omit<Shar
   // Structure
   id?: SelectorIdType;
 
-  separator?: any;
+  separator?: VueNode;
 
   // Value
   value?: RangeValueType<DateType> | null;
@@ -112,9 +113,6 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 const props = withDefaults(defineProps<RangePickerProps<DateType>>(), {
   allowClear: true,
   showNow: false,
-  showHour: true,
-  showMinute: true,
-  showSecond: true,
   picker: 'date',
   prefixCls: 'rc-picker',
   order: true,
@@ -304,7 +302,6 @@ const mergedShowTime = computed<PopupShowTimeConfig<DateType> & Pick<RangeTimePr
         });
       }
     : undefined;
-
   return { ...showTime.value, disabledTime: proxyDisabledTime };
 });
 
@@ -756,7 +753,7 @@ if (process.env.NODE_ENV !== 'production') {
       range
     >
       <RangeSelector
-        v-bind="{ ...omit(filledProps, ['onChange']) }"
+        v-bind="{ ...omit(filledProps, ['onChange', 'onFocus', 'onBlur']) }"
         :ref="(el) => (selectorRef = el)"
         :class="clsx(filledProps.class, rootClassName, mergedClassNames.root)"
         :style="{

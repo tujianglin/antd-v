@@ -79,9 +79,10 @@ const renderItemChildren = (inlineCollapsed: boolean) => {
 const { siderCollapsed } = toRefs(useSiderContextInject());
 
 const tooltipProps = computed(() => {
-  const result: TooltipProps = {};
+  const result: TooltipProps & { open?: boolean } = {};
   if (!siderCollapsed?.value && !isInlineCollapsed.value) {
     result.title = null;
+    result.open = false;
   }
   return result;
 });

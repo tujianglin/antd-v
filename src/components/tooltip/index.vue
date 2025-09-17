@@ -22,6 +22,7 @@ import { getTransitionName } from '../_util/motion';
 import { isValidElement } from '../_util/isValidNode';
 import { isFragment } from '../_util/reactNode';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
+import Render from '../render';
 
 export type { AdjustOverflow, PlacementsConfig };
 
@@ -238,10 +239,16 @@ const [zIndex, contextZIndex] = useZIndex(
 
 // ============================= Render =============================
 const slots = useSlots();
-const children = () => {
+const children = computed(() => {
   const result = flattenChildren(slots?.default?.());
   return isValidElement(result) && !isFragment(result) && result.length === 1 ? result[0] : <span>{slots?.default?.()}</span>;
-};
+});
+
+const childCls = computed(() => {
+  return !children.value?.props?.class || typeof children.value?.props?.class === 'string'
+    ? clsx(children.value?.props?.class, openClassName || `${prefixCls.value}-open`)
+    : children.value?.props?.class;
+});
 </script>
 <template>
   <ZIndexContextProvider :value="contextZIndex">
@@ -285,7 +292,8 @@ const children = () => {
       :destroy-on-hidden="destroyOnHidden"
     >
       <template #default="props">
-        <component :is="cloneVNode(children(), { class: clsx(openClassName || `${prefixCls}-open`), ...props })" />
+        <component v-if="tempOpen" :is="cloneVNode(children, { class: childCls, ...props })" />
+        <Render v-else :content="children" v-bind="props" />
       </template>
       <template #overlay>
         <ContextIsolator space>

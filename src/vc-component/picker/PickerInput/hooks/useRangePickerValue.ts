@@ -36,7 +36,7 @@ const EMPTY_LIST: any = [];
 export default function useRangePickerValue<DateType extends object, ValueType extends DateType[]>(
   generateConfig: Ref<GenerateConfig<DateType>>,
   locale: Ref<Locale>,
-  calendarValue: ValueType,
+  calendarValue: Ref<ValueType>,
   modes: Ref<PanelMode[]>,
   open: Ref<boolean>,
   activeIndex: Ref<number>,
@@ -63,7 +63,7 @@ export default function useRangePickerValue<DateType extends object, ValueType e
     if (isTimePicker) {
       now = fillTime(generateConfig.value, now);
     }
-    return defaultPickerValue.value[index] || calendarValue[index] || now;
+    return defaultPickerValue.value[index] || calendarValue.value[index] || now;
   };
 
   // Align `pickerValue` with `showTime.defaultValue`
@@ -81,9 +81,10 @@ export default function useRangePickerValue<DateType extends object, ValueType e
   // Current PickerValue
   const currentPickerValue = computed(() => {
     const current = [mergedStartPickerValue.value, mergedEndPickerValue.value][mergedActiveIndex.value];
-
     // Merge the `showTime.defaultValue` into `pickerValue`
-    return isTimePicker ? current : fillTime(generateConfig.value, current, timeDefaultValue[mergedActiveIndex.value]);
+    return isTimePicker.value
+      ? current
+      : fillTime(generateConfig.value, current, timeDefaultValue?.value?.[mergedActiveIndex.value]);
   });
 
   const setCurrentPickerValue = (nextPickerValue: DateType, source: 'reset' | 'panel' = 'panel') => {
@@ -101,7 +102,7 @@ export default function useRangePickerValue<DateType extends object, ValueType e
       onPickerValueChange(clone, {
         source,
         range: mergedActiveIndex.value === 1 ? 'end' : 'start',
-        mode: modes as any,
+        mode: modes.value as any,
       });
     }
   };
@@ -114,7 +115,7 @@ export default function useRangePickerValue<DateType extends object, ValueType e
    * - Else pass directly
    */
   const getEndDatePickerValue = (startDate: DateType, endDate: DateType) => {
-    if (multiplePanel) {
+    if (multiplePanel.value) {
       // Basic offset
       const SAME_CHECKER: Partial<Record<InternalMode, PanelMode>> = {
         date: 'month',
@@ -144,7 +145,7 @@ export default function useRangePickerValue<DateType extends object, ValueType e
   // >>> When switch field, reset the picker value as prev field picker value
   const prevActiveIndexRef = ref<number>(null);
   watch(
-    [open, mergedActiveIndex, () => calendarValue[mergedActiveIndex.value]],
+    [open, mergedActiveIndex, () => calendarValue.value[mergedActiveIndex.value]],
     async () => {
       await nextTick();
       if (open.value) {
@@ -164,13 +165,15 @@ export default function useRangePickerValue<DateType extends object, ValueType e
           if (prevActiveIndexRef.value !== null && prevActiveIndexRef.value !== mergedActiveIndex.value) {
             // If from another field, not jump picker value
             nextPickerValue = [mergedStartPickerValue.value, mergedEndPickerValue.value][mergedActiveIndex.value ^ 1];
-          } else if (calendarValue[mergedActiveIndex.value]) {
+          } else if (calendarValue.value[mergedActiveIndex.value]) {
             // Current field has value
             nextPickerValue =
-              mergedActiveIndex.value === 0 ? calendarValue[0] : getEndDatePickerValue(calendarValue[0], calendarValue[1]);
-          } else if (calendarValue[mergedActiveIndex.value ^ 1]) {
+              mergedActiveIndex.value === 0
+                ? calendarValue.value[0]
+                : getEndDatePickerValue(calendarValue.value[0], calendarValue.value[1]);
+          } else if (calendarValue.value[mergedActiveIndex.value ^ 1]) {
             // Current field has no value but another field has value
-            nextPickerValue = calendarValue[mergedActiveIndex.value ^ 1];
+            nextPickerValue = calendarValue.value[mergedActiveIndex.value ^ 1];
           }
 
           // Only sync when has value, this will sync in the `min-max` logic

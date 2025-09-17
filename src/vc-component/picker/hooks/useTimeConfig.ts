@@ -112,7 +112,22 @@ export function getTimeProps<DateType extends object>(
   const { showTime } = componentProps;
   const [pickedProps, propFormat] = pickTimeProps(componentProps);
 
-  const showTimeConfig = showTime && typeof showTime === 'object' ? showTime : {};
+  const showTimeConfig =
+    showTime && typeof showTime === 'object'
+      ? ({
+          showHour: undefined,
+          showMinute: undefined,
+          showSecond: undefined,
+          showMillisecond: undefined,
+          ...showTime,
+        } as any)
+      : {
+          showHour: undefined,
+          showMinute: undefined,
+          showSecond: undefined,
+          showMillisecond: undefined,
+        };
+
   const timeConfig = {
     defaultOpenValue: showTimeConfig.defaultOpenValue,
     ...pickedProps,
@@ -184,7 +199,6 @@ export function fillShowTimeConfig<DateType extends object>(
 
     // Fallback if all can not see
     [showHour, showMinute, showSecond] = fillShowConfig(hasShowConfig, showHour, showMinute, showSecond, showMillisecond);
-
     // ======================== Format ========================
     const timeFormat = showTimeFormat || fillTimeFormat(showHour, showMinute, showSecond, showMillisecond, showMeridiem);
     // ======================== Props =========================

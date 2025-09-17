@@ -1,7 +1,7 @@
 import type { PickerProps as RcPickerProps, RangePickerProps as RcRangePickerProps } from '@/vc-component/picker';
 import type { PanelSemanticName as PopupSemantic, Locale as RcPickerLocale, SemanticName } from '@/vc-component/picker/interface';
 
-import type { CSSProperties } from 'vue';
+import type { ComputedRef, CSSProperties } from 'vue';
 import type { InputStatus } from '../../_util/statusUtils';
 import type { AnyObject } from '../../_util/type';
 import type { Variant } from '../../config-provider';
@@ -15,30 +15,6 @@ type DataPickerPlacement = (typeof _DataPickerPlacements)[number];
 export type PickerLocale = {
   lang: RcPickerLocale & AdditionalPickerLocaleLangProps;
   timePickerLocale: TimePickerLocale;
-} & AdditionalPickerLocaleProps;
-
-/** @deprecated **Useless**. */
-export type AdditionalPickerLocaleProps = {
-  /**
-   * @deprecated **Invalid**, Please use `lang.fieldDateFormat` instead.
-   * @see [Migration Guide](https://github.com/ant-design/ant-design/discussions/53011)
-   */
-  dateFormat?: string;
-  /**
-   * @deprecated **Invalid**, Please use `lang.fieldDateTimeFormat` instead,
-   * @see [Migration Guide](https://github.com/ant-design/ant-design/discussions/53011)
-   */
-  dateTimeFormat?: string;
-  /**
-   * @deprecated **Invalid**, Please use `lang.fieldWeekFormat` instead,
-   * @see [Migration Guide](https://github.com/ant-design/ant-design/discussions/53011)
-   */
-  weekFormat?: string;
-  /**
-   * @deprecated **Invalid**, Please use `lang.fieldWeekFormat` instead,
-   * @see [Migration Guide](https://github.com/ant-design/ant-design/discussions/53011)
-   */
-  monthFormat?: string;
 };
 
 export type AdditionalPickerLocaleLangProps = {
@@ -58,41 +34,30 @@ export type PickerClassNames = Omit<NonNullable<RcPickerProps['classNames']>, 'p
   popup?: string | NonNullable<RcPickerProps['classNames']>['popup'];
 };
 
-export type RequiredSemanticPicker = readonly [
-  classNames: Required<Record<SemanticName, string>> & {
-    popup: Required<Record<PopupSemantic, string>>;
-  },
-  styles: Required<Record<SemanticName, CSSProperties>> & {
-    popup: Required<Record<PopupSemantic, CSSProperties>>;
-  },
+export type RequiredSemanticPicker = [
+  classNames: ComputedRef<
+    Required<Record<SemanticName, string>> & {
+      popup: Required<Record<PopupSemantic, string>>;
+    }
+  >,
+  styles: ComputedRef<
+    Required<Record<SemanticName, CSSProperties>> & {
+      popup: Required<Record<PopupSemantic, CSSProperties>>;
+    }
+  >,
 ];
 
 type InjectDefaultProps<Props> = Omit<Props, 'locale' | 'generateConfig' | 'hideHeader' | 'classNames'> & {
   locale?: PickerLocale;
   size?: SizeType;
   placement?: DataPickerPlacement;
-  /** @deprecated Use `variant` instead */
-  bordered?: boolean;
   status?: InputStatus;
   /**
    * @since 5.13.0
    * @default "outlined"
    */
   variant?: Variant;
-  /**
-   * @deprecated `dropdownClassName` is deprecated which will be removed in next major
-   *   version.Please use `classNames.popup.root` instead.
-   */
-  dropdownClassName?: string;
-  /**
-   * @deprecated please use `classNames.popup.root` instead
-   */
-  popupClassName?: string;
   rootClassName?: string;
-  /**
-   * @deprecated please use `styles.popup.root` instead
-   */
-  popupStyle?: CSSProperties;
   classNames?: PickerClassNames;
 };
 

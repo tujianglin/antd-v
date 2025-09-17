@@ -3,7 +3,7 @@ import useMergedState from '@/vc-util/hooks/useMergedState';
 import pickAttrs from '@/vc-util/pickAttrs';
 import { reactiveComputed, toReactive } from '@vueuse/core';
 import { omit } from 'lodash-es';
-import { computed, nextTick, ref, toRefs, watch } from 'vue';
+import { computed, nextTick, ref, toRefs, useTemplateRef, watch } from 'vue';
 import useSemantic from '../hooks/useSemantic';
 import useToggleDates from '../hooks/useToggleDates';
 import type {
@@ -108,9 +108,6 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 const props = withDefaults(defineProps<PickerProps<DateType>>(), {
   allowClear: true,
   showNow: true,
-  showHour: true,
-  showMinute: true,
-  showSecond: true,
   picker: 'date',
   prefixCls: 'rc-picker',
   order: true,
@@ -188,7 +185,7 @@ const {
   onClick,
 } = toRefs(toReactive(filledProps) as FilledProps<PickerProps, DateType, object>);
 
-const selectorRef = ref();
+const selectorRef = useTemplateRef('selectorRef');
 
 defineExpose({
   get nativeElement() {
@@ -496,7 +493,6 @@ const panelProps = computed(() => {
     multiple: filledProps.value.multiple,
   } as unknown as PopupProps;
 });
-
 // >>> Render
 const panel = () => (
   <Popup
@@ -638,8 +634,8 @@ watch(
       @close="onPopupClose"
     >
       <SingleSelector
-        v-bind="{ ...omit(filledProps, ['onChange']) }"
-        :ref="(el) => (selectorRef = el)"
+        v-bind="{ ...omit(filledProps, ['onChange', 'onOpenChange']) }"
+        ref="selectorRef"
         :class="clsx(filledProps.class, rootClassName, mergedClassNames.root)"
         :style="{
           ...mergedStyles.root,

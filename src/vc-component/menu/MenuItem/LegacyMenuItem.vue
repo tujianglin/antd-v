@@ -2,15 +2,13 @@
 import Overflow from '@/vc-component/overflow';
 import type { RawItemProps } from '@/vc-component/overflow/RawItem.vue';
 import { omit } from 'lodash-es';
-import { useAttrs, useTemplateRef } from 'vue';
+import { useTemplateRef } from 'vue';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const props = defineProps<RawItemProps>();
 
 const { Item } = Overflow;
-
-const attrs = useAttrs() as any;
 
 const domRef = useTemplateRef('domRef');
 
@@ -25,10 +23,9 @@ defineExpose({
     ref="domRef"
     v-bind="{
       ...props,
-      ...attrs,
-      ...omit(attrs, ['eventKey', 'popupClassName', 'popupOffset', 'onTitleClick', 'title']),
+      ...omit($attrs, ['eventKey', 'popupClassName', 'popupOffset', 'onTitleClick', 'title']),
     }"
-    :title="typeof attrs?.title === 'string' ? attrs?.title : undefined"
+    :title="typeof $attrs?.title === 'string' ? $attrs?.title : undefined"
   >
     <slot></slot>
   </Item>

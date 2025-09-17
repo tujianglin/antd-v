@@ -413,7 +413,6 @@ const inputProps = computed(() => {
       :class="classNames.input"
       :style="styles.input"
     />
-
     <Icon type="suffix" :icon="suffixIcon" />
     <Render :content="clearIcon" />
   </div>

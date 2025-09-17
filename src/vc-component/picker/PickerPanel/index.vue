@@ -1,11 +1,11 @@
 <!-- eslint-disable unused-imports/no-unused-vars -->
 <!-- eslint-disable no-unused-vars -->
 <script lang="tsx" setup generic="DateType extends object = any">
-import useMergedState from '@/vc-util/hooks/useMergedState';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 import warning from '@/vc-util/warning';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, getCurrentInstance, ref, toRef, toRefs, watch, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, ref, toRefs, watch, type CSSProperties } from 'vue';
 import useLocale from '../hooks/useLocale';
 import { fillShowTimeConfig, getTimeProps } from '../hooks/useTimeConfig';
 import useToggleDates from '../hooks/useToggleDates';
@@ -144,6 +144,7 @@ const {
   // Value
   multiple,
   defaultValue,
+  value,
   onChange,
   onSelect,
 
@@ -153,6 +154,7 @@ const {
   onPickerValueChange,
 
   // Mode
+  mode,
   onPanelChange,
   picker = 'date',
   showTime,
@@ -168,10 +170,6 @@ const {
   components = {},
 
   hideHeader,
-  showHour = true,
-  showMinute = true,
-  showSecond = true,
-  showNow = true,
 } = defineProps<PickerPanelProps<DateType>>();
 
 const DefaultComponents: Components = {
@@ -222,10 +220,10 @@ const mergedShowTime = computed<any>(() => {
 const now = computed(() => generateConfig.getNow());
 
 // ========================== Mode ==========================
-const [mergedMode, setMergedMode] = useMergedState<PanelMode>(picker, {
-  value: toRef(vm.props, 'mode') as any,
-  postState: (val) => val || 'date',
-});
+const [mergedMode, setMergedMode] = useControlledState<PanelMode>(
+  picker || 'date',
+  computed(() => mode),
+);
 
 const internalMode = computed(() => (mergedMode.value === 'date' && mergedShowTime.value ? 'datetime' : mergedMode.value));
 
@@ -235,9 +233,10 @@ const toggleDates = computed(() => useToggleDates(generateConfig, locale, intern
 // ========================= Value ==========================
 // >>> Real value
 // Interactive with `onChange` event which only trigger when the `mode` is `picker`
-const [innerValue, setMergedValue] = useMergedState(defaultValue, {
-  value: toRef(vm.props, 'value') as any,
-});
+const [innerValue, setMergedValue] = useControlledState(
+  defaultValue,
+  computed(() => value),
+);
 
 const mergedValue = computed(() => {
   // Clean up `[null]`
@@ -274,9 +273,10 @@ const onInternalSelect = (newDate: DateType) => {
 
 // >>> PickerValue
 // PickerValue is used to control the current displaying panel
-const [mergedPickerValue, setInternalPickerValue] = useMergedState<any>(defaultPickerValue || mergedValue.value[0] || now.value, {
-  value: toRef(vm.props, 'pickerValue'),
-});
+const [mergedPickerValue, setInternalPickerValue] = useControlledState(
+  defaultPickerValue || mergedValue.value[0] || now.value,
+  computed(() => pickerValue),
+);
 
 watch(
   () => mergedValue.value[0],

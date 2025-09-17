@@ -1,6 +1,11 @@
 <script lang="tsx" setup>
-import { computed, nextTick, onBeforeUnmount, toRefs, useTemplateRef, watch } from 'vue';
-import { floatButtonPrefixCls, type FloatButtonGroupProps } from './interface';
+import { computed, getCurrentInstance, nextTick, onBeforeUnmount, toRefs, useTemplateRef, watch } from 'vue';
+import {
+  floatButtonPrefixCls,
+  type FloatButtonGroupClassNamesType,
+  type FloatButtonGroupProps,
+  type FloatButtonGroupStylesType,
+} from './interface';
 import { useComponentConfig } from '../config-provider/context';
 import { CloseOutlined, FileTextOutlined } from '@ant-design/icons-vue';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
@@ -56,19 +61,6 @@ const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 const groupPrefixCls = computed(() => `${prefixCls.value}-group`);
 
 const isMenuMode = computed(() => trigger && ['click', 'hover'].includes(trigger));
-
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [contextClassNames?.value, classNames]),
-  computed(() => [contextStyles?.value, styles]),
-  computed(() => ({
-    item: {
-      _default: 'root',
-    },
-    trigger: {
-      _default: 'root',
-    },
-  })),
-);
 
 const [zIndex] = useZIndex(
   'FloatButton',
@@ -134,21 +126,66 @@ onBeforeUnmount(() => {
   document.removeEventListener('click', onDocClick, { capture: true });
 });
 
+// =========== Merged Props for Semantic ==========
+const vm = getCurrentInstance();
+const mergedProps = computed(() => {
+  return {
+    ...vm.props,
+    shape,
+    type,
+    placement: mergedPlacement.value,
+  } as FloatButtonGroupProps;
+});
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<
+  FloatButtonGroupClassNamesType,
+  FloatButtonGroupStylesType,
+  FloatButtonGroupProps
+>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    item: {
+      _default: 'root',
+    },
+    trigger: {
+      _default: 'root',
+    },
+  })),
+  computed(() => ({ props: mergedProps.value })),
+);
+
 // ======================== Contexts ========================
 const individual = computed(() => shape === 'circle');
 
 const listContext = computed(() => ({
   shape,
   individual: individual.value,
-  classNames: mergedClassNames?.value?.item,
-  styles: mergedStyles?.value?.item,
+  classNames: {
+    root: mergedClassNames?.value?.item,
+    icon: mergedClassNames?.value?.itemIcon,
+    content: mergedClassNames?.value?.itemContent,
+  },
+  styles: {
+    root: mergedStyles?.value?.item,
+    icon: mergedStyles?.value?.itemIcon,
+    content: mergedStyles?.value?.itemContent,
+  },
 }));
 
 const triggerContext = computed(() => ({
   ...listContext.value,
   individual: true,
-  classNames: mergedClassNames?.value?.trigger,
-  styles: mergedStyles?.value?.trigger,
+  classNames: {
+    root: mergedClassNames?.value?.trigger,
+    icon: mergedClassNames?.value?.triggerIcon,
+    content: mergedClassNames?.value?.triggerContent,
+  },
+  styles: {
+    root: mergedStyles?.value?.trigger,
+    icon: mergedStyles?.value?.triggerIcon,
+    content: mergedStyles?.value?.triggerContent,
+  },
 }));
 
 // ========================= Render =========================
