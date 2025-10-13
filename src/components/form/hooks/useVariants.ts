@@ -5,7 +5,16 @@ import { useVariantContextInject } from '../context';
 
 type VariantComponents = keyof Pick<
   ConfigProviderProps,
-  'input' | 'inputNumber' | 'select' | 'datePicker' | 'rangePicker' | 'timePicker' | 'textArea' | 'card' | 'mentions'
+  | 'input'
+  | 'inputNumber'
+  | 'select'
+  | 'datePicker'
+  | 'rangePicker'
+  | 'timePicker'
+  | 'textArea'
+  | 'card'
+  | 'mentions'
+  | 'treeSelect'
 >;
 /**
  * Compatible for legacy `bordered` prop.

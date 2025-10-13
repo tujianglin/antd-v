@@ -108,12 +108,6 @@ export interface TreeProps<TreeDataType extends BasicDataNode = DataNode> {
   defaultExpandParent?: boolean;
   autoExpandParent?: boolean;
   defaultExpandAll?: boolean;
-  defaultExpandedKeys?: VueKey[];
-  expandedKeys?: VueKey[];
-  defaultCheckedKeys?: VueKey[];
-  checkedKeys?: VueKey[] | { checked: VueKey[]; halfChecked: VueKey[] };
-  defaultSelectedKeys?: VueKey[];
-  selectedKeys?: VueKey[];
   allowDrop?: AllowDrop<TreeDataType>;
   titleRender?: any;
   dropIndicatorRender?: any;
@@ -206,15 +200,16 @@ const props = withDefaults(defineProps<TreeProps<TreeDataType>>(), {
   defaultExpandParent: true,
   autoExpandParent: false,
   defaultExpandAll: false,
-  defaultExpandedKeys: () => [],
-  defaultCheckedKeys: () => [],
-  defaultSelectedKeys: () => [],
   dropIndicatorRender: DropIndicator,
   allowDrop: () => true,
   expandAction: false,
   tabindex: 0,
   virtual: true,
 });
+
+const defaultExpandedKeys = defineModel<VueKey[]>('expandedKeys');
+const defaultCheckedKeys = defineModel<VueKey[] | { checked: VueKey[]; halfChecked: VueKey[] }>('checkedKeys');
+const defaultSelectedKeys = defineModel<VueKey[]>('selectedKeys');
 
 const MAX_RETRY_TIMES = 10;
 
@@ -287,15 +282,15 @@ watchEffect(() => {
 let init = false; // 处理 defaultXxxx api, 仅仅首次有效
 
 watch(
-  [() => props.expandedKeys, () => props.autoExpandParent, keyEntities],
+  [() => defaultExpandedKeys.value, () => props.autoExpandParent, keyEntities],
   ([_newKeys, newAutoExpandParent], [_oldKeys, oldAutoExpandParent]) => {
     let keys = expandedKeys.value;
     // ================ expandedKeys =================
-    if (props.expandedKeys !== undefined || (init && newAutoExpandParent !== oldAutoExpandParent)) {
+    if (defaultExpandedKeys.value !== undefined || (init && newAutoExpandParent !== oldAutoExpandParent)) {
       keys =
         props.autoExpandParent || (!init && props.defaultExpandParent)
-          ? conductExpandParent(props.expandedKeys, keyEntities.value)
-          : props.expandedKeys;
+          ? conductExpandParent(defaultExpandedKeys.value, keyEntities.value)
+          : defaultExpandedKeys.value;
     } else if (!init && props.defaultExpandAll) {
       const cloneKeyEntities = { ...keyEntities.value };
       delete cloneKeyEntities[MOTION_KEY];
@@ -309,11 +304,6 @@ watch(
         }
       });
       keys = nextExpandedKeys;
-    } else if (!init && props.defaultExpandedKeys) {
-      keys =
-        props.autoExpandParent || props.defaultExpandParent
-          ? conductExpandParent(props.defaultExpandedKeys, keyEntities.value)
-          : props.defaultExpandedKeys;
     }
 
     if (keys) {
@@ -332,10 +322,8 @@ watchEffect(() => {
 // ================ selectedKeys =================
 watchEffect(() => {
   if (props.selectable) {
-    if (props.selectedKeys !== undefined) {
-      selectedKeys.value = calcSelectedKeys(props.selectedKeys, props as unknown as TreeProps<DataNode>);
-    } else if (!init && props.defaultSelectedKeys) {
-      selectedKeys.value = calcSelectedKeys(props.defaultSelectedKeys, props as unknown as TreeProps<DataNode>);
+    if (defaultSelectedKeys.value !== undefined) {
+      selectedKeys.value = calcSelectedKeys(defaultSelectedKeys.value, props as unknown as TreeProps<DataNode>);
     }
   }
 });
@@ -345,13 +333,11 @@ watchEffect(() => {
   if (props.checkable) {
     let checkedKeyEntity;
 
-    if (props.checkedKeys !== undefined) {
-      checkedKeyEntity = parseCheckedKeys(props.checkedKeys) || {};
-    } else if (!init && props.defaultCheckedKeys) {
-      checkedKeyEntity = parseCheckedKeys(props.defaultCheckedKeys) || {};
+    if (defaultCheckedKeys.value !== undefined) {
+      checkedKeyEntity = parseCheckedKeys(defaultCheckedKeys.value) || {};
     } else if (treeData.value) {
       // If `treeData` changed, we also need check it
-      checkedKeyEntity = parseCheckedKeys(props.checkedKeys) || {
+      checkedKeyEntity = parseCheckedKeys(defaultCheckedKeys.value) || {
         checkedKeys: checkedKeys.value,
         halfCheckedKeys: halfCheckedKeys.value,
       };
@@ -771,12 +757,13 @@ function onNodeSelect(e, treeNode) {
     .filter(Boolean);
 
   selectedKeys.value = newSelectedKeys;
+  defaultSelectedKeys.value = newSelectedKeys;
   onSelect?.(newSelectedKeys, {
     event: 'select',
     selected: targetSelected,
     node: treeNode,
     selectedNodes,
-    nativeEvent: e.nativeEvent,
+    nativeEvent: e,
   });
 }
 
@@ -844,7 +831,7 @@ function onNodeCheck(e: MouseEvent, treeNode: EventDataNode<TreeDataType>, check
     checkedKeys.value = newCheckedKeys;
     halfCheckedKeys.value = newHalfCheckedKeys;
   }
-
+  defaultCheckedKeys.value = checkedKeys.value;
   onCheck?.(checkedObj, eventObj as CheckInfo<TreeDataType>);
 }
 
@@ -959,6 +946,7 @@ function getTreeNodeRequiredProps() {
 function setExpandedKeys(newExpandedKeys: VueKey[]) {
   const newFlattenNodes = flattenTreeData<TreeDataType>(treeData.value, newExpandedKeys, fieldNames.value);
   expandedKeys.value = newExpandedKeys;
+  defaultExpandedKeys.value = newExpandedKeys;
   flattenNodes.value = newFlattenNodes;
 }
 

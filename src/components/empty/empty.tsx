@@ -16,7 +16,7 @@ export default defineComponent({
 
     return () => (
       <svg style={themeStyle.value} width="184" height="152" viewBox="0 0 184 152" xmlns="http://www.w3.org/2000/svg">
-        <title>{locale?.description || 'Empty'}</title>
+        <title>{locale?.value?.description || 'Empty'}</title>
         <g fill="none" fill-rule="evenodd">
           <g transform="translate(24 31.67)">
             <ellipse fill-opacity=".8" fill="#F5F5F7" cx="67.797" cy="106.89" rx="67.797" ry="12.668" />

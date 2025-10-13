@@ -24,6 +24,7 @@ import useMemoCallback from './hooks/useMemoCallback';
 import useUUID from './hooks/useUUID';
 import type {
   BuiltinPlacements,
+  Components,
   ItemType,
   MenuClickEventHandler,
   MenuInfo,
@@ -138,7 +139,7 @@ export interface MenuProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'onCl
    * Not use it! Not accept any PR try to make it as normal API.
    * By zombieJ
    */
-  _internalComponents?: any;
+  _internalComponents?: Components;
 
   popupRender?: PopupRender;
   tabindex?: any;

@@ -28,12 +28,8 @@ export interface PaginationData {
   prefixCls: string;
   pageSizeOptions: number[];
 
-  current: number;
-  defaultCurrent: number;
   total: number;
   totalBoundaryShowSizeChanger?: number;
-  pageSize: number;
-  defaultPageSize: number;
 
   hideOnSinglePage: boolean;
   align: 'start' | 'center' | 'end';

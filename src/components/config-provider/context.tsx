@@ -27,7 +27,7 @@ import type { DatePickerProps, RangePickerProps } from '../date-picker';
 import type { DividerProps } from '../divider';
 // import type { DrawerProps } from '../drawer';
 import type { DropdownProps } from '../dropdown';
-// import type { EmptyProps } from '../empty';
+import type { EmptyProps } from '../empty';
 import type { FlexProps } from '../flex/interface';
 import type { FloatButtonGroupProps } from '../float-button/interface';
 // import type { FormProps } from '../form/Form';
@@ -43,7 +43,7 @@ import type { MenuProps } from '../menu';
 // import type { ArgsProps as MessageProps } from '../message';
 // import type { ModalProps } from '../modal';
 // import type { ArgsProps as NotificationProps } from '../notification';
-// import type { PaginationProps } from '../pagination';
+import type { PaginationProps } from '../pagination';
 // import type { PopconfirmProps } from '../popconfirm';
 import type { PopoverProps } from '../popover';
 // import type { ProgressProps } from '../progress';
@@ -75,9 +75,9 @@ import type { RibbonProps } from '../badge/Ribbon.vue';
 import type { CardMetaProps, CardProps } from '../card';
 import type { TooltipProps } from '../tooltip';
 // import type { TourProps } from '../tour/interface';
-// import type { TransferProps } from '../transfer';
-// import type { TreeProps } from '../tree';
-// import type { TreeSelectProps } from '../tree-select';
+import type { TransferProps } from '../transfer';
+import type { TreeProps } from '../tree';
+import type { TreeSelectProps } from '../tree-select';
 // import type { UploadProps } from '../upload';
 
 export const defaultPrefixCls = 'ant';
@@ -184,7 +184,7 @@ export type MenuConfig = ComponentStyleConfig & Pick<MenuProps, 'expandIcon' | '
 
 // export type DescriptionsConfig = ComponentStyleConfig & Pick<DescriptionsProps, 'classNames' | 'styles'>;
 
-// export type EmptyConfig = ComponentStyleConfig & Pick<EmptyProps, 'classNames' | 'styles'>;
+export type EmptyConfig = ComponentStyleConfig & Pick<EmptyProps, 'classNames' | 'styles' | 'image'>;
 
 // export type ModalConfig = ComponentStyleConfig &
 //   Pick<ModalProps, 'classNames' | 'styles' | 'closeIcon' | 'closable' | 'centered' | 'okButtonProps' | 'cancelButtonProps'>;
@@ -235,7 +235,7 @@ export type DropdownConfig = ComponentStyleConfig & Pick<DropdownProps, 'classNa
 
 export type FlexConfig = ComponentStyleConfig & Pick<FlexProps, 'vertical'>;
 
-// export type TransferConfig = ComponentStyleConfig & Pick<TransferProps, 'selectionsIcon' | 'classNames' | 'styles'>;
+export type TransferConfig = ComponentStyleConfig & Pick<TransferProps, 'selectionsIcon' | 'classNames' | 'styles'>;
 
 // export type FormConfig = ComponentStyleConfig &
 //   Pick<FormProps, 'requiredMark' | 'colon' | 'scrollToFirstError' | 'validateMessages' | 'variant' | 'classNames' | 'styles'>;
@@ -246,7 +246,7 @@ export type FloatButtonConfig = {
 
 export type FloatButtonGroupConfig = ComponentStyleConfig & Pick<FloatButtonGroupProps, 'closeIcon' | 'classNames' | 'styles'>;
 
-// export type PaginationConfig = ComponentStyleConfig & Pick<PaginationProps, 'showSizeChanger' | 'classNames' | 'styles'>;
+export type PaginationConfig = ComponentStyleConfig & Pick<PaginationProps, 'showSizeChanger' | 'classNames' | 'styles'>;
 
 // export type ProgressConfig = ComponentStyleConfig & Pick<ProgressProps, 'classNames' | 'styles'>;
 
@@ -284,9 +284,9 @@ export type InputNumberConfig = ComponentStyleConfig & Pick<InputNumberProps, 'v
 
 // export type CascaderConfig = ComponentStyleConfig & Pick<CascaderProps, 'variant' | 'styles' | 'classNames'>;
 
-// export type TreeSelectConfig = ComponentStyleConfig & Pick<TreeSelectProps, 'variant' | 'classNames' | 'styles'>;
+export type TreeSelectConfig = ComponentStyleConfig & Pick<TreeSelectProps, 'variant' | 'classNames' | 'styles' | 'switcherIcon'>;
 
-// export type TreeConfig = ComponentStyleConfig & Pick<TreeProps, 'classNames' | 'styles'>;
+export type TreeConfig = ComponentStyleConfig & Pick<TreeProps, 'classNames' | 'styles'>;
 
 export type DatePickerConfig = ComponentStyleConfig & Pick<DatePickerProps, 'variant' | 'classNames' | 'styles'>;
 
@@ -332,7 +332,7 @@ export interface ConfigComponentProps {
   textArea?: TextAreaConfig;
   otp?: OTPConfig;
   inputNumber?: InputNumberConfig;
-  // pagination?: PaginationConfig;
+  pagination?: PaginationConfig;
   space?: SpaceConfig;
   // splitter?: ComponentStyleConfig & Pick<SplitterProps, 'classNames' | 'styles'>;
   // form?: FormConfig;
@@ -346,7 +346,7 @@ export interface ConfigComponentProps {
   // calendar?: CalendarConfig;
   // carousel?: ComponentStyleConfig;
   // cascader?: CascaderConfig;
-  // treeSelect?: TreeSelectConfig;
+  treeSelect?: TreeSelectConfig;
   collapse?: CollapseConfig;
   floatButton?: FloatButtonConfig;
   floatButtonGroup?: FloatButtonGroupConfig;
@@ -369,12 +369,12 @@ export interface ConfigComponentProps {
   menu?: MenuConfig;
   checkbox?: CheckboxConfig;
   // descriptions?: DescriptionsConfig;
-  // empty?: EmptyConfig;
+  empty?: EmptyConfig;
   badge?: BadgeConfig;
   radio?: RadioConfig;
   rate?: ComponentStyleConfig;
   switch?: SwitchStyleConfig;
-  // transfer?: TransferConfig;
+  transfer?: TransferConfig;
   avatar?: ComponentStyleConfig;
   // message?: MessageConfig;
   // tag?: TagConfig;
@@ -390,7 +390,7 @@ export interface ConfigComponentProps {
   // popconfirm?: PopconfirmConfig;
   // upload?: UploadConfig;
   // notification?: NotificationConfig;
-  // tree?: TreeConfig;
+  tree?: TreeConfig;
   colorPicker?: ColorPickerConfig;
   datePicker?: DatePickerConfig;
   rangePicker?: RangePickerConfig;
@@ -466,6 +466,7 @@ type ComponentReturnType<T extends keyof ConfigComponentProps> = Omit<
   getPrefixCls: ConfigConsumerProps['getPrefixCls'];
   direction: ConfigConsumerProps['direction'];
   getPopupContainer: ConfigConsumerProps['getPopupContainer'];
+  renderEmpty: ConfigConsumerProps['renderEmpty'];
 };
 
 /**

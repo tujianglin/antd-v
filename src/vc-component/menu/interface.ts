@@ -1,4 +1,4 @@
-import type { VueKey } from '@/vc-util/type';
+import type { VueKey, VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 import type { SubMenuProps } from './SubMenu/index.vue';
 
@@ -11,7 +11,7 @@ interface ItemSharedProps {
 export interface SubMenuType extends ItemSharedProps {
   type?: 'submenu';
 
-  label?: any;
+  label?: VueNode;
 
   children?: ItemType[];
 
@@ -44,17 +44,15 @@ export interface SubMenuType extends ItemSharedProps {
 export interface MenuItemType extends ItemSharedProps {
   type?: 'item';
 
-  label?: any;
+  label?: VueNode;
 
   disabled?: boolean;
 
   itemIcon?: RenderIconType;
 
-  extra?: any;
+  extra?: VueNode;
 
-  key: VueKey;
-
-  // >>>>> Active
+  key: VueKey; // >>>>> Active
   onMouseenter?: MenuHoverEventHandler;
   onMouseleave?: MenuHoverEventHandler;
 
@@ -65,7 +63,7 @@ export interface MenuItemType extends ItemSharedProps {
 export interface MenuItemGroupType extends ItemSharedProps {
   type: 'group';
 
-  label?: any;
+  label?: VueNode;
 
   children?: ItemType[];
 }

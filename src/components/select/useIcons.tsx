@@ -24,6 +24,7 @@ export default function useIcons(
     hasFeedback?: boolean;
     feedbackIcon?: VueNode;
     prefixCls: string;
+    showSuffixIcon?: boolean;
     showArrow?: boolean;
     componentName: string;
   }>,
@@ -39,18 +40,19 @@ export default function useIcons(
     prefixCls,
     feedbackIcon,
     showArrow,
+    showSuffixIcon,
   } = toRefs(options);
   // Clear Icon
   const mergedClearIcon = computed(() => clearIcon?.value ?? <CloseCircleFilled />);
 
   // Validation Feedback Icon
   const getSuffixIconNode = (arrowIcon?: VueNode) => {
-    if (suffixIcon?.value !== undefined && !hasFeedback?.value && !showArrow?.value) {
+    if (!suffixIcon?.value && !hasFeedback?.value && !showArrow?.value) {
       return null;
     }
     return (
       <>
-        <Render content={arrowIcon}></Render>
+        {showSuffixIcon?.value !== false && <Render content={arrowIcon}></Render>}
         {hasFeedback?.value && <Render content={feedbackIcon?.value}></Render>}
       </>
     );

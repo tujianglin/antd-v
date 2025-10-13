@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { cloneVNode, computed, createVNode, getCurrentInstance, ref, watch } from 'vue';
+import { cloneVNode, computed, createVNode, getCurrentInstance, ref } from 'vue';
 import type { PaginationProps } from './interface';
 import zhCN from './locale/zh_CN';
 import KeyCode from '@/vc-util/KeyCode';
@@ -61,7 +61,7 @@ function isInteger(v: number) {
   return typeof value === 'number' && !Number.isNaN(value) && isFinite(value) && Math.floor(value) === value;
 }
 
-const showSizeChanger = computed(() => defaultShowSizeChanger || total > totalBoundaryShowSizeChanger);
+const showSizeChanger = computed(() => total > totalBoundaryShowSizeChanger && defaultShowSizeChanger !== false);
 const itemRender = computed<any>(() => defaultItemRender || ((_, __, element) => element));
 
 const paginationRef = ref<HTMLUListElement>(null);
@@ -73,16 +73,6 @@ const current = defineModel('current', {
   get: (val) => Math.max(1, Math.min(val, calculatePage(undefined, pageSize.value, total))),
 });
 
-const internalInputVal = ref(current.value);
-
-watch(
-  current,
-  () => {
-    internalInputVal.value = current.value;
-  },
-  { immediate: true },
-);
-
 const jumpPrevPage = computed(() => Math.max(1, current.value - (showLessItems ? 3 : 5)));
 const jumpNextPage = computed(() =>
   Math.min(calculatePage(undefined, pageSize.value, total), current.value + (showLessItems ? 3 : 5)),
@@ -92,7 +82,7 @@ const vm = getCurrentInstance();
 function getItemIcon(icon: any, label: string) {
   let iconNode = icon || <button type="button" aria-label={label} class={`${prefixCls}-item-link`} />;
   if (typeof icon === 'function') {
-    iconNode = createVNode(icon, vm.props);
+    iconNode = createVNode(icon);
   }
   return iconNode as any;
 }
@@ -104,7 +94,7 @@ function getValidValue(e: any): number {
   if (inputValue === '') {
     value = inputValue;
   } else if (Number.isNaN(Number(inputValue))) {
-    value = internalInputVal.value;
+    value = current.value;
   } else if (inputValue >= allPages) {
     value = allPages;
   } else {
@@ -131,8 +121,8 @@ function handleKeyDown(event: KeyboardEvent) {
 
 function handleKeyUp(event) {
   const value = getValidValue(event);
-  if (value !== internalInputVal.value) {
-    internalInputVal.value = value;
+  if (value !== current.value) {
+    current.value = value;
   }
 
   switch (event) {
@@ -159,9 +149,7 @@ function changePageSize(size: number) {
   const nextCurrent = current.value > newCurrent && newCurrent !== 0 ? newCurrent : current.value;
 
   pageSize.value = size;
-  internalInputVal.value = newCurrent;
   onShowSizeChange?.(current.value, size);
-  current.value = newCurrent;
   onChange?.(nextCurrent, size);
 }
 
@@ -175,8 +163,8 @@ function handleChange(page: number) {
       newPage = 1;
     }
 
-    if (newPage !== internalInputVal.value) {
-      internalInputVal.value = newPage;
+    if (newPage !== current.value) {
+      current.value = newPage;
     }
     current.value = newPage;
     onChange?.(newPage, pageSize.value);
@@ -239,8 +227,8 @@ function renderNext(nextPage: number) {
 }
 
 function handleGoTO(event: any) {
-  if (event.type === 'click' || event.keyCode === KeyCode.ENTER) {
-    handleChange(internalInputVal.value);
+  if (event?.type === 'click' || event.keyCode === KeyCode.ENTER) {
+    handleChange(current.value);
   }
 }
 
@@ -320,12 +308,12 @@ const simplePager = () => {
     result = (
       <li title={showTitle ? `${current.value}/${allPages.value}` : null} class={`${prefixCls}-simple-pager`}>
         {isReadOnly.value ? (
-          <Render content={internalInputVal.value}></Render>
+          <Render content={current.value}></Render>
         ) : (
           <input
             type="text"
             aria-label={locale.jump_to}
-            value={internalInputVal.value}
+            v-model:value={current.value}
             disabled={disabled}
             onKeydown={handleKeyDown}
             onKeyup={handleKeyUp}

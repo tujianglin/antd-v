@@ -3,7 +3,7 @@ import { isValidElement } from './isValidNode';
 import type { AnyObject } from './type';
 
 export function isFragment(child: any): boolean {
-  return child && isValidElement(child) && child.type === Fragment;
+  return child && isValidElement(child) && child?.type === Fragment;
 }
 
 type RenderProps = AnyObject | ((originProps: AnyObject) => AnyObject | undefined);

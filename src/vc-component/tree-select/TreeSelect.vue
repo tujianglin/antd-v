@@ -3,7 +3,7 @@ import { BaseSelect, type BaseSelectPropsWithoutPrivate } from '@/vc-component/s
 import type { IconType } from '@/vc-component/tree/interface';
 import type { ExpandAction } from '@/vc-component/tree/Tree.vue';
 import { conductCheck } from '@/vc-component/tree/utils/conductUtil';
-import useMergedState from '@/vc-util/hooks/useMergedState';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 import { reactiveComputed } from '@vueuse/core';
 import { isEmpty } from 'lodash-es';
 import { computed, ref, toRefs, useId, useTemplateRef, type CSSProperties } from 'vue';
@@ -98,7 +98,7 @@ export interface TreeSelectProps<ValueType = any, OptionType extends DataNode = 
 
   // >>> Tree
   treeLine?: boolean;
-  treeIcon?: IconType;
+  treeIcon?: any;
   showTreeIcon?: boolean;
   switcherIcon?: IconType;
   treeMotion?: any;
@@ -204,10 +204,8 @@ const mergedShowCheckedStrategy = computed(() => {
 const mergedFieldNames = computed<FieldNames>(() => fillFieldNames(fieldNames));
 
 // =========================== Search ===========================
-const [mergedSearchValue, setSearchValue] = useMergedState('', {
-  value: searchValue,
-  postState: (search) => search || '',
-});
+const [internalSearchValue, setSearchValue] = useControlledState('', searchValue);
+const mergedSearchValue = computed(() => internalSearchValue.value || '');
 
 const onInternalSearch = (searchText) => {
   setSearchValue(searchText);
@@ -301,7 +299,7 @@ const convert2LabelValues = (draftValues: DefaultValueType) => {
     } else if (rawLabel === undefined) {
       // We try to find in current `labelInValue` value
       const labelInValueItem = toLabeledValues(internalValue.value).find((labeledItem) => labeledItem.value === rawValue);
-      rawLabel = labelInValueItem.label;
+      rawLabel = labelInValueItem?.label;
     }
     return {
       label: rawLabel,

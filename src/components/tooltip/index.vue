@@ -293,7 +293,7 @@ const childCls = computed(() => {
     >
       <template #default="props">
         <component v-if="tempOpen" :is="cloneVNode(children, { class: childCls, ...props })" />
-        <Render v-else :content="children" v-bind="props" />
+        <Render v-else :content="children" />
       </template>
       <template #overlay>
         <ContextIsolator space>

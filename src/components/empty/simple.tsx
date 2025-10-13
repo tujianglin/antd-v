@@ -21,7 +21,7 @@ export default defineComponent({
 
     return () => (
       <svg width="64" height="41" viewBox="0 0 64 41" xmlns="http://www.w3.org/2000/svg">
-        <title>{locale?.description || 'Empty'}</title>
+        <title>{locale?.value?.description || 'Empty'}</title>
         <g transform="translate(0 1)" fill="none" fill-rule="evenodd">
           <ellipse fill={shadowColor.value} cx="32" cy="33" rx="32" ry="7" />
           <g fill-rule="nonzero" stroke={borderColor.value}>

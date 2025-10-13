@@ -16,20 +16,20 @@ const style = computed(() => {
     position: 'absolute',
     right: 0,
     backgroundColor: 'red',
-    height: 2,
+    height: '2px',
   };
   switch (dropPosition) {
     case -1:
       result.top = 0;
-      result.left = -dropLevelOffset * indent;
+      result.left = `${-dropLevelOffset * indent}px`;
       break;
     case 1:
       result.bottom = 0;
-      result.left = -dropLevelOffset * indent;
+      result.left = `${-dropLevelOffset * indent}px`;
       break;
     case 0:
       result.bottom = 0;
-      result.left = indent;
+      result.left = `${indent}px`;
       break;
   }
   return result;

@@ -1,6 +1,6 @@
+import type { VueNode } from '@/vc-util/type';
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, CSSProperties, HTMLAttributes, VNode } from 'vue';
 import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
-import type { RenderNode } from '../_util/type';
 import type { SizeType } from '../config-provider/SizeContext';
 import { PresetColors } from '../theme/internal';
 
@@ -31,12 +31,12 @@ export interface BaseButtonProps {
   type?: ButtonType;
   color?: ButtonColorType;
   variant?: ButtonVariantType;
-  icon?: RenderNode;
+  icon?: VueNode;
   iconPosition?: 'start' | 'end';
   shape?: ButtonShape;
   size?: SizeType;
   disabled?: boolean;
-  loading?: boolean | { delay?: number; icon?: RenderNode };
+  loading?: boolean | { delay?: number; icon?: VueNode };
   prefixCls?: string;
   class?: string;
   rootClassName?: string;

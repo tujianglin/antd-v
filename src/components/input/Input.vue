@@ -31,7 +31,7 @@ const {
   onBlur,
   onFocus,
   suffix,
-  allowClear,
+  allowClear = true,
   addonAfter,
   addonBefore,
   class: className,

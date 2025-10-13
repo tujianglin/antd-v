@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { omit } from 'lodash-es';
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, toRefs, useAttrs, watch } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
-import isValidNode from '../_util/isValidNode';
+import isValidNode, { isValidElement } from '../_util/isValidNode';
 import { useComposeRef } from '../_util/type';
 import { Wave } from '../_util/wave';
 import { useConfigContextInject } from '../config-provider';
@@ -223,7 +223,7 @@ const classes = computed(() => {
       [`${prefixCls.value}-color-${mergedColorText.value}`]: mergedColorText.value,
       [`${prefixCls.value}-variant-${mergedVariant.value}`]: mergedVariant.value,
       [`${prefixCls.value}-${sizeCls.value}`]: sizeCls.value,
-      [`${prefixCls.value}-icon-only`]: !defaultSlot.value && defaultSlot.value.length !== 0 && !!iconType?.value,
+      [`${prefixCls.value}-icon-only`]: !isValidElement(defaultSlot.value) && !!iconType?.value,
       [`${prefixCls.value}-background-ghost`]: ghost && !isUnBorderedButtonVariant(mergedVariant.value),
       [`${prefixCls.value}-loading`]: innerLoading.value,
       [`${prefixCls.value}-two-chinese-chars`]: hasTwoCNChar?.value && mergedInsertSpace.value && !innerLoading?.value,
@@ -254,11 +254,11 @@ const mergedRef = useComposeRef();
 
 const iconNode = () => {
   return iconSlot.value && !innerLoading.value ? (
-    <IconWrapper prefixCls={prefixCls.value} {...iconSharedProps}>
+    <IconWrapper prefixCls={prefixCls.value} {...iconSharedProps.value}>
       <Render content={iconSlot.value}></Render>
     </IconWrapper>
   ) : loading && typeof loading === 'object' && loading.icon ? (
-    <IconWrapper prefixCls={prefixCls.value} {...iconSharedProps}>
+    <IconWrapper prefixCls={prefixCls.value} {...iconSharedProps.value}>
       <Render content={loading.icon}></Render>
     </IconWrapper>
   ) : (
@@ -267,7 +267,7 @@ const iconNode = () => {
       prefixCls={prefixCls.value}
       loading={innerLoading.value}
       mount={isMountRef.value}
-      {...iconSharedProps}
+      {...iconSharedProps.value}
     />
   );
 };

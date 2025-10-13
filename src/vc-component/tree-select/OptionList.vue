@@ -315,7 +315,7 @@ const hasLoadDataFn = computed(() => !searchValue?.value);
 const syncLoadData = computed(() => (hasLoadDataFn.value ? loadData?.value : null) as unknown as TreeProps['loadData']);
 
 const treeProps = computed(() => {
-  const result: Partial<TreeProps> = {
+  const result: Partial<TreeProps & { expandedKeys: VueKey[] }> = {
     fieldNames: fieldNames.value,
   };
   if (treeLoadedKeys.value) {

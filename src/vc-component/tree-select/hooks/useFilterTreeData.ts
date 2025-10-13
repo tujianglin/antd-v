@@ -17,8 +17,8 @@ const useFilterTreeData = (
   const fieldChildren = computed(() => fieldNames.value.children);
 
   return computed(() => {
-    if (!searchValue || filterTreeNode.value === false) {
-      return treeData;
+    if (!searchValue.value || filterTreeNode.value === false) {
+      return treeData.value;
     }
 
     const filterOptionFunc: FilterFn =

@@ -2,6 +2,8 @@ import DefaultEmptyImg from './empty';
 import InternalEmpty from './index.vue';
 import SimpleEmptyImg from './simple';
 
+export type { EmptyProps } from './index.vue';
+
 type CompoundedComponent = typeof InternalEmpty & {
   PRESENTED_IMAGE_DEFAULT: typeof DefaultEmptyImg;
   PRESENTED_IMAGE_SIMPLE: typeof SimpleEmptyImg;

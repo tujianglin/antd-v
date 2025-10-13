@@ -421,17 +421,20 @@ const onContainerBlur = (e) => {
     return;
   }
 
-  if (mergedSearchValue.value) {
-    // `tags` mode should move `searchValue` into values
-    if (mode === 'tags') {
-      onSearch(mergedSearchValue.value, { source: 'submit' });
-    } else if (mode === 'multiple') {
-      // `multiple` mode only clean the search value but not trigger event
-      onSearch('', {
-        source: 'blur',
-      });
+  // 关闭等待 open = false 再触发
+  setTimeout(() => {
+    if (mergedSearchValue.value) {
+      // `tags` mode should move `searchValue` into values
+      if (mode === 'tags') {
+        onSearch(mergedSearchValue.value, { source: 'submit' });
+      } else if (mode === 'multiple') {
+        // `multiple` mode only clean the search value but not trigger event
+        onSearch('', {
+          source: 'blur',
+        });
+      }
     }
-  }
+  }, 300);
 
   if (onBlur) {
     onBlur(e);

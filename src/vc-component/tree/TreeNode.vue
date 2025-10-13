@@ -57,7 +57,7 @@ const isDisabled = computed(() => {
 
 const isCheckable = computed(() => {
   // Return false if tree or treeNode is not checkable
-  if (!context.checkable || otherProps.checkable === false) {
+  if (!context.checkable) {
     return false;
   }
   return context.checkable;
@@ -359,6 +359,7 @@ const selectorNode = () => {
   } else {
     titleNode = title;
   }
+
   return (
     <span
       ref={selectHandleRef}

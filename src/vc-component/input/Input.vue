@@ -242,6 +242,7 @@ const getSuffix = () => {
     <input
       v-bind="{
         ...omit($props, [
+          'style',
           'value',
           'prefixCls',
           'onPressenter',
