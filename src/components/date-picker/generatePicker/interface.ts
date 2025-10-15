@@ -59,6 +59,7 @@ type InjectDefaultProps<Props> = Omit<Props, 'locale' | 'generateConfig' | 'hide
   variant?: Variant;
   rootClassName?: string;
   classNames?: PickerClassNames;
+  valueFormat?: string;
 };
 
 /** Base Single Picker props */
@@ -67,10 +68,7 @@ export type PickerProps<DateType extends AnyObject = any> = InjectDefaultProps<R
 /** Base Range Picker props */
 export type RangePickerProps<DateType extends AnyObject = any> = InjectDefaultProps<RcRangePickerProps<DateType>>;
 
-export type GenericTimePickerProps<DateType extends AnyObject = any> = Omit<PickerProps<DateType>, 'picker' | 'showTime'> & {
-  /** @deprecated Please use `onCalendarChange` instead */
-  onSelect?: (value: DateType) => void;
-};
+export type GenericTimePickerProps<DateType extends AnyObject = any> = Omit<PickerProps<DateType>, 'picker' | 'showTime'>;
 
 /**
  * Single Picker has the `multiple` prop,
@@ -81,9 +79,7 @@ export type PickerPropsWithMultiple<
   DateType extends AnyObject = any,
   InnerPickerProps extends PickerProps<DateType> = PickerProps<DateType>,
   ValueType = DateType,
-> = Omit<InnerPickerProps, 'defaultValue' | 'value' | 'onChange' | 'onOk'> & {
-  defaultValue?: ValueType | null;
-  value?: ValueType | null;
+> = Omit<InnerPickerProps, 'onChange' | 'onOk'> & {
   onChange?: (date: ValueType, dateString: string | string[]) => void;
   onOk?: (date: ValueType) => void;
 };

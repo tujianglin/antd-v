@@ -1,7 +1,6 @@
 <script lang="tsx" setup generic="DateType extends object = any">
-import useMergedState from '@/vc-util/hooks/useMergedState';
 import pickAttrs from '@/vc-util/pickAttrs';
-import { reactiveComputed, toReactive } from '@vueuse/core';
+import { toReactive } from '@vueuse/core';
 import { omit } from 'lodash-es';
 import { computed, nextTick, ref, toRefs, useTemplateRef, watch } from 'vue';
 import useSemantic from '../hooks/useSemantic';
@@ -32,6 +31,7 @@ import PickerTrigger from '../PickerTrigger/index.vue';
 import { pickTriggerProps } from '../PickerTrigger/util';
 import clsx from 'clsx';
 import SingleSelector from './Selector/SingleSelector/index.vue';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 
 // TODO: isInvalidateDate with showTime.disabledTime should not provide `range` prop
 
@@ -46,8 +46,6 @@ export interface BasePickerProps<DateType extends object = any> extends SharedPi
   maxTagCount?: number | 'responsive';
 
   // Value
-  value?: DateType | DateType[] | null;
-  defaultValue?: DateType | DateType[];
   onChange?: (date: DateType | DateType[], dateString: string | string[]) => void;
   onCalendarChange?: (date: DateType | DateType[], dateString: string | string[], info: BaseInfo) => void;
   /**  */
@@ -56,19 +54,6 @@ export interface BasePickerProps<DateType extends object = any> extends SharedPi
   // Placeholder
   placeholder?: string;
 
-  // Picker Value
-  /**
-   * Config the popup panel date.
-   * Every time active the input to open popup will reset with `defaultPickerValue`.
-   *
-   * Note: `defaultPickerValue` priority is higher than `value` for the first open.
-   */
-  defaultPickerValue?: DateType | null;
-  /**
-   * Config each start & end field popup panel date.
-   * When config `pickerValue`, you must also provide `onPickerValueChange` to handle changes.
-   */
-  pickerValue?: DateType | null;
   /**
    * Each popup panel `pickerValue` change will trigger the callback.
    * @param date The changed picker value
@@ -95,7 +80,7 @@ export interface BasePickerProps<DateType extends object = any> extends SharedPi
 
 export interface PickerProps<DateType extends object = any>
   extends BasePickerProps<DateType>,
-    Omit<SharedTimeProps<DateType>, 'format' | 'defaultValue'> {}
+    Omit<SharedTimeProps<DateType>, 'format'> {}
 
 /** Internal usage. For cross function get same aligned props */
 export type ReplacedPickerProps<DateType extends object = any> = {
@@ -116,8 +101,16 @@ const props = withDefaults(defineProps<PickerProps<DateType>>(), {
   components: () => ({}),
 });
 
+const innerValue = defineModel<DateType | DateType[] | null>('value');
+const innerPickerValue = defineModel<DateType | DateType[]>('pickerValue');
+const open = defineModel<boolean>('open');
+
 // ========================= Prop =========================
-const [filledProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate] = useFilledProps(toReactive(props));
+const [filledProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate] = useFilledProps(
+  toReactive(props),
+  innerValue,
+  innerPickerValue,
+);
 
 const {
   // Style
@@ -128,7 +121,6 @@ const {
 
   // Value
   order,
-  defaultValue,
   value,
   needConfirm,
   onChange,
@@ -140,9 +132,6 @@ const {
   minDate,
   maxDate,
 
-  // Open
-  defaultOpen,
-  open,
   onOpenChange,
 
   // Picker
@@ -160,7 +149,6 @@ const {
   multiple,
 
   // Picker Value
-  defaultPickerValue,
   pickerValue,
   onPickerValueChange,
 
@@ -208,15 +196,14 @@ function pickerParam<T>(values: T | T[]) {
   return multiple.value ? values : values[0];
 }
 
-const toggleDates = computed(() => useToggleDates<DateType>(generateConfig.value, locale.value, internalPicker.value));
+const toggleDates = useToggleDates<DateType>(generateConfig, locale, internalPicker);
 
 // ======================= Semantic =======================
-const { mergedClassNames, mergedStyles } = toRefs(reactiveComputed(() => useSemantic(propClassNames.value, propStyles.value)));
+const [mergedClassNames, mergedStyles] = useSemantic(propClassNames, propStyles);
 
 // ========================= Open =========================
 const [mergedOpen, triggerOpen] = useOpen(
   open,
-  defaultOpen,
   computed(() => [disabled.value]),
   onOpenChange.value,
 );
@@ -241,9 +228,8 @@ const [mergedValue, setInnerValue, getCalendarValue, triggerCalendarChange, trig
   generateConfig,
   locale,
   formatList,
-  computed(() => false),
+  false,
   order,
-  defaultValue,
   value,
   onInternalCalendarChange,
   onInternalOk,
@@ -268,9 +254,7 @@ const onSharedBlur = (event: FocusEvent) => {
 };
 
 // ========================= Mode =========================
-const [mergedMode, setMode] = useMergedState(picker.value, {
-  defaultValue: mode.value,
-});
+const [mergedMode, setMode] = useControlledState(picker.value, mode);
 
 /** Extends from `mergedMode` to patch `datetime` mode */
 const internalMode = computed<InternalMode>(() =>
@@ -278,7 +262,7 @@ const internalMode = computed<InternalMode>(() =>
 );
 
 // ======================= Show Now =======================
-const mergedShowNow = computed(() => useShowNow(picker.value, mergedMode.value, showNow.value));
+const mergedShowNow = useShowNow(picker, mergedMode, showNow);
 
 const onInternalChange = computed(
   () =>
@@ -303,6 +287,7 @@ const [, triggerSubmitChange] = useRangeValue<any>(
   focused,
   mergedOpen,
   isInvalidateDate,
+  innerValue,
 );
 
 // ======================= Validate =======================
@@ -332,7 +317,6 @@ const [currentPickerValue, setCurrentPickerValue] = useRangePickerValue(
   activeIndex,
   internalPicker,
   computed(() => false), // multiplePanel,
-  defaultPickerValue,
   pickerValue,
   computed(() => toArray(showTime.value?.defaultOpenValue) || []),
   onInternalPickerValueChange,
@@ -420,7 +404,7 @@ const onPresetHover = (nextValue: DateType | null) => {
 
 // TODO: handle this
 const onPresetSubmit = (nextValue: DateType) => {
-  const nextCalendarValues = multiple.value ? toggleDates?.value?.(calendarValue.value, nextValue) : [nextValue];
+  const nextCalendarValues = multiple.value ? toggleDates?.(calendarValue.value, nextValue) : [nextValue];
   const passed = triggerSubmitChange(nextCalendarValues);
 
   if (passed && !multiple.value) {
@@ -453,7 +437,7 @@ const onPanelSelect = (date: DateType) => {
     return;
   }
 
-  const nextValues = multiple.value ? toggleDates?.value?.(calendarValue.value, date) : [date];
+  const nextValues = multiple.value ? toggleDates?.(calendarValue.value, date) : [date];
 
   // Only trigger calendar event but not update internal `calendarValue` state
   triggerCalendarChange(nextValues);
@@ -513,7 +497,7 @@ const panel = () => (
     // Value
     format={maskFormat.value}
     value={calendarValue.value}
-    isInvalid={isInvalidateDate.value as any}
+    isInvalid={isInvalidateDate as any}
     onChange={null}
     onSelect={onPanelSelect}
     // PickerValue

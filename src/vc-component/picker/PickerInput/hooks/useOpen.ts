@@ -8,7 +8,6 @@ import useDelayState from './useDelayState';
  */
 export default function useOpen(
   open?: Ref<boolean>,
-  defaultOpen?: Ref<boolean>,
   disabledList: Ref<boolean[]> = ref([]),
   onOpenChange?: (open: boolean) => void,
 ): [open: Ref<boolean>, setOpen: (open: boolean, config?: OpenConfig) => void] {
@@ -16,8 +15,7 @@ export default function useOpen(
 
   // Delay for handle the open state, in case fast shift from `open` -> `close` -> `open`
   // const [rafOpen, setRafOpen] = useLockState(open, defaultOpen || false, onOpenChange);
-  const [rafOpen, setRafOpen] = useDelayState(mergedOpen, defaultOpen || ref(false), onOpenChange);
-
+  const [rafOpen, setRafOpen] = useDelayState(mergedOpen, onOpenChange);
   function setOpen(next: boolean, config: OpenConfig = {}) {
     if (!config.inherit || rafOpen.value) {
       setRafOpen(next, config.force);

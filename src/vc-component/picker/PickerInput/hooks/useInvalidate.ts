@@ -1,3 +1,4 @@
+import type { Ref } from 'vue';
 import type { GenerateConfig } from '../../generate';
 import type { PanelMode, RangeTimeProps, SharedPickerProps, SharedTimeProps } from '../../interface';
 
@@ -5,37 +6,37 @@ import type { PanelMode, RangeTimeProps, SharedPickerProps, SharedTimeProps } fr
  * Check if provided date is valid for the `disabledDate` & `showTime.disabledTime`.
  */
 export default function useInvalidate<DateType extends object = any>(
-  generateConfig: GenerateConfig<DateType>,
-  picker: PanelMode,
+  generateConfig: Ref<GenerateConfig<DateType>>,
+  picker: Ref<PanelMode>,
   disabledDate?: SharedPickerProps<DateType>['disabledDate'],
-  showTime?: SharedTimeProps<DateType> | RangeTimeProps<DateType>,
+  showTime?: Ref<SharedTimeProps<DateType> | RangeTimeProps<DateType>>,
 ) {
   // Check disabled date
   const isInvalidate = (date: DateType, info?: { from?: DateType; activeIndex: number }) => {
-    const outsideInfo = { type: picker, ...info };
+    const outsideInfo = { type: picker.value, ...info };
     delete outsideInfo.activeIndex;
     if (
       // Date object is invalid
-      !generateConfig.isValidate(date) ||
+      !generateConfig?.value?.isValidate?.(date) ||
       // Date is disabled by `disabledDate`
       (disabledDate && disabledDate(date, outsideInfo))
     ) {
       return true;
     }
 
-    if ((picker === 'date' || picker === 'time') && showTime) {
+    if ((picker?.value === 'date' || picker?.value === 'time') && showTime?.value) {
       const range = info && info.activeIndex === 1 ? 'end' : 'start';
       const { disabledHours, disabledMinutes, disabledSeconds, disabledMilliseconds } =
-        showTime.disabledTime?.(date, range, { from: outsideInfo.from }) || {};
+        showTime?.value?.disabledTime?.(date, range, { from: outsideInfo.from }) || {};
 
       const mergedDisabledHours = disabledHours;
       const mergedDisabledMinutes = disabledMinutes;
       const mergedDisabledSeconds = disabledSeconds;
 
-      const hour = generateConfig.getHour(date);
-      const minute = generateConfig.getMinute(date);
-      const second = generateConfig.getSecond(date);
-      const millisecond = generateConfig.getMillisecond(date);
+      const hour = generateConfig?.value?.getHour(date);
+      const minute = generateConfig?.value?.getMinute(date);
+      const second = generateConfig?.value?.getSecond(date);
+      const millisecond = generateConfig?.value?.getMillisecond(date);
 
       if (mergedDisabledHours && mergedDisabledHours().includes(hour)) {
         return true;

@@ -1,13 +1,16 @@
+import { computed, type Ref } from 'vue';
 import type { FormatType } from '../../interface';
 
 export default function useInputReadOnly<DateType = any>(
-  formatList: FormatType<DateType>[],
-  inputReadOnly?: boolean,
-  multiple?: boolean,
+  formatList: Ref<FormatType<DateType>[]>,
+  inputReadOnly?: Ref<boolean>,
+  multiple?: Ref<boolean>,
 ) {
-  if (typeof formatList[0] === 'function' || multiple) {
-    return true;
-  }
+  return computed(() => {
+    if (typeof formatList.value[0] === 'function' || multiple?.value) {
+      return true;
+    }
 
-  return inputReadOnly;
+    return inputReadOnly?.value;
+  });
 }

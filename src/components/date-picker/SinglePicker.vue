@@ -24,6 +24,7 @@ import RCPicker from '@/vc-component/picker';
 import type { GenerateConfig } from '@/vc-component/picker/generate';
 import { getMergedStatus, getStatusClassNames } from '../_util/statusUtils';
 import SuffixIcon from './generatePicker/SuffixIcon.vue';
+import dayjs from 'dayjs';
 
 const {
   prefixCls: customizePrefixCls,
@@ -47,8 +48,23 @@ const {
   picker,
   showNow = true,
   allowClear = true,
+  valueFormat,
   ...restProps
 } = defineProps<PickerProps<DateType> & { pickerType?: 'timePicker' | 'datePicker'; generateConfig: GenerateConfig<DateType> }>();
+
+const value = defineModel<DateType | DateType[] | null>('value', {
+  set(v) {
+    if (valueFormat) return dayjs(v[0]).format(valueFormat);
+    return v;
+  },
+  get: (e: any) => {
+    if (!e) return e;
+    if (generateConfig.isValidate(e)) return e;
+    if (valueFormat && !generateConfig.isValidate(e)) return dayjs(e);
+  },
+});
+const pickerValue = defineModel<DateType | DateType[]>('pickerValue');
+const open = defineModel<boolean>('open');
 
 const [mergedClassNames, mergedStyles] = useMergedPickerSemantic(
   computed(() => pickerType),
@@ -141,6 +157,9 @@ const [zIndex] = useZIndex(
     <RCPicker
       ref="innerRef"
       v-bind="{ ...additionalProps, ...restProps }"
+      v-model:value="value"
+      v-model:picker-value="pickerValue"
+      v-model:open="open"
       :show-now="showNow"
       :placeholder="getPlaceholder(locale, picker, placeholder)"
       :suffix-icon="mergedSuffixIcon"

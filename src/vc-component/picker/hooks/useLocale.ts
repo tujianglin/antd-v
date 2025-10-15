@@ -1,3 +1,4 @@
+import { computed, type Ref } from 'vue';
 import type { Locale, SharedTimeProps } from '../interface';
 
 export function fillTimeFormat(
@@ -98,9 +99,11 @@ function fillLocale(
  * Fill locale format as start up
  */
 export default function useLocale<DateType extends object>(
-  locale: Locale,
-  showProps: Pick<SharedTimeProps<DateType>, 'showHour' | 'showMinute' | 'showSecond' | 'showMillisecond' | 'use12Hours'>,
+  locale: Ref<Locale>,
+  showProps: Ref<Pick<SharedTimeProps<DateType>, 'showHour' | 'showMinute' | 'showSecond' | 'showMillisecond' | 'use12Hours'>>,
 ) {
-  const { showHour, showMinute, showSecond, showMillisecond, use12Hours } = showProps;
-  return fillLocale(locale, showHour, showMinute, showSecond, showMillisecond, use12Hours);
+  return computed(() => {
+    const { showHour, showMinute, showSecond, showMillisecond, use12Hours } = showProps?.value || {};
+    return fillLocale(locale.value, showHour, showMinute, showSecond, showMillisecond, use12Hours);
+  });
 }

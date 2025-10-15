@@ -5,12 +5,11 @@ import type { TimeRangePickerProps } from './index.vue';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const props = withDefaults(defineProps<TimeRangePickerProps>(), {
-  showHour: true,
-  showMinute: true,
-  showSecond: true,
-  showNow: true,
-});
+const { allowClear = true } = defineProps<TimeRangePickerProps>();
+
+const value = defineModel<any[]>('value');
+const pickerValue = defineModel<any[]>('pickerValue');
+const open = defineModel<boolean>('open');
 
 const domRef = useTemplateRef('domRef');
 
@@ -21,5 +20,14 @@ defineExpose({
 const { RangePicker: InternalRangePicker } = DatePicker;
 </script>
 <template>
-  <InternalRangePicker ref="domRef" v-bind="props" picker="time" :mode="undefined" />
+  <InternalRangePicker
+    ref="domRef"
+    v-bind="{...$props as any}"
+    v-model:value="value"
+    v-model:picker-value="pickerValue"
+    v-model:open="open"
+    :allow-clear="allowClear"
+    picker="time"
+    :mode="undefined"
+  />
 </template>

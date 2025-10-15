@@ -24,6 +24,8 @@ import { TIME } from './generatePicker/constant';
 import SuffixIcon from './generatePicker/SuffixIcon.vue';
 import { SwapRightOutlined } from '@ant-design/icons-vue';
 import type { RangePickerProps } from './interface';
+import { isArray } from 'lodash-es';
+import dayjs from 'dayjs';
 
 const {
   prefixCls: customizePrefixCls,
@@ -42,9 +44,29 @@ const {
   picker,
   rootClassName,
   suffixIcon,
+  generateConfig,
   allowClear = true,
+  valueFormat,
   ...restProps
 } = defineProps<RangePickerProps<DateType> & { generateConfig: GenerateConfig<DateType> }>();
+
+const value = defineModel<any[]>('value', {
+  set(v) {
+    if (valueFormat) return [dayjs(v[0]).format(valueFormat), dayjs(v[1]).format(valueFormat)];
+    return v;
+  },
+  get: (e) => {
+    if (!e) return e;
+    if (isArray(e)) {
+      return [
+        generateConfig.isValidate(e[0]) ? e[0] : valueFormat && !generateConfig.isValidate(e[0]) && dayjs(e[0]),
+        generateConfig.isValidate(e[1]) ? e[1] : valueFormat && !generateConfig.isValidate(e[1]) && dayjs(e[1]),
+      ];
+    }
+  },
+});
+const pickerValue = defineModel<any[]>('pickerValue');
+const open = defineModel<boolean>('open');
 
 const pickerType = computed(() => (picker === TIME ? 'timePicker' : 'datePicker'));
 
@@ -114,6 +136,9 @@ const [zIndex] = useZIndex(
     <RCRangePicker
       ref="innerRef"
       v-bind="{ ...restProps as any }"
+      v-model:value="value"
+      v-model:picker-value="pickerValue"
+      v-model:open="open"
       :separator="() => h('span', { 'aria-label': 'to', class: `${prefixCls}-separator` }, h(SwapRightOutlined))"
       :disabled="mergedDisabled"
       :placement="placement"

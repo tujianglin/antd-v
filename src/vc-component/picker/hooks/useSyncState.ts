@@ -1,4 +1,4 @@
-import { ref, shallowRef, type Ref } from 'vue';
+import { ref, type Ref } from 'vue';
 
 /**
  * Sync value with state.
@@ -9,7 +9,7 @@ export default function useSyncState<T>(
   defaultValue: Ref<T>,
   controlledValue?: T,
 ): [getter: (useControlledValueFirst?: boolean) => T, setter: (nextValue: T) => void, value: T] {
-  const valueRef = shallowRef(defaultValue.value);
+  const valueRef = ref(defaultValue.value);
   const forceUpdate = ref(Symbol('update'));
 
   const getter = (useControlledValueFirst?: boolean) => {

@@ -1,9 +1,9 @@
 import warning from '@/vc-util/warning';
 import { reactiveComputed, type ReactiveComputedReturn } from '@vueuse/core';
-import { computed, toRefs, type ComputedRef, type Ref } from 'vue';
+import { computed, ref, toRefs, type ComputedRef, type Ref } from 'vue';
 import useLocale from '../../hooks/useLocale';
 import { fillShowTimeConfig, getTimeProps } from '../../hooks/useTimeConfig';
-import type { FormatType, InternalMode, PanelMode, PickerMode } from '../../interface';
+import type { FormatType, InternalMode, PickerMode } from '../../interface';
 import { toArray } from '../../utils/miscUtil';
 import type { RangePickerProps } from '../RangePicker.vue';
 import { fillClearIcon } from '../Selector/hooks/useClearIcon';
@@ -36,10 +36,6 @@ type PickedProps<DateType extends object = any> = Pick<
   multiple?: boolean;
   // RangePicker showTime definition is different with Picker
   showTime?: any;
-  value?: any;
-  defaultValue?: any;
-  pickerValue?: any;
-  defaultPickerValue?: any;
 };
 
 type ExcludeBooleanType<T> = T extends boolean ? never : T;
@@ -48,14 +44,16 @@ type GetGeneric<T> = T extends PickedProps<infer U> ? U : never;
 
 type ToArrayType<T, DateType> = T extends any[] ? T : DateType[];
 
-function useList<T>(value: T | T[], fillMode: boolean = false) {
-  const list = value ? toArray(value) : value;
+function useList<T>(value: Ref<T | T[]>, fillMode: Ref<boolean> = ref(false)) {
+  return computed(() => {
+    const list = value.value ? toArray(value.value) : value.value;
 
-  if (fillMode && list) {
-    list[1] = list[1] || list[0];
-  }
+    if (fillMode?.value && list) {
+      list[1] = list[1] || list[0];
+    }
 
-  return list;
+    return list;
+  });
 }
 
 export type FilledProps<InProps extends PickedProps, DateType extends GetGeneric<InProps>, UpdaterProps extends object> = Omit<
@@ -65,10 +63,8 @@ export type FilledProps<InProps extends PickedProps, DateType extends GetGeneric
   UpdaterProps & {
     picker: PickerMode;
     showTime?: ExcludeBooleanType<InProps['showTime']>;
-    value?: ToArrayType<InProps['value'], DateType>;
-    defaultValue?: ToArrayType<InProps['value'], DateType>;
-    pickerValue?: ToArrayType<InProps['value'], DateType>;
-    defaultPickerValue?: ToArrayType<InProps['value'], DateType>;
+    value?: ToArrayType<DateType | DateType[], DateType>;
+    pickerValue?: ToArrayType<DateType | DateType[], DateType>;
   };
 
 /**
@@ -83,6 +79,8 @@ export default function useFilledProps<
   UpdaterProps extends object,
 >(
   props: ReactiveComputedReturn<InProps>,
+  value?: Ref<any>,
+  pickerValue?: Ref<any>,
   updater?: () => UpdaterProps,
 ): [
   filledProps: ComputedRef<FilledProps<InProps, DateType, UpdaterProps>>,
@@ -90,7 +88,7 @@ export default function useFilledProps<
   complexPicker: ComputedRef<boolean>,
   formatList: Ref<FormatType<any>[]>,
   maskFormat: Ref<string>,
-  isInvalidateDate: ComputedRef<ReturnType<UseInvalidate<DateType>>>,
+  isInvalidateDate: ReturnType<UseInvalidate<DateType>>,
 ] {
   const {
     generateConfig,
@@ -106,17 +104,10 @@ export default function useFilledProps<
     minDate,
     maxDate,
     showTime,
-
-    value,
-    defaultValue,
-    pickerValue,
-    defaultPickerValue,
   } = toRefs(props);
 
-  const values = computed(() => useList(value.value));
-  const defaultValues = computed(() => useList(defaultValue.value));
-  const pickerValues = computed(() => useList(pickerValue.value) || []);
-  const defaultPickerValues = computed(() => useList(defaultPickerValue.value) || []);
+  const values = useList(value);
+  const pickerValues = useList(pickerValue);
 
   // ======================== Picker ========================
   /** Almost same as `picker`, but add `datetime` for `date` with `showTime` */
@@ -133,7 +124,7 @@ export default function useFilledProps<
   const { timeProps, localeTimeProps, showTimeFormat, propFormat } = toRefs(reactiveComputed(() => getTimeProps(props)));
 
   // ======================= Locales ========================
-  const mergedLocale = computed(() => useLocale(locale.value, localeTimeProps.value));
+  const mergedLocale = useLocale(locale, localeTimeProps);
 
   const mergedShowTime = computed(() => {
     return fillShowTimeConfig(internalPicker.value, showTimeFormat.value, propFormat.value, timeProps.value, mergedLocale.value);
@@ -156,37 +147,29 @@ export default function useFilledProps<
       clearIcon: fillClearIcon(prefixCls.value, allowClear.value),
       showTime: mergedShowTime.value,
       value: values.value,
-      defaultValue: defaultValues.value,
       pickerValue: pickerValues.value,
-      defaultPickerValue: defaultPickerValues.value,
       ...updater?.(),
     };
   });
 
   // ======================== Format ========================
-  const { formatList, maskFormat } = toRefs(
-    reactiveComputed(() => useFieldFormat<DateType>(internalPicker.value, mergedLocale.value, format.value)),
-  );
+  const [formatList, maskFormat] = useFieldFormat<DateType>(internalPicker, mergedLocale, format);
 
   // ======================= ReadOnly =======================
-  const mergedInputReadOnly = computed(() => useInputReadOnly(formatList.value, inputReadOnly.value, multiple?.value));
+  const mergedInputReadOnly = useInputReadOnly(formatList, inputReadOnly, multiple);
 
   // ======================= Boundary =======================
-  const disabledBoundaryDate = computed(() =>
-    useDisabledBoundary(generateConfig.value, locale.value, disabledDate.value, minDate.value, maxDate.value),
-  );
+  const disabledBoundaryDate = useDisabledBoundary(generateConfig, locale, disabledDate, minDate, maxDate);
 
   // ====================== Invalidate ======================
-  const isInvalidateDate = computed(() =>
-    useInvalidate(generateConfig.value, picker.value as PanelMode, disabledBoundaryDate.value, mergedShowTime.value),
-  );
+  const isInvalidateDate = useInvalidate(generateConfig, picker, disabledBoundaryDate, mergedShowTime);
 
   // ======================== Merged ========================
   const mergedProps = computed<any>(() => ({
     ...filledProps.value,
     needConfirm: mergedNeedConfirm.value,
     inputReadOnly: mergedInputReadOnly.value,
-    disabledDate: disabledBoundaryDate.value,
+    disabledDate: disabledBoundaryDate,
   }));
 
   return [mergedProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate];

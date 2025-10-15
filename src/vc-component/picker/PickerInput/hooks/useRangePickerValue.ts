@@ -1,4 +1,4 @@
-import useMergedState from '@/vc-util/hooks/useMergedState';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 import { computed, nextTick, ref, watch, type Ref } from 'vue';
 import type { GenerateConfig } from '../../generate';
 import type { InternalMode, Locale, PanelMode } from '../../interface';
@@ -42,7 +42,6 @@ export default function useRangePickerValue<DateType extends object, ValueType e
   activeIndex: Ref<number>,
   pickerMode: Ref<InternalMode>,
   multiplePanel: Ref<boolean>,
-  defaultPickerValue: Ref<ValueType> = ref(EMPTY_LIST),
   pickerValue: Ref<ValueType> = ref(EMPTY_LIST),
   // This is legacy from origin logic.
   // We will take `showTime.defaultValue` as the part of `pickerValue`
@@ -63,20 +62,16 @@ export default function useRangePickerValue<DateType extends object, ValueType e
     if (isTimePicker) {
       now = fillTime(generateConfig.value, now);
     }
-    return defaultPickerValue.value[index] || calendarValue.value[index] || now;
+    return pickerValue?.value?.[index] || calendarValue.value[index] || now;
   };
 
   // Align `pickerValue` with `showTime.defaultValue`
   const startPickerValue = computed(() => pickerValue.value?.[0]);
   const endPickerValue = computed(() => pickerValue.value?.[1]);
   // PickerValue state
-  const [mergedStartPickerValue, setStartPickerValue] = useMergedState(() => getDefaultPickerValue(0), {
-    value: startPickerValue,
-  });
+  const [mergedStartPickerValue, setStartPickerValue] = useControlledState(getDefaultPickerValue(0), startPickerValue);
 
-  const [mergedEndPickerValue, setEndPickerValue] = useMergedState(() => getDefaultPickerValue(1), {
-    value: endPickerValue,
-  });
+  const [mergedEndPickerValue, setEndPickerValue] = useControlledState(getDefaultPickerValue(1), endPickerValue);
 
   // Current PickerValue
   const currentPickerValue = computed(() => {
@@ -149,7 +144,7 @@ export default function useRangePickerValue<DateType extends object, ValueType e
     async () => {
       await nextTick();
       if (open.value) {
-        if (!defaultPickerValue.value[mergedActiveIndex.value]) {
+        if (!pickerValue?.value?.[mergedActiveIndex.value]) {
           let nextPickerValue: DateType = isTimePicker.value ? null : generateConfig.value.getNow();
 
           /**
@@ -214,14 +209,14 @@ export default function useRangePickerValue<DateType extends object, ValueType e
     { immediate: true },
   );
 
-  // >>> defaultPickerValue: Resync to `defaultPickerValue` for each panel focused
+  // >>> pickerValue: Resync to `pickerValue` for each panel focused
   watch(
     [open, mergedActiveIndex],
     async () => {
       await nextTick();
-      if (open.value && defaultPickerValue.value) {
-        if (defaultPickerValue.value[mergedActiveIndex.value]) {
-          setCurrentPickerValue(defaultPickerValue.value[mergedActiveIndex.value], 'reset');
+      if (open.value && pickerValue.value) {
+        if (pickerValue.value[mergedActiveIndex.value]) {
+          setCurrentPickerValue(pickerValue.value[mergedActiveIndex.value], 'reset');
         }
       }
     },

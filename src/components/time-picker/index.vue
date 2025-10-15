@@ -43,7 +43,11 @@ export interface TimePickerProps extends Omit<PickerTimeProps<Dayjs>, 'picker' |
 
 defineOptions({ name: 'TimePicker', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { addon, renderExtraFooter, variant, ...restProps } = defineProps<TimePickerProps>();
+const { addon, renderExtraFooter, variant, allowClear = true, ...restProps } = defineProps<TimePickerProps>();
+
+const value = defineModel<any>('value');
+const pickerValue = defineModel<any>('pickerValue');
+const open = defineModel<boolean>('open');
 
 const timePickerRef = useTemplateRef('timePickerRef');
 
@@ -72,7 +76,11 @@ const internalRenderExtraFooter = computed(() => {
 <template>
   <InternalTimePicker
     ref="timePickerRef"
-    v-bind="restProps"
+    v-bind="{...restProps as any}"
+    v-model:value="value"
+    v-model:picker-value="pickerValue"
+    v-model:open="open"
+    :allow-clear="allowClear"
     :mode="undefined"
     :render-extra-footer="internalRenderExtraFooter"
     :variant="mergedVariant"

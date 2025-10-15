@@ -261,8 +261,8 @@ export interface SharedPanelProps<DateType extends object = any> {
 
 export type Components = Partial<
   Record<InternalMode, any> & {
-    button?: string;
-    input?: string;
+    button?: VueNode;
+    input?: VueNode;
   }
 >;
 
@@ -289,6 +289,8 @@ export type PickerFocusEventHandler = (e: FocusEvent, info: BaseInfo) => void;
 export type LegacyOnKeyDown = (event: KeyboardEvent, preventDefault?: VoidFunction) => void;
 
 export type SemanticName = 'root' | 'prefix' | 'input' | 'suffix';
+
+export type PreviewValueType = 'hover';
 
 export type PanelSemanticName = 'root' | 'header' | 'body' | 'content' | 'item' | 'footer';
 
@@ -369,8 +371,6 @@ export interface SharedPickerProps<DateType extends object = any>
 
   // Open
   defaultOpenValue?: DateType;
-  defaultOpen?: boolean;
-  open?: boolean;
   onOpenChange?: (open: boolean) => void;
   popupAlign?: AlignType;
   getPopupContainer?: (node: HTMLElement) => HTMLElement;
@@ -391,6 +391,13 @@ export interface SharedPickerProps<DateType extends object = any>
    * This is only used for strong a11y requirement which do not want modify after blur.
    */
   preserveInvalidOnBlur?: boolean;
+
+  /**
+   * When the user selects the date hover option, the value of the input field undergoes a temporary change.
+   * `false` will not preview value.
+   * `hover` will preview value when hover.
+   */
+  previewValue?: false | PreviewValueType;
 
   // Motion
   transitionName?: string;

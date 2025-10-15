@@ -2,6 +2,7 @@
 import { Render } from '@/components';
 import type { AlignType, BuildInPlacements } from '@/vc-component/trigger';
 import Trigger from '@/vc-component/trigger';
+import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, toRefs, type CSSProperties } from 'vue';
 import { usePickerContextInject } from '../PickerInput/context';
@@ -9,7 +10,7 @@ import { getRealPlacement } from '../utils/uiUtil';
 import { BUILT_IN_PLACEMENTS } from './util';
 
 export type PickerTriggerProps = {
-  popupElement: any;
+  popupElement: VueNode;
   popupStyle?: CSSProperties;
   transitionName?: string;
   getPopupContainer?: (node: HTMLElement) => HTMLElement;

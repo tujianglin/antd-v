@@ -7,7 +7,7 @@ import type useInvalidate from './useInvalidate';
  */
 export default function useFieldsInvalidate<DateType extends object, ValueType extends DateType[]>(
   calendarValue: Ref<ValueType>,
-  isInvalidateDate: Ref<ReturnType<typeof useInvalidate<DateType>>>,
+  isInvalidateDate: ReturnType<typeof useInvalidate<DateType>>,
   allowEmpty: Ref<boolean[]> = ref([]),
 ) {
   const fieldsInvalidates = ref<[boolean, boolean]>([false, false]);
@@ -39,7 +39,7 @@ export default function useFieldsInvalidate<DateType extends object, ValueType e
       }
 
       // Invalidate
-      if (current && isInvalidateDate.value(current, { activeIndex: index })) {
+      if (current && isInvalidateDate(current, { activeIndex: index })) {
         return true;
       }
 

@@ -206,7 +206,10 @@ const vm = getCurrentInstance();
 const { timeProps, localeTimeProps, showTimeFormat, propFormat } = toRefs(reactiveComputed(() => getTimeProps(vm.props as any)));
 
 // ========================= Locale =========================
-const filledLocale = computed(() => useLocale(locale, localeTimeProps.value));
+const filledLocale = useLocale(
+  computed(() => locale),
+  localeTimeProps,
+);
 
 // ========================= Picker =========================
 const internalPicker = computed<InternalMode>(() => (picker === 'date' && showTime ? 'datetime' : picker));
@@ -228,7 +231,11 @@ const [mergedMode, setMergedMode] = useControlledState<PanelMode>(
 const internalMode = computed(() => (mergedMode.value === 'date' && mergedShowTime.value ? 'datetime' : mergedMode.value));
 
 // ========================= Toggle =========================
-const toggleDates = computed(() => useToggleDates(generateConfig, locale, internalPicker.value));
+const toggleDates = useToggleDates(
+  computed(() => generateConfig),
+  computed(() => locale),
+  internalPicker,
+);
 
 // ========================= Value ==========================
 // >>> Real value
@@ -265,7 +272,7 @@ const onInternalSelect = (newDate: DateType) => {
   onSelect?.(newDate);
 
   if (mergedMode.value === picker) {
-    const nextValues = multiple ? toggleDates.value(mergedValue.value, newDate) : [newDate];
+    const nextValues = multiple ? toggleDates(mergedValue.value, newDate) : [newDate];
 
     triggerChange(nextValues);
   }

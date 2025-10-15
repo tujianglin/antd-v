@@ -1,7 +1,6 @@
 <script lang="tsx" setup generic="DateType extends object = any">
-import useMergedState from '@/vc-util/hooks/useMergedState';
 import pickAttrs from '@/vc-util/pickAttrs';
-import { reactiveComputed, toReactive } from '@vueuse/core';
+import { toReactive } from '@vueuse/core';
 import { omit } from 'lodash-es';
 import { computed, nextTick, ref, toRefs, watch } from 'vue';
 import useSemantic from '../hooks/useSemantic';
@@ -37,6 +36,7 @@ import PickerTrigger from '../PickerTrigger/index.vue';
 import { pickTriggerProps } from '../PickerTrigger/util';
 import clsx from 'clsx';
 import type { VueNode } from '@/vc-util/type';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 
 export type RangeValueType<DateType> = [start: DateType | null | undefined, end: DateType | null | undefined];
 
@@ -49,29 +49,12 @@ export interface BaseRangePickerProps<DateType extends object> extends Omit<Shar
 
   separator?: VueNode;
 
-  // Value
-  value?: RangeValueType<DateType> | null;
-  defaultValue?: RangeValueType<DateType>;
   onChange?: (dates: NoUndefinedRangeValueType<DateType> | null, dateStrings: [string, string]) => void;
   onCalendarChange?: (dates: NoUndefinedRangeValueType<DateType>, dateStrings: [string, string], info: BaseInfo) => void;
   onOk?: (values: NoUndefinedRangeValueType<DateType>) => void;
 
   // Placeholder
   placeholder?: [string, string];
-
-  // Picker Value
-  /**
-   * Config the popup panel date.
-   * Every time active the input to open popup will reset with `defaultPickerValue`.
-   *
-   * Note: `defaultPickerValue` priority is higher than `value` for the first open.
-   */
-  defaultPickerValue?: [DateType, DateType] | DateType | null;
-  /**
-   * Config each start & end field popup panel date.
-   * When config `pickerValue`, you must also provide `onPickerValueChange` to handle changes.
-   */
-  pickerValue?: [DateType, DateType] | DateType | null;
   /**
    * Each popup panel `pickerValue` includes `mode` change will trigger the callback.
    * @param date The changed picker value
@@ -88,8 +71,6 @@ export interface BaseRangePickerProps<DateType extends object> extends Omit<Shar
 
   // Preset
   presets?: ValueDate<Exclude<RangeValueType<DateType>, null>>[];
-  /** @deprecated Please use `presets` instead */
-  ranges?: Record<string, Exclude<RangeValueType<DateType>, null> | (() => Exclude<RangeValueType<DateType>, null>)>;
 
   // Control
   disabled?: boolean | [boolean, boolean];
@@ -147,9 +128,15 @@ const updateProps = () => {
   };
 };
 
+const innerValue = defineModel<any>('value');
+const innerPickerValue = defineModel<any>('pickerValue');
+const open = defineModel<boolean>('open');
+
 // ========================= Prop =========================
 const [filledProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate] = useFilledProps(
   toReactive(props),
+  innerValue,
+  innerPickerValue,
   updateProps,
 );
 
@@ -161,7 +148,6 @@ const {
   classNames: propClassNames,
 
   // Value
-  defaultValue,
   value,
   needConfirm,
   onKeydown,
@@ -173,9 +159,6 @@ const {
   minDate,
   maxDate,
 
-  // Open
-  defaultOpen,
-  open,
   onOpenChange,
 
   // Picker
@@ -192,7 +175,6 @@ const {
   onOk,
 
   // Picker Value
-  defaultPickerValue,
   pickerValue,
   onPickerValueChange,
 
@@ -229,10 +211,10 @@ defineExpose({
   },
 });
 
-const { mergedClassNames, mergedStyles } = toRefs(reactiveComputed(() => useSemantic(propClassNames.value, propStyles.value)));
+const [mergedClassNames, mergedStyles] = useSemantic(propClassNames, propStyles);
 
 // ========================= Open =========================
-const [mergedOpen, setMergeOpen] = useOpen(open, defaultOpen, disabled, onOpenChange.value);
+const [mergedOpen, setMergeOpen] = useOpen(open, disabled, onOpenChange.value);
 
 const triggerOpen: OnOpenChange = (nextOpen, config?: OpenConfig) => {
   // No need to open if all disabled
@@ -246,10 +228,9 @@ const [mergedValue, setInnerValue, getCalendarValue, triggerCalendarChange, trig
   generateConfig,
   locale,
   formatList,
-  computed(() => true),
+  true,
   computed(() => false),
-  defaultValue,
-  value,
+  value as any,
   onCalendarChange.value as any,
   onOk.value,
 );
@@ -306,9 +287,7 @@ const mergedShowTime = computed<PopupShowTimeConfig<DateType> & Pick<RangeTimePr
 });
 
 // ========================= Mode =========================
-const [modes, setModes] = useMergedState<[PanelMode, PanelMode]>([picker.value, picker.value], {
-  defaultValue: mode.value as any,
-});
+const [modes, setModes] = useControlledState([picker.value, picker.value], mode);
 
 const mergedMode = computed(() => modes.value[activeIndex.value] || picker.value);
 
@@ -321,7 +300,7 @@ const internalMode = computed<InternalMode>(() =>
 const multiplePanel = computed(() => internalMode.value === picker.value && internalMode.value !== 'time');
 
 // ======================= Show Now =======================
-const mergedShowNow = computed(() => useShowNow(picker.value, mergedMode.value, showNow.value, true));
+const mergedShowNow = useShowNow(picker, mergedMode, showNow);
 
 // ======================== Value =========================
 const [flushSubmit, triggerSubmitChange] = useRangeValue<any>(
@@ -335,6 +314,7 @@ const [flushSubmit, triggerSubmitChange] = useRangeValue<any>(
   focused,
   mergedOpen,
   isInvalidateDate,
+  innerValue,
 );
 
 // ===================== DisabledDate =====================
@@ -362,7 +342,6 @@ const [currentPickerValue, setCurrentPickerValue] = useRangePickerValue(
   activeIndex,
   internalPicker,
   multiplePanel,
-  defaultPickerValue,
   pickerValue,
   computed(() => mergedShowTime.value?.defaultOpenValue),
   onPickerValueChange.value as any,
@@ -535,7 +514,7 @@ const panelValue = computed(() => calendarValue.value[activeIndex.value] || null
 
 // >>> invalid
 const isPopupInvalidateDate = (date) => {
-  return isInvalidateDate?.value?.(date, {
+  return isInvalidateDate?.(date, {
     activeIndex: activeIndex.value,
   });
 };
@@ -728,12 +707,7 @@ watch(
 // ====================== DevWarning ======================
 if (process.env.NODE_ENV !== 'production') {
   const isIndexEmpty = (index: number) => {
-    return (
-      // Value is empty
-      !value?.[index] &&
-      // DefaultValue is empty
-      !defaultValue?.[index]
-    );
+    return !value.value?.[index];
   };
 
   if (disabled.value.some((fieldDisabled, index) => fieldDisabled && isIndexEmpty(index) && !allowEmpty[index])) {

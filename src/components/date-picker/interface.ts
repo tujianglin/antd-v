@@ -15,30 +15,6 @@ type DataPickerPlacement = (typeof _DataPickerPlacements)[number];
 export type PickerLocale = {
   lang: RcPickerLocale & AdditionalPickerLocaleLangProps;
   timePickerLocale: TimePickerLocale;
-} & AdditionalPickerLocaleProps;
-
-/** @deprecated **Useless**. */
-export type AdditionalPickerLocaleProps = {
-  /**
-   * @deprecated **Invalid**, Please use `lang.fieldDateFormat` instead.
-   * @see [Migration Guide](https://github.com/ant-design/ant-design/discussions/53011)
-   */
-  dateFormat?: string;
-  /**
-   * @deprecated **Invalid**, Please use `lang.fieldDateTimeFormat` instead,
-   * @see [Migration Guide](https://github.com/ant-design/ant-design/discussions/53011)
-   */
-  dateTimeFormat?: string;
-  /**
-   * @deprecated **Invalid**, Please use `lang.fieldWeekFormat` instead,
-   * @see [Migration Guide](https://github.com/ant-design/ant-design/discussions/53011)
-   */
-  weekFormat?: string;
-  /**
-   * @deprecated **Invalid**, Please use `lang.fieldWeekFormat` instead,
-   * @see [Migration Guide](https://github.com/ant-design/ant-design/discussions/53011)
-   */
-  monthFormat?: string;
 };
 
 export type AdditionalPickerLocaleLangProps = {
@@ -71,29 +47,15 @@ type InjectDefaultProps<Props> = Omit<Props, 'locale' | 'generateConfig' | 'hide
   locale?: PickerLocale;
   size?: SizeType;
   placement?: DataPickerPlacement;
-  /** @deprecated Use `variant` instead */
-  bordered?: boolean;
   status?: InputStatus;
   /**
    * @since 5.13.0
    * @default "outlined"
    */
   variant?: Variant;
-  /**
-   * @deprecated `dropdownClassName` is deprecated which will be removed in next major
-   *   version.Please use `classNames.popup.root` instead.
-   */
-  dropdownClassName?: string;
-  /**
-   * @deprecated please use `classNames.popup.root` instead
-   */
-  popupClassName?: string;
   rootClassName?: string;
-  /**
-   * @deprecated please use `styles.popup.root` instead
-   */
-  popupStyle?: CSSProperties;
   classNames?: PickerClassNames;
+  valueFormat?: string;
 };
 
 /** Base Single Picker props */
@@ -102,10 +64,7 @@ export type PickerProps<DateType extends AnyObject = any> = InjectDefaultProps<R
 /** Base Range Picker props */
 export type RangePickerProps<DateType extends AnyObject = any> = InjectDefaultProps<RcRangePickerProps<DateType>>;
 
-export type GenericTimePickerProps<DateType extends AnyObject = any> = Omit<PickerProps<DateType>, 'picker' | 'showTime'> & {
-  /** @deprecated Please use `onCalendarChange` instead */
-  onSelect?: (value: DateType) => void;
-};
+export type GenericTimePickerProps<DateType extends AnyObject = any> = Omit<PickerProps<DateType>, 'picker' | 'showTime'>;
 
 /**
  * Single Picker has the `multiple` prop,
@@ -116,9 +75,7 @@ export type PickerPropsWithMultiple<
   DateType extends AnyObject = any,
   InnerPickerProps extends PickerProps<DateType> = PickerProps<DateType>,
   ValueType = DateType,
-> = Omit<InnerPickerProps, 'defaultValue' | 'value' | 'onChange' | 'onOk'> & {
-  defaultValue?: ValueType | null;
-  value?: ValueType | null;
+> = Omit<InnerPickerProps, 'onChange' | 'onOk'> & {
   onChange?: (date: ValueType, dateString: string | string[]) => void;
   onOk?: (date: ValueType) => void;
 };

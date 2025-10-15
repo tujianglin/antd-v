@@ -1,5 +1,6 @@
-import useMergedState from '@/vc-util/hooks/useMergedState';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 import { toReactive } from '@vueuse/core';
+import { cloneDeep } from 'lodash-es';
 import { computed, toRefs, watch, type Ref } from 'vue';
 import type { GenerateConfig } from '../../generate';
 import useSyncState from '../../hooks/useSyncState';
@@ -90,7 +91,7 @@ function useCalendarValue<MergedValueType extends object[]>(mergedValue: Ref<Mer
     () => {
       syncWithValue();
     },
-    { immediate: true },
+    { immediate: true, deep: true },
   );
 
   return [calendarValue, setCalendarValue] as const;
@@ -105,20 +106,20 @@ export function useInnerValue<ValueType extends DateType[], DateType extends obj
   locale: Ref<Locale>,
   formatList: Ref<FormatType[]>,
   /** Used for RangePicker. `true` means [DateType, DateType] or will be DateType[] */
-  rangeValue: Ref<boolean>,
+  rangeValue: boolean,
   /**
    * Trigger order when trigger calendar value change.
    * This should only used in SinglePicker with `multiple` mode.
    * So when `rangeValue` is `true`, order will be ignored.
    */
   order: Ref<boolean>,
-  defaultValue?: Ref<ValueType>,
   value?: Ref<ValueType>,
   onCalendarChange?: (dates: ValueType, dateStrings: ReplaceListType<Required<ValueType>, string>, info: BaseInfo) => void,
   onOk?: (dates: ValueType) => void,
 ) {
   // This is the root value which will sync with controlled or uncontrolled value
-  const [innerValue, setInnerValue] = useMergedState(defaultValue.value, { value });
+  const [innerValue, setInnerValue] = useControlledState(undefined, value);
+
   const mergedValue = computed(() => innerValue.value || (EMPTY_VALUE as ValueType));
 
   // ========================= Inner Values =========================
@@ -130,7 +131,7 @@ export function useInnerValue<ValueType extends DateType[], DateType extends obj
   const triggerCalendarChange: TriggerCalendarChange<ValueType> = (nextCalendarValues: ValueType) => {
     let clone = [...nextCalendarValues] as ValueType;
 
-    if (rangeValue.value) {
+    if (rangeValue) {
       for (let i = 0; i < 2; i += 1) {
         clone[i] = clone[i] || null;
       }
@@ -173,7 +174,8 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
   formatList: Ref<FormatType[]>,
   focused: Ref<boolean>,
   open: Ref<boolean>,
-  isInvalidateDate: Ref<(date: DateType, info?: { from?: DateType; activeIndex: number }) => boolean>,
+  isInvalidateDate: (date: DateType, info?: { from?: DateType; activeIndex: number }) => boolean,
+  value: Ref<any>,
 ): [
   /** Trigger `onChange` by check `disabledDate` */
   flushSubmit: (index: number, needTriggerChange: boolean) => void,
@@ -209,9 +211,13 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
     setSubmitValue(mergedValue.value);
   };
 
-  watch(mergedValue, () => {
-    syncWithValue();
-  });
+  watch(
+    mergedValue,
+    () => {
+      syncWithValue();
+    },
+    { deep: true },
+  );
 
   // ============================ Submit ============================
   const triggerSubmit = (nextValue?: ValueType) => {
@@ -231,10 +237,9 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
     }
 
     // Only when exist value to sort
-    if (orderOnChange && clone[0] && clone[1]) {
+    if (orderOnChange.value && clone[0] && clone[1]) {
       clone = orderDates(clone, generateConfig.value);
     }
-
     // Sync `calendarValue`
     triggerCalendarChange(clone);
 
@@ -245,16 +250,16 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
     const startEmpty = !start;
     const endEmpty = !end;
 
-    const validateEmptyDateRange = allowEmpty
+    const validateEmptyDateRange = allowEmpty?.value
       ? // Validate empty start
-        (!startEmpty || allowEmpty[0]) &&
+        (!startEmpty || allowEmpty?.value[0]) &&
         // Validate empty end
-        (!endEmpty || allowEmpty[1])
+        (!endEmpty || allowEmpty?.value[1])
       : true;
 
     // >>> Order
     const validateOrder =
-      !order ||
+      !order.value ||
       startEmpty ||
       endEmpty ||
       isSame(generateConfig.value, locale.value, start, end, picker.value) ||
@@ -263,9 +268,9 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
     // >>> Invalid
     const validateDates =
       // Validate start
-      (disabled.value[0] || !start || !isInvalidateDate?.value?.(start, { activeIndex: 0 })) &&
+      (disabled.value[0] || !start || !isInvalidateDate?.(start, { activeIndex: 0 })) &&
       // Validate end
-      (disabled.value[1] || !end || !isInvalidateDate?.value?.(end, { from: start, activeIndex: 1 }));
+      (disabled.value[1] || !end || !isInvalidateDate?.(end, { from: start, activeIndex: 1 }));
     // >>> Result
     const allPassed =
       // Null value is from clear button
@@ -275,14 +280,18 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
 
     if (allPassed) {
       // Sync value with submit value
-      setInnerValue(clone);
 
       const [isSameMergedDates] = isSameDates(clone, mergedValue.value);
 
+      setInnerValue(clone);
+
       // Trigger `onChange` if needed
-      if (onChange.value && !isSameMergedDates) {
+      if (!isSameMergedDates) {
         const everyEmpty = clone.every((val) => !val);
-        onChange?.value(
+
+        value.value = isNullValue && everyEmpty ? null : cloneDeep(clone);
+        // Return null directly if all date are empty
+        onChange?.value?.(
           // Return null directly if all date are empty
           isNullValue && everyEmpty ? null : clone,
           everyEmpty ? null : getDateTexts(clone),
@@ -312,14 +321,12 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
     () => {
       if (interactiveFinished.value) {
         // Always try to trigger submit first
-        triggerSubmit();
-
+        // triggerSubmit();
         // Trigger calendar change since this is a effect reset
         // https://github.com/ant-design/ant-design/issues/22351
-        triggerCalendarChange(mergedValue.value);
-
+        // triggerCalendarChange(mergedValue.value);
         // Sync with value anyway
-        syncWithValue();
+        // syncWithValue();
       }
     },
     2,

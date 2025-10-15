@@ -150,7 +150,9 @@ const generateConfig: GenerateConfig<Dayjs> = {
 
   // Compare
   isAfter: (date1, date2) => date1.isAfter(date2),
-  isValidate: (date) => date.isValid(),
+  isValidate: (date) => {
+    return date?.isValid?.() || false;
+  },
 
   locale: {
     getWeekFirstDay: (locale) => dayjs().locale(parseLocale(locale)).localeData().firstDayOfWeek(),

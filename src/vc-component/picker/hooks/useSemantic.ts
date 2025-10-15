@@ -1,3 +1,4 @@
+import { computed, type Ref } from 'vue';
 import type { SharedPickerProps } from '../interface';
 
 export type FilledPanelClassNames = NonNullable<SharedPickerProps['classNames']>['popup'];
@@ -15,16 +16,19 @@ export type FilledStyles = NonNullable<SharedPickerProps['styles']> & {
 /**
  * Convert `classNames` & `styles` to a fully filled object
  */
-export default function useSemantic(classNames?: SharedPickerProps['classNames'], styles?: SharedPickerProps['styles']) {
-  const mergedClassNames: FilledClassNames = {
-    ...classNames,
-    popup: classNames?.popup || {},
-  };
+export default function useSemantic(
+  classNames?: Ref<SharedPickerProps['classNames']>,
+  styles?: Ref<SharedPickerProps['styles']>,
+) {
+  const mergedClassNames = computed<FilledClassNames>(() => ({
+    ...classNames?.value,
+    popup: classNames?.value?.popup || {},
+  }));
 
-  const mergedStyles: FilledStyles = {
-    ...styles,
-    popup: styles?.popup || {},
-  };
+  const mergedStyles = computed<FilledStyles>(() => ({
+    ...styles?.value,
+    popup: styles?.value?.popup || {},
+  }));
 
-  return { mergedClassNames, mergedStyles } as const;
+  return [mergedClassNames, mergedStyles] as const;
 }

@@ -1,4 +1,4 @@
-import useMergedState from '@/vc-util/hooks/useMergedState';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 import raf from '@/vc-util/raf';
 import { onBeforeUnmount, ref, type Ref } from 'vue';
 
@@ -8,10 +8,9 @@ import { onBeforeUnmount, ref, type Ref } from 'vue';
  */
 export default function useDelayState<T>(
   value: Ref<T>,
-  defaultValue?: Ref<T>,
   onChange?: (next: T) => void,
 ): [state: Ref<T>, setState: (nextState: T, immediately?: boolean) => void] {
-  const [state, setState] = useMergedState<T>(defaultValue.value, { defaultValue: value.value });
+  const [state, setState] = useControlledState<T>(value.value, undefined);
 
   const nextValueRef = ref<T>(value.value);
 
