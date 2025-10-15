@@ -18,7 +18,7 @@ const { prefixCls, checked, halfChecked, disabled, onClick, disableCheckbox } = 
 
 const { checkable } = toRefs(useCascaderContextInject());
 
-const customCheckbox = computed(() => (typeof checkable.value !== 'boolean' ? checkable : null));
+const customCheckbox = computed(() => (typeof checkable.value !== 'boolean' ? checkable.value : null));
 </script>
 <template>
   <span

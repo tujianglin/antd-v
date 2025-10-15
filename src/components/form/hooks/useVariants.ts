@@ -15,6 +15,7 @@ type VariantComponents = keyof Pick<
   | 'card'
   | 'mentions'
   | 'treeSelect'
+  | 'cascader'
 >;
 /**
  * Compatible for legacy `bordered` prop.

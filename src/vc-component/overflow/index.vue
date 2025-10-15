@@ -146,18 +146,11 @@ function registerSuffixSize(_: VueKey, width: number | null) {
 
 // ================================ Effect ================================
 function getItemWidth(index: number) {
-  return itemWidths.value.get(getKey(mergedData[index], index));
+  return itemWidths.value.get(getKey(mergedData.value[index], index));
 }
 
 watch(
-  [
-    () => mergedContainerWidth.value,
-    () => itemWidths.value,
-    () => restWidth.value,
-    () => suffixWidth.value,
-    () => getKey,
-    () => mergedData.value,
-  ],
+  [mergedContainerWidth, itemWidths, restWidth, suffixWidth, () => getKey, mergedData],
   async () => {
     await nextTick();
     if (mergedContainerWidth.value && typeof mergedRestWidth.value === 'number' && mergedData.value) {
@@ -174,7 +167,6 @@ watch(
 
       for (let i = 0; i < len; i += 1) {
         let currentItemWidth = getItemWidth(i);
-
         // Fully will always render
         if (fullySSR.value) {
           currentItemWidth = currentItemWidth || 0;
@@ -258,7 +250,6 @@ const internalRenderItemNode = () => {
       }
     : (item: ItemType, index: number) => {
         const key = getKey(item, index);
-
         return (
           <Item
             {...itemSharedProps.value}

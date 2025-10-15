@@ -18,7 +18,7 @@ import type { BreadcrumbProps } from '../breadcrumb';
 // import type { CalendarProps } from '../calendar';
 // import type { CardProps } from '../card';
 // import type { CardMetaProps } from '../card/Meta';
-// import type { CascaderProps } from '../cascader';
+import type { CascaderProps } from '../cascader';
 import type { CheckboxProps } from '../checkbox';
 import type { CollapseProps } from '../collapse';
 import type { ColorPickerProps } from '../color-picker';
@@ -282,7 +282,7 @@ export type RadioConfig = ComponentStyleConfig & Pick<RadioProps, 'classNames' |
 
 export type InputNumberConfig = ComponentStyleConfig & Pick<InputNumberProps, 'variant' | 'classNames' | 'styles'>;
 
-// export type CascaderConfig = ComponentStyleConfig & Pick<CascaderProps, 'variant' | 'styles' | 'classNames'>;
+export type CascaderConfig = ComponentStyleConfig & Pick<CascaderProps, 'variant' | 'styles' | 'classNames'>;
 
 export type TreeSelectConfig = ComponentStyleConfig & Pick<TreeSelectProps, 'variant' | 'classNames' | 'styles' | 'switcherIcon'>;
 
@@ -345,7 +345,7 @@ export interface ConfigComponentProps {
   // drawer?: DrawerConfig;
   // calendar?: CalendarConfig;
   // carousel?: ComponentStyleConfig;
-  // cascader?: CascaderConfig;
+  cascader?: CascaderConfig;
   treeSelect?: TreeSelectConfig;
   collapse?: CollapseConfig;
   floatButton?: FloatButtonConfig;

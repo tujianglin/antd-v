@@ -243,7 +243,7 @@ const inputNode = () => (
 );
 
 function itemKey(value: DisplayValueType) {
-  return value.key ?? value.value;
+  return value?.key ?? value?.value;
 }
 
 // >>> Selections

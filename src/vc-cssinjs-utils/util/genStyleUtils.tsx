@@ -330,7 +330,7 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
             proxyToken.value,
             {
               componentCls,
-              prefixCls,
+              prefixCls: prefixCls.value,
               iconCls: `.${iconPrefixCls}`,
               antCls: `.${rootPrefixCls}`,
               calc,

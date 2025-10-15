@@ -8,17 +8,17 @@ export default function useOptions(
   options?: Ref<DefaultOptionType[]>,
 ): [
   mergedOptions: Ref<DefaultOptionType[]>,
-  getPathKeyEntities: Ref<GetEntities>,
+  getPathKeyEntities: GetEntities,
   getValueByKeyPath: (pathKeys: LegacyKey[]) => SingleValueType[],
 ] {
   const mergedOptions = computed(() => options.value || []);
 
   // Only used in multiple mode, this fn will not call in single mode
-  const getPathKeyEntities = computed(() => useEntities(mergedOptions.value, mergedFieldNames.value));
+  const getPathKeyEntities = useEntities(mergedOptions, mergedFieldNames);
 
   /** Convert path key back to value format */
   const getValueByKeyPath = (pathKeys: LegacyKey[]): SingleValueType[] => {
-    const keyPathEntities = getPathKeyEntities.value();
+    const keyPathEntities = getPathKeyEntities();
 
     return pathKeys.map((pathKey) => {
       const { nodes } = keyPathEntities[pathKey];

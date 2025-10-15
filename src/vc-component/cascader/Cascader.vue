@@ -3,6 +3,7 @@ import { BaseSelect, type BaseSelectProps, type BaseSelectPropsWithoutPrivate, t
 import type { DisplayValueType, Placement } from '@/vc-component/select/interface';
 import type { BuildInPlacements } from '@/vc-component/trigger';
 import useMergedState from '@/vc-util/hooks/useMergedState';
+import type { VueNode } from '@/vc-util/type';
 import { toReactive } from '@vueuse/core';
 import { computed, getCurrentInstance, ref, toRefs, useId, type CSSProperties } from 'vue';
 import { CascaderContextProvider } from './context';
@@ -133,7 +134,7 @@ export interface CascaderProps<
   classNames?: Partial<Record<SemanticName, string>> & {
     popup?: Partial<Record<PopupSemantic, string>>;
   };
-  checkable?: boolean;
+  checkable?: boolean | VueNode;
   onChange?: (value: GetValueType<OptionType, ValueField, Multiple>, selectOptions: GetOptionType<OptionType, Multiple>) => void;
 }
 
@@ -265,8 +266,7 @@ const { checkedValues, halfCheckedValues, missingCheckedValues } = toRefs(
 
 const deDuplicatedValues = computed(() => {
   const checkedKeys = toPathKeys(checkedValues.value);
-  const deduplicateKeys = formatStrategyValues(checkedKeys, getPathKeyEntities.value, showCheckedStrategy);
-
+  const deduplicateKeys = formatStrategyValues(checkedKeys, getPathKeyEntities, showCheckedStrategy);
   return [...missingCheckedValues.value, ...getValueByKeyPath(deduplicateKeys)];
 });
 
@@ -298,7 +298,7 @@ const handleSelection = computed(() =>
     checkedValues.value,
     halfCheckedValues.value,
     missingCheckedValues.value,
-    getPathKeyEntities.value,
+    getPathKeyEntities,
     getValueByKeyPath,
     showCheckedStrategy,
   ),
@@ -308,7 +308,6 @@ const onInternalSelect = (valuePath: SingleValueType) => {
   if (!multiple.value || autoClearSearchValue.value) {
     setSearchValue('');
   }
-
   handleSelection.value?.(valuePath);
 };
 

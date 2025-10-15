@@ -6,9 +6,7 @@
 
 ## FloatButton 悬浮按钮
 
-1. 6.0.0-alpha.1 菜单模式有bug
-
-- [ ] 完成
+- [x] 完成
 
 ## Typography 排版
 

@@ -9,7 +9,7 @@ import type { GetMissValues } from './useMissingValues';
 export default function useValues(
   multiple: Ref<boolean>,
   rawValues: Ref<SingleValueType[]>,
-  getPathKeyEntities: Ref<() => Record<string, DataEntity>>,
+  getPathKeyEntities: () => Record<string, DataEntity>,
   getValueByKeyPath: (pathKeys: LegacyKey[]) => SingleValueType[],
   getMissingValues: Ref<GetMissValues>,
 ): { checkedValues: SingleValueType[]; halfCheckedValues: SingleValueType[]; missingCheckedValues: SingleValueType[] } {
@@ -25,7 +25,7 @@ export default function useValues(
     }
 
     const keyPathValues = toPathKeys(existValues);
-    const keyPathEntities = getPathKeyEntities.value();
+    const keyPathEntities = getPathKeyEntities();
 
     const { checkedKeys, halfCheckedKeys } = conductCheck(keyPathValues, true, keyPathEntities) as {
       checkedKeys: LegacyKey[];

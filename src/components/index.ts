@@ -15,6 +15,8 @@ export type { BreadcrumbProps } from './breadcrumb';
 export { default as Button } from './button';
 export { default as Card } from './card';
 export type { CardProps } from './card';
+export { default as Cascader } from './cascader';
+export type { CascaderAutoProps, CascaderPanelAutoProps, CascaderPanelProps, CascaderProps } from './cascader';
 export { default as Checkbox } from './checkbox';
 export type { CheckboxProps } from './checkbox';
 export { default as Col } from './col';

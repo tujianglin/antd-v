@@ -1,25 +1,37 @@
 import type { Locale } from '../locale';
 import type {
+  BadgeConfig,
+  ButtonConfig,
   CardConfig,
+  CascaderConfig,
   CheckboxConfig,
   ComponentStyleConfig,
   ConfigConsumerProps,
   CSPConfig,
   DatePickerConfig,
   DirectionType,
+  EmptyConfig,
+  FlexConfig,
   FloatButtonConfig,
   FloatButtonGroupConfig,
   InputConfig,
   InputNumberConfig,
   InputSearchConfig,
   MentionsConfig,
+  MenuConfig,
   OTPConfig,
+  PopoverConfig,
+  PopupOverflow,
   RadioConfig,
   RangePickerConfig,
   SelectConfig,
+  SpaceConfig,
+  TabsConfig,
   TextAreaConfig,
   ThemeConfig,
   TimePickerConfig,
+  TooltipConfig,
+  TransferConfig,
   TreeSelectConfig,
   Variant,
   WaveConfig,
@@ -79,7 +91,7 @@ export interface ConfigProviderProps {
    * @default ltr
    */
   direction?: DirectionType;
-  // space?: SpaceConfig;
+  space?: SpaceConfig;
   splitter?: ComponentStyleConfig;
   /**
    * @descCN 设置 `false` 时关闭虚拟滚动。
@@ -88,16 +100,16 @@ export interface ConfigProviderProps {
    */
   virtual?: boolean;
   popupMatchSelectWidth?: boolean;
-  // popupOverflow?: PopupOverflow;
+  popupOverflow?: PopupOverflow;
   theme?: ThemeConfig;
   // warning?: WarningContextProps;
   // alert?: AlertConfig;
   affix?: ComponentStyleConfig;
   anchor?: ComponentStyleConfig;
-  // button?: ButtonConfig;
+  button?: ButtonConfig;
   calendar?: ComponentStyleConfig;
   carousel?: ComponentStyleConfig;
-  // cascader?: CascaderConfig;
+  cascader?: CascaderConfig;
   treeSelect?: TreeSelectConfig;
   // collapse?: CollapseConfig;
   divider?: ComponentStyleConfig;
@@ -118,25 +130,25 @@ export interface ConfigProviderProps {
   slider?: ComponentStyleConfig;
   breadcrumb?: ComponentStyleConfig;
   // masonry?: MasonryConfig;
-  // menu?: MenuConfig;
+  menu?: MenuConfig;
   floatButton?: FloatButtonConfig;
   floatButtonGroup?: FloatButtonGroupConfig;
   checkbox?: CheckboxConfig;
   descriptions?: ComponentStyleConfig;
-  // empty?: EmptyConfig;
-  // badge?: BadgeConfig;
+  empty?: EmptyConfig;
+  badge?: BadgeConfig;
   radio?: RadioConfig;
   rate?: ComponentStyleConfig;
   // ribbon?: RibbonConfig;
   switch?: ComponentStyleConfig;
-  // transfer?: TransferConfig;
+  transfer?: TransferConfig;
   avatar?: ComponentStyleConfig;
   // message?: MessageConfig;
   // tag?: TagConfig;
   // table?: TableConfig;
   card?: CardConfig;
   // cardMeta?: CardMetaConfig;
-  // tabs?: TabsConfig;
+  tabs?: TabsConfig;
   timeline?: ComponentStyleConfig;
   timePicker?: TimePickerConfig;
   upload?: ComponentStyleConfig;
@@ -146,14 +158,14 @@ export interface ConfigProviderProps {
   datePicker?: DatePickerConfig;
   rangePicker?: RangePickerConfig;
   dropdown?: ComponentStyleConfig;
-  // flex?: FlexConfig;
+  flex?: FlexConfig;
   /**
    * Wave is special component which only patch on the effect of component interaction.
    */
   wave?: WaveConfig;
   // tour?: TourConfig;
-  // tooltip?: TooltipConfig;
-  // popover?: PopoverConfig;
+  tooltip?: TooltipConfig;
+  popover?: PopoverConfig;
   // popconfirm?: PopconfirmConfig;
   watermark?: ComponentStyleConfig;
   // qrcode?: QRcodeConfig;

@@ -1,6 +1,5 @@
-import type { VueKey } from '@/vc-util/type';
+import type { VueKey, VueNode } from '@/vc-util/type';
 import type { CSSProperties, HTMLAttributes } from 'vue';
-import type { RenderNode } from '../../components/_util/type';
 
 export const RESPONSIVE = 'responsive' as const;
 export const INVALIDATE = 'invalidate' as const;
@@ -13,14 +12,14 @@ export interface OverflowProps<ItemType> extends /** @vue-ignore */ HTMLAttribut
   itemKey?: VueKey | ((item: ItemType) => VueKey);
   /** Used for `responsive`. It will limit render node to avoid perf issue */
   itemWidth?: number;
-  renderItem?: (item: ItemType, info: { index: number }) => RenderNode;
+  renderItem?: (item: ItemType, info: { index: number }) => VueNode;
   /** @private Do not use in your production. Render raw node that need wrap Item by developer self */
-  renderRawItem?: (item: ItemType, index: number) => RenderNode;
+  renderRawItem?: (item: ItemType, index: number) => VueNode;
   maxCount?: number | typeof RESPONSIVE | typeof INVALIDATE;
-  renderRest?: RenderNode | ((omittedItems: ItemType[]) => RenderNode);
+  renderRest?: VueNode | ((omittedItems: ItemType[]) => VueNode);
   /** @private Do not use in your production. Render raw node that need wrap Item by developer self */
-  renderRawRest?: (omittedItems: ItemType[]) => RenderNode;
-  suffix?: RenderNode;
+  renderRawRest?: (omittedItems: ItemType[]) => VueNode;
+  suffix?: VueNode;
   component?: any;
   itemComponent?: any;
 

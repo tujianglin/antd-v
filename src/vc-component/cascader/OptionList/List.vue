@@ -224,7 +224,6 @@ const columnNodes = () => {
   return mergedOptionColumns.value.map((col, index) => {
     const prevValuePath = activeValueCells.value.slice(0, index);
     const activeValue = activeValueCells.value[index];
-
     return (
       <Column
         key={index}

@@ -1,6 +1,6 @@
 import type { DataEntity, DataNode } from '@/vc-component/tree/interface';
 import { convertDataToEntities } from '@/vc-component/tree/utils/treeUtil';
-import { ref } from 'vue';
+import { markRaw, ref, type Ref } from 'vue';
 import type { DefaultOptionType, InternalFieldNames } from '../Cascader.vue';
 import { VALUE_SPLIT } from '../utils/commonUtil';
 
@@ -12,7 +12,7 @@ export interface OptionsInfo {
 export type GetEntities = () => OptionsInfo['pathKeyEntities'];
 
 /** Lazy parse options data into conduct-able info to avoid perf issue in single mode */
-export default (options: DefaultOptionType[], fieldNames: InternalFieldNames) => {
+export default (options: Ref<DefaultOptionType[]>, fieldNames: Ref<InternalFieldNames>) => {
   const cacheRef = ref<{
     options: DefaultOptionType[];
     info: OptionsInfo;
@@ -22,16 +22,16 @@ export default (options: DefaultOptionType[], fieldNames: InternalFieldNames) =>
   });
 
   const getEntities: GetEntities = () => {
-    if (cacheRef.value.options !== options) {
-      cacheRef.value.options = options;
-      cacheRef.value.info = convertDataToEntities(options as DataNode[], {
-        fieldNames: fieldNames as any,
+    if (markRaw(cacheRef.value.options) !== markRaw(options.value)) {
+      cacheRef.value.options = options.value;
+      cacheRef.value.info = convertDataToEntities(options.value as DataNode[], {
+        fieldNames: fieldNames.value as any,
         initWrapper: (wrapper) => ({
           ...wrapper,
           pathKeyEntities: {},
         }),
         processEntity: (entity, wrapper) => {
-          const pathKey = (entity.nodes as DefaultOptionType[]).map((node) => node[fieldNames.value]).join(VALUE_SPLIT);
+          const pathKey = (entity.nodes as DefaultOptionType[]).map((node) => node[fieldNames.value.value]).join(VALUE_SPLIT);
 
           (wrapper as unknown as OptionsInfo).pathKeyEntities[pathKey] = entity;
 
@@ -41,7 +41,6 @@ export default (options: DefaultOptionType[], fieldNames: InternalFieldNames) =>
         },
       }) as any;
     }
-
     return cacheRef.value.info.pathKeyEntities;
   };
 
