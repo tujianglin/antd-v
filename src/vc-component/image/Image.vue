@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import { Render } from '@/components';
-import useMergedState from '@/vc-util/hooks/useMergedState';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 import { toPx } from '@/vc-util/setStyle';
 import { reactiveComputed, toReactive } from '@vueuse/core';
 import clsx from 'clsx';
@@ -128,9 +128,10 @@ const coverNode = computed(() =>
 );
 
 // ============================ Open ============================
-const [isShowPreview, setShowPreview] = useMergedState(!!previewConfig.open, {
-  value: computed(() => previewConfig.open),
-});
+const [isShowPreview, setShowPreview] = useControlledState(
+  !!previewConfig.open,
+  computed(() => previewConfig.open),
+);
 
 const mousePosition = ref<null | { x: number; y: number }>(null);
 

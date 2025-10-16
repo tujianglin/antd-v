@@ -26,7 +26,6 @@ const panelPickerContext = usePanelPickerContextInject() as PanelPickerContextPr
 
 const {
   mode,
-  onModeChange,
   modeOptions,
   prefixCls,
   allowClear,
@@ -163,7 +162,7 @@ const showMode = computed(() => modeOptions.value.length > 1);
 </script>
 <template>
   <div v-if="allowClear || showMode" :class="`${prefixCls}-operation`">
-    <Segmented v-if="showMode" :options="modeOptions" :value="mode" @change="onModeChange" />
+    <Segmented v-if="showMode" :options="modeOptions" v-model:value="mode" />
     <ColorClear
       :prefix-cls="prefixCls"
       :value="value"

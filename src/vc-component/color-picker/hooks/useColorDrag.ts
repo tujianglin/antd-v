@@ -100,7 +100,7 @@ function useColorDrag(props: Reactive<useColorDragProps>): [Ref<TransformOffset>
     updateOffset(e);
     document.addEventListener('mousemove', onDragMove);
     document.addEventListener('mouseup', onDragStop);
-    document.addEventListener('touchmove', onDragMove);
+    document.addEventListener('touchmove', onDragMove, { passive: false });
     document.addEventListener('touchend', onDragStop);
     mouseMoveRef.value = onDragMove;
     mouseUpRef.value = onDragStop;

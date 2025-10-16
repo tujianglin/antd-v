@@ -106,7 +106,7 @@ const onInternalChangeComplete = (nextValues: number[]) => {
     :prefix-cls="prefixCls"
     :class="`${prefixCls}-gradient-slider`"
     :colors="colorList"
-    :color="null"
+    :color="null!"
     :value="values"
     range
     @change-complete="onInternalChangeComplete"

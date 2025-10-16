@@ -210,7 +210,7 @@ function useDrag(
     document.addEventListener('mouseup', onMouseUp);
     document.addEventListener('mousemove', onMouseMove);
     e.currentTarget.addEventListener('touchend', onMouseUp as any);
-    e.currentTarget.addEventListener('touchmove', onMouseMove as any);
+    e.currentTarget.addEventListener('touchmove', onMouseMove as any, { passive: false });
     mouseMoveEventRef.value = onMouseMove;
     mouseUpEventRef.value = onMouseUp;
     touchEventTargetRef.value = e.currentTarget;

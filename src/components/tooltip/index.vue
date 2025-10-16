@@ -117,6 +117,8 @@ const {
   ...restProps
 } = defineProps<TooltipProps>();
 
+const slots = useSlots();
+
 const vm = getCurrentInstance();
 
 const [, token] = useToken();
@@ -171,7 +173,7 @@ defineExpose({
 // ============================== Open ==============================
 const open = defineModel('open', { default: false });
 
-const noTitle = computed(() => !title && title !== 0);
+const noTitle = computed(() => !title && !slots.overlay && title !== 0);
 
 const onInternalOpenChange = (vis: boolean) => {
   open.value = noTitle.value ? false : vis;
@@ -238,16 +240,22 @@ const [zIndex, contextZIndex] = useZIndex(
 );
 
 // ============================= Render =============================
-const slots = useSlots();
-const children = computed(() => {
+const children = () => {
   const result = flattenChildren(slots?.default?.());
   return isValidElement(result) && !isFragment(result) && result.length === 1 ? result[0] : <span>{slots?.default?.()}</span>;
-});
+};
+
+const targetChild = (props) => {
+  const result = children();
+  result.props = { ...props, ...result.props };
+  return result;
+};
 
 const childCls = computed(() => {
-  return !children.value?.props?.class || typeof children.value?.props?.class === 'string'
-    ? clsx(children.value?.props?.class, openClassName || `${prefixCls.value}-open`)
-    : children.value?.props?.class;
+  const dom = children();
+  return !dom?.props?.class || typeof dom?.props?.class === 'string'
+    ? clsx(dom?.props?.class, openClassName || `${prefixCls.value}-open`)
+    : dom?.props?.class;
 });
 </script>
 <template>
@@ -292,8 +300,8 @@ const childCls = computed(() => {
       :destroy-on-hidden="destroyOnHidden"
     >
       <template #default="props">
-        <component v-if="tempOpen" :is="cloneVNode(children, { class: childCls, ...props })" />
-        <Render v-else :content="children" />
+        <component v-if="tempOpen" :is="cloneVNode(targetChild(props), { class: childCls })" />
+        <Render v-else :content="targetChild(props)" />
       </template>
       <template #overlay>
         <ContextIsolator space>

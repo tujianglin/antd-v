@@ -54,7 +54,7 @@ export interface TreeSelectProps<ValueType = any, OptionType extends DataNode = 
   onChange?: (value: ValueType, labelList: any[], extra: ChangeEventExtra) => void;
 
   // >>> Search
-  showSearch?: SearchConfig;
+  showSearch?: boolean | SearchConfig;
 
   // >>> Select
   onSelect?: (value: ValueType, option: OptionType) => void;
@@ -185,7 +185,7 @@ const {
   autoClearSearchValue = ref(true),
   filterTreeNode,
   treeNodeFilterProp = ref('value'),
-} = toRefs(reactiveComputed(() => showSearch || {}));
+} = toRefs(reactiveComputed(() => (typeof showSearch === 'boolean' && showSearch === true ? {} : showSearch || {})));
 
 const internalValue = defineModel<any>('value');
 
@@ -399,8 +399,6 @@ const triggerChange = useRefFunc(
     if (mergedMaxCount.value && formattedKeyList.length > mergedMaxCount.value) {
       return;
     }
-    const labeledValues = convert2LabelValues(newRawValues);
-    internalValue.value = labeledValues;
 
     // Clean up if needed
     if (autoClearSearchValue.value) {
@@ -408,54 +406,53 @@ const triggerChange = useRefFunc(
     }
 
     // Generate rest parameters is costly, so only do it when necessary
-    if (onChange) {
-      let eventValues: VueKey[] = newRawValues;
-      if (treeConduction.value) {
-        eventValues = formattedKeyList.map((key) => {
-          const entity = valueEntities.value.get(key);
-          return entity ? entity.node[mergedFieldNames.value.value] : key;
-        });
-      }
-
-      const { triggerValue, selected } = extra || {
-        triggerValue: undefined,
-        selected: undefined,
-      };
-
-      let returnRawValues: (LabeledValueType | VueKey)[] = eventValues;
-
-      // We need fill half check back
-      if (treeCheckStrictly) {
-        const halfValues = rawHalfLabeledValues.value.filter((item) => !eventValues.includes(item.value));
-
-        returnRawValues = [...returnRawValues, ...halfValues];
-      }
-
-      const returnLabeledValues = convert2LabelValues(returnRawValues);
-      const additionalInfo = {
-        // [Legacy] Always return as array contains label & value
-        preValue: rawLabeledValues.value,
-        triggerValue,
-      } as ChangeEventExtra;
-
-      // [Legacy] Fill legacy data if user query.
-      // This is expansive that we only fill when user query
-      // https://github.com/react-component/tree-select/blob/fe33eb7c27830c9ac70cd1fdb1ebbe7bc679c16a/src/Select.jsx
-      let showPosition = true;
-      if (treeCheckStrictly || (source === 'selection' && !selected)) {
-        showPosition = false;
-      }
-
-      fillAdditionalInfo(additionalInfo, triggerValue, newRawValues, mergedTreeData.value, showPosition, mergedFieldNames.value);
-
-      const returnValues = mergedLabelInValue.value ? returnLabeledValues : returnLabeledValues.map((item) => item.value);
-
-      onChange(
-        mergedMultiple.value ? returnValues : returnValues[0],
-        mergedLabelInValue.value ? null : returnLabeledValues.map((item) => item.label),
-        additionalInfo,
-      );
+    let eventValues: VueKey[] = newRawValues;
+    if (treeConduction.value) {
+      eventValues = formattedKeyList.map((key) => {
+        const entity = valueEntities.value.get(key);
+        return entity ? entity.node[mergedFieldNames.value.value] : key;
+      });
     }
+
+    const { triggerValue, selected } = extra || {
+      triggerValue: undefined,
+      selected: undefined,
+    };
+
+    let returnRawValues: (LabeledValueType | VueKey)[] = eventValues;
+
+    // We need fill half check back
+    if (treeCheckStrictly) {
+      const halfValues = rawHalfLabeledValues.value.filter((item) => !eventValues.includes(item.value));
+
+      returnRawValues = [...returnRawValues, ...halfValues];
+    }
+
+    const returnLabeledValues = convert2LabelValues(returnRawValues);
+    const additionalInfo = {
+      // [Legacy] Always return as array contains label & value
+      preValue: rawLabeledValues.value,
+      triggerValue,
+    } as ChangeEventExtra;
+
+    // [Legacy] Fill legacy data if user query.
+    // This is expansive that we only fill when user query
+    // https://github.com/react-component/tree-select/blob/fe33eb7c27830c9ac70cd1fdb1ebbe7bc679c16a/src/Select.jsx
+    let showPosition = true;
+    if (treeCheckStrictly || (source === 'selection' && !selected)) {
+      showPosition = false;
+    }
+
+    fillAdditionalInfo(additionalInfo, triggerValue, newRawValues, mergedTreeData.value, showPosition, mergedFieldNames.value);
+
+    const returnValues = mergedLabelInValue.value ? returnLabeledValues : returnLabeledValues.map((item) => item.value);
+    internalValue.value = mergedMultiple.value ? returnValues : returnValues[0];
+
+    onChange?.(
+      mergedMultiple.value ? returnValues : returnValues[0],
+      mergedLabelInValue.value ? null : returnLabeledValues.map((item) => item.label),
+      additionalInfo,
+    );
   },
 );
 

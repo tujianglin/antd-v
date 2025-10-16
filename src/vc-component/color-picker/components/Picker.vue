@@ -45,7 +45,7 @@ const [offset, dragStartHandle] = useColorDrag(
 );
 </script>
 <template>
-  <div ref="pickerRef" :class="`${prefixCls}-select`" @mousedown="dragStartHandle" @touchstart="dragStartHandle">
+  <div ref="pickerRef" :class="`${prefixCls}-select`" @mousedown="dragStartHandle" @touchstart.passive="dragStartHandle">
     <Palette :prefix-cls="prefixCls">
       <Transform :x="offset.x" :y="offset.y" ref="transformRef">
         <Handler :color="color.toRgbString()" :prefix-cls="prefixCls" />

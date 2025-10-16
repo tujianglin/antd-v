@@ -110,4 +110,43 @@ export class AggregationColor {
       })
     );
   }
+
+  static parseGradient(cssString: string): GradientColor | null {
+    if (!cssString || !cssString.startsWith('linear-gradient')) {
+      return null;
+    }
+
+    // 提取颜色部分（去掉方向角度）
+    const inner = cssString.replace(/^linear-gradient\([^,]+,\s*(.*)\)$/, '$1');
+
+    // 按逗号分割成每个颜色片段
+    const colorStops = inner.split(/,(?![^(]*\))/).map((s) => s.trim());
+
+    const gradient: GradientColor = colorStops.map((stop) => {
+      // 提取颜色（支持 rgb/rgba/hex）
+      const colorMatch = stop.match(/(rgba?\([^)]+\)|#[0-9a-fA-F]{3,8})/);
+      // 提取百分比
+      const percentMatch = stop.match(/(\d+(?:\.\d+)?)%/);
+
+      const colorStr = colorMatch ? colorMatch[1] : '#000';
+      const percent = percentMatch ? parseFloat(percentMatch[1]) : 0;
+
+      return {
+        color: new AggregationColor(colorStr),
+        percent,
+      };
+    });
+
+    return gradient;
+  }
+
+  fromCssString(cssString: string) {
+    const gradient = AggregationColor.parseGradient(cssString);
+    if (gradient) {
+      this.colors = gradient;
+      this.cleared = false;
+      this.metaColor = gradient[0].color.metaColor.clone();
+    }
+    return this;
+  }
 }

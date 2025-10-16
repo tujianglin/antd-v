@@ -172,7 +172,8 @@ const divProps = computed(() => {
       'aria-valuetext': getIndex(ariaValueTextFormatterForHandle.value, valueIndex)?.(value),
       'aria-orientation': direction.value === 'ltr' || direction.value === 'rtl' ? 'horizontal' : 'vertical',
       onMousedown: onInternalStartMove,
-      onTouchstart: onInternalStartMove,
+      // @ts-ignore
+      onTouchstartPassive: onInternalStartMove,
       onFocus: onInternalFocus,
       onMouseenter: onInternalMouseEnter,
       onKeydown: onKeyDown,

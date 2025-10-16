@@ -270,12 +270,11 @@ const triggerChange = (nextValues: number[]) => {
   const cloneNextValues = [...nextValues].sort((a, b) => a - b);
 
   // Trigger event if needed
-  if (onChange && !isEqual(cloneNextValues, rawValues, true)) {
-    onChange(getTriggerValue(cloneNextValues));
+  if (!isEqual(cloneNextValues, rawValues, true)) {
+    // We set this later since it will re-render component immediately
+    mergedValue.value = getTriggerValue(cloneNextValues);
+    onChange?.(getTriggerValue(cloneNextValues));
   }
-
-  // We set this later since it will re-render component immediately
-  mergedValue.value = cloneNextValues;
 };
 
 const finishChange = (draggingDelete?: boolean) => {

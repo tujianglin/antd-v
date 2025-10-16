@@ -21,7 +21,7 @@ export interface BaseSliderProps {
   onChange: (value: number) => void;
   onChangeComplete: (value: number) => void;
   type: HsbaColorType;
-  color: Color;
+  color: Color | null;
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -86,7 +86,7 @@ const gradientList = computed(() => colors.map((info) => `${info.color} ${info.p
     ref="sliderRef"
     :class="clsx(`${prefixCls}-slider`, `${prefixCls}-slider-${type}`)"
     @mousedown="dragStartHandle"
-    @touchstart="dragStartHandle"
+    @touchstart.passive="dragStartHandle"
   >
     <Palette :prefix-cls="prefixCls">
       <Transform :x="offset.x" :y="offset.y" ref="transformRef">

@@ -123,14 +123,14 @@ export default function useTouchMove(domRef: Ref<HTMLDivElement>, onOffset: (off
     domRef,
     () => {
       // No need to clean up since element removed
-      domRef.value?.addEventListener?.('touchstart', onProxyTouchStart, { passive: true });
+      domRef.value?.addEventListener?.('touchstart', onProxyTouchStart, { passive: false });
       domRef.value?.addEventListener?.('wheel', onProxyWheel, { passive: false });
     },
     { deep: true },
   );
   onMounted(() => {
     document.addEventListener('touchmove', onProxyTouchMove, { passive: false });
-    document.addEventListener('touchend', onProxyTouchEnd, { passive: true });
+    document.addEventListener('touchend', onProxyTouchEnd, { passive: false });
   });
 
   onBeforeUnmount(() => {

@@ -2,7 +2,7 @@
 import { BaseSelect, type BaseSelectProps, type BaseSelectPropsWithoutPrivate, type BaseSelectRef } from '@/vc-component/select';
 import type { DisplayValueType, Placement } from '@/vc-component/select/interface';
 import type { BuildInPlacements } from '@/vc-component/trigger';
-import useMergedState from '@/vc-util/hooks/useMergedState';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 import type { VueNode } from '@/vc-util/type';
 import { toReactive } from '@vueuse/core';
 import { computed, getCurrentInstance, ref, toRefs, useId, type CSSProperties } from 'vue';
@@ -235,10 +235,8 @@ const { mergedShowSearch, searchConfig } = toRefs(
 );
 const { searchValue, onSearch } = toRefs(searchConfig.value);
 const autoClearSearchValue = computed(() => searchConfig.value.autoClearSearchValue || true);
-const [mergedSearchValue, setSearchValue] = useMergedState('', {
-  value: searchValue,
-  postState: (search) => search || '',
-});
+const [internalSearchValue, setSearchValue] = useControlledState('', searchValue);
+const mergedSearchValue = computed(() => internalSearchValue.value || '');
 
 const onInternalSearch: BaseSelectProps['onSearch'] = (searchText, info) => {
   setSearchValue(searchText);

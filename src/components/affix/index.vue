@@ -187,7 +187,7 @@ const addListeners = () => {
     if (prevListener.value) {
       prevTarget.value?.removeEventListener(eventName, prevListener.value);
     }
-    listenerTarget?.addEventListener(eventName, lazyUpdatePosition);
+    listenerTarget?.addEventListener(eventName, lazyUpdatePosition, { passive: false });
   });
   prevTarget.value = listenerTarget;
   prevListener.value = lazyUpdatePosition;

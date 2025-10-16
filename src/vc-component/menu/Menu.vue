@@ -1,5 +1,4 @@
 <script lang="tsx" setup>
-import useMergedState from '@/vc-util/hooks/useMergedState';
 import type { CSSMotionProps } from '@/vc-component/motion';
 import isEqual from '@/vc-util/isEqual';
 import warning from '@/vc-util/warning';
@@ -46,6 +45,7 @@ import SubMenu from './SubMenu/index.vue';
 import { PrivateContextProvider } from './context/PrivateContext';
 import { IdContextProvider } from './context/IdContext';
 import { PathRegisterContextProvider, PathUserContextProvider } from './context/PathContext';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 export interface MenuProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'onClick' | 'onSelect' | 'dir' | 'onScroll'> {
   prefixCls?: string;
   rootClassName?: string;
@@ -366,11 +366,9 @@ watch(
 );
 
 // ======================== Active ========================
-const [mergedActiveKey, setMergedActiveKey] = useMergedState(
+const [mergedActiveKey, setMergedActiveKey] = useControlledState(
   activeKey || ((defaultActiveFirst && childList.value[0]?.key) as string),
-  {
-    value: computed(() => activeKey),
-  },
+  computed(() => activeKey),
 );
 
 const onActive = useMemoCallback((key: string) => {

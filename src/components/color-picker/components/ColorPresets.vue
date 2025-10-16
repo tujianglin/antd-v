@@ -8,10 +8,10 @@ import { useToken } from '../../theme/internal';
 import type { AggregationColor } from '../color';
 import type { PresetsItem } from '../interface';
 import { generateColor } from '../util';
-import useMergedState from '@/vc-util/hooks/useMergedState';
 import clsx from 'clsx';
 import { isBright } from './utils';
 import Render from '@/components/render';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 
 interface ColorPresetsProps {
   prefixCls: string;
@@ -35,10 +35,12 @@ const genCollapsePanelKey = (preset: PresetsItem, index: number) => {
 
 const [locale] = useLocale('ColorPicker');
 const [, token] = useToken();
-const [presetsValue] = useMergedState(genPresetColor(presets), {
-  value: computed(() => genPresetColor(presets)),
-  postState: genPresetColor,
-});
+const [innterPresetsValue] = useControlledState(
+  genPresetColor(presets),
+  computed(() => genPresetColor(presets)),
+);
+const presetsValue = computed(() => genPresetColor(innterPresetsValue.value));
+
 const colorPresetsPrefixCls = computed(() => `${prefixCls}-presets`);
 
 const activeKeys = computed(() =>

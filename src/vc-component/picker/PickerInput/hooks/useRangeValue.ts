@@ -1,6 +1,5 @@
 import useControlledState from '@/vc-util/hooks/useControlledState';
 import { toReactive } from '@vueuse/core';
-import { cloneDeep } from 'lodash-es';
 import { computed, toRefs, watch, type Ref } from 'vue';
 import type { GenerateConfig } from '../../generate';
 import useSyncState from '../../hooks/useSyncState';
@@ -289,7 +288,7 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
       if (!isSameMergedDates) {
         const everyEmpty = clone.every((val) => !val);
 
-        value.value = isNullValue && everyEmpty ? null : cloneDeep(clone);
+        value.value = isNullValue && everyEmpty ? null : clone;
         // Return null directly if all date are empty
         onChange?.value?.(
           // Return null directly if all date are empty

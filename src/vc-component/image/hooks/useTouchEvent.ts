@@ -158,9 +158,7 @@ export default function useTouchEvent(
     [open, movable],
     () => {
       if (open.value && movable.value) {
-        window.addEventListener('touchmove', preventDefault, {
-          passive: false,
-        });
+        window.addEventListener('touchmove', preventDefault, { passive: false });
       }
     },
     { immediate: true },

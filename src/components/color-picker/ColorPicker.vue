@@ -55,7 +55,67 @@ const {
 
 // ======================== Base ========================
 // Color
-const color = defineModel<ColorValueType>('value');
+const color = defineModel<ColorValueType>('value', {
+  set: (v: any) => {
+    const { format } = rest as any;
+    if (!v) return v;
+
+    // 如果是 AggregationColor 实例
+    if (v instanceof AggregationColor) {
+      // 🔹 如果是渐变色，永远返回 CSS 字符串（无论 format）
+      if (v.isGradient()) return v.toCssString();
+
+      // 🔹 否则是单色，按 format 转换
+      if (format === 'hex') return v.toHexString();
+      if (format === 'rgb') return v.toRgbString();
+      if (format === 'hsb') return v.toHsbString();
+
+      // 默认 rgb
+      return v.toRgbString();
+    }
+
+    // 🔹 如果是数组 [{ color, percent }]
+    if (Array.isArray(v)) {
+      const ag = new AggregationColor(v);
+      return ag.toCssString();
+    }
+
+    // 🔹 如果是渐变字符串
+    if (typeof v === 'string' && v.startsWith('linear-gradient')) {
+      return v;
+    }
+
+    // 🔹 普通颜色字符串
+    return v;
+  },
+
+  get: (v: any) => {
+    if (!v) return v;
+
+    // 🌈 渐变字符串
+    if (typeof v === 'string' && v.startsWith('linear-gradient')) {
+      const gradient = AggregationColor.parseGradient(v);
+      if (gradient) return new AggregationColor(gradient);
+    }
+
+    // 🧩 数组形式
+    if (Array.isArray(v)) {
+      return new AggregationColor(v);
+    }
+
+    // 🎨 普通单色
+    if (typeof v === 'string') {
+      return new AggregationColor(v);
+    }
+
+    // 已经是 AggregationColor
+    if (v instanceof AggregationColor) {
+      return v;
+    }
+
+    return new AggregationColor('');
+  },
+});
 
 const {
   getPrefixCls,

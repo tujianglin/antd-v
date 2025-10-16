@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import useMergedState from '@/vc-util/hooks/useMergedState';
+import useControlledState from '@/vc-util/hooks/useControlledState';
 import { reactiveComputed } from '@vueuse/core';
 import { omit } from 'lodash-es';
 import { computed, ref, watch, type CSSProperties } from 'vue';
@@ -54,21 +54,27 @@ const [mergedItems, register, fromItems] = usePreviewItems(computed(() => items)
 
 // ========================= Preview ==========================
 // >>> Index
-const [current, setCurrent] = useMergedState(0, {
-  value: computed(() => previewConfig.current),
-});
+const [current, setCurrent] = useControlledState(
+  0,
+  computed(() => previewConfig.current),
+);
 
 const keepOpenIndex = ref(false);
 
 // >>> Image
 const imageProps = reactiveComputed(() => mergedItems.value[current.value]?.data || {});
 // >>> Visible
-const [isShowPreview, setShowPreview] = useMergedState(!!previewConfig.open, {
-  value: computed(() => previewConfig.open),
-  onChange: (val) => {
-    previewConfig.onOpenChange?.(val, { current: current.value });
-  },
-});
+const [isShowPreview, setShowPreview] = useControlledState(
+  !!previewConfig.open,
+  computed(() => previewConfig.open),
+);
+
+const triggerShowPreview = (next: boolean) => {
+  setShowPreview(next);
+  if (next !== isShowPreview.value) {
+    previewConfig?.onOpenChange?.(next, { current: current.value });
+  }
+};
 
 // >>> Position
 const mousePosition = ref<null | { x: number; y: number }>(null);
@@ -79,7 +85,7 @@ const onPreviewFromImage = (id, imageSrc, mouseX, mouseY) => {
     : mergedItems.value.findIndex((item) => item.id === id);
 
   setCurrent(index < 0 ? 0 : index);
-  setShowPreview(true);
+  triggerShowPreview(true);
   mousePosition.value = { x: mouseX, y: mouseY };
 
   keepOpenIndex.value = true;

@@ -290,21 +290,20 @@ const displayOptions = computed(() =>
 // =========================== Change ===========================
 const triggerChange = (values: DraftValueType) => {
   const labeledValues = convert2LabelValues(values);
-  internalValue.value = labeledValues;
 
   if (
-    onChange &&
     // Trigger event only when value changed
-    (labeledValues.length !== mergedValues.value.length ||
-      labeledValues.some((newVal, index) => mergedValues.value[index]?.value !== newVal?.value))
+    labeledValues.length !== mergedValues.value.length ||
+    labeledValues.some((newVal, index) => mergedValues.value[index]?.value !== newVal?.value)
   ) {
     const returnValues = labelInValue
       ? labeledValues.map(({ label: l, value: v }) => ({ label: l, value: v }))
       : labeledValues.map((v) => v.value);
 
     const returnOptions = labeledValues.map((v) => injectPropsWithOption(getMixedOption(v.value)));
+    internalValue.value = multiple.value ? returnValues : returnValues[0];
 
-    onChange(
+    onChange?.(
       // Value
       multiple.value ? returnValues : returnValues[0],
       // Option

@@ -30,7 +30,7 @@ export default function useModeColor(
 
   const { modeOptionList, modeSet } = toRefs(
     reactiveComputed(() => {
-      const list = (Array.isArray(mode) ? mode : [mode]).filter((m) => m);
+      const list = (Array.isArray(mode.value) ? mode.value : [mode.value]).filter((m) => m);
       if (!list.length) {
         list.push('single');
       }

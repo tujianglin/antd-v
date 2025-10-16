@@ -14,7 +14,7 @@ import type { ArrowPos, ArrowTypeOuter, TriggerProps } from './interface';
 import Popup from './Popup';
 import { getAlignPopupClassName } from './util';
 
-defineOptions({ name: 'Trigger', inheritAttrs: false, compatConfig: { MODE: 3 } });
+defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
   prefixCls = 'rc-trigger-popup',
@@ -559,10 +559,24 @@ const passedProps = computed(() => {
   });
   return result;
 });
+
+const targetProps = computed(() => ({
+  ...mergedChildrenProps.value,
+  ...passedProps.value,
+}));
 </script>
 <template>
   <ResizeObserver :disabled="!mergedOpen" :ref="setTargetRef" @resize="onTargetResize">
-    <slot v-bind="{ ...mergedChildrenProps, ...passedProps }"></slot>
+    <slot
+      @contextMenu="targetProps.onContextmenu"
+      @click="targetProps.onClick"
+      @mousedown="targetProps.onMousedown"
+      @touchstart.passive="targetProps.onTouchstart"
+      @mouseenter="targetProps.onMouseenter"
+      @mouseleave="targetProps.onMouseleave"
+      @focus="targetProps.onFocus"
+      @blur="targetProps.onBlur"
+    ></slot>
   </ResizeObserver>
   <TriggerContextProvider v-if="rendedRef" :value="context">
     <Popup

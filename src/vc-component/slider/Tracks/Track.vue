@@ -10,8 +10,8 @@ export interface TrackProps {
   style?: CSSProperties;
   /** Replace with origin prefix concat className */
   replaceCls?: string;
-  start: number;
-  end: number;
+  start: number | null;
+  end: number | null;
   index: number;
   onStartMove?: OnStartMove;
 }
@@ -78,6 +78,6 @@ const className = computed(
     :class="className"
     :style="{ ...positionStyle, ...style }"
     @mousedown="onInternalStartMove"
-    @touchstart="onInternalStartMove"
+    @touchstart.passive="onInternalStartMove"
   ></div>
 </template>

@@ -10,7 +10,6 @@ export interface PanelPickerContextProps {
   disabled?: boolean;
   disabledAlpha?: boolean;
   mode: ModeType;
-  onModeChange: (mode: ModeType) => void;
   modeOptions: ModeOptions;
 
   value: AggregationColor;
