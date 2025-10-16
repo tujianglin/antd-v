@@ -1,4 +1,4 @@
-import { isValidElement } from '@/components/_util/isValidNode';
+import { isValidElement } from '@/vc-util/Children/util';
 import { cloneVNode, computed, type Ref } from 'vue';
 import type { CascaderProps, DefaultOptionType, InternalFieldNames, SingleValueType } from '../Cascader.vue';
 import { toPathKey } from '../utils/commonUtil';

@@ -1,4 +1,4 @@
-import { ref, watchEffect, type Ref } from 'vue';
+import { ref, watchEffect, type CSSProperties, type Ref } from 'vue';
 import type { ProgressProps } from './interface';
 
 export const defaultProps: Partial<ProgressProps> = {
@@ -27,7 +27,7 @@ export const useTransitionDuration = (): Ref<SVGPathElement[]> => {
       }
 
       updated = true;
-      const pathStyle = path.style;
+      const pathStyle = path.style || ({} as CSSProperties);
       pathStyle.transitionDuration = '.3s, .3s, .3s, .06s';
 
       if (prevTimeStamp.value && now - prevTimeStamp.value < 100) {

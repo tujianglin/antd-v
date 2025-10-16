@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
-import { isValidElement } from '@/components/_util/isValidNode';
 import { ref } from 'vue';
 import type { TabBarExtraContent, TabBarExtraMap, TabBarExtraPosition } from '../interface';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
+import { isValidElement } from '@/vc-util/Children/util';
 
 interface ExtraContentProps {
   position: TabBarExtraPosition;

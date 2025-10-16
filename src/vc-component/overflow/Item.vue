@@ -1,9 +1,8 @@
 <script lang="tsx" setup generic="ItemType">
-import type { VueKey } from '@/vc-util/type';
+import Render from '@/vc-component/render';
+import type { VueKey, VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, onBeforeUnmount, ref, useSlots, type CSSProperties, type HTMLAttributes } from 'vue';
-import { Render } from '../../components';
-import type { RenderNode } from '../../components/_util/type';
 import ResizeObserver from '../resize-observer';
 
 export interface ItemProps<ItemType> extends /** @vue-ignore */ HTMLAttributes {
@@ -11,7 +10,7 @@ export interface ItemProps<ItemType> extends /** @vue-ignore */ HTMLAttributes {
   item?: ItemType;
   class?: string;
   style?: CSSProperties;
-  renderItem?: (item: ItemType, info: { index: number }) => RenderNode;
+  renderItem?: (item: ItemType, info: { index: number }) => VueNode;
   responsive?: boolean;
   // https://github.com/ant-design/ant-design/issues/35475
   /**

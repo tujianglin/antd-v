@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
 import type { CSSMotionProps } from '@/vc-component/motion';
+import Render from '@/vc-component/render';
 import Trigger from '@/vc-component/trigger';
 import raf from '@/vc-util/raf';
 import clsx from 'clsx';

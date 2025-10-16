@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import {} from 'vue';
-import Render from '../render';
+import Render from '@/vc-component/render';
+
 interface OverlayProps {
   prefixCls?: string;
   title?: any;

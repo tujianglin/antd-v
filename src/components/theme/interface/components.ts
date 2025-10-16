@@ -32,13 +32,13 @@ import type { ComponentToken as LayoutComponentToken } from '../../layout/style'
 // import type { ComponentToken as MasonryComponentToken } from '../../masonry/style';
 import type { ComponentToken as MentionsComponentToken } from '../../mentions/style';
 import type { ComponentToken as MenuComponentToken } from '../../menu/style';
-// import type { ComponentToken as MessageComponentToken } from '../../message/style';
+import type { ComponentToken as MessageComponentToken } from '../../message/style';
 // import type { ComponentToken as ModalComponentToken } from '../../modal/style';
-// import type { ComponentToken as NotificationComponentToken } from '../../notification/style';
+import type { ComponentToken as NotificationComponentToken } from '../../notification/style';
 import type { ComponentToken as PaginationComponentToken } from '../../pagination/style';
-// import type { ComponentToken as PopconfirmComponentToken } from '../../popconfirm/style';
+import type { ComponentToken as PopconfirmComponentToken } from '../../popconfirm/style';
 import type { ComponentToken as PopoverComponentToken } from '../../popover/style';
-// import type { ComponentToken as ProgressComponentToken } from '../../progress/style';
+import type { ComponentToken as ProgressComponentToken } from '../../progress/style';
 // import type { ComponentToken as QRCodeComponentToken } from '../../qr-code/style';
 import type { ComponentToken as RadioComponentToken } from '../../radio/style';
 import type { ComponentToken as RateComponentToken } from '../../rate/style';
@@ -63,7 +63,7 @@ import type { ComponentToken as TransferComponentToken } from '../../transfer/st
 import type { ComponentToken as TreeSelectComponentToken } from '../../tree-select/style';
 import type { ComponentToken as TreeComponentToken } from '../../tree/style';
 // import type { ComponentToken as TypographyComponentToken } from '../../typography/style';
-// import type { ComponentToken as UploadComponentToken } from '../../upload/style';
+import type { ComponentToken as UploadComponentToken } from '../../upload/style';
 
 export interface ComponentTokenMap {
   Affix?: AffixComponentToken;
@@ -96,10 +96,10 @@ export interface ComponentTokenMap {
   Layout?: LayoutComponentToken;
   // List?: ListComponentToken;
   Mentions?: MentionsComponentToken;
-  // Notification?: NotificationComponentToken;
+  Notification?: NotificationComponentToken;
   Pagination?: PaginationComponentToken;
   Popover?: PopoverComponentToken;
-  // Popconfirm?: PopconfirmComponentToken;
+  Popconfirm?: PopconfirmComponentToken;
   Rate?: RateComponentToken;
   Radio?: RadioComponentToken;
   // Result?: ResultComponentToken;
@@ -122,12 +122,12 @@ export interface ComponentTokenMap {
   // Steps?: StepsComponentToken;
   Menu?: MenuComponentToken;
   // Modal?: ModalComponentToken;
-  // Message?: MessageComponentToken;
-  // Upload?: UploadComponentToken;
+  Message?: MessageComponentToken;
+  Upload?: UploadComponentToken;
   Tooltip?: TooltipComponentToken;
   // Table?: TableComponentToken;
   Space?: SpaceComponentToken;
-  // Progress?: ProgressComponentToken;
+  Progress?: ProgressComponentToken;
   // Tour?: TourComponentToken;
   // QRCode?: QRCodeComponentToken;
   App?: AppComponentToken;

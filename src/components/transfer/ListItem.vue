@@ -6,7 +6,7 @@ import { useLocale } from '../locale';
 import defaultLocale from '../locale/en_US';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import Render from '../render';
+import Render from '@/vc-component/render';
 import { DeleteOutlined } from '@ant-design/icons-vue';
 
 type ListItemProps<RecordType> = {

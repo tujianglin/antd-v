@@ -1,7 +1,5 @@
 import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
-import type { CSSMotionProps } from '../motion';
-import type { MobileConfig } from './Popup/interface';
 
 export type Placement =
   | 'top'
@@ -94,6 +92,7 @@ export interface AlignType {
 }
 
 export interface ArrowTypeOuter {
+  style?: CSSProperties;
   class?: string;
   content?: VueNode;
 }
@@ -120,80 +119,4 @@ export interface Point {
 
 export interface CommonEventHandler {
   remove: () => void;
-}
-
-export interface TriggerRef {
-  nativeElement: HTMLElement;
-  popupElement: HTMLDivElement;
-  forceAlign: VoidFunction;
-}
-
-export interface TriggerProps {
-  action?: ActionType | ActionType[];
-  showAction?: ActionType[];
-  hideAction?: ActionType[];
-
-  prefixCls?: string;
-
-  zIndex?: number;
-
-  onPopupAlign?: (element: HTMLElement, align: AlignType) => void;
-
-  stretch?: string;
-
-  // ==================== Open =====================
-  popupVisible?: boolean;
-  defaultPopupVisible?: boolean;
-  onOpenChange?: (visible: boolean) => void;
-  afterOpenChange?: (visible: boolean) => void;
-
-  // =================== Portal ====================
-  getPopupContainer?: (node: HTMLElement) => HTMLElement;
-  forceRender?: boolean;
-  autoDestroy?: boolean;
-
-  // ==================== Mask =====================
-  mask?: boolean;
-  maskClosable?: boolean;
-
-  // =================== Motion ====================
-  popupMotion?: CSSMotionProps;
-  maskMotion?: CSSMotionProps;
-
-  // ==================== Delay ====================
-  mouseEnterDelay?: number;
-  mouseLeaveDelay?: number;
-
-  focusDelay?: number;
-  blurDelay?: number;
-
-  // ==================== Popup ====================
-  popupPlacement?: string;
-  builtinPlacements?: BuildInPlacements;
-  popupAlign?: AlignType;
-  popupClassName?: string;
-  popupStyle?: CSSProperties;
-  getPopupClassNameFromAlign?: (align: AlignType) => string;
-  onPopupClick?: (e: MouseEvent) => void;
-
-  alignPoint?: boolean; // Maybe we can support user pass position in the future
-
-  /**
-   * Trigger will memo content when close.
-   * This may affect the case if want to keep content update.
-   * Set `fresh` to `false` will always keep update.
-   */
-  fresh?: boolean;
-
-  // ==================== Arrow ====================
-  arrow?: boolean | ArrowTypeOuter;
-
-  // // ========================== Mobile ==========================
-  /**
-   * @private Bump fixed position at bottom in mobile.
-   * Will replace the config of root props.
-   * This will directly trade as mobile view which will not check what real is.
-   * This is internal usage currently, do not use in your prod.
-   */
-  mobile?: MobileConfig;
 }

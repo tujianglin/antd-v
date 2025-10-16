@@ -1,6 +1,5 @@
 <script lang="tsx" setup generic="DateType extends object = any">
-import { Render } from '@/components';
-import {} from 'vue';
+import Render from '@/vc-component/render';
 import type { ValueDate } from '../../interface';
 
 export interface PresetPanelProps<ValueType = any> {

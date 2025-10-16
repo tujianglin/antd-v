@@ -472,7 +472,7 @@ onBeforeUnmount(() => {
 });
 
 defineExpose({
-  get domRef() {
+  get el() {
     return domRef.value;
   },
   get input() {

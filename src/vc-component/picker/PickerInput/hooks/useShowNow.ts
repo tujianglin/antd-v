@@ -7,7 +7,7 @@ export default function useShowNow(picker: Ref<InternalMode>, mode: Ref<PanelMod
       return false;
     }
 
-    if (showNow.value === true) {
+    if (showNow.value !== undefined) {
       return showNow.value;
     }
 

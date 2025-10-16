@@ -1,6 +1,6 @@
+import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 import type { Orientation } from '../_util/hooks/useOrientation';
-import type { RenderNode } from '../_util/type';
 import type { SizeType } from '../config-provider/SizeContext';
 
 export type SpaceSize = SizeType | number;
@@ -15,7 +15,7 @@ export interface SpaceProps {
   orientation?: Orientation;
   // No `stretch` since many components do not support that.
   align?: 'start' | 'end' | 'center' | 'baseline';
-  separator?: RenderNode;
+  separator?: VueNode;
   wrap?: boolean;
   classNames?: Partial<Record<SemanticName, string>>;
   styles?: Partial<Record<SemanticName, CSSProperties>>;

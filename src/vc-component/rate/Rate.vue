@@ -7,7 +7,7 @@ import { getOffsetLeft } from './util';
 import KeyCode from '@/vc-util/KeyCode';
 import clsx from 'clsx';
 import pickAttrs from '@/vc-util/pickAttrs';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 export interface RateProps extends Pick<StarProps, 'count' | 'character' | 'characterRender' | 'allowHalf' | 'disabled'> {
   allowClear?: boolean;

@@ -1,4 +1,4 @@
-import type { VueKey } from '@/vc-util/type';
+import type { VueKey, VueNode } from '@/vc-util/type';
 import type { AriaAttributes, CSSProperties, HTMLAttributes } from 'vue';
 
 export type Placement = 'top' | 'topLeft' | 'topRight' | 'bottom' | 'bottomLeft' | 'bottomRight';
@@ -6,7 +6,7 @@ export type Placement = 'top' | 'topLeft' | 'topRight' | 'bottom' | 'bottomLeft'
 type NoticeSemanticProps = 'wrapper';
 
 export interface NoticeConfig {
-  content?: any;
+  content?: VueNode;
   duration?: number | null;
   showProgress?: boolean;
   pauseOnHover?: boolean;
@@ -30,7 +30,7 @@ export interface NoticeConfig {
 export interface OpenConfig extends NoticeConfig {
   key: VueKey;
   placement?: Placement;
-  content?: any;
+  content?: VueNode;
   duration?: number | null;
 }
 

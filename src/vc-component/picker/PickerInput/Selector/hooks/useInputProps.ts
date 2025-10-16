@@ -1,6 +1,6 @@
 import pickAttrs from '@/vc-util/pickAttrs';
 import warning from '@/vc-util/warning';
-import { toReactive } from '@vueuse/core';
+import { reactiveComputed } from '@vueuse/core';
 import { computed, toRefs, type Ref } from 'vue';
 import type { SelectorProps } from '../../../interface';
 import { formatValue } from '../../../utils/dateUtil';
@@ -77,7 +77,7 @@ export default function useInputProps<DateType extends object = any>(
     allHelp,
 
     picker,
-  } = toRefs(toReactive(props));
+  } = toRefs(reactiveComputed(() => props.value));
 
   // ======================== Parser ========================
   const parseDate = (str: string, formatStr: string) => {

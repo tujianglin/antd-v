@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
+import { isVueElement } from '@/vc-util/Children/util';
 import isEqual from '@/vc-util/isEqual';
-import { isVueElement } from '@/vc-util/ref';
 import warning from '@/vc-util/warning';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';

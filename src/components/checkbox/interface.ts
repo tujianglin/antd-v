@@ -1,5 +1,5 @@
+import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
-import type { RenderNode } from '../_util/type';
 
 export interface AbstractCheckboxProps<T> {
   prefixCls?: string;
@@ -46,7 +46,7 @@ export interface CheckboxChangeEvent {
 }
 
 export interface CheckboxOptionType<T = any> {
-  label: RenderNode;
+  label: VueNode;
   style?: CSSProperties;
   class?: string; // 👈 5.25.0+
   disabled?: boolean;

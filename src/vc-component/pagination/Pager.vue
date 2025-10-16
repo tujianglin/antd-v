@@ -2,7 +2,7 @@
 import { computed, type CSSProperties } from 'vue';
 import type { PaginationProps } from './interface';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 export interface PagerProps extends Pick<PaginationProps, 'itemRender'> {
   rootPrefixCls: string;

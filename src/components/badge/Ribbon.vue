@@ -1,4 +1,5 @@
 <script lang="tsx" setup>
+import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, toRefs, type CSSProperties, type VNode } from 'vue';
@@ -6,7 +7,6 @@ import type { PresetColorType } from '../_util/colors';
 import { isPresetColor } from '../_util/colors';
 import type { LiteralUnion } from '../_util/type';
 import { useComponentConfig } from '../config-provider/context';
-import Render from '../render';
 import useStyle from './style/ribbon';
 
 type RibbonPlacement = 'start' | 'end';

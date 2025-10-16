@@ -8,15 +8,15 @@ import {
   InfoCircleFilled,
 } from '@ant-design/icons-vue';
 import clsx from 'clsx';
-import { replaceElement } from '../_util/reactNode';
 import { useComponentConfig } from '../config-provider/context';
 import useStyle from './style/index';
 import pickAttrs from '@/vc-util/pickAttrs';
 import CSSMotion from '@/vc-component/motion';
 import { composeRef } from '@/vc-util/ref';
-import Render from '../render';
+import Render from '@/vc-component/render';
 import { keysToCamelCaseShallow } from '@/vc-util/props';
 import type { VueNode } from '@/vc-util/type';
+import { replaceElement } from '@/vc-util/Children/util';
 
 export interface AlertRef {
   nativeElement: HTMLDivElement;

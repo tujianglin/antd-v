@@ -1,7 +1,7 @@
 import Collection from './Collection.vue';
 import RefResizeObserver from './index.vue';
 
-export type { ResizeObserverProps } from './interface';
+export type { ResizeObserverProps } from './index.vue';
 
 type CompoundedComponent = typeof RefResizeObserver & {
   Collection: typeof Collection;

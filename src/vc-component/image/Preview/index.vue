@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import type { PortalProps } from '@/vc-component/portal/index.vue';
-import { reactiveComputed, toReactive } from '@vueuse/core';
+import { reactiveComputed } from '@vueuse/core';
 import { isEmpty } from 'lodash-es';
 import { computed, nextTick, onBeforeUnmount, ref, toRefs, watch, type CSSProperties, type ImgHTMLAttributes } from 'vue';
 import { usePreviewGroupContextInject } from '../context';
@@ -16,7 +16,7 @@ import KeyCode from '@/vc-util/KeyCode';
 import Portal from '@/vc-component/portal';
 import CSSMotion from '@/vc-component/motion';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import CloseBtn from './CloseBtn.vue';
 import PrevNext from './PrevNext.vue';
 import Footer from './Footer.vue';
@@ -186,7 +186,7 @@ const { isMoving, onMouseDown, onWheel } = useMouseEvent(
   computed(() => movable),
   computed(() => open),
   computed(() => scaleStep),
-  toReactive(transform),
+  transform,
   updateTransform,
   dispatchZoomChange,
 );
@@ -195,7 +195,7 @@ const { isTouching, onTouchStart, onTouchMove, onTouchEnd } = useTouchEvent(
   computed(() => movable),
   computed(() => open),
   computed(() => minScale),
-  toReactive(transform),
+  transform,
   updateTransform,
   dispatchZoomChange,
 );

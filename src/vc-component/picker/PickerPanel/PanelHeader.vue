@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { computed, toRefs, type CSSProperties } from 'vue';
 import { isSameOrAfter } from '../utils/dateUtil';

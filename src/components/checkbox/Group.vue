@@ -1,18 +1,18 @@
 <script lang="tsx" setup>
+import Render from '@/vc-component/render';
+import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
 import { computed, ref, toRefs, useTemplateRef, type CSSProperties } from 'vue';
-import type { RenderNode } from '../_util/type';
 import { useConfigContextInject } from '../config-provider';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
-import Render from '../render';
 import { CheckboxGroupContextProvider, type CheckboxGroupContext } from './GroupContext';
 import Checkbox from './index.vue';
 import type { CheckboxChangeEvent } from './interface';
 import useStyle from './style';
 
 export interface CheckboxOptionType<T = any> {
-  label: RenderNode;
+  label: VueNode;
   value: T;
   style?: CSSProperties;
   class?: string; // 👈 5.25.0+

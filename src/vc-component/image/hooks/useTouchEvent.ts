@@ -1,4 +1,5 @@
-import { onBeforeUnmount, ref, toRefs, watch, type Reactive, type Ref } from 'vue';
+import { reactiveComputed } from '@vueuse/core';
+import { onBeforeUnmount, ref, toRefs, watch, type Ref } from 'vue';
 import getFixScaleEleTransPosition from '../getFixScaleEleTransPosition';
 import type { DispatchZoomChangeFunc, TransformType, UpdateTransformFunc } from './useImageTransform';
 
@@ -44,11 +45,11 @@ export default function useTouchEvent(
   movable: Ref<boolean>,
   open: Ref<boolean>,
   minScale: Ref<number>,
-  transform: Reactive<TransformType>,
+  transform: Ref<TransformType>,
   updateTransform: UpdateTransformFunc,
   dispatchZoomChange: DispatchZoomChangeFunc,
 ) {
-  const { rotate, scale, x, y } = toRefs(transform);
+  const { rotate, scale, x, y } = toRefs(reactiveComputed(() => transform.value));
 
   const isTouching = ref(false);
   const touchPointInfo = ref<TouchPointInfoType>({

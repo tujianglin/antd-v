@@ -3,13 +3,13 @@ import { cloneVNode, computed, createVNode, getCurrentInstance, ref } from 'vue'
 import type { PaginationProps } from './interface';
 import zhCN from './locale/zh_CN';
 import KeyCode from '@/vc-util/KeyCode';
-import { isValidElement } from '@/components/_util/isValidNode';
 import pickAttrs from '@/vc-util/pickAttrs';
 import type { PagerProps } from './Pager.vue';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import Pager from './Pager.vue';
 import clsx from 'clsx';
 import Options from './Options.vue';
+import { isValidElement } from '@/vc-util/Children/util';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 

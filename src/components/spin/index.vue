@@ -7,7 +7,7 @@ import usePercent from './usePercent';
 import type { VueNode } from '@/vc-util/type';
 import { debounce } from 'throttle-debounce';
 import clsx from 'clsx';
-import Render from '../render';
+import Render from '@/vc-component/render';
 
 export type SpinIndicator = VueNode;
 type SemanticName = 'root' | 'wrapper' | 'mask' | 'indicator';

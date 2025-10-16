@@ -2,14 +2,14 @@ import { computed, defineComponent, inject, provide, ref, type InjectionKey, typ
 
 export type SizeType = 'small' | 'middle' | 'large' | undefined;
 
-export const sizeProviderKey: InjectionKey<Ref<SizeType>> = Symbol('sizeProviderKey');
+const SizeContext: InjectionKey<Ref<SizeType>> = Symbol('SizeContext');
 
 export const useSizeContextInject = () => {
-  return inject(sizeProviderKey, ref<SizeType>('middle'));
+  return inject(SizeContext, ref<SizeType>('middle'));
 };
 
 export const useSizeContextProvider = (props: Ref<SizeType>) => {
-  return provide(sizeProviderKey, props);
+  return provide(SizeContext, props);
 };
 
 export const SizeContextProvider = defineComponent({

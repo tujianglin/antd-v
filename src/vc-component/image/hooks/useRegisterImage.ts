@@ -1,11 +1,11 @@
 import { isEmpty } from 'lodash-es';
-import { computed, onBeforeUnmount, ref, watch, type Reactive, type Ref } from 'vue';
+import { computed, onBeforeUnmount, ref, watch, type Ref } from 'vue';
 import { usePreviewGroupContextInject } from '../context';
 import type { ImageElementProps } from '../interface';
 
 let uid = 0;
 
-export default function useRegisterImage(canPreview: Ref<boolean>, data: Reactive<ImageElementProps>) {
+export default function useRegisterImage(canPreview: Ref<boolean>, data: Ref<ImageElementProps>) {
   const id = ref(() => {
     uid += 1;
     return String(uid);
@@ -13,7 +13,7 @@ export default function useRegisterImage(canPreview: Ref<boolean>, data: Reactiv
   const groupContext = usePreviewGroupContextInject();
 
   const registerData = computed(() => ({
-    data,
+    data: data.value,
     canPreview: canPreview.value,
   }));
 

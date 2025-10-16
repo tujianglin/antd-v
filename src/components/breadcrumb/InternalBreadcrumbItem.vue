@@ -5,7 +5,7 @@ import type { DropdownProps } from '../dropdown';
 import { useBreadcrumbContextInject } from './BreadcrumbContext';
 import Dropdown from '../dropdown';
 import { DownOutlined } from '@ant-design/icons-vue';
-import Render from '../render';
+import Render from '@/vc-component/render';
 import BreadcrumbSeparator from './BreadcrumbSeparator.vue';
 import type { BreadcrumbItemProps } from './BreadcrumbItem.vue';
 

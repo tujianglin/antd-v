@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { computed, type CSSProperties } from 'vue';
 

@@ -1,4 +1,4 @@
-export default (element: Element): boolean => {
+export default (element): boolean => {
   if (!element) {
     return false;
   }

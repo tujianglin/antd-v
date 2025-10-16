@@ -1,5 +1,5 @@
 <script lang="tsx" setup generic="T">
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import { falseToUndefined } from '@/vc-util/props';
 import clsx from 'clsx';
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef, toRaw, watch, watchEffect, type CSSProperties } from 'vue';

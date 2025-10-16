@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import type { HtmlHTMLAttributes } from 'vue';
 import { toRefs } from 'vue';

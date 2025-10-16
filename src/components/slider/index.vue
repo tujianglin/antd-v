@@ -11,7 +11,7 @@ import type { SliderProps as RcSliderProps } from '@/vc-component/slider';
 import type { AbstractTooltipProps, TooltipPlacement } from '../tooltip/index.vue';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import { useSliderInternalContextInject } from './Context';
-import { toReactive } from '@vueuse/core';
+import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
 import raf from '@/vc-util/raf';
 import RcSlider from '@/vc-component/slider';
@@ -149,7 +149,7 @@ const {
   getPopupContainer: getTooltipPopupContainer,
   prefixCls: customizeTooltipPrefixCls,
   formatter: tipFormatter,
-} = toRefs(toReactive(tooltip));
+} = toRefs(reactiveComputed(() => tooltip));
 
 const lockOpen = computed(() => tooltipOpen?.value);
 const activeOpen = computed(() => (hoverOpen?.value || focusOpen?.value) && lockOpen?.value !== false);

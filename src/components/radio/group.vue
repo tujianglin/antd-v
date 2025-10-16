@@ -1,10 +1,10 @@
 <script lang="tsx" setup>
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { computed, toRefs, useId } from 'vue';
 import { useConfigContextInject } from '../config-provider';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useSize from '../config-provider/hooks/useSize';
-import Render from '../render';
 import { RadioGroupContextProvider } from './context';
 import Radio from './index.vue';
 import type { RadioChangeEvent, RadioGroupButtonStyle, RadioGroupProps } from './interface';

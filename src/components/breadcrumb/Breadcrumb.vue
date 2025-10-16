@@ -10,7 +10,7 @@ import useStyle from './style';
 import useItemRender from './useItemRender';
 import type { VueKey, VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import Render from '../render';
+import Render from '@/vc-component/render';
 import InternalBreadcrumbItem from './InternalBreadcrumbItem.vue';
 import pickAttrs from '@/vc-util/pickAttrs';
 import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';

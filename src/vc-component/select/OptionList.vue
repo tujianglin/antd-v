@@ -1,5 +1,4 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
 import type { ListRef, ScrollConfig } from '@/vc-component/virtual-list/interface';
 import KeyCode from '@/vc-util/KeyCode';
 import { computed, onBeforeUnmount, ref, toRefs, watch, withModifiers } from 'vue';
@@ -12,8 +11,9 @@ import pickAttrs from '@/vc-util/pickAttrs';
 import List from '@/vc-component/virtual-list/List.vue';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import isValidNode, { isValidElement } from '@/components/_util/isValidNode';
 import TransBtn from './TransBtn.vue';
+import Render from '@/vc-component/render';
+import { isValidElement, isValidNode } from '@/vc-util/Children/util';
 
 // export interface OptionListProps<OptionsType extends object[]> {
 export type OptionListProps = Record<string, never>;

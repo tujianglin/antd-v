@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import { useBaseSelectContextInject } from '@/vc-component/select';
 import Tree, { UnstableContextProvider, type TreeProps } from '@/vc-component/tree';
 import type { EventDataNode } from '@/vc-component/tree/interface';

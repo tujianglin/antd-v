@@ -1,6 +1,6 @@
-import { nextTick, onBeforeUnmount, ref, watch, type Ref } from 'vue';
-import { getShadowRoot } from '../../../vc-util/Dom/shadow';
-import warning from '../../../vc-util/warning';
+import { getShadowRoot } from '@/vc-util/Dom/shadow';
+import warning from '@/vc-util/warning';
+import { nextTick, onBeforeUnmount, shallowRef, watch, watchEffect, type Ref } from 'vue';
 import { getWin } from '../util';
 
 /**
@@ -17,12 +17,12 @@ export default function useWinClick(
   inPopupOrChild: (target: EventTarget) => boolean,
   triggerOpen: (open: boolean) => void,
 ) {
-  const openRef = ref<boolean>();
-  watch(open, (val) => {
-    openRef.value = val;
+  const openRef = shallowRef<boolean>();
+  watchEffect(() => {
+    openRef.value = open.value;
   });
 
-  const popupPointerDownRef = ref<boolean>(false);
+  const popupPointerDownRef = shallowRef<boolean>(false);
   let win, targetShadowRoot;
 
   const onPointerDown = () => {
@@ -36,17 +36,17 @@ export default function useWinClick(
   };
 
   // Click to hide is special action since click popup element should not hide
-  watch([clickToHide, targetEle, popupEle, mask, maskClosable], async ([val1, val2, val3, val4, val5]) => {
+  watch([clickToHide, targetEle, popupEle, mask, maskClosable], async () => {
     await nextTick();
-    if (val1 && val3 && (!val4 || val5)) {
-      win = getWin(val2);
+    if (clickToHide.value && popupEle.value && (!mask.value || maskClosable.value)) {
+      win = getWin(targetEle.value);
 
       win?.addEventListener('pointerdown', onPointerDown, true);
       win?.addEventListener('mousedown', onTriggerClose, true);
       win?.addEventListener('contextmenu', onTriggerClose, true);
 
       // shadow root
-      targetShadowRoot = getShadowRoot(val2) as unknown as HTMLElement;
+      targetShadowRoot = getShadowRoot(targetEle.value) as unknown as HTMLElement;
       if (targetShadowRoot) {
         targetShadowRoot.addEventListener('mousedown', onTriggerClose, true);
         targetShadowRoot.addEventListener('contextmenu', onTriggerClose, true);
@@ -54,12 +54,10 @@ export default function useWinClick(
 
       // Warning if target and popup not in same root
       if (process.env.NODE_ENV !== 'production') {
-        const targetRoot = val2?.getRootNode?.();
-        const popupRoot = val3.getRootNode?.();
+        const targetRoot = targetEle.value?.getRootNode?.();
+        const popupRoot = popupEle.value.getRootNode?.();
         warning(targetRoot === popupRoot, `trigger element and popup element should in same shadow root.`);
       }
-
-      return () => {};
     }
   });
 

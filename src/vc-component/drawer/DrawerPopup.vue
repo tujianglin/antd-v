@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import { parseWidthHeight } from './util';
 import DrawerPanel from './DrawerPanel.vue';
 import pickAttrs from '@/vc-util/pickAttrs';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 export type Placement = 'left' | 'right' | 'top' | 'bottom';
 

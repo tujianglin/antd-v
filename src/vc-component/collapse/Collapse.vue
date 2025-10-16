@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import pickAttrs from '@/vc-util/pickAttrs';
 import type { VueKey } from '@/vc-util/type';
 import clsx from 'clsx';

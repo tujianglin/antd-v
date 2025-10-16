@@ -46,7 +46,7 @@ export const flattenChildren = (children = [], filterEmpty = true): VNode[] => {
   return res;
 };
 
-export function isDOM(node: any): node is HTMLElement | SVGElement {
+export function isDOM(node): boolean {
   // https://developer.mozilla.org/en-US/docs/Web/API/Element
   // Since XULElement is also subclass of Element, we only need HTMLElement and SVGElement
   return node instanceof HTMLElement || node instanceof SVGElement;

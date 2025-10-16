@@ -1,5 +1,5 @@
 import useControlledState from '@/vc-util/hooks/useControlledState';
-import { toReactive } from '@vueuse/core';
+import { reactiveComputed } from '@vueuse/core';
 import { computed, toRefs, watch, type Ref } from 'vue';
 import type { GenerateConfig } from '../../generate';
 import useSyncState from '../../hooks/useSyncState';
@@ -193,7 +193,7 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
     // Checker
     allowEmpty,
     order,
-  } = toRefs(toReactive(info));
+  } = toRefs(reactiveComputed(() => info.value));
 
   const orderOnChange = computed(() => (disabled?.value?.some((d) => d) ? false : order.value));
 

@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
-import { reactiveComputed, toReactive } from '@vueuse/core';
+import Render from '@/vc-component/render';
+import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, ref, toRefs, type CSSProperties } from 'vue';
-import { Render } from '../../../components';
+import { computed, toRefs, type CSSProperties } from 'vue';
 import type { AlignType, ArrowPos, ArrowTypeOuter } from '../interface';
 export interface ArrowProps {
   prefixCls: string;
@@ -13,15 +13,8 @@ export interface ArrowProps {
 
 const { prefixCls, align, arrow, arrowPos } = defineProps<ArrowProps>();
 
-const { class: className, content } = toRefs(toReactive(arrow || {}));
+const { class: className, content, style } = toRefs(reactiveComputed(() => arrow || {}));
 const { x, y } = toRefs(reactiveComputed(() => arrowPos));
-
-const arrowRef = ref<HTMLDivElement>(null);
-
-// Skip if no align
-// if (!align || !align.points) {
-//   return null;
-// }
 
 const alignStyle = computed(() => {
   const result: CSSProperties = {
@@ -60,7 +53,7 @@ const alignStyle = computed(() => {
 </script>
 <template>
   <template v-if="!align || !align.points"></template>
-  <div v-else ref="arrowRef" :class="clsx(`${prefixCls}-arrow`, className)" :style="alignStyle">
+  <div v-else :class="clsx(`${prefixCls}-arrow`, className)" :style="{ ...alignStyle, ...style }">
     <Render :content="content" />
   </div>
 </template>

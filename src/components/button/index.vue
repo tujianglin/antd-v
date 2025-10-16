@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { omit } from 'lodash-es';
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, toRefs, useAttrs, watch } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
-import isValidNode, { isValidElement } from '../_util/isValidNode';
 import { useComposeRef } from '../_util/type';
 import { Wave } from '../_util/wave';
 import { useConfigContextInject } from '../config-provider';
@@ -25,7 +24,8 @@ import useStyle from './style';
 import Compact from './style/compact';
 import IconWrapper from './IconWrapper.vue';
 import DefaultLoadingIcon from './DefaultLoadingIcon.vue';
-import Render from '../render/render';
+import Render from '@/vc-component/render';
+import { isValidElement, isValidNode } from '@/vc-util/Children/util';
 
 defineOptions({ name: 'Button', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -223,7 +223,7 @@ const classes = computed(() => {
       [`${prefixCls.value}-color-${mergedColorText.value}`]: mergedColorText.value,
       [`${prefixCls.value}-variant-${mergedVariant.value}`]: mergedVariant.value,
       [`${prefixCls.value}-${sizeCls.value}`]: sizeCls.value,
-      [`${prefixCls.value}-icon-only`]: !isValidElement(defaultSlot.value) && !!iconType?.value,
+      [`${prefixCls.value}-icon-only`]: !isValidElement(defaultSlot.value) && defaultSlot.value.length === 0 && !!iconType?.value,
       [`${prefixCls.value}-background-ghost`]: ghost && !isUnBorderedButtonVariant(mergedVariant.value),
       [`${prefixCls.value}-loading`]: innerLoading.value,
       [`${prefixCls.value}-two-chinese-chars`]: hasTwoCNChar?.value && mergedInsertSpace.value && !innerLoading?.value,

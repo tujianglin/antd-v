@@ -1,7 +1,7 @@
+import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 import { computed, type ComputedRef, type Ref } from 'vue';
 import ContextIsolator from '../_util/ContextIsolator';
-import Render from '../render';
 
 type RenderFunction<T extends any[]> = (...args: T) => VueNode;
 

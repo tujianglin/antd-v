@@ -1,15 +1,15 @@
 <script lang="tsx" setup>
+import Render from '@/vc-component/render';
+import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { toRefs, type CSSProperties } from 'vue';
-import type { RenderNode } from '../_util/type';
-import Render from '../render';
 import { useSpaceContextInject } from './context';
 
 export interface ItemProps {
   class: string;
   prefix: string;
   index: number;
-  separator?: RenderNode;
+  separator?: VueNode;
   style?: CSSProperties;
   classNames: Partial<Record<'separator', string>>;
   styles: Partial<Record<'separator', CSSProperties>>;

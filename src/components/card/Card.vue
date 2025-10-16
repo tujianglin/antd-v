@@ -1,4 +1,5 @@
 <script lang="tsx" setup>
+import Render from '@/vc-component/render';
 import type { Tab, TabBarExtraContent } from '@/vc-component/tabs/interface';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
@@ -7,7 +8,6 @@ import { computed, toRefs, useSlots, type CSSProperties, type HTMLAttributes } f
 import { useComponentConfig } from '../config-provider/context';
 import useSize from '../config-provider/hooks/useSize';
 import useVariant from '../form/hooks/useVariants';
-import Render from '../render';
 import Skeleton from '../skeleton';
 import type { TabsProps } from '../tabs';
 import Tabs from '../tabs';

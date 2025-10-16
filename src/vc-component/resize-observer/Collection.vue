@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import { shallowRef } from 'vue';
 import { CollectionContextProvider, useCollectionContextInject } from './context';
-import type { SizeInfo } from './interface';
+import type { SizeInfo } from './index.vue';
 export interface ResizeInfo {
   size: SizeInfo;
   data: any;

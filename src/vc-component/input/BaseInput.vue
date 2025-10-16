@@ -2,7 +2,7 @@
 import { cloneVNode, computed, getCurrentInstance, ref, useSlots } from 'vue';
 import type { BaseInputProps, ValueType } from './interface';
 import { hasAddon, hasPrefixSuffix } from './utils/commonUtils';
-import Render from '@/components/render/render';
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 

@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import type { PickerProps } from '../../SinglePicker.vue';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import Overflow from '@/vc-component/overflow';
 
 export interface MultipleDatesProps<DateType extends object = any> extends Pick<PickerProps, 'maxTagCount'> {

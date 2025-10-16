@@ -8,7 +8,7 @@ import { useConfigContextInject } from '../config-provider';
 import { omit } from 'lodash-es';
 import clsx from 'clsx';
 import { BarsOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons-vue';
-import Render from '../render';
+import Render from '@/vc-component/render';
 
 export type CollapseType = 'clickTrigger' | 'responsive';
 

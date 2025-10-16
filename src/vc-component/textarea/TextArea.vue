@@ -4,11 +4,11 @@ import type { TextAreaProps } from './interface';
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import useCount from '../input/hooks/useCount';
 import { resolveOnChange } from '../input/utils/commonUtils';
-import { Render } from '../../components';
+import Render from '@/vc-component/render';
 import { BaseInput } from '../input';
 import ResizableTextArea from './ResizableTextArea.vue';
 import type { HolderRef } from '../input/BaseInput.vue';
-import findDOMNode from '../../vc-util/Dom/findDOMNode';
+import findDOMNode from '@/vc-util/Dom/findDOMNode';
 
 defineOptions({ inheritAttrs: false });
 

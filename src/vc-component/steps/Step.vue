@@ -9,7 +9,7 @@ import { reactiveComputed } from '@vueuse/core';
 import KeyCode from '@/vc-util/KeyCode';
 import clsx from 'clsx';
 import { StepIconSemanticContextProvider } from './StepIconContext';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 export interface StepProps {
   // style

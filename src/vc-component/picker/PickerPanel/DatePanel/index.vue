@@ -6,7 +6,7 @@ import { formatValue, getWeekStartDate, isSameDate, isSameMonth, WEEK_DAY_COUNT 
 import { PanelContextProvider, useInfo } from '../context';
 import clsx from 'clsx';
 import PanelHeader from '../PanelHeader.vue';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import PanelBody from '../PanelBody.vue';
 
 export interface DatePanelProps<DateType extends object> extends SharedPanelProps<DateType> {

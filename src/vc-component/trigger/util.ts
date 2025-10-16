@@ -8,13 +8,14 @@ function isPointsEq(a1: string[] = [], a2: string[] = [], isAlignPoint: boolean)
 }
 
 export function getAlignPopupClassName(
-  builtinPlacements: BuildInPlacements,
+  builtinPlacements: BuildInPlacements = {},
   prefixCls: string,
   align: AlignType,
   isAlignPoint: boolean,
 ): string {
-  const { points } = align;
-  const placements = Object.keys(builtinPlacements || {});
+  const { points } = align || {};
+
+  const placements = Object.keys(builtinPlacements);
 
   for (let i = 0; i < placements.length; i += 1) {
     const placement = placements[i];
@@ -27,7 +28,7 @@ export function getAlignPopupClassName(
 }
 
 export function getWin(ele: HTMLElement) {
-  return ele?.ownerDocument.defaultView;
+  return ele?.ownerDocument?.defaultView;
 }
 
 /**

@@ -17,7 +17,7 @@ import { warnItemProp } from '../utils/warnUtil';
 import PopupTrigger from './PopupTrigger.vue';
 import SubMenuList from './SubMenuList.vue';
 import InlineSubMenuList from './InlineSubMenuList.vue';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import { omit } from 'lodash-es';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });

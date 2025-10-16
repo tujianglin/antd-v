@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
+import Render from '@/vc-component/render';
 import { Popup } from '@/vc-component/tooltip';
 import clsx from 'clsx';
 import { computed, toRefs, type CSSProperties } from 'vue';
 import { useConfigContextInject } from '../config-provider';
-import Render from '../render';
 import type { TooltipProps } from './index.vue';
 import useStyle from './style';
 import { parseColor } from './util';

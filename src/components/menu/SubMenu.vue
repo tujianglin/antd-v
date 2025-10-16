@@ -2,14 +2,13 @@
 import { computed, toRefs } from 'vue';
 import { SubMenu as RcSubMenu, useFullPath } from '@/vc-component/menu';
 import { useZIndex } from '../_util/hooks/useZIndex';
-import { cloneElement } from '../_util/reactNode';
 import type { SubMenuType } from './interface';
 import { MenuContextProvider, useMenuContextInject, type MenuContextProps } from './MenuContext';
 import type { VueNode } from '@/vc-util/type';
 import { omit } from 'lodash-es';
 import clsx from 'clsx';
-import { isValidElement } from '../_util/isValidNode';
-import Render from '../render';
+import { cloneElement, isValidElement } from '@/vc-util/Children/util';
+import Render from '@/vc-component/render';
 
 export interface SubMenuProps extends Omit<SubMenuType, 'ref' | 'key' | 'children' | 'label'> {
   title?: VueNode;

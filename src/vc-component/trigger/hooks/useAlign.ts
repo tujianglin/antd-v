@@ -1,7 +1,8 @@
-import { computed, nextTick, ref, watch, type Ref } from 'vue';
-import { isDOM } from '../../../vc-util/Dom/findDOMNode';
-import isVisible from '../../../vc-util/Dom/isVisible';
-import type { AlignPointLeftRight, AlignPointTopBottom, AlignType, OffsetType, TriggerProps } from '../interface';
+import { isDOM } from '@/vc-util/Dom/findDOMNode';
+import isVisible from '@/vc-util/Dom/isVisible';
+import { computed, nextTick, ref, shallowRef, watch, type Ref } from 'vue';
+import type { TriggerProps } from '../index.vue';
+import type { AlignPointLeftRight, AlignPointTopBottom, AlignType, OffsetType } from '../interface';
 import { collectScroller, getVisibleArea, getWin, toNum } from '../util';
 
 type Rect = Record<'x' | 'y' | 'width' | 'height', number>;
@@ -82,7 +83,7 @@ export default function useAlign(
   builtinPlacements: Ref<any>,
   popupAlign?: Ref<AlignType>,
   onPopupAlign?: TriggerProps['onPopupAlign'],
-  mobile?: boolean,
+  mobile?: Ref<boolean>,
 ): [
   ready: Ref<boolean>,
   offsetX: Ref<number>,
@@ -117,21 +118,13 @@ export default function useAlign(
     arrowY: 0,
     scaleX: 1,
     scaleY: 1,
-    align: {},
+    align: builtinPlacements?.value?.[placement?.value] || {},
   });
 
-  watch(
-    [builtinPlacements, placement],
-    () => {
-      offsetInfo.value.align = builtinPlacements?.value?.[placement?.value] || {};
-    },
-    { immediate: true, deep: true },
-  );
-
-  const alignCountRef = ref<number>(0);
+  const alignCountRef = shallowRef<number>(0);
 
   const scrollerList = computed(() => {
-    if (!popupEle.value || mobile) {
+    if (!popupEle.value || mobile.value) {
       return [];
     }
 
@@ -158,7 +151,7 @@ export default function useAlign(
 
   // ========================= Align =========================
   const onAlign = () => {
-    if (popupEle.value && target.value && open.value && !mobile) {
+    if (popupEle.value && target?.value && open.value && !mobile.value) {
       const popupElement = popupEle.value;
 
       const doc = popupElement.ownerDocument;
@@ -277,7 +270,7 @@ export default function useAlign(
       const scaleY = toNum(Math.round((popupHeight / parseFloat(height)) * 1000) / 1000);
 
       // No need to align since it's not visible in view
-      if (scaleX === 0 || scaleY === 0 || (isDOM(target) && !isVisible(target))) {
+      if (scaleX === 0 || scaleY === 0 || (isDOM(target.value) && !isVisible(target.value))) {
         return;
       }
 
@@ -615,7 +608,7 @@ export default function useAlign(
   };
 
   watch(
-    () => placement.value,
+    () => placement?.value,
     async () => {
       await nextTick();
       resetReady();

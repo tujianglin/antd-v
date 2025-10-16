@@ -4,7 +4,7 @@ import type { InnerSelectorProps } from './interface';
 import { getTitle } from '../utils/commonUtil';
 import Input from './Input.vue';
 import pickAttrs from '@/vc-util/pickAttrs';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 interface SelectorProps extends InnerSelectorProps {
   inputElement: VueNode;

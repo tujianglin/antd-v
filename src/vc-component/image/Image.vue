@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import useControlledState from '@/vc-util/hooks/useControlledState';
 import { toPx } from '@/vc-util/setStyle';
-import { reactiveComputed, toReactive } from '@vueuse/core';
+import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
 import { isEmpty, omit } from 'lodash-es';
 import { computed, getCurrentInstance, ref, type CSSProperties, type ImgHTMLAttributes } from 'vue';
@@ -173,7 +173,7 @@ const registerData = computed<ImageElementProps>(() => ({
   src: src.value,
 }));
 
-const imageId = useRegisterImage(canPreview, toReactive(registerData));
+const imageId = useRegisterImage(canPreview, registerData);
 
 // ========================== Preview ===========================
 const onPreview = (e) => {

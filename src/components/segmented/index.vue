@@ -17,7 +17,7 @@ import type { VueNode } from '@/vc-util/type';
 import type { TooltipProps } from '../tooltip';
 import { computed, toRefs, useId, type CSSProperties } from 'vue';
 import clsx from 'clsx';
-import Render from '../render';
+import Render from '@/vc-component/render';
 import Tooltip from '../tooltip';
 
 export type { SegmentedValue } from '@/vc-component/segmented/index.vue';

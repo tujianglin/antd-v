@@ -10,7 +10,7 @@ import type { PresetsItem } from '../interface';
 import { generateColor } from '../util';
 import clsx from 'clsx';
 import { isBright } from './utils';
-import Render from '@/components/render';
+import Render from '@/vc-component/render';
 import useControlledState from '@/vc-util/hooks/useControlledState';
 
 interface ColorPresetsProps {

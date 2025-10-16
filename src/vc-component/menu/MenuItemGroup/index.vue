@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 import { omit } from 'lodash-es';
 import { computed } from 'vue';

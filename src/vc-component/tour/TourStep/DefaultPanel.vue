@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import type { TourStepProps } from '../interface';
 import pickAttrs from '@/vc-util/pickAttrs';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 export type DefaultPanelProps = TourStepProps & {
   closable: Exclude<TourStepProps['closable'], boolean>;

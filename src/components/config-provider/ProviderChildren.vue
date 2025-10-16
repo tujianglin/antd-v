@@ -10,6 +10,7 @@ import { SizeContextProvider } from './SizeContext';
 import { defaultTheme, DesignTokenContextProvider } from '../theme/context';
 import defaultSeedToken from '../theme/themes/seed';
 import { DisabledContextProvider } from './DisabledContext';
+import MotionWrapper from './MotionWrapper.vue';
 
 interface ProviderChildrenProps extends ConfigProviderProps {
   parentContext: ConfigConsumerProps;
@@ -25,11 +26,12 @@ const {
   locale,
   componentSize,
   direction,
-  // space,
+  space,
   splitter,
   virtual,
+  // dropdownMatchSelectWidth,
   popupMatchSelectWidth,
-  // popupOverflow,
+  popupOverflow,
   legacyLocale,
   parentContext,
   iconPrefixCls: customIconPrefixCls,
@@ -37,29 +39,78 @@ const {
   componentDisabled,
   segmented,
   statistic,
+  // spin,
   calendar,
   carousel,
+  cascader,
+  // collapse,
   typography,
+  checkbox,
   descriptions,
   divider,
+  // drawer,
+  // skeleton,
   steps,
+  // image,
   layout,
+  // list,
+  mentions,
+  // modal,
   progress,
   result,
   slider,
   breadcrumb,
+  // masonry,
+  menu,
+  pagination,
+  input,
+  textArea,
+  otp,
+  empty,
+  badge,
+  radio,
   rate,
+  // ribbon,
   switch: SWITCH,
+  transfer,
   avatar,
+  // message,
+  // tag,
+  // table,
+  card,
+  // cardMeta,
+  tabs,
+  timeline,
+  timePicker,
   upload,
+  // notification,
   tree,
   colorPicker,
+  datePicker,
+  rangePicker,
+  flex,
+  wave,
+  dropdown,
+  // warning: warningConfig,
+  // tour,
+  tooltip,
+  popover,
+  popconfirm,
+  // qrcode,
+  floatButton,
+  floatButtonGroup,
+  variant,
+  inputNumber,
+  treeSelect,
   watermark,
-  prefixCls,
 } = defineProps<ProviderChildrenProps>();
+
+const vm = getCurrentInstance() as unknown as { props: ProviderChildrenProps };
 
 // =================================== Context ===================================
 const getPrefixCls = (suffixCls: string, customizePrefixCls?: string) => {
+  const { prefixCls } = vm.props;
+
   if (customizePrefixCls) {
     return customizePrefixCls;
   }
@@ -87,35 +138,81 @@ const baseConfig = computed(() => ({
   anchor,
   locale: locale || legacyLocale,
   direction,
+  space,
   splitter,
   virtual,
   popupMatchSelectWidth,
+  popupOverflow,
   getPrefixCls,
   iconPrefixCls,
   theme: mergedTheme,
   segmented,
   statistic,
+  // spin,
   calendar,
   carousel,
+  cascader,
+  // collapse,
   typography,
+  checkbox,
   descriptions,
   divider,
+  // drawer,
+  // skeleton,
   steps,
+  // image,
+  input,
+  textArea,
+  otp,
   layout,
+  // list,
+  mentions,
+  // modal,
   progress,
   result,
   slider,
   breadcrumb,
+  // masonry,
+  menu,
+  pagination,
+  empty,
+  badge,
+  radio,
   rate,
+  // ribbon,
   switch: SWITCH,
+  transfer,
   avatar,
+  // message,
+  // tag,
+  // table,
+  card,
+  // cardMeta,
+  tabs,
+  timeline,
+  timePicker,
   upload,
+  // notification,
   tree,
   colorPicker,
+  datePicker,
+  rangePicker,
+  flex,
+  wave,
+  dropdown,
+  // warning: warningConfig,
+  // tour,
+  tooltip,
+  popover,
+  popconfirm,
+  // qrcode,
+  floatButton,
+  floatButtonGroup,
+  variant,
+  inputNumber,
+  treeSelect,
   watermark,
 }));
-
-const vm = getCurrentInstance();
 
 const memoedConfig = computed(() => {
   const props = vm.props as any;
@@ -139,10 +236,23 @@ const memoedConfig = computed(() => {
   return config;
 });
 
-// const { layer } = toRefs(useStyleContextInject());
+// const styleInject = useStyleInject();
+// const { layer } = toRefs(reactiveComputed(() => styleInject.value));
 
-// const memoIconContextValue = computed(() => ({ prefixCls: iconPrefixCls, csp, layer: layer?.value ? 'antd' : undefined }));
+// const memoIconContextValue = computed(() => ({
+//   prefixCls: iconPrefixCls?.value,
+//   csp: csp?.value,
+//   layer: layer?.value ? 'antd' : undefined,
+// }));
 
+// const validateMessages = computed(() =>
+//   merge(
+//     defaultLocale.Form?.defaultValidateMessages || {},
+//     memoedConfig?.value?.locale?.Form?.defaultValidateMessages || {},
+// memoedConfig?.value?.form?.validateMessages || {},
+// form?.validateMessages || {},
+//   ),
+// );
 // ================================ Dynamic theme ================================
 const memoTheme = computed(() => {
   const { algorithm, token, components, cssVar, ...rest } = mergedTheme.value || {};
@@ -193,9 +303,16 @@ const childNode = () => {
       </LocaleProvider>
     );
   }
+
+  // if (iconPrefixCls.value || csp.value) {
+  // result = <IconContextProvider value={memoIconContextValue}>{childNode}</IconContextProvider>;
+  // }
+
   if (componentSize) {
     result = <SizeContextProvider size={componentSize}>{result}</SizeContextProvider>;
   }
+
+  result = <MotionWrapper>{result}</MotionWrapper>;
 
   if (theme) {
     result = <DesignTokenContextProvider value={memoTheme.value}>{result}</DesignTokenContextProvider>;

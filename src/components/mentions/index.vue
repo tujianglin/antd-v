@@ -19,7 +19,8 @@ import { useFormItemInputContextInject } from '../form/context';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import DefaultRenderEmpty from '../config-provider/defaultRenderEmpty.vue';
 import clsx from 'clsx';
-import Render from '../render';
+import Render from '@/vc-component/render';
+
 export type { DataDrivenOptionProps as MentionsOptionProps } from '@/vc-component/mentions/Mentions.vue';
 
 export type MentionPlacement = 'top' | 'bottom';
@@ -80,7 +81,9 @@ const focused = ref(false);
 const innerRef = useTemplateRef('innerRef');
 
 defineExpose({
-  ...innerRef.value,
+  get el() {
+    return innerRef.value;
+  },
 });
 
 const {

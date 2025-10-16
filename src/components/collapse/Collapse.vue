@@ -4,7 +4,6 @@ import type { CollapseProps as RcCollapseProps } from '@/vc-component/collapse';
 import RcCollapse from '@/vc-component/collapse';
 import type { CSSMotionProps } from '@/vc-component/motion';
 import initCollapseMotion from '../_util/motion';
-import { cloneElement } from '../_util/reactNode';
 import { useComponentConfig } from '../config-provider/context';
 import useSize from '../config-provider/hooks/useSize';
 import type { SizeType } from '../config-provider/SizeContext';
@@ -14,6 +13,7 @@ import type { VueKey, VueNode } from '@/vc-util/type';
 import { RightOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
+import { cloneElement } from '@/vc-util/Children/util';
 
 export type ExpandIconPlacement = 'start' | 'end';
 

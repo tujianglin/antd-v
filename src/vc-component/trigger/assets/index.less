@@ -76,6 +76,55 @@
       transform-origin: var(--arrow-x, 50%) var(--arrow-y, 50%);
     }
   }
+
+  // =============== Unique Container ===============
+  &-unique-container {
+    position: absolute;
+    z-index: 0;
+    box-sizing: border-box;
+    background: green;
+    border: 1px solid red;
+
+    &-hidden {
+      display: none;
+    }
+
+    &-visible {
+      transition: all 0.1s;
+    }
+  }
+
+  // Debug
+  &-unique-controlled {
+    z-index: 1;
+    background: transparent !important;
+    border-color: rgb(0 0 0 / 1%) !important;
+  }
+
+  // Motion Content
+  &-motion-content {
+    // Fade motion
+    &-fade-appear {
+      opacity: 0;
+      animation-duration: 0.3s;
+      animation-fill-mode: both;
+      animation-timing-function: cubic-bezier(0.55, 0, 0.55, 0.2);
+    }
+
+    &-fade-appear&-fade-appear-active {
+      animation-name: rcTriggerFadeIn;
+    }
+
+    @keyframes rcTriggerFadeIn {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+  }
 }
 
 @import './index/Mask';

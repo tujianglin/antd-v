@@ -1,8 +1,11 @@
 <script lang="tsx" setup>
-import type { ActionType, AlignType, ArrowType, TriggerProps, TriggerRef } from '@/vc-component/trigger';
+import type { ActionType, AlignType, ArrowType, TriggerProps } from '@/vc-component/trigger';
 import Trigger from '@/vc-component/trigger';
+import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { computed, getCurrentInstance, ref, useId, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, ref, useId, type CSSProperties, type VNode } from 'vue';
+import Render from '../render';
+import type { TriggerRef } from '../trigger/index.vue';
 import placements from './placements';
 import Popup from './Popup.vue';
 
@@ -26,7 +29,7 @@ export interface TooltipProps
   visible?: boolean;
   onVisibleChange?: (visible: boolean) => void;
   afterVisibleChange?: (visible: boolean) => void;
-  overlay?: string;
+  overlay?: VueNode;
   getTooltipContainer?: (node: HTMLElement) => HTMLElement;
   destroyOnHidden?: boolean;
   align?: AlignType;
@@ -75,6 +78,12 @@ const {
   ...restProps
 } = defineProps<TooltipProps>();
 
+const slots = defineSlots<{
+  overlay: () => VNode[];
+}>();
+
+const overlaySlot = computed(() => slots.overlay?.() || overlay);
+
 const mergedId = useId();
 const triggerRef = ref<TriggerRef>(null);
 
@@ -116,7 +125,7 @@ const extraProps = computed(() => {
     v-bind="extraProps"
   >
     <template #default="props">
-      <slot :aria-describedby="$slots.overlay || overlay ? mergedId : null" v-bind="props"></slot>
+      <slot :aria-describedby="overlaySlot ? mergedId : null" v-bind="props"></slot>
     </template>
     <template #popup>
       <Popup
@@ -126,7 +135,7 @@ const extraProps = computed(() => {
         :body-class-name="tooltipClassNames?.body"
         :overlay-inner-style="{ ...tooltipStyles?.body }"
       >
-        <slot name="overlay">{{ overlay }}</slot>
+        <Render :content="overlaySlot" />
       </Popup>
     </template>
   </Trigger>

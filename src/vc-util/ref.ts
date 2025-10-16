@@ -1,11 +1,7 @@
-import isValidNode from '@/components/_util/isValidNode';
-import { Fragment, isVNode, type VNode } from 'vue';
+import { isVNode, type VNode } from 'vue';
+import { isFragment, isValidNode } from './Children/util';
 
-export function isFragment(node: VNode): boolean {
-  return node.type === Fragment;
-}
-
-export function isVueElement(node: VNode) {
+function isVueElement(node: VNode) {
   return isValidNode(node) && !isFragment(node);
 }
 

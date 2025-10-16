@@ -1,6 +1,5 @@
 <script lang="tsx" setup>
 import { cloneVNode, computed, ref, toRefs, useAttrs, useTemplateRef, watch, type VNode } from 'vue';
-import type { RenderNode } from '../_util/type';
 import { useConfigContextInject } from '../config-provider';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import type { InputProps } from './interface';
@@ -9,9 +8,10 @@ import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
 import Input from './Input.vue';
 import { omit } from 'lodash-es';
-import Render from '../render';
-import isValidNode from '../_util/isValidNode';
-import type { VueKey } from '@/vc-util/type';
+import Render from '@/vc-component/render';
+import type { VueKey, VueNode } from '@/vc-util/type';
+import type { InputRef } from '@/vc-component/input';
+import { isValidNode } from '@/vc-util/Children/util';
 
 interface VisibilityToggle {
   visible?: boolean;
@@ -22,7 +22,7 @@ export interface PasswordProps extends InputProps {
   readonly inputPrefixCls?: string;
   readonly action?: 'click' | 'hover';
   visibilityToggle?: boolean | VisibilityToggle;
-  iconRender?: (visible: boolean) => RenderNode;
+  iconRender?: (visible: boolean) => VueNode;
 }
 
 defineOptions({ name: 'InputPassword', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -62,7 +62,7 @@ watch(
   },
   { immediate: true, deep: true },
 );
-const inputRef = useTemplateRef('inputRef');
+const inputRef = useTemplateRef<InputRef>('inputRef');
 
 // Remove Password value
 const removePasswordTimeout = useRemovePasswordTimeout(inputRef);

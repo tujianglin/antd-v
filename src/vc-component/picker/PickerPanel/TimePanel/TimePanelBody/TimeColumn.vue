@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import { computed, h, nextTick, onBeforeUnmount, ref, toRefs, watch } from 'vue';
 import { usePanelContextInject } from '../../context';
 import useScrollTo from './useScrollTo';

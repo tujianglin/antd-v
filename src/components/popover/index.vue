@@ -3,10 +3,10 @@ import { cloneVNode, computed, toRefs, type VNode } from 'vue';
 import { useComponentConfig } from '../config-provider/context';
 import type { AbstractTooltipProps } from '../tooltip/index.vue';
 // CSSINJS
+import { isValidElement } from '@/vc-util/Children/util';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import KeyCode from '@/vc-util/KeyCode';
 import clsx from 'clsx';
-import { isValidElement } from '../_util/isValidNode';
 import { getTransitionName } from '../_util/motion';
 import Tooltip from '../tooltip';
 import useMergedArrow from '../tooltip/hook/useMergedArrow';

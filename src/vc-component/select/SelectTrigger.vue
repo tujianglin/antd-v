@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import Trigger from '@/vc-component/trigger';
 import type { AlignType, BuildInPlacements } from '@/vc-component/trigger/interface';
 import type { VueNode } from '@/vc-util/type';

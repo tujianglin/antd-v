@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { computed, toRefs } from 'vue';
 import type { CascaderProps, DefaultOptionType, InternalValueType, SingleValueType } from './Cascader.vue';
@@ -111,7 +111,7 @@ const handleSelection = computed(() =>
     checkedValues.value,
     halfCheckedValues.value,
     missingCheckedValues.value,
-    getPathKeyEntities.value,
+    getPathKeyEntities,
     getValueByKeyPath,
     showCheckedStrategy,
   ),

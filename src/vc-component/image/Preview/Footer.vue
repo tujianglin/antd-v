@@ -4,7 +4,8 @@ import type { ImgInfo } from '../Image.vue';
 import type { TransformType } from '../hooks/useImageTransform';
 import type { Actions, PreviewProps } from './index.vue';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
+
 export type FooterSemanticName = 'footer' | 'actions';
 
 type OperationType = 'prev' | 'next' | 'flipY' | 'flipX' | 'rotateLeft' | 'rotateRight' | 'zoomOut' | 'zoomIn';

@@ -33,7 +33,9 @@ const value = defineModel('value', { default: 0 });
 const domRef = useTemplateRef('domRef');
 
 defineExpose({
-  ...domRef.value,
+  get el() {
+    return domRef.value;
+  },
 });
 
 const isTooltipProps = (item: TooltipProps | string): item is TooltipProps => {

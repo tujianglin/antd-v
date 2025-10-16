@@ -80,7 +80,9 @@ const holderRef = useTemplateRef('holderRef');
 const mentionRef = useTemplateRef('mentionRef');
 
 defineExpose({
-  ...mentionRef.value,
+  get el() {
+    return mentionRef.value;
+  },
   get nativeElement() {
     return holderRef.value?.nativeElement || mentionRef.value?.nativeElement;
   },

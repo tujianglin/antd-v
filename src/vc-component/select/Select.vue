@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
-import isValidNode from '@/components/_util/isValidNode';
+import { isValidNode } from '@/vc-util/Children/util';
 import useControlledState from '@/vc-util/hooks/useControlledState';
 import warning from '@/vc-util/warning';
-import { toReactive } from '@vueuse/core';
+import { reactiveComputed } from '@vueuse/core';
 import { isEmpty } from 'lodash-es';
 import { computed, ref, toRefs, useId, useSlots, watch, type VNode } from 'vue';
 import BaseSelect from './BaseSelect/index.vue';
@@ -64,7 +64,7 @@ const {
 
 const open = defineModel('open', { default: false });
 
-const { filterOption, searchValue, optionFilterProp, filterSort, onSearch } = toRefs(toReactive(showSearch || {}));
+const { filterOption, searchValue, optionFilterProp, filterSort, onSearch } = toRefs(reactiveComputed(() => showSearch || {}));
 
 const autoClearSearchValue = computed(() => showSearch.autoClearSearchValue ?? true);
 

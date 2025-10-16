@@ -3,7 +3,7 @@ import { computed, ref, toRefs, watch, type CSSProperties } from 'vue';
 import type { EditableConfig, Tab } from '../interface';
 import { genDataNodeKey, getRemovable } from '../util';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 export interface TabNodeProps {
   id: any;

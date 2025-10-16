@@ -30,7 +30,5 @@ defineExpose({
     v-bind="{ ...$props, ...context }"
     v-model:selected-keys="selectedKeys"
     v-model:open-keys="openKeys"
-  >
-    <slot></slot>
-  </InternalMenu>
+  />
 </template>

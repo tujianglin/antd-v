@@ -2,7 +2,7 @@
 import { type CSSProperties } from 'vue';
 import type { ItemRender, SegmentedLabeledOption, SegmentedRawOption, SemanticName } from './index.vue';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 interface Props {
   prefixCls: string;

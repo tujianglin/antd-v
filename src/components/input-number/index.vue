@@ -14,7 +14,7 @@ import useVariant from '../form/hooks/useVariants';
 import clsx from 'clsx';
 import RcInputNumber from '@/vc-component/input-number';
 import ContextIsolator from '../_util/ContextIsolator';
-import Render from '../render';
+import Render from '@/vc-component/render';
 import type { ValueType } from '@/vc-component/mini-decimal';
 
 defineOptions({ name: 'InputNumber', inheritAttrs: false, compatConfig: { MODE: 3 } });

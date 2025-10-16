@@ -2,7 +2,7 @@
 import KeyCode from '@/vc-util/KeyCode';
 import { computed, ref } from 'vue';
 import type { PaginationLocale } from './interface';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 export type SizeChangerRender = (info: {
   disabled: boolean;

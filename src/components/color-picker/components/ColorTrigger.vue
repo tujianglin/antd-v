@@ -6,7 +6,7 @@ import type { ColorFormatType, ColorPickerProps } from '../interface';
 import { getColorAlpha } from '../util';
 import ColorClear from './ColorClear.vue';
 import clsx from 'clsx';
-import Render from '@/components/render';
+import Render from '@/vc-component/render';
 import pickAttrs from '@/vc-util/pickAttrs';
 import { ColorBlock } from '@/vc-component/color-picker';
 

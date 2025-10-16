@@ -56,13 +56,11 @@ export default function useRangeActive<DateType>(
   // Trigger when input enter or input blur or panel close
   const nextActiveIndex: NextActive<DateType> = (nextValue: RangeValueType<DateType>) => {
     const list = activeListRef.value;
-    const filledActiveSet = new Set(list.filter((index) => nextValue[index] || empty[index]));
+    const filledActiveSet = new Set(list.filter((index) => nextValue[index] || empty.value[index]));
     const nextIndex = list[list.length - 1] === 0 ? 1 : 0;
-
     if (filledActiveSet.size >= 2 || disabled.value[nextIndex]) {
       return null;
     }
-
     return nextIndex;
   };
 
@@ -71,7 +69,7 @@ export default function useRangeActive<DateType>(
   useLockEffect(
     computed(() => focused.value || mergedOpen.value),
     () => {
-      if (!focused) {
+      if (!focused.value) {
         activeListRef.value = [];
         updateSubmitIndex(null);
       }

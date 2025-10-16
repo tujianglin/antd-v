@@ -1,6 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
-import {} from 'vue';
+import Render from '@/vc-component/render';
 import type { TourStepInfo, TourStepProps } from '../interface';
 import DefaultPanel, { type DefaultPanelProps } from './DefaultPanel.vue';
 

@@ -29,7 +29,7 @@ import TransBtn from '../TransBtn.vue';
 import clsx from 'clsx';
 import { useAllowClear } from '../hooks/useAllowClear';
 import { omit } from 'lodash-es';
-import Render from '@/components/render/render';
+import Render from '@/vc-component/render';
 import { falseToUndefined } from '@/vc-util/props';
 import Polite from './Polite.vue';
 

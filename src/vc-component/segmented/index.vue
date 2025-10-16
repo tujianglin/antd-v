@@ -3,7 +3,7 @@ import { computed, getCurrentInstance, onMounted, ref, type CSSProperties, type 
 import InternalSegmentedOption from './InternalSegmentedOption.vue';
 import clsx from 'clsx';
 import MotionThumb from './MotionThumb.vue';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import findDOMNode from '@/vc-util/Dom/findDOMNode';
 
 export type SemanticName = 'item' | 'label';

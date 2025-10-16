@@ -3,15 +3,14 @@ import { computed, getCurrentInstance, toRefs, useSlots } from 'vue';
 import type { MenuItemProps as RcMenuItemProps } from '@/vc-component/menu';
 import { Item } from '@/vc-component/menu';
 import { toArray } from '@/vc-util/Children/toArray';
-import { cloneElement } from '../_util/reactNode';
 import Tooltip, { type TooltipProps } from '../tooltip';
 import { useMenuContextInject } from './MenuContext';
 import type { VueNode } from '@/vc-util/type';
 import { omit } from 'lodash-es';
 import clsx from 'clsx';
-import { isValidElement } from '../_util/isValidNode';
+import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import { useSiderContextInject } from '../layout/context';
-import Render from '../render';
+import Render from '@/vc-component/render';
 
 export interface MenuItemProps extends Omit<RcMenuItemProps, 'title'> {
   icon?: VueNode;

@@ -9,7 +9,7 @@ import type { SizeType } from '../config-provider/SizeContext';
 import { useSpaceCompactItemContextInject } from './CompactContext';
 import CompactItem from './CompactItem.vue';
 import useStyle from './style';
-import Render from '../render';
+import Render from '@/vc-component/render';
 import { isEmpty } from 'lodash-es';
 
 export interface SpaceCompactProps {

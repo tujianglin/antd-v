@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, toRefs, watch, type CSSProperties, type VNode } from 'vue';
 
 import clsx from 'clsx';
-import { isValidElement } from '../_util/isValidNode';
+import { isValidElement } from '@/vc-util/Children/util';
 import { responsiveArray, type Breakpoint } from '../_util/responsiveObserver';
 import { devUseWarning } from '../_util/warning';
 import { useComponentConfig } from '../config-provider/context';
@@ -12,7 +12,7 @@ import useBreakpoint from '../grid/hooks/useBreakpoint';
 import { useAvatarContextInject, type AvatarSize } from './AvatarContext';
 import useStyle from './style';
 import ResizeObserver from '@/vc-component/resize-observer';
-import Render from '../render';
+import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 
 export interface AvatarProps {

@@ -9,7 +9,7 @@ import TransBtn from '../TransBtn.vue';
 import Input from './Input.vue';
 import pickAttrs from '@/vc-util/pickAttrs';
 import Overflow from '@/vc-component/overflow';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 
 interface SelectorProps extends InnerSelectorProps {

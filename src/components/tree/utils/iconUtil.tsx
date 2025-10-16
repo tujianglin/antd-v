@@ -1,8 +1,7 @@
-import { isValidElement } from '@/components/_util/isValidNode';
+import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import type { VueNode } from '@/vc-util/type';
 import { CaretDownFilled, FileOutlined, LoadingOutlined, MinusSquareOutlined, PlusSquareOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
-import { cloneElement } from '../../_util/reactNode';
 import type { AntTreeNodeProps, SwitcherIcon, TreeLeafIcon } from '../Tree.vue';
 
 interface SwitcherIconProps {

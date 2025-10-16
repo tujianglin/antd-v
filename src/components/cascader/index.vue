@@ -372,7 +372,7 @@ const restProps = computed(() => omit(rest, ['suffixIcon']) as any);
     :popup-style="{ ...mergedPopupStyle, zIndex }"
     :popup-render="mergedPopupRender"
     :popup-menu-column-style="popupMenuColumnStyle"
-    :on-popup-visible-change="onOpenChange"
+    @popup-visible-change="onOpenChange"
     :choice-transition-name="getTransitionName(rootPrefixCls, '', choiceTransitionName)"
     :transition-name="getTransitionName(rootPrefixCls, 'slide-up', transitionName)"
     :get-popup-container="getPopupContainer || getContextPopupContainer"

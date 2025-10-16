@@ -5,7 +5,7 @@ import type { IDialogPropTypes } from '../../IDialogPropTypes';
 import { useRefContextInject } from '../../context';
 import clsx from 'clsx';
 import pickAttrs from '@/vc-util/pickAttrs';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import MemoChildren from './MemoChildren.vue';
 
 export interface PanelProps extends Omit<IDialogPropTypes, 'getOpenCount'> {

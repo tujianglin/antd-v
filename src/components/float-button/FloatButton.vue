@@ -15,7 +15,7 @@ import useStyle from './style';
 import { FileTextOutlined } from '@ant-design/icons-vue';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import clsx from 'clsx';
-import Render from '../render';
+import Render from '@/vc-component/render';
 
 defineOptions({ name: 'FloatButton', inheritAttrs: false, compatConfig: { MODE: 3 } });
 

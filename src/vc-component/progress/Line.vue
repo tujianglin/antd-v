@@ -6,7 +6,7 @@ import type { ProgressProps } from './interface';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 

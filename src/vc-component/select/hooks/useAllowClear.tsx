@@ -1,4 +1,4 @@
-import type { RenderNode } from '@/components/_util/type';
+import type { VueNode } from '@/vc-util/type';
 import { computed, ref, type Ref } from 'vue';
 import TransBtn from '../TransBtn.vue';
 import type { DisplayValueType, Mode } from '../interface';
@@ -7,7 +7,7 @@ export const useAllowClear = (
   prefixCls: string,
   onClearMouseDown: (e: MouseEvent) => void,
   displayValues: Ref<DisplayValueType[]>,
-  allowClear?: Ref<boolean | { clearIcon?: RenderNode }>,
+  allowClear?: Ref<boolean | { clearIcon?: VueNode }>,
   disabled: Ref<boolean> = ref(false),
   mergedSearchValue?: Ref<string>,
   mode?: Mode,

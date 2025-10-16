@@ -1,5 +1,6 @@
 import warning from '@/vc-util/warning';
-import { onBeforeUnmount, ref, toRefs, watch, type Reactive, type Ref } from 'vue';
+import { reactiveComputed } from '@vueuse/core';
+import { onBeforeUnmount, ref, toRefs, watch, type Ref } from 'vue';
 import getFixScaleEleTransPosition from '../getFixScaleEleTransPosition';
 import { BASE_SCALE_RATIO, WHEEL_MAX_SCALE_RATIO } from '../previewConfig';
 import type { DispatchZoomChangeFunc, TransformType, UpdateTransformFunc } from './useImageTransform';
@@ -9,11 +10,11 @@ export default function useMouseEvent(
   movable: Ref<boolean>,
   open: Ref<boolean>,
   scaleStep: Ref<number>,
-  transform: Reactive<TransformType>,
+  transform: Ref<TransformType>,
   updateTransform: UpdateTransformFunc,
   dispatchZoomChange: DispatchZoomChangeFunc,
 ) {
-  const { rotate, scale, x, y } = toRefs(transform);
+  const { rotate, scale, x, y } = toRefs(reactiveComputed(() => transform.value));
 
   const isMoving = ref(false);
   const startPositionInfo = ref({

@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import Render from '@/components/render';
 import type { PickerMode } from '@/vc-component/picker/interface';
+import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 import { CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons-vue';
 import { TIME } from '../generatePicker/constant';

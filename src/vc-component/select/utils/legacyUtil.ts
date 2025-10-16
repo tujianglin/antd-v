@@ -1,4 +1,4 @@
-import isValidNode from '@/components/_util/isValidNode';
+import { isValidNode } from '@/vc-util/Children/util';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import { type VNode } from 'vue';
 import type { BaseOptionType, DefaultOptionType } from '../interface';

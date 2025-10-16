@@ -9,7 +9,7 @@ import useVariant from '../form/hooks/useVariants';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useStyle from './style';
 import clsx from 'clsx';
-import { toReactive } from '@vueuse/core';
+import { reactiveComputed } from '@vueuse/core';
 import type { TimePickerProps } from '../time-picker';
 import { getPlaceholder, useIcons } from './util';
 import useComponents from './generatePicker/useComponents';
@@ -53,14 +53,33 @@ const {
 } = defineProps<PickerProps<DateType> & { pickerType?: 'timePicker' | 'datePicker'; generateConfig: GenerateConfig<DateType> }>();
 
 const value = defineModel<DateType | DateType[] | null>('value', {
-  set(v) {
-    if (valueFormat) return dayjs(v[0]).format(valueFormat);
-    return v;
-  },
-  get: (e: any) => {
+  get(e: any) {
     if (!e) return e;
-    if (generateConfig.isValidate(e)) return e;
-    if (valueFormat && !generateConfig.isValidate(e)) return dayjs(e);
+
+    // 转成 dayjs 实例
+    const toDayjs = (v: any) => {
+      if (generateConfig.isValidate(v)) return v; // 已经是有效 dayjs
+      return dayjs(v); // 转成 dayjs
+    };
+
+    if (Array.isArray(e)) {
+      return e.map(toDayjs);
+    }
+    return toDayjs(e);
+  },
+
+  set(v: any) {
+    if (!v) return v;
+
+    const formatValue = (d: any) => {
+      const instance = generateConfig.isValidate(d) ? d : dayjs(d);
+      return valueFormat ? instance.format(valueFormat) : instance;
+    };
+
+    if (Array.isArray(v)) {
+      return v.map(formatValue);
+    }
+    return formatValue(v);
   },
 });
 const pickerValue = defineModel<DateType | DateType[]>('pickerValue');
@@ -95,7 +114,9 @@ const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 const mergedRootClassName = computed(() => clsx(hashId.value, cssVarCls.value, rootCls.value, rootClassName));
 
 defineExpose({
-  ...innerRef.value,
+  get el() {
+    return innerRef.value;
+  },
 });
 
 const additionalProps = {
@@ -105,7 +126,7 @@ const additionalProps = {
 const rootPrefixCls = computed(() => getPrefixCls.value());
 
 // ==================== Legacy =====================
-const { onSelect, multiple } = toRefs(toReactive(restProps) as TimePickerProps);
+const { onSelect, multiple } = toRefs(reactiveComputed(() => restProps) as TimePickerProps);
 const hasLegacyOnSelect = computed(() => onSelect.value && picker === 'time' && !multiple.value);
 
 const onInternalCalendarChange: typeof onCalendarChange = (date, dateStr, info) => {

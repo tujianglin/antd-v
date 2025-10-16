@@ -1,9 +1,8 @@
 <script lang="tsx" setup>
-import { isValidElement } from '@/components/_util/isValidNode';
+import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, type CSSProperties } from 'vue';
-import { cloneElement } from '../../_util/reactNode';
 import Looper from './Looper.vue';
 
 export interface IndicatorProps {

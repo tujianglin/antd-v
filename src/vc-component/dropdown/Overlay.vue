@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import type { DropdownProps } from './Dropdown.vue';
 export type OverlayProps = Pick<DropdownProps, 'overlay' | 'arrow' | 'prefixCls'>;
 

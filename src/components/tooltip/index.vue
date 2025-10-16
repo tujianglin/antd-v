@@ -4,13 +4,12 @@ import type { placements as Placements } from '@/vc-component/tooltip/placements
 import type { TooltipProps as RcTooltipProps } from '@/vc-component/tooltip/Tooltip.vue';
 import type { BuildInPlacements } from '@/vc-component/trigger';
 import clsx from 'clsx';
-import { cloneVNode, computed, getCurrentInstance, h, toRefs, useAttrs, useSlots, useTemplateRef, type CSSProperties } from 'vue';
+import { cloneVNode, computed, getCurrentInstance, h, toRefs, useAttrs, useTemplateRef, type CSSProperties } from 'vue';
 import type { PresetColorType } from '../_util/colors';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import type { AdjustOverflow, PlacementsConfig } from '../_util/placements';
 import getPlacements from '../_util/placements';
 import type { LiteralUnion } from '../_util/type';
-import { devUseWarning } from '../_util/warning';
 import { ZIndexContextProvider } from '../_util/zindexContext';
 import { useComponentConfig } from '../config-provider/context';
 import useToken from '../theme/useToken';
@@ -19,10 +18,10 @@ import useStyle from './style';
 import { parseColor } from './util';
 import ContextIsolator from '../_util/ContextIsolator';
 import { getTransitionName } from '../_util/motion';
-import { isValidElement } from '../_util/isValidNode';
-import { isFragment } from '../_util/reactNode';
+import { isFragment, isValidElement, isVueNode } from '@/vc-util/Children/util';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
-import Render from '../render';
+import Render from '@/vc-component/render';
+import type { VueNode } from '@/vc-util/type';
 
 export type { AdjustOverflow, PlacementsConfig };
 
@@ -83,7 +82,7 @@ export interface AbstractTooltipProps extends LegacyTooltipProps {
   arrow?: boolean | { pointAtCenter?: boolean };
   autoAdjustOverflow?: boolean | AdjustOverflow;
   getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
-  title?: string | number;
+  title?: VueNode;
   /**
    * @since 5.25.0
    */
@@ -114,10 +113,17 @@ const {
   styles,
   classNames: tooltipClassNames,
   onOpenChange,
+  overlay,
   ...restProps
 } = defineProps<TooltipProps>();
 
-const slots = useSlots();
+const slots = defineSlots<{
+  default: () => VueNode[];
+  overlay: () => VueNode[];
+  title: () => VueNode[];
+}>();
+const titleSlot = computed(() => slots.title?.() || title);
+const overlaySlot = computed(() => slots.overlay?.() || overlay);
 
 const vm = getCurrentInstance();
 
@@ -140,19 +146,6 @@ const mergedArrow = useMergedArrow(
 const mergedShowArrow = computed(() => mergedArrow.show);
 
 // ============================== Ref ===============================
-const warning = devUseWarning('Tooltip');
-
-// ============================== Warn ==============================
-if (process.env.NODE_ENV !== 'production') {
-  [
-    ['overlayStyle', 'styles.root'],
-    ['overlayInnerStyle', 'styles.body'],
-    ['overlayClassName', 'classNames.root'],
-    ['destroyTooltipOnHide', 'destroyOnHidden'],
-  ].forEach(([deprecatedName, newName]) => {
-    warning.deprecated(!(deprecatedName in vm.props), deprecatedName, newName);
-  });
-}
 
 const tooltipRef = useTemplateRef('tooltipRef');
 
@@ -173,7 +166,7 @@ defineExpose({
 // ============================== Open ==============================
 const open = defineModel('open', { default: false });
 
-const noTitle = computed(() => !title && !slots.overlay && title !== 0);
+const noTitle = computed(() => !isVueNode(titleSlot.value) && !isVueNode(overlaySlot.value) && titleSlot.value !== 0);
 
 const onInternalOpenChange = (vis: boolean) => {
   open.value = noTitle.value ? false : vis;
@@ -240,6 +233,7 @@ const [zIndex, contextZIndex] = useZIndex(
 );
 
 // ============================= Render =============================
+
 const children = () => {
   const result = flattenChildren(slots?.default?.());
   return isValidElement(result) && !isFragment(result) && result.length === 1 ? result[0] : <span>{slots?.default?.()}</span>;
@@ -306,9 +300,7 @@ const childCls = computed(() => {
       <template #overlay>
         <ContextIsolator space>
           <slot name="overlay">
-            <slot name="title">
-              {{ title }}
-            </slot>
+            <Render :content="titleSlot" />
           </slot>
         </ContextIsolator>
       </template>

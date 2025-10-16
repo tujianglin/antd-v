@@ -1,10 +1,10 @@
 <script lang="tsx" setup>
+import Render from '@/vc-component/render';
+import { falseToUndefined } from '@/vc-util/props';
+import type { VueNode } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
 import { computed, ref, toRefs, type CSSProperties, type VNode } from 'vue';
-import { Render } from '../../components';
-import type { RenderNode } from '../../components/_util/type';
-import { falseToUndefined } from '../../vc-util/props';
 import ResizeObserver from '../resize-observer';
 export type InnerProps = Pick<HTMLDivElement, 'role' | 'id'>;
 
@@ -24,7 +24,7 @@ interface FillerProps {
 
   rtl: boolean;
 
-  extra?: RenderNode;
+  extra?: VueNode;
 }
 
 defineOptions({ name: 'Filler', inheritAttrs: false, compatConfig: { MODE: 3 } });

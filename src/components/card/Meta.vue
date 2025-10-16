@@ -3,7 +3,7 @@ import { computed, toRefs, type CSSProperties } from 'vue';
 import { useComponentConfig } from '../config-provider/context';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import Render from '../render';
+import Render from '@/vc-component/render';
 
 export type SemanticName = 'root' | 'section' | 'avatar' | 'title' | 'description';
 export interface CardMetaProps {

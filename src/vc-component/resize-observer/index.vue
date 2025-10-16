@@ -1,8 +1,22 @@
 <script lang="tsx" setup>
+import Render from '@/vc-component/render';
 import { ref } from 'vue';
-import { Render } from '../../components';
-import type { ResizeObserverProps } from './interface';
 import SingleObserver from './SingleObserver/index.vue';
+
+export interface SizeInfo {
+  width: number;
+  height: number;
+  offsetWidth: number;
+  offsetHeight: number;
+}
+export type OnResize = (size: SizeInfo, element: HTMLElement) => void;
+export interface ResizeObserverProps {
+  /** Pass to ResizeObserver.Collection with additional data */
+  data?: any;
+  disabled?: boolean;
+  /** Trigger if element resized. Will always trigger when first time render. */
+  onResize?: OnResize;
+}
 
 defineOptions({ name: 'ResizeObserver', inheritAttrs: false, compatConfig: { MODE: 3 } });
 

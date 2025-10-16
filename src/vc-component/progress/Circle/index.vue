@@ -7,7 +7,7 @@ import PtgCircle from './PtgCircle.vue';
 import { VIEW_BOX_SIZE, getCircleStyle } from './util';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -27,7 +27,7 @@ const {
   class: className,
   strokeColor = '#2db7f5',
   percent = 0,
-  loading = false,
+  loading,
   ...restProps
 } = defineProps<ProgressProps>();
 

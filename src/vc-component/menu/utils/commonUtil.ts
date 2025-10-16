@@ -1,5 +1,5 @@
-import { isValidElement } from '@/components/_util/isValidNode';
 import { toArray } from '@/vc-util/Children/toArray';
+import { isValidElement } from '@/vc-util/Children/util';
 import { cloneVNode } from 'vue';
 
 export function parseChildren(children: any, keyPath: string[]) {

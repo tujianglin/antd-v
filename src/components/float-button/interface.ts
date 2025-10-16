@@ -1,6 +1,6 @@
+import type { VueNode } from '@/vc-util/type';
 import type { ButtonHTMLAttributes, Component, CSSProperties, HtmlHTMLAttributes, VNode } from 'vue';
 import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
-import type { RenderNode } from '../_util/type';
 import type { ButtonHTMLType, ButtonSemanticName } from '../button/interface';
 
 export type FloatButtonElement = HTMLAnchorElement & HTMLButtonElement;
@@ -34,11 +34,11 @@ export interface FloatButtonProps {
   styles?: FloatButtonStylesType;
 
   // Others
-  icon?: RenderNode;
-  content?: RenderNode;
+  icon?: VueNode;
+  content?: VueNode;
   type?: FloatButtonType;
   shape?: FloatButtonShape;
-  // tooltip?: RenderNode | TooltipProps;
+  // tooltip?: VueNode | TooltipProps;
   href?: string;
   target?: HTMLAttributeAnchorTarget;
   // badge?: FloatButtonBadgeProps;

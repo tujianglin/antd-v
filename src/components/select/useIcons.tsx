@@ -1,3 +1,4 @@
+import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 import {
   CheckOutlined,
@@ -9,16 +10,13 @@ import {
 } from '@ant-design/icons-vue';
 import type { ReactiveComputedReturn } from '@vueuse/core';
 import { computed, toRefs } from 'vue';
-import Render from '../render';
-
-type RenderNode = VueNode | ((props: any) => VueNode);
 
 export default function useIcons(
   options: ReactiveComputedReturn<{
     suffixIcon?: VueNode;
-    clearIcon?: RenderNode;
-    menuItemSelectedIcon?: RenderNode;
-    removeIcon?: RenderNode;
+    clearIcon?: VueNode;
+    menuItemSelectedIcon?: VueNode;
+    removeIcon?: VueNode;
     loading?: boolean;
     multiple?: boolean;
     hasFeedback?: boolean;

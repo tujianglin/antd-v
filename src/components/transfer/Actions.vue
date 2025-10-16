@@ -4,8 +4,8 @@ import Button from '../button';
 import type { DirectionType } from '../config-provider';
 import { cloneVNode, computed, defineComponent, type CSSProperties, type PropType } from 'vue';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons-vue';
-import { isValidElement } from '../_util/isValidNode';
-import Render from '../render';
+import { isValidElement } from '@/vc-util/Children/util';
+import Render from '@/vc-component/render';
 
 export interface TransferOperationProps {
   class?: string;

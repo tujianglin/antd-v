@@ -1,5 +1,5 @@
 <script lang="tsx" setup generic="ItemType extends any">
-import { Render } from '../../components';
+import Render from '@/vc-component/render';
 import ResizeObserver from '../resize-observer';
 import clsx from 'clsx';
 import { computed, nextTick, ref, resolveDynamicComponent, useAttrs, watch, type CSSProperties } from 'vue';

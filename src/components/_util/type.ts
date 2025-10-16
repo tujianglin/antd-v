@@ -1,6 +1,6 @@
 import type { VueKey } from '@/vc-util/type';
 import { assign, camelCase } from 'lodash-es';
-import type { Component, ComponentPublicInstance, FunctionalComponent, Ref, VNode, VNodeChild } from 'vue';
+import type { Component, FunctionalComponent, Ref, VNode } from 'vue';
 import { Fragment, getCurrentInstance, isVNode } from 'vue';
 
 /** https://github.com/Microsoft/TypeScript/issues/29729 */
@@ -8,26 +8,12 @@ export type LiteralUnion<T extends string> = T | (string & {});
 
 export type AnyObject = Record<VueKey, any>;
 
-export type RenderNode =
-  | VNodeChild // 支持 VNode、string、number、array 等
-  | VNode // 显式支持单个 VNode
-  | Component // 组件类型（可传递）
-  | ComponentPublicInstance // 组件实例（极少情况）
-  | ((props?: any) => RenderNode | null | undefined) // 函数式返回 RenderNode 的写法
-  | null
-  | undefined
-  | string;
-
 export type HTMLTagName = keyof HTMLElementTagNameMap;
 
 export type CustomComponent =
   | HTMLTagName // e.g., 'div', 'span'
   | Component // Vue component
   | FunctionalComponent;
-
-export function isComponent(value: unknown): boolean {
-  return value !== null && (typeof value === 'object' || typeof value === 'function') && !isVNode(value);
-}
 
 export function propsToCamelCase(obj: Record<string, any>): Record<string, any> {
   const result: Record<string, any> = {};

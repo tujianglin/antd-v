@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import { useTemplateRef, type CSSProperties } from 'vue';
 import type { EditableConfig, TabsLocale } from '../interface';
 

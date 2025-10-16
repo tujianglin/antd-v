@@ -10,7 +10,7 @@ import useStyle from './style';
 import RcTabs, { type TabsProps as RcTabsProps } from '@/vc-component/tabs';
 import type { VueNode } from '@/vc-util/type';
 import type { EditableConfig, MoreProps, Tab } from '@/vc-component/tabs/interface';
-import { toReactive } from '@vueuse/core';
+import { reactiveComputed } from '@vueuse/core';
 import { CloseOutlined, EllipsisOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
 
@@ -77,7 +77,7 @@ const {
 
 const activeKey = defineModel<string | undefined>('activeKey');
 
-const { prefixCls: customizePrefixCls } = toRefs(toReactive(restProps));
+const { prefixCls: customizePrefixCls } = toRefs(reactiveComputed(() => restProps));
 
 const {
   getPrefixCls,

@@ -1,5 +1,5 @@
 import { defineComponent, inject, provide, type InjectionKey, type PropType } from 'vue';
-import type { SizeInfo } from './interface';
+import type { SizeInfo } from './index.vue';
 
 type onCollectionResize = (size: SizeInfo, element: HTMLElement, data: any) => void;
 

@@ -37,7 +37,7 @@ import type {
 import { parseItems } from './utils/nodeUtil';
 import { warnItemProp } from './utils/warnUtil';
 import { MenuContextProvider } from './context/MenuContext';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import Overflow from '@/vc-component/overflow';
 import { composeRef } from '@/vc-util/ref';
 import clsx from 'clsx';

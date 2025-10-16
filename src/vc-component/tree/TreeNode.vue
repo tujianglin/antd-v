@@ -4,7 +4,7 @@ import { useTreeContextInject, useUnstableContextInject } from './contextTypes';
 import type { DataEntity, TreeNodeProps } from './interface';
 import getEntity from './utils/keyUtil';
 import { convertNodePropsToEventData } from './utils/treeUtil';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import pickAttrs from '@/vc-util/pickAttrs';
 import { reactiveComputed } from '@vueuse/core';

@@ -1,8 +1,8 @@
+import type { InputStatus } from '@/components/_util/statusUtils';
+import type { Variant } from '@/components/config-provider/context';
+import type { SizeType } from '@/components/config-provider/SizeContext';
+import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties, HTMLAttributes, InputTypeHTMLAttribute } from 'vue';
-import type { InputStatus } from '../../../components/_util/statusUtils';
-import type { RenderNode } from '../../../components/_util/type';
-import type { Variant } from '../../../components/config-provider/context';
-import type { SizeType } from '../../../components/config-provider/SizeContext';
 
 type SemanticName = 'root' | 'input' | 'separator';
 
@@ -27,7 +27,7 @@ export interface OTPProps extends /* @vue-ignore */ Omit<HTMLAttributes, 'onChan
   // Values
   onChange?: (value: string) => void;
   formatter?: (value: string) => string;
-  separator?: ((index: number) => RenderNode) | RenderNode;
+  separator?: ((index: number) => VueNode) | VueNode;
 
   // Status
   disabled?: boolean;

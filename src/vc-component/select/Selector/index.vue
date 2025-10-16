@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import KeyCode from '@/vc-util/KeyCode';
 import clsx from 'clsx';
 import { computed, ref, useTemplateRef } from 'vue';

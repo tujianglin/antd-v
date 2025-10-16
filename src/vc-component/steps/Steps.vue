@@ -4,7 +4,7 @@ import Step from './Step.vue';
 import { StepsContextProvider, type StepsContextProps } from './Context';
 import type StepIcon from './StepIcon.vue';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 export type Status = 'error' | 'process' | 'finish' | 'wait';
 

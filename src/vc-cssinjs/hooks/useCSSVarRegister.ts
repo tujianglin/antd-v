@@ -1,5 +1,5 @@
 import { removeCSS, updateCSS } from '@/vc-util/Dom/dynamicCSS';
-import { toReactive } from '@vueuse/core';
+import { reactiveComputed } from '@vueuse/core';
 import { computed, toRefs, type Ref } from 'vue';
 import { ATTR_MARK, ATTR_TOKEN, CSS_IN_JS_INSTANCE, useStyleInject } from '../StyleContext';
 import { isClientSide, toStyleStr } from '../util';
@@ -31,9 +31,9 @@ const useCSSVarRegister = <V, T extends Record<string, V>>(
   }>,
   fn: () => T,
 ) => {
-  const { key, prefix, unitless, ignore, token, hashId, scope } = toRefs(toReactive(config));
+  const { key, prefix, unitless, ignore, token, hashId, scope } = toRefs(reactiveComputed(() => config.value));
   const styleContext = useStyleInject();
-  const { _tokenKey: tokenKey } = toRefs(toReactive(token));
+  const { _tokenKey: tokenKey } = toRefs(reactiveComputed(() => token.value));
   const stylePath = computed(() => [...config.value.path, key.value, scope.value || '', tokenKey.value]);
 
   const cache = useGlobalCache<CSSVarCacheValue<V, T>>(

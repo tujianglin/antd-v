@@ -8,7 +8,7 @@ import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import useStyle from './style';
 import { useLocale } from '../locale';
 import clsx from 'clsx';
-import Render from '../render';
+import Render from '@/vc-component/render';
 
 defineOptions({ name: 'Empty', inheritAttrs: false, compatConfig: { MODE: 3 } });
 const {

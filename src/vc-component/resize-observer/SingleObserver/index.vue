@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
+import findDOMNode from '@/vc-util/Dom/findDOMNode';
 import { getCurrentInstance, nextTick, onBeforeUnmount, ref, watch } from 'vue';
-import findDOMNode from '../../../vc-util/Dom/findDOMNode';
 import { useCollectionContextInject } from '../context';
-import type { ResizeObserverProps } from '../interface';
+import type { ResizeObserverProps } from '../index.vue';
 import { observe, unobserve } from '../utils/observerUtil';
 
 export interface SingleObserverProps extends ResizeObserverProps {}
@@ -98,5 +98,5 @@ defineExpose({
 });
 </script>
 <template>
-  <slot></slot>
+  <slot :dom-ref="currentElement"></slot>
 </template>

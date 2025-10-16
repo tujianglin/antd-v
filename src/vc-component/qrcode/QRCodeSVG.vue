@@ -13,7 +13,7 @@ import {
 import { useQRCode } from './hooks/useQRCode';
 import type { QRPropsSVG } from './interface';
 import { reactiveComputed } from '@vueuse/core';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 

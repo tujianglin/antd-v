@@ -16,11 +16,11 @@ export default function useWatch(
   }
   watch(
     [open, target, popup],
-    async ([val1, val2, val3]) => {
+    async () => {
       await nextTick();
-      if (val1 && val2 && val3) {
-        const targetElement = val2;
-        const popupElement = val3;
+      if (open.value && target?.value && popup.value) {
+        const targetElement = target.value;
+        const popupElement = popup.value;
         const targetScrollList = collectScroller(targetElement);
         const popupScrollList = collectScroller(popupElement);
         win = getWin(popupElement);

@@ -162,7 +162,9 @@ const connectClassName = computed(() =>
 const domRef = useTemplateRef('domRef');
 
 defineExpose({
-  ...domRef.value,
+  get el() {
+    return domRef.value;
+  },
 });
 </script>
 <template>

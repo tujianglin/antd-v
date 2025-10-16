@@ -19,7 +19,7 @@ export interface ProgressProps {
   gapPosition?: GapPositionType;
   transition?: string;
   onClick?: (e: MouseEvent) => void;
-  steps?: number | { count: number; gap: number };
+  steps?: number | null | { count: number; gap: number };
   loading?: boolean;
 }
 

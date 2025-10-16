@@ -1,7 +1,6 @@
 <script lang="tsx" setup>
 import { cloneVNode, computed, ref, toRefs, useTemplateRef, type CSSProperties, type VNode } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
-import { type RenderNode } from '../_util/type';
 import { useComponentConfig } from '../config-provider/context';
 import useSize from '../config-provider/hooks/useSize';
 import { useCompactItemContext } from '../space/CompactContext';
@@ -9,10 +8,11 @@ import type { InputProps } from './interface';
 import Input from './Input.vue';
 import { SearchOutlined } from '@ant-design/icons-vue';
 import Button from '../button';
-import Render from '../render';
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import type { ButtonSemanticName } from '../button/interface';
 import type { ValueType } from '@/vc-component/input/interface';
+import type { VueNode } from '@/vc-util/type';
 
 type SemanticName = 'root' | 'input' | 'prefix' | 'suffix' | 'count';
 
@@ -25,7 +25,7 @@ export interface SearchProps extends InputProps {
       source?: 'clear' | 'input';
     },
   ) => void;
-  enterButton?: RenderNode | boolean;
+  enterButton?: VueNode | boolean;
   loading?: boolean;
   onPressEnter?: (e: KeyboardEvent) => void;
   classNames?: Partial<Record<SemanticName, string>> & {

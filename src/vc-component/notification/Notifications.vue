@@ -3,7 +3,7 @@ import type { CSSMotionProps } from '@/vc-component/motion';
 import { computed, ref, watch, type CSSProperties } from 'vue';
 import type { InnerOpenConfig, OpenConfig, Placement, Placements, StackConfig } from './interface';
 import NoticeList from './NoticeList.vue';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import type { VueKey } from '@/vc-util/type';
 
 export interface NotificationsProps {

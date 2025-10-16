@@ -6,7 +6,7 @@ import { getRemovable } from '../util';
 import KeyCode from '@/vc-util/KeyCode';
 import clsx from 'clsx';
 import Dropdown from '@/vc-component/dropdown';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 export interface OperationNodeProps {
   prefixCls: string;

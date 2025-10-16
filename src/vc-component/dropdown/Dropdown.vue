@@ -67,7 +67,9 @@ const triggerRef = useTemplateRef('triggerRef');
 const overlayRef = useTemplateRef('overlayRef');
 const childRef = ref(null);
 defineExpose({
-  ...triggerRef.value,
+  get el() {
+    return triggerRef.value;
+  },
 });
 
 const handleVisibleChange = (newVisible: boolean) => {

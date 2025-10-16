@@ -1,15 +1,14 @@
 <script lang="tsx" setup>
 import type { MenuProps as RcMenuProps } from '@/vc-component/menu';
 import RcMenu from '@/vc-component/menu';
+import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import type { VueNode } from '@/vc-util/type';
 import { EllipsisOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
 import { isEmpty, omit } from 'lodash-es';
 import { computed, getCurrentInstance, h, toRefs, type CSSProperties } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
-import { isValidElement } from '../_util/isValidNode';
 import initCollapseMotion from '../_util/motion';
-import { cloneElement } from '../_util/reactNode';
 import { useComponentConfig, useConfigContextInject } from '../config-provider/context';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import type { SiderContextProps } from '../layout/context';
@@ -133,6 +132,7 @@ overrideObj.validator?.({ mode });
 // ========================== Click ==========================
 // Tell dropdown that item clicked
 const onItemClick = (e) => {
+  selectedKeys.value = [e.key];
   onClick?.(e);
   overrideObj.onClick?.();
 };

@@ -24,7 +24,6 @@ import { TIME } from './generatePicker/constant';
 import SuffixIcon from './generatePicker/SuffixIcon.vue';
 import { SwapRightOutlined } from '@ant-design/icons-vue';
 import type { RangePickerProps } from './interface';
-import { isArray } from 'lodash-es';
 import dayjs from 'dayjs';
 
 const {
@@ -50,21 +49,33 @@ const {
   ...restProps
 } = defineProps<RangePickerProps<DateType> & { generateConfig: GenerateConfig<DateType> }>();
 
-const value = defineModel<any[]>('value', {
-  set(v) {
-    if (valueFormat) return [dayjs(v[0]).format(valueFormat), dayjs(v[1]).format(valueFormat)];
-    return v;
-  },
-  get: (e) => {
+const value = defineModel<DateType[]>('value', {
+  get(e: any) {
     if (!e) return e;
-    if (isArray(e)) {
-      return [
-        generateConfig.isValidate(e[0]) ? e[0] : valueFormat && !generateConfig.isValidate(e[0]) && dayjs(e[0]),
-        generateConfig.isValidate(e[1]) ? e[1] : valueFormat && !generateConfig.isValidate(e[1]) && dayjs(e[1]),
-      ];
+
+    if (Array.isArray(e)) {
+      return e.map((d) => {
+        if (!d) return null;
+        return generateConfig.isValidate(d) ? d : dayjs(d);
+      });
     }
+
+    return e; // 防止非数组意外情况
+  },
+
+  set(v: any[]) {
+    if (!v || !Array.isArray(v)) return v;
+
+    const formatValue = (d: any) => {
+      if (!d) return null;
+      const dayjsObj = generateConfig.isValidate(d) ? d : dayjs(d);
+      return valueFormat ? dayjsObj.format(valueFormat) : dayjsObj;
+    };
+
+    return [formatValue(v[0]), formatValue(v[1])];
   },
 });
+
 const pickerValue = defineModel<any[]>('pickerValue');
 const open = defineModel<boolean>('open');
 
@@ -118,7 +129,9 @@ const mergedSuffixIcon = () => (
 );
 
 defineExpose({
-  ...innerRef.value,
+  get el() {
+    return innerRef.value;
+  },
 });
 
 const [contextLocale] = useLocale('Calendar', enUS);

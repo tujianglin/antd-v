@@ -1,6 +1,6 @@
 <script lang="tsx" setup generic="DateType extends object = any">
 import pickAttrs from '@/vc-util/pickAttrs';
-import { toReactive } from '@vueuse/core';
+import { reactiveComputed } from '@vueuse/core';
 import { omit } from 'lodash-es';
 import { computed, nextTick, ref, toRefs, useTemplateRef, watch } from 'vue';
 import useSemantic from '../hooks/useSemantic';
@@ -107,7 +107,7 @@ const open = defineModel<boolean>('open');
 
 // ========================= Prop =========================
 const [filledProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate] = useFilledProps(
-  toReactive(props),
+  reactiveComputed(() => props),
   innerValue,
   innerPickerValue,
 );
@@ -171,7 +171,7 @@ const {
 
   // Native
   onClick,
-} = toRefs(toReactive(filledProps) as FilledProps<PickerProps, DateType, object>);
+} = toRefs(reactiveComputed(() => filledProps.value) as FilledProps<PickerProps, DateType, object>);
 
 const selectorRef = useTemplateRef('selectorRef');
 

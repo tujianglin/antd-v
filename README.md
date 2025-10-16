@@ -227,7 +227,7 @@
 
 ## Message 全局提示
 
-- [ ] 完成
+- [x] 完成
 
 ## Modal 对话框
 
@@ -235,15 +235,15 @@
 
 ## Notification 通知提醒框
 
-- [ ] 完成
+- [x] 完成
 
 ## Popconfirm 气泡确认框
 
-- [ ] 完成
+- [x] 完成
 
 ## Progress 进度条
 
-- [ ] 完成
+- [x] 完成
 
 ## Result 结果
 

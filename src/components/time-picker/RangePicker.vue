@@ -14,7 +14,9 @@ const open = defineModel<boolean>('open');
 const domRef = useTemplateRef('domRef');
 
 defineExpose({
-  ...domRef.value,
+  get el() {
+    return domRef.value;
+  },
 });
 
 const { RangePicker: InternalRangePicker } = DatePicker;

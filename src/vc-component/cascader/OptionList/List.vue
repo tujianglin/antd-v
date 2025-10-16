@@ -10,7 +10,7 @@ import useActive from './useActive';
 import useKeyboard from './useKeyboard';
 import Column from './Column.vue';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import KeyCode from '@/vc-util/KeyCode';
 import { SEARCH_MARK } from '../hooks/useSearchOptions';
 

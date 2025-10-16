@@ -4,7 +4,7 @@ import type { ChangeEventInfo, InputProps, ValueType } from './interface';
 import { resolveOnChange, triggerFocus, type InputFocusOptions } from './utils/commonUtils';
 import useCount from './hooks/useCount';
 import BaseInput from './BaseInput.vue';
-import { Render } from '../../components';
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
 

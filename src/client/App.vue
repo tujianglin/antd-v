@@ -1,27 +1,28 @@
 <script lang="tsx">
-import { ConfigProvider, Flex, Space } from '@/components';
+import { Button, ConfigProvider, notification } from '@/components';
 import { defineComponent } from 'vue';
 import zhCN from '@/components/locale/zh_CN';
 import 'dayjs/locale/zh-cn';
-import ColorPickerDemo from './demo/ColorPickerDemo';
+import Demo from './Demo';
 
 export default defineComponent({
   setup() {
+    const openNotification = () => {
+      notification?.open({
+        title: 'Notification Title',
+        description: () => <div>11111</div>,
+      });
+    };
     return () => (
       <div style={{ margin: '100px' }}>
         <ConfigProvider locale={zhCN}>
-          <Flex vertical gap="small">
-            <Space vertical size={12}>
-              <ColorPickerDemo></ColorPickerDemo>
-            </Space>
-          </Flex>
+          <Button type="primary" onClick={openNotification}>
+            Open the notification box
+          </Button>
+          <Demo></Demo>
         </ConfigProvider>
       </div>
     );
   },
 });
 </script>
-
-<style lang="less">
-@import '@/vc-component/cascader/assets/index.less';
-</style>

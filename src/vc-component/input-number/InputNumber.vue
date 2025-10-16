@@ -101,7 +101,7 @@ defineExpose({
   focus,
   blur: () => inputFocusRef.value?.input?.blur?.(),
   get nativeElement() {
-    return holderRef.value.nativeElement || inputFocusRef.value?.domRef;
+    return holderRef.value.nativeElement || inputFocusRef.value?.el;
   },
 });
 

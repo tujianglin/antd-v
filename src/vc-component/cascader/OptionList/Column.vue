@@ -8,7 +8,7 @@ import { SEARCH_MARK } from '../hooks/useSearchOptions';
 import { isLeaf, toPathKey } from '../utils/commonUtil';
 import pickAttrs from '@/vc-util/pickAttrs';
 import Checkbox from './Checkbox.vue';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import type { VueKey } from '@/vc-util/type';
 export interface ColumnProps<OptionType extends DefaultOptionType = DefaultOptionType> {
   prefixCls: string;

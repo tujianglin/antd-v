@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import type { TabNavListProps } from './index.vue';
 import TabNavList from './index.vue';
 

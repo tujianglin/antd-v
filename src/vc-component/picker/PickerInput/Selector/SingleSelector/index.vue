@@ -1,5 +1,5 @@
 <script lang="tsx" setup generic="DateType extends object = any">
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { computed, getCurrentInstance, h, toRefs, useAttrs, useTemplateRef } from 'vue';
 import type { InternalMode, SelectorProps, SharedHTMLAttrs } from '../../../interface';

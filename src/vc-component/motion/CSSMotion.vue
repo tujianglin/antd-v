@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { isValidElement } from '@/components/_util/isValidNode';
+import { isValidElement } from '@/vc-util/Children/util';
 import findDOMNode from '@/vc-util/Dom/findDOMNode';
 import { falseToUndefined } from '@/vc-util/props';
 import { getNodeRef, supportRef } from '@/vc-util/ref';
@@ -160,7 +160,7 @@ defineExpose({
   },
 });
 // ===================== Render =====================
-const motionChildren = () => {
+const MotionChildren = () => {
   let result = null;
   const children = slots.default;
   const mergedProps = { ...eventProps, visible };
@@ -212,5 +212,5 @@ const motionChildren = () => {
 };
 </script>
 <template>
-  <motionChildren />
+  <MotionChildren />
 </template>

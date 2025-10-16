@@ -66,6 +66,7 @@ export default defineComponent({
       <Flex align="center" gap={8}>
         <div style={{ width: '100px' }}>级联选择</div>
         <Cascader options={options} v-model:value={value.value} placeholder="Please select" />
+        <Cascader options={options} expandTrigger="hover" v-model:value={value.value} placeholder="Please select" />
       </Flex>
     );
   },

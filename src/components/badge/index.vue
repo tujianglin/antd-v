@@ -2,17 +2,17 @@
 import { computed, ref, toRefs, watchEffect, type CSSProperties, type HTMLAttributes, type VNode } from 'vue';
 import type { PresetStatusColorType } from '../_util/colors';
 import { isPresetColor } from '../_util/colors';
-import { cloneElement } from '../_util/reactNode';
 import type { LiteralUnion } from '../_util/type';
 import { useComponentConfig } from '../config-provider/context';
 import type { PresetColorKey } from '../theme/internal';
 import ScrollNumber from './ScrollNumber.vue';
 import useStyle from './style';
 import clsx from 'clsx';
-import Render from '../render';
+import Render from '@/vc-component/render';
 import CSSMotion from '@/vc-component/motion';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import type { VueNode } from '@/vc-util/type';
+import { cloneElement } from '@/vc-util/Children/util';
 
 export type { ScrollNumberProps } from './ScrollNumber.vue';
 

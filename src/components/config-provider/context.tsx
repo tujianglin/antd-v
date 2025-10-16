@@ -40,13 +40,13 @@ import type { OTPProps } from '../input/OTP/interface';
 // import type { MasonryProps } from '../masonry';
 import type { MentionsProps } from '../mentions';
 import type { MenuProps } from '../menu';
-// import type { ArgsProps as MessageProps } from '../message';
+import type { ArgsProps as MessageProps } from '../message';
 // import type { ModalProps } from '../modal';
-// import type { ArgsProps as NotificationProps } from '../notification';
+import type { ArgsProps as NotificationProps } from '../notification';
 import type { PaginationProps } from '../pagination';
-// import type { PopconfirmProps } from '../popconfirm';
+import type { PopconfirmProps } from '../popconfirm';
 import type { PopoverProps } from '../popover';
-// import type { ProgressProps } from '../progress';
+import type { ProgressProps } from '../progress';
 // import type { QRCodeProps } from '../qr-code';
 import type { RadioProps } from '../radio';
 // import type { ResultProps } from '../result';
@@ -213,9 +213,9 @@ export type OTPConfig = ComponentStyleConfig & Pick<OTPProps, 'classNames' | 'st
 export type ButtonConfig = ComponentStyleConfig &
   Pick<ButtonProps, 'classNames' | 'styles' | 'autoInsertSpace' | 'variant' | 'color' | 'shape'>;
 
-// export type MessageConfig = ComponentStyleConfig & Pick<MessageProps, 'classNames' | 'styles'>;
+export type MessageConfig = ComponentStyleConfig & Pick<MessageProps, 'classNames' | 'styles'>;
 
-// export type NotificationConfig = ComponentStyleConfig & Pick<NotificationProps, 'closeIcon' | 'classNames' | 'styles'>;
+export type NotificationConfig = ComponentStyleConfig & Pick<NotificationProps, 'closeIcon' | 'classNames' | 'styles'>;
 
 // export type TagConfig = ComponentStyleConfig & Pick<TagProps, 'variant' | 'closeIcon' | 'closable' | 'classNames' | 'styles'>;
 
@@ -248,7 +248,7 @@ export type FloatButtonGroupConfig = ComponentStyleConfig & Pick<FloatButtonGrou
 
 export type PaginationConfig = ComponentStyleConfig & Pick<PaginationProps, 'showSizeChanger' | 'classNames' | 'styles'>;
 
-// export type ProgressConfig = ComponentStyleConfig & Pick<ProgressProps, 'classNames' | 'styles'>;
+export type ProgressConfig = ComponentStyleConfig & Pick<ProgressProps, 'classNames' | 'styles'>;
 
 export type SelectConfig = ComponentStyleConfig & Pick<SelectProps, 'showSearch' | 'variant' | 'classNames' | 'styles'>;
 
@@ -258,7 +258,7 @@ export type TooltipConfig = Pick<TooltipProps, 'class' | 'style' | 'styles' | 'c
 
 export type PopoverConfig = Pick<PopoverProps, 'class' | 'style' | 'styles' | 'classNames' | 'arrow'>;
 
-// export type PopconfirmConfig = Pick<PopconfirmProps, 'className' | 'style' | 'styles' | 'classNames' | 'arrow'>;
+export type PopconfirmConfig = Pick<PopconfirmProps, 'class' | 'style' | 'styles' | 'classNames' | 'arrow'>;
 
 // export type QRcodeConfig = ComponentStyleConfig & Pick<QRCodeProps, 'classNames' | 'styles'>;
 
@@ -361,7 +361,7 @@ export interface ConfigComponentProps {
   // list?: ListConfig;
   mentions?: MentionsConfig;
   // modal?: ModalConfig;
-  // progress?: ProgressConfig;
+  progress?: ProgressConfig;
   // result?: ResultConfig;
   slider?: SliderConfig;
   breadcrumb?: BreadcrumbConfig;
@@ -376,7 +376,7 @@ export interface ConfigComponentProps {
   switch?: SwitchStyleConfig;
   transfer?: TransferConfig;
   avatar?: ComponentStyleConfig;
-  // message?: MessageConfig;
+  message?: MessageConfig;
   // tag?: TagConfig;
   // table?: TableConfig;
   card?: CardConfig;
@@ -387,9 +387,9 @@ export interface ConfigComponentProps {
   // tour?: TourConfig;
   tooltip?: TooltipConfig;
   popover?: PopoverConfig;
-  // popconfirm?: PopconfirmConfig;
+  popconfirm?: PopconfirmConfig;
   // upload?: UploadConfig;
-  // notification?: NotificationConfig;
+  notification?: NotificationConfig;
   tree?: TreeConfig;
   colorPicker?: ColorPickerConfig;
   datePicker?: DatePickerConfig;
@@ -414,8 +414,6 @@ export interface ConfigConsumerProps extends ConfigComponentProps {
    * @descEN Set the [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) config.
    */
   csp?: CSPConfig;
-  /** @deprecated Please use `{ button: { autoInsertSpace: boolean }}` instead */
-  autoInsertSpaceInButton?: boolean;
   variant?: Variant;
   virtual?: boolean;
   locale?: Locale;

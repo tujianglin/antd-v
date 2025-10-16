@@ -7,7 +7,6 @@ import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import type { AdjustOverflow } from '../_util/placements';
 import getPlacements from '../_util/placements';
-import { cloneElement } from '../_util/reactNode';
 import { devUseWarning } from '../_util/warning';
 import { useComponentConfig } from '../config-provider/context';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
@@ -23,6 +22,7 @@ import { ZIndexContextProvider } from '../_util/zindexContext';
 import { onlyChild } from '../_util/onlyChild';
 import isPrimitive from '../_util/isPrimitive';
 import OverrideProvider from '../menu/OverrideProvider.vue';
+import { cloneElement } from '@/vc-util/Children/util';
 
 type Placement = (typeof _Placements)[number];
 

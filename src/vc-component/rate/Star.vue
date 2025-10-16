@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
 import KeyCode from '@/vc-util/KeyCode';
 import clsx from 'clsx';
 import { computed, getCurrentInstance } from 'vue';
+import Render from '@/vc-component/render';
 
 export interface StarProps {
   value?: number;

@@ -181,7 +181,9 @@ const selectedKeys = defineModel<VueKey[]>('selectedKeys');
 const domRef = useTemplateRef('domRef');
 
 defineExpose({
-  ...domRef.value,
+  get el() {
+    return domRef.value;
+  },
 });
 
 const {

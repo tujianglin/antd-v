@@ -1,19 +1,89 @@
 <script lang="tsx" setup>
 import CSSMotion, { type CSSMotionProps } from '@/vc-component/motion';
+import Render from '@/vc-component/render';
+import ResizeObserver, { type ResizeObserverProps } from '@/vc-component/resize-observer';
 import { activePopups, composeRef, registerPopup } from '@/vc-util/ref';
-import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, onBeforeUnmount, onMounted, ref, toRefs, type CSSProperties } from 'vue';
-import Portal from '../../portal';
-import ResizeObserver from '../../resize-observer';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } from 'vue';
+import useOffsetStyle from '../hooks/useOffsetStyle';
+import type { AlignType, TriggerProps } from '../index.vue';
+import type { ArrowPos, ArrowTypeOuter } from '../interface';
 import Arrow from './Arrow.vue';
-import type { PopupProps } from './interface';
 import Mask from './Mask.vue';
 import PopupContent from './PopupContent.vue';
+
+export interface MobileConfig {
+  mask?: boolean;
+  /** Set popup motion. You can ref `rc-motion` for more info. */
+  motion?: CSSMotionProps;
+  /** Set mask motion. You can ref `rc-motion` for more info. */
+  maskMotion?: CSSMotionProps;
+}
+
+export interface PopupProps {
+  prefixCls: string;
+  class?: string;
+  style?: CSSProperties;
+  popup?: TriggerProps['popup'];
+  target: HTMLElement;
+  onMouseenter?: (e: MouseEvent) => void;
+  onMouseleave?: (e: MouseEvent) => void;
+  onPointerEnter?: (e: MouseEvent) => void;
+  onPointerDownCapture?: (e: MouseEvent) => void;
+  zIndex?: number;
+
+  mask?: boolean;
+  onVisibleChanged: (visible: boolean) => void;
+
+  // Arrow
+  align?: AlignType;
+  arrow?: ArrowTypeOuter;
+  arrowPos: ArrowPos;
+
+  // Open
+  open: boolean;
+  /** Tell Portal that should keep in screen. e.g. should wait all motion end */
+  keepDom: boolean;
+  fresh?: boolean;
+
+  // Click
+  onClick?: (e: MouseEvent) => void;
+
+  // Motion
+  motion?: CSSMotionProps;
+  maskMotion?: CSSMotionProps;
+
+  // Portal
+  forceRender?: boolean;
+  getPopupContainer?: TriggerProps['getPopupContainer'];
+  autoDestroy?: boolean;
+  portal: any;
+
+  // Align
+  ready: boolean;
+  offsetX: number;
+  offsetY: number;
+  offsetR: number;
+  offsetB: number;
+  onAlign: VoidFunction;
+  onPrepare: () => Promise<void>;
+
+  // stretch
+  stretch?: string;
+  targetWidth?: number;
+  targetHeight?: number;
+
+  // Resize
+  onResize?: ResizeObserverProps['onResize'];
+
+  // Mobile
+  mobile?: MobileConfig;
+}
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
+  popup,
   class: className,
   prefixCls,
   style,
@@ -48,6 +118,7 @@ const {
   forceRender,
   getPopupContainer,
   autoDestroy,
+  portal: Portal,
 
   zIndex,
 
@@ -64,6 +135,9 @@ const {
   onAlign,
   onPrepare,
 
+  // Resize
+  onResize,
+
   stretch,
   targetWidth,
   targetHeight,
@@ -75,59 +149,44 @@ const isNodeVisible = computed(() => open || keepDom);
 const isMobile = computed(() => !!mobile);
 
 // ========================== Mask ==========================
-const { mergedMask, mergedMaskMotion, mergedPopupMotion } = toRefs(
-  reactiveComputed(
-    (): {
-      mergedMask: boolean;
-      mergedMaskMotion: CSSMotionProps | undefined;
-      mergedPopupMotion: CSSMotionProps | undefined;
-    } => {
-      if (mobile) {
-        return { mergedMask: mobile.mask, mergedMaskMotion: mobile.maskMotion, mergedPopupMotion: mobile.motion };
-      }
-      return { mergedMask: mask, mergedMaskMotion: maskMotion, mergedPopupMotion: motion };
-    },
-  ),
+const mergedMask = computed(() => (mobile ? mobile.mask : mask));
+const mergedMaskMotion = computed(() => (mobile ? mobile.maskMotion : maskMotion));
+const mergedPopupMotion = computed(() => (mobile ? mobile.motion : motion));
+
+// ======================= Container ========================
+const getPopupContainerNeedParams = computed(() => getPopupContainer?.length > 0);
+
+const show = ref(!getPopupContainer || !getPopupContainerNeedParams.value);
+
+// Delay to show since `getPopupContainer` need target element
+watch(
+  [show, getPopupContainerNeedParams, () => target],
+  async () => {
+    await nextTick();
+    if (!show.value && getPopupContainerNeedParams.value && target) {
+      show.value = true;
+    }
+  },
+  { flush: 'post', immediate: true, deep: true },
 );
 
-// >>>>> Offset
-const AUTO = 'auto' as const;
+// ========================= Resize =========================
+const onInternalResize: ResizeObserverProps['onResize'] = (size, ele) => {
+  onResize?.(size, ele);
+  onAlign();
+};
 
-const offsetStyle = computed(() => {
-  const result: CSSProperties = isMobile.value
-    ? {}
-    : {
-        left: '-1000vw',
-        top: '-1000vh',
-        right: AUTO,
-        bottom: AUTO,
-      };
-
-  // Set align style
-  if (!isMobile.value && (ready || !open)) {
-    const { points } = align;
-    const dynamicInset = align.dynamicInset || (align as any)._experimental?.dynamicInset;
-    const alignRight = dynamicInset && points[0][1] === 'r';
-    const alignBottom = dynamicInset && points[0][0] === 'b';
-
-    if (alignRight) {
-      result.right = `${offsetR}px`;
-      result.left = AUTO;
-    } else {
-      result.left = `${offsetX}px`;
-      result.right = AUTO;
-    }
-
-    if (alignBottom) {
-      result.bottom = `${offsetB}px`;
-      result.top = AUTO;
-    } else {
-      result.top = `${offsetY}px`;
-      result.bottom = AUTO;
-    }
-  }
-  return result;
-});
+// ========================= Styles =========================
+const offsetStyle = useOffsetStyle(
+  isMobile,
+  computed(() => ready),
+  computed(() => open),
+  computed(() => align),
+  computed(() => offsetR),
+  computed(() => offsetB),
+  computed(() => offsetX),
+  computed(() => offsetY),
+);
 
 // >>>>> Misc
 const miscStyle = computed(() => {
@@ -176,7 +235,9 @@ function onMouseout(e: MouseEvent) {
 }
 </script>
 <template>
-  <Portal
+  <component
+    v-if="show"
+    :is="Portal"
     :open="forceRender || isNodeVisible"
     :get-container="getPopupContainer && (() => getPopupContainer(target))"
     :auto-destroy="autoDestroy"
@@ -189,7 +250,7 @@ function onMouseout(e: MouseEvent) {
       :motion="mergedMaskMotion"
       :mobile="isMobile"
     />
-    <ResizeObserver @resize="onAlign" :disabled="!open">
+    <ResizeObserver @resize="onInternalResize" :disabled="!open">
       <CSSMotion
         motion-appear
         motion-enter
@@ -197,9 +258,9 @@ function onMouseout(e: MouseEvent) {
         :remove-on-leave="false"
         :force-render="forceRender"
         :leaved-class-name="`${prefixCls}-hidden`"
+        v-bind="mergedPopupMotion"
         @appear-prepare="onPrepare"
         @enter-prepare="onPrepare"
-        v-bind="mergedPopupMotion"
         :visible="open"
         @visible-changed="
           (nextVisible) => {
@@ -234,11 +295,12 @@ function onMouseout(e: MouseEvent) {
           >
             <Arrow v-if="arrow" :prefix-cls="prefixCls" :arrow="arrow" :arrow-pos="arrowPos" :align="align" />
             <PopupContent :cache="!open && !fresh">
-              <slot name="popup"></slot>
+              <Render :content="popup" />
             </PopupContent>
           </div>
         </template>
       </CSSMotion>
     </ResizeObserver>
-  </Portal>
+    <slot></slot>
+  </component>
 </template>

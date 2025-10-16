@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import { type CSSProperties } from 'vue';
 import Mark from './Mark.vue';
 export interface MarkObj {

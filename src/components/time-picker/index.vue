@@ -52,7 +52,9 @@ const open = defineModel<boolean>('open');
 const timePickerRef = useTemplateRef('timePickerRef');
 
 defineExpose({
-  ...timePickerRef.value,
+  get el() {
+    return timePickerRef.value;
+  },
 });
 
 const { TimePicker: InternalTimePicker } = DatePicker;

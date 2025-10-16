@@ -3,7 +3,7 @@ import { computed, getCurrentInstance, type CSSProperties } from 'vue';
 import type { ProgressProps } from '..';
 import type { StrokeColorObject } from '../interface';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 export interface ColorGradientProps {
   prefixCls: string;
@@ -15,7 +15,7 @@ export interface ColorGradientProps {
   strokeLinecap: ProgressProps['strokeLinecap'];
   strokeWidth: ProgressProps['strokeWidth'];
   size: number;
-  color: string | StrokeColorObject;
+  color: string | null | StrokeColorObject;
   gapDegree: number;
 }
 
@@ -80,8 +80,8 @@ const maskId = computed(() => `${gradientId}-conic`);
 
 const fromDeg = computed(() => (gapDegree ? `${180 + gapDegree / 2}deg` : '0deg'));
 
-const conicColors = computed(() => getPtgColors(color, (360 - gapDegree) / 360));
-const linearColors = computed(() => getPtgColors(color, 1));
+const conicColors = computed(() => getPtgColors(color || {}, (360 - gapDegree) / 360));
+const linearColors = computed(() => getPtgColors(color || {}, 1));
 
 const conicColorBg = computed(() => `conic-gradient(from ${fromDeg.value}, ${conicColors.value.join(', ')})`);
 const linearColorBg = `linear-gradient(to ${gapDegree ? 'bottom' : 'top'}, ${linearColors.value.join(', ')})`;

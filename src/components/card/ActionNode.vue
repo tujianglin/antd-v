@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
+import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 import { type CSSProperties } from 'vue';
-import Render from '../render';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 

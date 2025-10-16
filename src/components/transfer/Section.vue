@@ -18,10 +18,10 @@ import { OmitProps, type PaginationType, type TransferKey } from './interface';
 import type { ListBodyRef, TransferListBodyProps } from './ListBody.vue';
 import DefaultListBody from './ListBody.vue';
 import Search from './search.vue';
-import { isValidElement } from '../_util/isValidNode';
+import { isValidElement } from '@/vc-util/Children/util';
 import { computed, getCurrentInstance, ref, type CSSProperties } from 'vue';
 import { omit } from 'lodash-es';
-import Render from '../render';
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { DownOutlined } from '@ant-design/icons-vue';
 

@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import { Render } from '@/components';
-import {} from 'vue';
+import Render from '@/vc-component/render';
+
 export interface CloseBtnProps {
   prefixCls: string;
   icon?: any;

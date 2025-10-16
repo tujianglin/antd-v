@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
 import type { CSSMotionProps } from '@/vc-component/motion';
+import CSSMotion from '@/vc-component/motion';
 import clsx from 'clsx';
 
 export interface MaskProps {
-  class?: string;
   prefixCls: string;
   open?: boolean;
   zIndex?: number;
@@ -15,8 +15,25 @@ export interface MaskProps {
   mobile?: boolean;
 }
 
-const { class: className, zIndex, prefixCls, mobile } = defineProps<MaskProps>();
+const {
+  prefixCls,
+  open,
+  zIndex,
+
+  mask,
+  motion,
+
+  mobile,
+} = defineProps<MaskProps>();
 </script>
 <template>
-  <div v-if="mask" :style="{ zIndex }" :class="clsx(`${prefixCls}-mask`, mobile && `${prefixCls}-mobile-mask`, className)"></div>
+  <CSSMotion v-if="mask" v-bind="motion" motion-appear :visible="open" remove-on-leave>
+    <template #default="{ class: className, ref: motionRef }">
+      <div
+        :ref="motionRef"
+        :style="{ zIndex }"
+        :class="clsx(`${prefixCls}-mask`, mobile && `${prefixCls}-mobile-mask`, className)"
+      ></div>
+    </template>
+  </CSSMotion>
 </template>

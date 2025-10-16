@@ -1,6 +1,6 @@
-import { isValidElement } from '@/components/_util/isValidNode';
 import { TreeNode } from '@/vc-component/tree';
 import { toArray } from '@/vc-util/Children/toArray';
+import { isValidElement } from '@/vc-util/Children/util';
 import warning from '@/vc-util/warning';
 import type { ChangeEventExtra, DataNode, FieldNames, VueKey } from '../interface';
 

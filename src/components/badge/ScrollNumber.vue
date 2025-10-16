@@ -3,10 +3,10 @@ import { computed, toRefs, type CSSProperties, type VNode } from 'vue';
 import SingleNumber from './SingleNumber.vue';
 import { useConfigContextInject } from '../config-provider';
 import clsx from 'clsx';
-import { cloneElement } from '../_util/reactNode';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
-import Render from '../render';
+import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
+import { cloneElement } from '@/vc-util/Children/util';
 
 export interface ScrollNumberProps {
   prefixCls?: string;

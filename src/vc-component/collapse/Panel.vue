@@ -3,7 +3,7 @@ import KeyCode from '@/vc-util/KeyCode';
 import { computed, getCurrentInstance, ref } from 'vue';
 import type { CollapsePanelProps } from './interface';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 import CSSMotion from '@/vc-component/motion';
 import PanelContent from './PanelContent.vue';
 

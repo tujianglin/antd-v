@@ -20,6 +20,8 @@ import type {
   MentionsConfig,
   MenuConfig,
   OTPConfig,
+  PaginationConfig,
+  PopconfirmConfig,
   PopoverConfig,
   PopupOverflow,
   RadioConfig,
@@ -55,11 +57,11 @@ export const PASSED_PROPS: Exclude<keyof ConfigConsumerProps, 'rootPrefixCls' | 
   'getTargetContainer',
   'getPopupContainer',
   'renderEmpty',
-  // 'input',
-  // 'pagination',
+  'input',
+  'pagination',
   // 'form',
   'select',
-  // 'button',
+  'button',
 ];
 
 export interface ConfigProviderProps {
@@ -77,7 +79,7 @@ export interface ConfigProviderProps {
   inputNumber?: InputNumberConfig;
   textArea?: TextAreaConfig;
   select?: SelectConfig;
-  // pagination?: PaginationConfig;
+  pagination?: PaginationConfig;
   /**
    * @descCN 语言包配置，语言包可到 `antd/locale` 目录下寻找。
    * @descEN Language package setting, you can find the packages in `antd/locale`.
@@ -166,7 +168,7 @@ export interface ConfigProviderProps {
   // tour?: TourConfig;
   tooltip?: TooltipConfig;
   popover?: PopoverConfig;
-  // popconfirm?: PopconfirmConfig;
+  popconfirm?: PopconfirmConfig;
   watermark?: ComponentStyleConfig;
   // qrcode?: QRcodeConfig;
 }

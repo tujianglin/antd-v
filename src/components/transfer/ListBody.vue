@@ -98,7 +98,11 @@ const memoizedItems = computed<RenderedItem[]>(() => {
   return displayItems;
 });
 
-defineExpose({ items: memoizedItems });
+defineExpose({
+  get items() {
+    return memoizedItems.value;
+  },
+});
 </script>
 <template>
   <ul

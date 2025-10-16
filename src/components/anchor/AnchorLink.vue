@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { computed, onBeforeUnmount, toRefs, watch } from 'vue';
 import { devUseWarning } from '../_util/warning';
 import { useConfigContextInject } from '../config-provider';
-import Render from '../render';
 import { useAnchorContextInject } from './context';
 
 export interface AnchorLinkBaseProps {

@@ -4,7 +4,7 @@ import type { DisplayValueType, Placement } from '@/vc-component/select/interfac
 import type { BuildInPlacements } from '@/vc-component/trigger';
 import useControlledState from '@/vc-util/hooks/useControlledState';
 import type { VueNode } from '@/vc-util/type';
-import { toReactive } from '@vueuse/core';
+import { reactiveComputed } from '@vueuse/core';
 import { computed, getCurrentInstance, ref, toRefs, useId, type CSSProperties } from 'vue';
 import { CascaderContextProvider } from './context';
 import useDisplayValues from './hooks/useDisplayValues';
@@ -250,7 +250,7 @@ const searchOptions = useSearchOptions(
   mergedOptions,
   mergedFieldNames,
   computed(() => popupPrefixCls || prefixCls),
-  toReactive(searchConfig.value),
+  reactiveComputed(() => searchConfig.value),
   computed(() => changeOnSelect || multiple.value),
 );
 
@@ -272,20 +272,17 @@ const displayValues = useDisplayValues(deDuplicatedValues, mergedOptions, merged
 
 // =========================== Change ===========================
 const triggerChange = (nextValues: InternalValueType) => {
-  rawValues.value = toRawValues(nextValues);
-
   // Save perf if no need trigger event
-  if (onChange) {
-    const nextRawValues = toRawValues(nextValues);
+  const nextRawValues = toRawValues(nextValues);
 
-    const valueOptions = nextRawValues.map((valueCells) =>
-      toPathOptions(valueCells, mergedOptions.value, mergedFieldNames.value).map((valueOpt) => valueOpt.option),
-    );
+  const valueOptions = nextRawValues.map((valueCells) =>
+    toPathOptions(valueCells, mergedOptions.value, mergedFieldNames.value).map((valueOpt) => valueOpt.option),
+  );
 
-    const triggerValues = multiple.value ? nextRawValues : nextRawValues[0];
-    const triggerOptions = multiple.value ? valueOptions : valueOptions[0];
-    onChange(triggerValues, triggerOptions);
-  }
+  const triggerValues = multiple.value ? nextRawValues : nextRawValues[0];
+  const triggerOptions = multiple.value ? valueOptions : valueOptions[0];
+  rawValues.value = triggerValues as any;
+  onChange?.(triggerValues, triggerOptions);
 };
 
 // =========================== Select ===========================

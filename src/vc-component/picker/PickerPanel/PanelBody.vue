@@ -4,7 +4,7 @@ import type { DisabledDate } from '../interface';
 import { formatValue, isInRange, isSame } from '../utils/dateUtil';
 import { usePanelContextInject, usePickerHackContextInject } from './context';
 import clsx from 'clsx';
-import { Render } from '@/components';
+import Render from '@/vc-component/render';
 
 export interface PanelBodyProps<DateType = any> {
   rowNum: number;
