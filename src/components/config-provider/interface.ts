@@ -1,3 +1,4 @@
+import type { WarningContextProps } from '../_util/warning';
 import type { Locale } from '../locale';
 import type {
   BadgeConfig,
@@ -19,6 +20,8 @@ import type {
   InputSearchConfig,
   MentionsConfig,
   MenuConfig,
+  MessageConfig,
+  NotificationConfig,
   OTPConfig,
   PaginationConfig,
   PopconfirmConfig,
@@ -104,7 +107,7 @@ export interface ConfigProviderProps {
   popupMatchSelectWidth?: boolean;
   popupOverflow?: PopupOverflow;
   theme?: ThemeConfig;
-  // warning?: WarningContextProps;
+  warning?: WarningContextProps;
   // alert?: AlertConfig;
   affix?: ComponentStyleConfig;
   anchor?: ComponentStyleConfig;
@@ -145,7 +148,7 @@ export interface ConfigProviderProps {
   switch?: ComponentStyleConfig;
   transfer?: TransferConfig;
   avatar?: ComponentStyleConfig;
-  // message?: MessageConfig;
+  message?: MessageConfig;
   // tag?: TagConfig;
   // table?: TableConfig;
   card?: CardConfig;
@@ -154,7 +157,7 @@ export interface ConfigProviderProps {
   timeline?: ComponentStyleConfig;
   timePicker?: TimePickerConfig;
   upload?: ComponentStyleConfig;
-  // notification?: NotificationConfig;
+  notification?: NotificationConfig;
   tree?: ComponentStyleConfig;
   colorPicker?: ComponentStyleConfig;
   datePicker?: DatePickerConfig;

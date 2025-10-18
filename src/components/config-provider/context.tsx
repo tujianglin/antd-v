@@ -35,8 +35,7 @@ import type { FloatButtonGroupProps } from '../float-button/interface';
 import type { InputProps, SearchProps, TextAreaProps } from '../input';
 import type { InputNumberProps } from '../input-number';
 import type { OTPProps } from '../input/OTP/interface';
-// import type { ListItemProps } from '../list';
-// import type { Locale } from '../locale';
+import type { Locale } from '../locale';
 // import type { MasonryProps } from '../masonry';
 import type { MentionsProps } from '../mentions';
 import type { MenuProps } from '../menu';
@@ -61,11 +60,10 @@ import type { SpinProps } from '../spin';
 // import type { StepsProps } from '../steps';
 import type { SwitchProps } from '../switch';
 // import type { TableProps } from '../table';
-import type { TabsProps } from '../tabs';
-// import type { TagProps } from '../tag';
 import { reactiveComputed } from '@vueuse/core';
 import type { ButtonProps } from '../button';
-import type { Locale } from '../locale';
+import type { TabsProps } from '../tabs';
+import type { TagProps } from '../tag/index.vue';
 import type { AliasToken, MappingAlgorithm, OverrideToken } from '../theme/interface';
 import type { TimePickerProps } from '../time-picker';
 import type { RenderEmptyHandler } from './defaultRenderEmpty.vue';
@@ -217,7 +215,7 @@ export type MessageConfig = ComponentStyleConfig & Pick<MessageProps, 'className
 
 export type NotificationConfig = ComponentStyleConfig & Pick<NotificationProps, 'closeIcon' | 'classNames' | 'styles'>;
 
-// export type TagConfig = ComponentStyleConfig & Pick<TagProps, 'variant' | 'closeIcon' | 'closable' | 'classNames' | 'styles'>;
+export type TagConfig = ComponentStyleConfig & Pick<TagProps, 'variant' | 'closeIcon' | 'closable' | 'classNames' | 'styles'>;
 
 export type CardConfig = ComponentStyleConfig & Pick<CardProps, 'classNames' | 'styles' | 'variant'>;
 
@@ -304,10 +302,6 @@ export type RibbonConfig = ComponentStyleConfig & Pick<RibbonProps, 'classNames'
 
 export type PopupOverflow = 'viewport' | 'scroll';
 
-// export interface ListConfig extends ComponentStyleConfig {
-//   item?: Pick<ListItemProps, 'classNames' | 'styles'>;
-// }
-
 export const Variants = ['outlined', 'borderless', 'filled', 'underlined'] as const;
 
 export type Variant = (typeof Variants)[number];
@@ -358,7 +352,6 @@ export interface ConfigComponentProps {
   // statistic?: StatisticConfig;
   // image?: ImageConfig;
   layout?: ComponentStyleConfig;
-  // list?: ListConfig;
   mentions?: MentionsConfig;
   // modal?: ModalConfig;
   progress?: ProgressConfig;
@@ -377,7 +370,7 @@ export interface ConfigComponentProps {
   transfer?: TransferConfig;
   avatar?: ComponentStyleConfig;
   message?: MessageConfig;
-  // tag?: TagConfig;
+  tag?: TagConfig;
   // table?: TableConfig;
   card?: CardConfig;
   cardMeta?: CardMetaConfig;

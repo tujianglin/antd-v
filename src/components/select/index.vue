@@ -74,7 +74,6 @@ export interface SelectProps<ValueType = any, OptionType extends BaseOptionType 
   placement?: SelectCommonPlacement;
   mode?: 'multiple' | 'tags';
   status?: InputStatus;
-  dropdownMatchSelectWidth?: boolean | number;
   popupMatchSelectWidth?: boolean | number;
   styles?: Partial<Record<SemanticName, CSSProperties>> & {
     popup?: Partial<Record<PopupSemantic, CSSProperties>>;
@@ -101,7 +100,6 @@ const {
   notFoundContent,
   status: customStatus,
   builtinPlacements,
-  dropdownMatchSelectWidth,
   popupMatchSelectWidth = true,
   direction: propDirection,
   style,
@@ -177,9 +175,7 @@ const mode = computed(() => {
 
 const isMultiple = computed(() => mode.value === 'multiple' || mode.value === 'tags');
 
-const mergedPopupMatchSelectWidth = computed(
-  () => popupMatchSelectWidth ?? dropdownMatchSelectWidth ?? contextPopupMatchSelectWidth?.value,
-);
+const mergedPopupMatchSelectWidth = computed(() => popupMatchSelectWidth ?? contextPopupMatchSelectWidth?.value);
 
 const mergedPopupRender = usePopupRender(computed(() => popupRender));
 

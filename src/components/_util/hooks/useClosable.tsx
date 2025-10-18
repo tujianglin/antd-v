@@ -9,7 +9,7 @@ import defaultLocale from '../../locale/en_US';
 import extendsObject from '../extendsObject';
 
 export type ClosableType = DialogProps['closable'];
-export type BaseContextClosable = { closable?: ClosableType; closeIcon?: VueNode };
+export type BaseContextClosable = { closable?: ClosableType; closeIcon?: VueNode | boolean };
 export type ContextClosable<T extends BaseContextClosable = any> = Partial<Pick<T, 'closable' | 'closeIcon'>>;
 
 export function pickClosable<T extends BaseContextClosable>(context?: ContextClosable<T>): ContextClosable<T> | undefined {

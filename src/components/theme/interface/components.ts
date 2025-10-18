@@ -55,7 +55,7 @@ import type { ComponentToken as SpinComponentToken } from '../../spin/style';
 import type { ComponentToken as SwitchComponentToken } from '../../switch/style';
 // import type { ComponentToken as TableComponentToken } from '../../table/style';
 import type { ComponentToken as TabsComponentToken } from '../../tabs/style';
-// import type { ComponentToken as TagComponentToken } from '../../tag/style';
+import type { ComponentToken as TagComponentToken } from '../../tag/style';
 // import type { ComponentToken as TimelineComponentToken } from '../../timeline/style';
 import type { ComponentToken as TooltipComponentToken } from '../../tooltip/style';
 // import type { ComponentToken as TourComponentToken } from '../../tour/style';
@@ -111,7 +111,7 @@ export interface ComponentTokenMap {
   // Statistic?: StatisticComponentToken;
   Switch?: SwitchComponentToken;
   // Splitter?: SplitterComponentToken;
-  // Tag?: TagComponentToken;
+  Tag?: TagComponentToken;
   Tree?: TreeComponentToken;
   TreeSelect?: TreeSelectComponentToken;
   // Typography?: TypographyComponentToken;

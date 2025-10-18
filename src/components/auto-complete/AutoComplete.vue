@@ -17,7 +17,6 @@ export type DataSourceItemType = DataSourceItemObject | VueNode;
 export interface AutoCompleteProps<ValueType = any, OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType>
   extends Omit<InternalSelectProps<ValueType, OptionType>, 'loading' | 'mode' | 'optionLabelProp' | 'labelInValue'> {
   status?: InputStatus;
-  dropdownMatchSelectWidth?: boolean | number;
   popupMatchSelectWidth?: boolean | number;
   styles?: Partial<Record<SemanticName, CSSProperties>> & {
     popup?: Partial<Record<PopupSemantic, CSSProperties>>;

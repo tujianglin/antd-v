@@ -1,4 +1,5 @@
 import type { GetContainer } from '@/vc-util/PortalWrapper';
+import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties, HTMLAttributes } from 'vue';
 
 export type SemanticName = 'header' | 'body' | 'footer' | 'container' | 'title' | 'wrapper' | 'mask';
@@ -8,7 +9,7 @@ export type ModalClassNames = Partial<Record<SemanticName, string>>;
 export type ModalStyles = Partial<Record<SemanticName, CSSProperties>>;
 
 export type ClosableType = {
-  closeIcon?: any;
+  closeIcon?: VueNode;
   disabled?: boolean;
   afterClose?: () => any;
 };
