@@ -128,7 +128,7 @@ const generateConfig: GenerateConfig<Dayjs> = {
     const clone = date.locale('en');
     return clone.weekday() + clone.localeData().firstDayOfWeek();
   },
-  getYear: (date) => date.year(),
+  getYear: (date) => date.year?.(),
   getMonth: (date) => date.month(),
   getDate: (date) => date.date(),
   getHour: (date) => date.hour(),

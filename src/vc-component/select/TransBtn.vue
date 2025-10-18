@@ -32,7 +32,7 @@ const icon = computed(() => (typeof customizeIcon === 'function' ? customizeIcon
     @click="onClick"
     aria-hidden
   >
-    <Render v-if="icon !== undefined" :content="icon" />
+    <Render v-if="icon" :content="icon" />
     <span v-else :class="clsx(className.split(/\s+/).map((cls) => `${cls}-icon`))">
       <slot></slot>
     </span>

@@ -108,7 +108,6 @@ const memoizedValue = computed(() => ({ onChange: onRadioChange, value: value.va
               :id="option.id"
               :required="option.required"
             >
-              {{ prefixCls }}
               <Render :content="option.label" />
             </Radio>
           </template>

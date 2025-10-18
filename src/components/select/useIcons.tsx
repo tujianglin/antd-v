@@ -45,7 +45,7 @@ export default function useIcons(
 
   // Validation Feedback Icon
   const getSuffixIconNode = (arrowIcon?: VueNode) => {
-    if (!suffixIcon?.value && !hasFeedback?.value && !showArrow?.value) {
+    if (!suffixIcon?.value && !hasFeedback?.value && showArrow?.value === false) {
       return null;
     }
     return (

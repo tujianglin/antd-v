@@ -15,7 +15,7 @@ import type { AnchorProps } from '../anchor';
 // import type { BadgeProps } from '../badge';
 // import type { RibbonProps } from '../badge/Ribbon';
 import type { BreadcrumbProps } from '../breadcrumb';
-// import type { CalendarProps } from '../calendar';
+import type { CalendarProps } from '../calendar';
 // import type { CardProps } from '../card';
 // import type { CardMetaProps } from '../card/Meta';
 import type { CascaderProps } from '../cascader';
@@ -223,7 +223,7 @@ export type CardConfig = ComponentStyleConfig & Pick<CardProps, 'classNames' | '
 
 export type ColorPickerConfig = ComponentStyleConfig & Pick<ColorPickerProps, 'classNames' | 'styles'>;
 
-// export type CalendarConfig = ComponentStyleConfig & Pick<CalendarProps<AnyObject>, 'classNames' | 'styles'>;
+export type CalendarConfig = ComponentStyleConfig & Pick<CalendarProps, 'classNames' | 'styles'>;
 
 export type CardMetaConfig = ComponentStyleConfig & Pick<CardMetaProps, 'classNames' | 'styles'>;
 
@@ -343,7 +343,7 @@ export interface ConfigComponentProps {
   button?: ButtonConfig;
   divider?: DividerConfig;
   // drawer?: DrawerConfig;
-  // calendar?: CalendarConfig;
+  calendar?: CalendarConfig;
   // carousel?: ComponentStyleConfig;
   cascader?: CascaderConfig;
   treeSelect?: TreeSelectConfig;

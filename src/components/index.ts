@@ -13,6 +13,8 @@ export type { BadgeProps } from './badge';
 export { default as Breadcrumb } from './breadcrumb';
 export type { BreadcrumbProps } from './breadcrumb';
 export { default as Button } from './button';
+export { default as Calendar } from './calendar';
+export type { CalendarMode, CalendarProps } from './calendar';
 export { default as Card } from './card';
 export type { CardProps } from './card';
 export { default as Cascader } from './cascader';
