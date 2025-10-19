@@ -1,6 +1,6 @@
 export type UsePrefix = () => {
   /**
-   * All the component use `@ant-design/cssinjs-utils` should have same `rootPrefixCls`.
+   * All the component use `@/vc-cssinjs-utils` should have same `rootPrefixCls`.
    */
   rootPrefixCls: string;
   /**

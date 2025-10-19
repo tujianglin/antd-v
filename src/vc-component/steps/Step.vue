@@ -253,5 +253,5 @@ const stepNode = () => (
   <template v-if="itemRender">
     <Render :content="itemRender(stepNode, renderInfo) || null" />
   </template>
-  <Render :content="stepNode" />
+  <Render v-else :content="stepNode" />
 </template>

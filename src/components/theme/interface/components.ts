@@ -7,7 +7,7 @@ import type { ComponentToken as AvatarComponentToken } from '../../avatar/style'
 import type { ComponentToken as BadgeComponentToken } from '../../badge/style';
 import type { ComponentToken as BreadcrumbComponentToken } from '../../breadcrumb/style';
 import type { ComponentToken as ButtonComponentToken } from '../../button/style';
-// import type { ComponentToken as CalendarComponentToken } from '../../calendar/style';
+import type { ComponentToken as CalendarComponentToken } from '../../calendar/style';
 import type { ComponentToken as CardComponentToken } from '../../card/style';
 // import type { ComponentToken as CarouselComponentToken } from '../../carousel/style';
 import type { ComponentToken as CascaderComponentToken } from '../../cascader/style';
@@ -51,7 +51,7 @@ import type { ComponentToken as SpaceComponentToken } from '../../space/style';
 import type { ComponentToken as SpinComponentToken } from '../../spin/style';
 // import type { ComponentToken as SplitterComponentToken } from '../../splitter/style';
 // import type { ComponentToken as StatisticComponentToken } from '../../statistic/style';
-// import type { ComponentToken as StepsComponentToken } from '../../steps/style';
+import type { ComponentToken as StepsComponentToken } from '../../steps/style';
 import type { ComponentToken as SwitchComponentToken } from '../../switch/style';
 // import type { ComponentToken as TableComponentToken } from '../../table/style';
 import type { ComponentToken as TabsComponentToken } from '../../tabs/style';
@@ -94,7 +94,6 @@ export interface ComponentTokenMap {
   Input?: InputComponentToken;
   InputNumber?: InputNumberComponentToken;
   Layout?: LayoutComponentToken;
-  // List?: ListComponentToken;
   Mentions?: MentionsComponentToken;
   Notification?: NotificationComponentToken;
   Pagination?: PaginationComponentToken;
@@ -118,8 +117,8 @@ export interface ComponentTokenMap {
   // Timeline?: TimelineComponentToken;
   Transfer?: TransferComponentToken;
   Tabs?: TabsComponentToken;
-  // Calendar?: CalendarComponentToken;
-  // Steps?: StepsComponentToken;
+  Calendar?: CalendarComponentToken;
+  Steps?: StepsComponentToken;
   Menu?: MenuComponentToken;
   // Modal?: ModalComponentToken;
   Message?: MessageComponentToken;

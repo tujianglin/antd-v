@@ -84,6 +84,8 @@ export { default as Spin } from './spin';
 export type { SpinProps } from './spin';
 export { default as Splitter } from './splitter';
 export type { SplitterProps } from './splitter';
+export { default as Steps } from './steps';
+export type { StepsProps } from './steps';
 export { default as Switch } from './switch';
 export type { SwitchProps } from './switch';
 export { default as Tabs } from './tabs';
