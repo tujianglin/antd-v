@@ -42,7 +42,7 @@ import type { ComponentToken as ProgressComponentToken } from '../../progress/st
 // import type { ComponentToken as QRCodeComponentToken } from '../../qr-code/style';
 import type { ComponentToken as RadioComponentToken } from '../../radio/style';
 import type { ComponentToken as RateComponentToken } from '../../rate/style';
-// import type { ComponentToken as ResultComponentToken } from '../../result/style';
+import type { ComponentToken as ResultComponentToken } from '../../result/style';
 import type { ComponentToken as SegmentedComponentToken } from '../../segmented/style';
 import type { ComponentToken as SelectComponentToken } from '../../select/style';
 import type { ComponentToken as SkeletonComponentToken } from '../../skeleton/style';
@@ -102,7 +102,7 @@ export interface ComponentTokenMap {
   Popconfirm?: PopconfirmComponentToken;
   Rate?: RateComponentToken;
   Radio?: RadioComponentToken;
-  // Result?: ResultComponentToken;
+  Result?: ResultComponentToken;
   Segmented?: SegmentedComponentToken;
   Select?: SelectComponentToken;
   Skeleton?: SkeletonComponentToken;

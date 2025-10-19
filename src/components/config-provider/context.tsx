@@ -48,7 +48,7 @@ import type { PopoverProps } from '../popover';
 import type { ProgressProps } from '../progress';
 // import type { QRCodeProps } from '../qr-code';
 import type { RadioProps } from '../radio';
-// import type { ResultProps } from '../result';
+import type { ResultProps } from '../result';
 import type { SegmentedProps } from '../segmented';
 import type { SelectProps } from '../select';
 import type { SkeletonProps } from '../skeleton';
@@ -215,7 +215,7 @@ export type MessageConfig = ComponentStyleConfig & Pick<MessageProps, 'className
 
 export type NotificationConfig = ComponentStyleConfig & Pick<NotificationProps, 'closeIcon' | 'classNames' | 'styles'>;
 
-export type TagConfig = ComponentStyleConfig & Pick<TagProps, 'variant' | 'closeIcon' | 'closable' | 'classNames' | 'styles'>;
+export type TagConfig = ComponentStyleConfig & Pick<TagProps, 'variant' | 'closeIcon' | 'classNames' | 'styles'>;
 
 export type CardConfig = ComponentStyleConfig & Pick<CardProps, 'classNames' | 'styles' | 'variant'>;
 
@@ -274,7 +274,7 @@ export type SpinConfig = ComponentStyleConfig & Pick<SpinProps, 'indicator' | 'c
 
 export type SwitchStyleConfig = ComponentStyleConfig & Pick<SwitchProps, 'classNames' | 'styles'>;
 
-// export type ResultConfig = ComponentStyleConfig & Pick<ResultProps, 'classNames' | 'styles'>;
+export type ResultConfig = ComponentStyleConfig & Pick<ResultProps, 'classNames' | 'styles'>;
 
 export type RadioConfig = ComponentStyleConfig & Pick<RadioProps, 'classNames' | 'styles'>;
 
@@ -355,7 +355,7 @@ export interface ConfigComponentProps {
   mentions?: MentionsConfig;
   // modal?: ModalConfig;
   progress?: ProgressConfig;
-  // result?: ResultConfig;
+  result?: ResultConfig;
   slider?: SliderConfig;
   breadcrumb?: BreadcrumbConfig;
   // masonry?: MasonryConfig;
