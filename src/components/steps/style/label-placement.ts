@@ -13,8 +13,7 @@ const genLabelPlacementStyle: GenerateStyle<StepsToken, CSSObject> = (token) => 
     // ====================== Shared ======================
     [componentCls]: {
       // Dot Steps active icon size is 2px larger than the default icon size
-      '--steps-icon-size-max':
-        'max(var(--steps-icon-size), var(--steps-icon-size-active, var(--steps-icon-size)))',
+      '--steps-icon-size-max': 'max(var(--steps-icon-size), var(--steps-icon-size-active, var(--steps-icon-size)))',
 
       // Icon
       [`${itemCls}-icon`]: {
