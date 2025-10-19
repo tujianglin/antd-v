@@ -1,39 +1,34 @@
-import type { StepsProps } from '@/components';
-import { Flex, Steps } from '@/components';
-import theme from '@/components/theme';
+import type { UploadFile } from '@/components';
+import { Button, Upload } from '@/components';
+import { UploadOutlined } from '@ant-design/icons-vue';
 
-const items: StepsProps['items'] = Array.from({ length: 5 }, (_, index) => ({
-  title: `Step ${index + 1}`,
-  subTitle: 'Sub Title',
-  content: `This is Step ${index + 1}`,
-}));
+const fileList: UploadFile[] = [
+  {
+    uid: '0',
+    name: 'xxx.png',
+    status: 'uploading',
+    percent: 33,
+  },
+  {
+    uid: '-1',
+    name: 'yyy.png',
+    status: 'done',
+    url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+  },
+  {
+    uid: '-2',
+    name: 'zzz.png',
+    status: 'error',
+  },
+];
 
-const App = () => {
-  const { token } = theme.useToken();
-
-  return (
-    <Flex vertical>
-      <Steps type="inline" current={1} items={items} />
-      <Steps
-        type="inline"
-        current={4}
-        items={items}
-        status="finish"
-        styles={{
-          itemTitle: {
-            color: token.value.colorPrimaryText,
-          },
-          itemSubtitle: {
-            color: token.value.colorPrimaryTextActive,
-          },
-          itemRail: {
-            background: token.value.colorTextDisabled,
-          },
-        }}
-      />
-      <Steps type="inline" current={1} items={items.slice(2)} offset={2} />
-    </Flex>
-  );
-};
+const App = () => (
+  <Upload action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload" listType="picture" defaultFileList={fileList}>
+    <Button type="primary" icon={<UploadOutlined />}>
+      Upload
+    </Button>
+  </Upload>
+);
 
 export default App;

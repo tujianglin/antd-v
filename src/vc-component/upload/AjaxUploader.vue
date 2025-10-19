@@ -327,6 +327,12 @@ const events = computed(() =>
 <template>
   <component :is="Tag" v-bind="events" :class="cls" :role="hasControlInside ? undefined : 'button'" :style="style">
     <input
+      v-bind="{
+        ...pickAttrs(otherProps, { aria: true, data: true }),
+        ...dirProps,
+        ...falseToUndefined($attrs),
+        ...($attrs.capture !== null ? { capture: $attrs.capture } : {}),
+      }"
       :id="id"
       :name="name"
       :disabled="disabled"
@@ -337,12 +343,6 @@ const events = computed(() =>
       :style="{ display: 'none', ...styles.input }"
       :class="classNames.input"
       :accept="accept"
-      v-bind="{
-        ...pickAttrs(otherProps, { aria: true, data: true }),
-        ...dirProps,
-        ...falseToUndefined($attrs),
-        ...($attrs.capture != null ? { capture: $attrs.capture } : {}),
-      }"
       :multiple="multiple"
       @change="onChange"
     />

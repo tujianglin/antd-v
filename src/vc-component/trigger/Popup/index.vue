@@ -226,7 +226,7 @@ onMounted(() => {
 
 function onMouseout(e: MouseEvent) {
   const related = e.relatedTarget as Node | null;
-  const stillInside = [...activePopups.keys()].some((popup) => popup.contains(related));
+  const stillInside = [...activePopups.keys()].some((popup) => popup?.contains(related));
   if (!stillInside) {
     for (const onMouseleave of activePopups.values()) {
       onMouseleave?.(e);

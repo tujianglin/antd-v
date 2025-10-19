@@ -78,7 +78,7 @@ import type { MaskType } from '../_util/hooks/useMergedMask';
 import type { TransferProps } from '../transfer';
 import type { TreeProps } from '../tree';
 import type { TreeSelectProps } from '../tree-select';
-// import type { UploadProps } from '../upload';
+import type { UploadProps } from '../upload';
 
 export const defaultPrefixCls = 'ant';
 export const defaultIconPrefixCls = 'anticon';
@@ -299,7 +299,7 @@ export type TimePickerConfig = ComponentStyleConfig & Pick<TimePickerProps, 'var
 
 export type MentionsConfig = ComponentStyleConfig & Pick<MentionsProps, 'variant' | 'classNames' | 'styles'>;
 
-// export type UploadConfig = ComponentStyleConfig & Pick<UploadProps, 'classNames' | 'styles'>;
+export type UploadConfig = ComponentStyleConfig & Pick<UploadProps, 'classNames' | 'styles' | 'customRequest'>;
 
 export type RibbonConfig = ComponentStyleConfig & Pick<RibbonProps, 'classNames' | 'styles'>;
 
@@ -384,7 +384,7 @@ export interface ConfigComponentProps {
   tooltip?: TooltipConfig;
   popover?: PopoverConfig;
   popconfirm?: PopconfirmConfig;
-  // upload?: UploadConfig;
+  upload?: UploadConfig;
   notification?: NotificationConfig;
   tree?: TreeConfig;
   colorPicker?: ColorPickerConfig;
