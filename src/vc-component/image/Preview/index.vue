@@ -20,20 +20,21 @@ import Render from '@/vc-component/render';
 import CloseBtn from './CloseBtn.vue';
 import PrevNext from './PrevNext.vue';
 import Footer from './Footer.vue';
+import type { VueNode } from '@/vc-util/type';
 // Note: if you want to add `action`,
 // pls contact @zombieJ or @thinkasany first.
 export type PreviewSemanticName = 'root' | 'mask' | 'body' | FooterSemanticName;
 
 export interface OperationIcons {
-  rotateLeft?: any;
-  rotateRight?: any;
-  zoomIn?: any;
-  zoomOut?: any;
-  close?: any;
-  prev?: any;
-  next?: any;
-  flipX?: any;
-  flipY?: any;
+  rotateLeft?: VueNode;
+  rotateRight?: VueNode;
+  zoomIn?: VueNode;
+  zoomOut?: VueNode;
+  close?: VueNode;
+  prev?: VueNode;
+  next?: VueNode;
+  flipX?: VueNode;
+  flipY?: VueNode;
 }
 
 export interface Actions {
@@ -50,14 +51,14 @@ export interface Actions {
 
 export type ToolbarRenderInfoType = {
   icons: {
-    prevIcon?: any;
-    nextIcon?: any;
-    flipYIcon: any;
-    flipXIcon: any;
-    rotateLeftIcon: any;
-    rotateRightIcon: any;
-    zoomOutIcon: any;
-    zoomInIcon: any;
+    prevIcon?: VueNode;
+    nextIcon?: VueNode;
+    flipYIcon: VueNode;
+    flipXIcon: VueNode;
+    rotateLeftIcon: VueNode;
+    rotateRightIcon: VueNode;
+    zoomOutIcon: VueNode;
+    zoomInIcon: VueNode;
   };
   actions: Actions;
   transform: TransformType;
@@ -90,14 +91,14 @@ export interface InternalPreviewConfig {
   // Operation
   movable?: boolean;
   icons?: OperationIcons;
-  closeIcon?: any;
+  closeIcon?: VueNode | boolean;
 
   onTransform?: (info: { transform: TransformType; action: TransformAction }) => void;
 
   // Render
-  countRender?: (current: number, total: number) => any;
-  imageRender?: (originalNode: any, info: { transform: TransformType; current?: number; image: ImgInfo }) => any;
-  actionsRender?: (originalNode: any, info: ToolbarRenderInfoType) => any;
+  countRender?: (current: number, total: number) => VueNode;
+  imageRender?: (originalNode: VueNode, info: { transform: TransformType; current?: number; image: ImgInfo }) => VueNode;
+  actionsRender?: (originalNode: VueNode, info: ToolbarRenderInfoType) => VueNode;
 }
 
 export interface PreviewProps extends InternalPreviewConfig {
@@ -249,11 +250,12 @@ const imgNode = () => {
       }}
       fallback={fallback}
       src={src}
-      onWheel={onWheel}
       onMousedown={onMouseDown}
       onDblclick={onDoubleClick}
-      onTouchstart={onTouchStart}
-      onTouchmove={onTouchMove}
+      // @ts-ignore
+      onWheelPassive={onWheel}
+      onTouchstartPassive={onTouchStart}
+      onTouchmovePassive={onTouchMove}
       onTouchend={onTouchEnd}
       onTouchcancel={onTouchEnd}
     />

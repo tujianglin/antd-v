@@ -81,7 +81,8 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 const {
   // Misc
   prefixCls = 'rc-image',
-
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  previewPrefixCls: customPreviewPrefixCls,
   // Style
   rootClassName,
   class: className,
@@ -107,6 +108,8 @@ const {
   onError,
   ...otherProps
 } = defineProps<ImageProps>();
+
+const previewPrefixCls = computed(() => `${prefixCls}-preview`);
 
 const groupContext = usePreviewGroupContextInject();
 
@@ -239,7 +242,7 @@ const onPreview = (e) => {
     </div>
   </div>
   <Preview
-    v-if="previewConfig.cover !== false && canPreview"
+    v-if="groupContext && canPreview"
     :aria-hidden="!isShowPreview"
     :open="isShowPreview"
     :prefix-cls="previewPrefixCls || `${prefixCls}-preview`"
@@ -251,5 +254,8 @@ const onPreview = (e) => {
     :fallback="fallback"
     :img-common-props="imgCommonProps"
     v-bind="omit(previewConfig, ['src', 'open', 'onOpenChange', 'cover', 'rootClassName'])"
+    :class-names="classNames?.popup"
+    :styles="styles?.popup"
+    :root-class-name="clsx(previewConfig?.rootClassName, rootClassName)"
   />
 </template>

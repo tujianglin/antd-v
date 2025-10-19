@@ -166,11 +166,23 @@ export const operationUnit = (token: AliasToken): CSSObject => ({
 
   ...genFocusStyle(token),
 
-  '&:focus, &:hover': {
+  '&:hover': {
     color: token.colorLinkHover,
+    textDecoration: token.linkHoverDecoration,
+  },
+
+  '&:focus': {
+    color: token.colorLinkHover,
+    textDecoration: token.linkFocusDecoration,
   },
 
   '&:active': {
     color: token.colorLinkActive,
+    textDecoration: token.linkHoverDecoration,
   },
 });
+
+export const blurMaskStyle = {
+  backdropFilter: 'blur(4px)',
+  backgroundColor: 'rgba(0, 0, 0, 0.3)',
+};

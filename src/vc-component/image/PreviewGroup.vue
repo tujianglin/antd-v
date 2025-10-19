@@ -61,8 +61,6 @@ const [current, setCurrent] = useControlledState(
 
 const keepOpenIndex = ref(false);
 
-// >>> Image
-const imageProps = reactiveComputed(() => mergedItems.value[current.value]?.data || {});
 // >>> Visible
 const [isShowPreview, setShowPreview] = useControlledState(
   !!previewConfig.open,
@@ -130,8 +128,8 @@ const previewGroupContext = reactiveComputed(() => ({ register, onPreview: onPre
       :prefix-cls="previewPrefixCls"
       @close="onPreviewClose"
       :mouse-position="mousePosition"
-      :img-common-props="omit(imageProps, ['src'])"
-      :src="imageProps.src"
+      :img-common-props="omit(mergedItems?.[current]?.data, ['src'])"
+      :src="mergedItems?.[current]?.data?.src"
       :fallback="fallback"
       :icons="icons"
       :current="current"

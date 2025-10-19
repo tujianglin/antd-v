@@ -1,3 +1,4 @@
+import { reactiveComputed } from '@vueuse/core';
 import { computed, onBeforeUnmount, ref, toRefs, watch, type Reactive } from 'vue';
 import { isImageValid } from '../util';
 
@@ -10,7 +11,7 @@ export default function useStatus(
     fallback?: string;
   }>,
 ) {
-  const { src, isCustomPlaceholder, fallback } = toRefs(props);
+  const { src, isCustomPlaceholder, fallback } = toRefs(reactiveComputed(() => props));
   const status = ref<ImageStatus>(isCustomPlaceholder?.value ? 'loading' : 'normal');
   const isLoaded = ref(false);
   const isError = computed(() => status.value === 'error');
@@ -38,9 +39,9 @@ export default function useStatus(
   watch(
     src,
     () => {
-      if (isCustomPlaceholder && !isLoaded.value) {
+      if (isCustomPlaceholder?.value && !isLoaded.value) {
         status.value = 'loading';
-      } else if (isError) {
+      } else if (isError.value) {
         status.value = 'normal';
       }
     },

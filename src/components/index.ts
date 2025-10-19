@@ -39,6 +39,8 @@ export { default as Flex } from './flex';
 export type { FlexProps } from './flex';
 export { default as FloatButton } from './float-button';
 export { default as Grid } from './grid';
+export { default as Image } from './image';
+export type { ImageProps } from './image';
 export { default as Input } from './input';
 export { default as InputNumber } from './input-number';
 export type { InputNumberProps } from './input-number';

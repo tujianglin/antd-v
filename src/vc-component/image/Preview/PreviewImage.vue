@@ -4,12 +4,13 @@ import { getCurrentInstance, type ImgHTMLAttributes } from 'vue';
 import useStatus from '../hooks/useStatus';
 
 interface PreviewImageProps extends /** @vue-ignore */ ImgHTMLAttributes {
+  src?: string;
   fallback?: string;
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { fallback, src, ...resetProps } = defineProps<PreviewImageProps>();
+const { fallback, src } = defineProps<PreviewImageProps>();
 
 const [getImgRef, srcAndOnload] = useStatus(
   reactiveComputed(() => ({
@@ -26,5 +27,5 @@ const changeRef = (instance) => {
 };
 </script>
 <template>
-  <img :ref="changeRef" v-bind="{ ...resetProps, ...srcAndOnload, ...$attrs }" />
+  <img :ref="changeRef" v-bind="{ ...$attrs, ...srcAndOnload }" />
 </template>

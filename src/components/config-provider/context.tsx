@@ -31,7 +31,7 @@ import type { EmptyProps } from '../empty';
 import type { FlexProps } from '../flex/interface';
 import type { FloatButtonGroupProps } from '../float-button/interface';
 // import type { FormProps } from '../form/Form';
-// import type { ImageProps } from '../image';
+import type { ImageProps } from '../image/index.vue';
 import type { InputProps, SearchProps, TextAreaProps } from '../input';
 import type { InputNumberProps } from '../input-number';
 import type { OTPProps } from '../input/OTP/interface';
@@ -73,6 +73,8 @@ import type { RibbonProps } from '../badge/Ribbon.vue';
 import type { CardMetaProps, CardProps } from '../card';
 import type { TooltipProps } from '../tooltip';
 // import type { TourProps } from '../tour/interface';
+import type { VueNode } from '@/vc-util/type';
+import type { MaskType } from '../_util/hooks/useMergedMask';
 import type { TransferProps } from '../transfer';
 import type { TreeProps } from '../tree';
 import type { TreeSelectProps } from '../tree-select';
@@ -165,10 +167,11 @@ export interface ComponentStyleConfig {
 //   rowKey?: string;
 // }
 
-// export type ImageConfig = ComponentStyleConfig &
-//   Pick<ImageProps, 'classNames' | 'styles'> & {
-//     preview?: Partial<Record<'closeIcon', React.ReactNode>> & Pick<ImageProps, 'classNames' | 'styles'>;
-//   };
+export type ImageConfig = ComponentStyleConfig &
+  Pick<ImageProps, 'classNames' | 'styles'> & {
+    preview?: Partial<Record<'closeIcon', VueNode>> & Pick<ImageProps, 'classNames' | 'styles'> & { mask?: MaskType };
+    fallback?: string;
+  };
 
 export type CollapseConfig = ComponentStyleConfig & Pick<CollapseProps, 'expandIcon' | 'classNames' | 'styles'>;
 
@@ -350,7 +353,7 @@ export interface ConfigComponentProps {
   segmented?: SegmentedConfig;
   // steps?: StepsConfig;
   // statistic?: StatisticConfig;
-  // image?: ImageConfig;
+  image?: ImageConfig;
   layout?: ComponentStyleConfig;
   mentions?: MentionsConfig;
   // modal?: ModalConfig;
