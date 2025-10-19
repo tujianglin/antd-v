@@ -1,6 +1,7 @@
 import type { WarningContextProps } from '../_util/warning';
 import type { Locale } from '../locale';
 import type {
+  AlertConfig,
   BadgeConfig,
   ButtonConfig,
   CardConfig,
@@ -15,6 +16,7 @@ import type {
   FlexConfig,
   FloatButtonConfig,
   FloatButtonGroupConfig,
+  ImageConfig,
   InputConfig,
   InputNumberConfig,
   InputSearchConfig,
@@ -32,6 +34,7 @@ import type {
   SelectConfig,
   SpaceConfig,
   TabsConfig,
+  TagConfig,
   TextAreaConfig,
   ThemeConfig,
   TimePickerConfig,
@@ -108,7 +111,7 @@ export interface ConfigProviderProps {
   popupOverflow?: PopupOverflow;
   theme?: ThemeConfig;
   warning?: WarningContextProps;
-  // alert?: AlertConfig;
+  alert?: AlertConfig;
   affix?: ComponentStyleConfig;
   anchor?: ComponentStyleConfig;
   button?: ButtonConfig;
@@ -125,9 +128,8 @@ export interface ConfigProviderProps {
   segmented?: ComponentStyleConfig;
   statistic?: ComponentStyleConfig;
   steps?: ComponentStyleConfig;
-  // image?: ImageConfig;
+  image?: ImageConfig;
   layout?: ComponentStyleConfig;
-  // list?: ListConfig;
   mentions?: MentionsConfig;
   // modal?: ModalConfig;
   progress?: ComponentStyleConfig;
@@ -149,7 +151,7 @@ export interface ConfigProviderProps {
   transfer?: TransferConfig;
   avatar?: ComponentStyleConfig;
   message?: MessageConfig;
-  // tag?: TagConfig;
+  tag?: TagConfig;
   // table?: TableConfig;
   card?: CardConfig;
   // cardMeta?: CardMetaConfig;

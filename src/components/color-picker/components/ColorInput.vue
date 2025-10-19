@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import Select from '@/components/select';
 import { computed, ref, watchEffect } from 'vue';
+import Select from '../../select';
 import type { DefaultOptionType } from '../../select/index.vue';
 import type { AggregationColor } from '../color';
 import type { ColorFormatType } from '../interface';

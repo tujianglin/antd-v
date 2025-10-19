@@ -1,10 +1,10 @@
 <script lang="tsx" setup>
-import { FormItemInputContextProvider, useFormItemInputContextInject } from '@/components/form/context';
 import type { GenerateConfig } from '@/vc-component/picker/generate';
 import type { Locale } from '@/vc-component/picker/interface';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
 import { computed, getCurrentInstance, ref, type CSSProperties, type Ref } from 'vue';
+import { FormItemInputContextProvider, useFormItemInputContextInject } from '../../form/context';
 import type { CalendarMode, DateType, SelectInfo } from '../CalendarPanel.vue';
 import ModeSwitch from './ModeSwitch.vue';
 import MonthSelect from './MonthSelect.vue';

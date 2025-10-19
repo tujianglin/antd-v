@@ -1,5 +1,5 @@
-import { groupKeysMap } from '@/components/_util/transKeys';
 import { computed, type Ref } from 'vue';
+import { groupKeysMap } from '../../_util/transKeys';
 import type { AnyObject } from '../../_util/type';
 import type { KeyWise, TransferProps } from '../index.vue';
 import type { TransferKey } from '../interface';

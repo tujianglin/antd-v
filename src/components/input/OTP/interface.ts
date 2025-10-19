@@ -1,8 +1,8 @@
-import type { InputStatus } from '@/components/_util/statusUtils';
-import type { Variant } from '@/components/config-provider/context';
-import type { SizeType } from '@/components/config-provider/SizeContext';
 import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties, HTMLAttributes, InputTypeHTMLAttribute } from 'vue';
+import type { InputStatus } from '../../_util/statusUtils';
+import type { Variant } from '../../config-provider/context';
+import type { SizeType } from '../../config-provider/SizeContext';
 
 type SemanticName = 'root' | 'input' | 'separator';
 

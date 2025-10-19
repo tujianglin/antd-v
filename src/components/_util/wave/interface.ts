@@ -1,6 +1,6 @@
-import { defaultPrefixCls } from '@/components/config-provider/context';
-import type { GlobalToken } from '@/components/theme/internal';
 import type { WaveProps } from '.';
+import { defaultPrefixCls } from '../../config-provider/context';
+import type { GlobalToken } from '../../theme/internal';
 
 export const TARGET_CLS = `${defaultPrefixCls}-wave-target`;
 

@@ -1,4 +1,5 @@
-import { isVNode, type VNode } from 'vue';
+import { assign } from 'lodash-es';
+import { getCurrentInstance, isVNode, type Ref, type VNode } from 'vue';
 import { isFragment, isValidNode } from './Children/util';
 
 function isVueElement(node: VNode) {
@@ -74,3 +75,17 @@ export function registerPopup(el: HTMLElement, fn) {
   activePopups.set(el, fn);
   return () => activePopups.delete(el);
 }
+
+export const useComposeRef = (expose?: Record<string, any>, ref?: Ref<any>) => {
+  const vm = getCurrentInstance();
+
+  const changeRef = (instacne) => {
+    if (ref) {
+      ref.value = instacne;
+    }
+    vm.exposed = assign(instacne || {}, expose);
+    vm.exposeProxy = assign(instacne || {}, expose);
+  };
+
+  return changeRef;
+};

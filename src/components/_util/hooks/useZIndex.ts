@@ -1,5 +1,5 @@
-import useToken from '@/components/theme/useToken';
 import { computed, type ComputedRef, type Ref } from 'vue';
+import useToken from '../../theme/useToken';
 import { useZIndexContextInject } from '../zindexContext';
 
 export type ZIndexContainer = 'Modal' | 'Drawer' | 'Popover' | 'Popconfirm' | 'Tooltip' | 'Tour' | 'FloatButton';

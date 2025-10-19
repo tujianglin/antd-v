@@ -1,5 +1,4 @@
 <script lang="tsx" setup>
-import { useComposeRef } from '@/components/_util/type';
 import { computed, ref, toRefs, type CSSProperties, type VNode } from 'vue';
 import type { IDialogPropTypes } from '../../IDialogPropTypes';
 import { useRefContextInject } from '../../context';
@@ -7,6 +6,7 @@ import clsx from 'clsx';
 import pickAttrs from '@/vc-util/pickAttrs';
 import Render from '@/vc-component/render';
 import MemoChildren from './MemoChildren.vue';
+import { useComposeRef } from '@/vc-util/ref';
 
 export interface PanelProps extends Omit<IDialogPropTypes, 'getOpenCount'> {
   prefixCls: string;

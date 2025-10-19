@@ -1,10 +1,10 @@
-import type { UnmountType } from '@/components/config-provider/UnstableContext';
 import CSSMotion from '@/vc-component/motion';
 import raf from '@/vc-util/raf';
 import { composeRef } from '@/vc-util/ref';
 import clsx from 'clsx';
 import { defineComponent, onBeforeUnmount, onMounted, ref, render, shallowRef, type CSSProperties, type PropType } from 'vue';
 import type { WaveProps } from '.';
+import type { UnmountType } from '../../config-provider/UnstableContext';
 import useState from '../hooks/useState';
 import type { ShowWaveEffect } from './interface';
 import { getTargetWaveColor } from './util';

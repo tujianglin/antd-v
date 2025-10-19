@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { omit } from 'lodash-es';
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, toRefs, useAttrs, watch } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
-import { useComposeRef } from '../_util/type';
 import { Wave } from '../_util/wave';
 import { useConfigContextInject } from '../config-provider';
 import { useComponentConfig } from '../config-provider/context';
@@ -26,6 +25,7 @@ import IconWrapper from './IconWrapper.vue';
 import DefaultLoadingIcon from './DefaultLoadingIcon.vue';
 import Render from '@/vc-component/render';
 import { isValidElement, isValidNode } from '@/vc-util/Children/util';
+import { useComposeRef } from '@/vc-util/ref';
 
 defineOptions({ name: 'Button', inheritAttrs: false, compatConfig: { MODE: 3 } });
 

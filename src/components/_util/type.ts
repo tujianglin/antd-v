@@ -1,7 +1,7 @@
 import type { VueKey } from '@/vc-util/type';
-import { assign, camelCase } from 'lodash-es';
-import type { Component, FunctionalComponent, Ref, VNode } from 'vue';
-import { Fragment, getCurrentInstance, isVNode } from 'vue';
+import { camelCase } from 'lodash-es';
+import type { Component, FunctionalComponent, VNode } from 'vue';
+import { Fragment, isVNode } from 'vue';
 
 /** https://github.com/Microsoft/TypeScript/issues/29729 */
 export type LiteralUnion<T extends string> = T | (string & {});
@@ -62,18 +62,4 @@ export const toUnrefProps = (refs: Record<string, any>) => {
     unrefed[key] = refs[key].value;
   }
   return unrefed;
-};
-
-export const useComposeRef = (expose?: Record<string, any>, ref?: Ref<any>) => {
-  const vm = getCurrentInstance();
-
-  const changeRef = (instacne) => {
-    if (ref) {
-      ref.value = instacne;
-    }
-    vm.exposed = assign(instacne || {}, expose);
-    vm.exposeProxy = assign(instacne || {}, expose);
-  };
-
-  return changeRef;
 };

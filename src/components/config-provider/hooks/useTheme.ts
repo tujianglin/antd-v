@@ -1,6 +1,6 @@
-import type { OverrideToken } from '@/components/theme/interface';
 import { computed, useId, type Ref } from 'vue';
 import { devUseWarning } from '../../_util/warning';
+import type { OverrideToken } from '../../theme/interface';
 import { defaultConfig } from '../../theme/internal';
 import type { ThemeConfig } from '../context';
 

@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
-import Input from '@/components/input/Input.vue';
 import { computed, ref, watch } from 'vue';
+import Input from '../../input/Input.vue';
 import type { AggregationColor } from '../color';
 import { toHexFormat } from '../color';
 import { generateColor } from '../util';

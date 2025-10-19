@@ -1,5 +1,4 @@
 <script lang="tsx" setup>
-import { useConfigContextInject } from '@/components/config-provider';
 import findDOMNode from '@/vc-util/Dom/findDOMNode';
 import isVisible from '@/vc-util/Dom/isVisible';
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, toRefs, useSlots, watch } from 'vue';
@@ -7,6 +6,7 @@ import type { WaveProps } from '.';
 import useStyle from './style';
 import clsx from 'clsx';
 import useWave from './useWave';
+import { useConfigContextInject } from '../../config-provider';
 
 const props = defineProps<WaveProps>();
 

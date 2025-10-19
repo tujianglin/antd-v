@@ -1,9 +1,9 @@
-import { useConfigContextInject } from '@/components/config-provider';
-import useToken from '@/components/theme/useToken';
 import findDOMNode from '@/vc-util/Dom/findDOMNode';
 import raf from '@/vc-util/raf';
 import { getCurrentInstance, shallowRef, toRefs, type ComputedRef } from 'vue';
 import type { WaveProps } from '.';
+import { useConfigContextInject } from '../../config-provider';
+import useToken from '../../theme/useToken';
 import { TARGET_CLS, type ShowWave, type WaveComponent } from './interface';
 import showWaveEffect from './WaveEffect';
 
