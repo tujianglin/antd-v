@@ -12,12 +12,10 @@ import type { WarningContextProps } from '../_util/warning';
 import type { ShowWaveEffect } from '../_util/wave/interface';
 import type { AlertProps } from '../alert';
 import type { AnchorProps } from '../anchor';
-// import type { BadgeProps } from '../badge';
+import type { BadgeProps } from '../badge';
 // import type { RibbonProps } from '../badge/Ribbon';
 import type { BreadcrumbProps } from '../breadcrumb';
 import type { CalendarProps } from '../calendar';
-// import type { CardProps } from '../card';
-// import type { CardMetaProps } from '../card/Meta';
 import type { CascaderProps } from '../cascader';
 import type { CheckboxProps } from '../checkbox';
 import type { CollapseProps } from '../collapse';
@@ -46,7 +44,7 @@ import type { PaginationProps } from '../pagination';
 import type { PopconfirmProps } from '../popconfirm';
 import type { PopoverProps } from '../popover';
 import type { ProgressProps } from '../progress';
-// import type { QRCodeProps } from '../qr-code';
+import type { QRCodeProps } from '../qrcode/index.vue';
 import type { RadioProps } from '../radio';
 import type { ResultProps } from '../result';
 import type { SegmentedProps } from '../segmented';
@@ -68,7 +66,6 @@ import type { AliasToken, MappingAlgorithm, OverrideToken } from '../theme/inter
 import type { TimePickerProps } from '../time-picker';
 import type { RenderEmptyHandler } from './defaultRenderEmpty.vue';
 // import type { TimelineProps } from '../timeline';
-import type { BadgeProps } from '../badge';
 import type { RibbonProps } from '../badge/Ribbon.vue';
 import type { CardMetaProps, CardProps } from '../card';
 import type { TooltipProps } from '../tooltip';
@@ -261,7 +258,7 @@ export type PopoverConfig = Pick<PopoverProps, 'class' | 'style' | 'styles' | 'c
 
 export type PopconfirmConfig = Pick<PopconfirmProps, 'class' | 'style' | 'styles' | 'classNames' | 'arrow'>;
 
-// export type QRcodeConfig = ComponentStyleConfig & Pick<QRCodeProps, 'classNames' | 'styles'>;
+export type QRcodeConfig = ComponentStyleConfig & Pick<QRCodeProps, 'classNames' | 'styles'>;
 
 export type SliderConfig = ComponentStyleConfig & Pick<SliderProps, 'styles' | 'classNames'>;
 
@@ -394,7 +391,7 @@ export interface ConfigComponentProps {
   dropdown?: DropdownConfig;
   flex?: FlexConfig;
   wave?: WaveConfig;
-  // qrcode?: QRcodeConfig;
+  qrcode?: QRcodeConfig;
   // watermark?: ComponentStyleConfig;
 }
 

@@ -122,4 +122,4 @@ export type QRProps = {
 
 export type QRPropsCanvas = QRProps & /** @vue-ignore */ Omit<CanvasHTMLAttributes, 'style'>;
 
-export type QRPropsSVG = QRProps & SVGAttributes;
+export type QRPropsSVG = QRProps & /** @vue-ignore */ SVGAttributes;

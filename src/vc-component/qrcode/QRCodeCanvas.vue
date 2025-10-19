@@ -87,7 +87,6 @@ watchEffect(() => {
 
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, numCells.value, numCells.value);
-
     ctx.fillStyle = fgColor;
     if (isSupportPath2d) {
       ctx.fill(new Path2D(generatePath(cellsToDraw, margin.value)));

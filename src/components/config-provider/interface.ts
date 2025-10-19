@@ -29,6 +29,7 @@ import type {
   PopconfirmConfig,
   PopoverConfig,
   PopupOverflow,
+  QRcodeConfig,
   RadioConfig,
   RangePickerConfig,
   SelectConfig,
@@ -175,7 +176,7 @@ export interface ConfigProviderProps {
   popover?: PopoverConfig;
   popconfirm?: PopconfirmConfig;
   watermark?: ComponentStyleConfig;
-  // qrcode?: QRcodeConfig;
+  qrcode?: QRcodeConfig;
 }
 
 export interface ProviderChildrenProps extends ConfigProviderProps {

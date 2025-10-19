@@ -182,9 +182,9 @@
 
 - [x] 完成
 
-## ORCode 二维码
+## QRCode 二维码
 
-- [ ] 完成
+- [x] 完成
 
 ## Segmented 分段控制器
 

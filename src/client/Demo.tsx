@@ -1,34 +1,15 @@
-import type { UploadFile } from '@/components';
-import { Button, Upload } from '@/components';
-import { UploadOutlined } from '@ant-design/icons-vue';
+import { QRCode, Space, theme } from '@/components';
 
-const fileList: UploadFile[] = [
-  {
-    uid: '0',
-    name: 'xxx.png',
-    status: 'uploading',
-    percent: 33,
-  },
-  {
-    uid: '-1',
-    name: 'yyy.png',
-    status: 'done',
-    url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-    thumbUrl: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  },
-  {
-    uid: '-2',
-    name: 'zzz.png',
-    status: 'error',
-  },
-];
+const App = () => {
+  const { useToken } = theme;
+  const { token } = useToken();
 
-const App = () => (
-  <Upload action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload" listType="picture" defaultFileList={fileList}>
-    <Button type="primary" icon={<UploadOutlined />}>
-      Upload
-    </Button>
-  </Upload>
-);
+  return (
+    <Space>
+      <QRCode value="https://ant.design/" color={token.value.colorSuccessText} />
+      <QRCode value="https://ant.design/" color={token.value.colorInfoText} bgColor={token.value.colorBgLayout} />
+    </Space>
+  );
+};
 
 export default App;
