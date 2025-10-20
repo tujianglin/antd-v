@@ -1,7 +1,7 @@
 import { reactiveComputed } from '@vueuse/core';
 import { defineComponent, inject, provide, reactive, type InjectionKey, type PropType, type Reactive } from 'vue';
-import type { ConfigOptions as MessageConfig } from '../message/interface';
-// import type { HookAPI as ModalHookAPI } from '../modal/useModal';
+import type { ConfigOptions as MessageConfig, MessageInstance } from '../message/interface';
+import type { HookAPI as ModalHookAPI } from '../modal/useModal';
 import type { NotificationConfig, NotificationInstance } from '../notification/interface';
 
 export interface AppConfig {
@@ -32,9 +32,9 @@ export const AppConfigContextProvider = defineComponent({
 });
 
 export interface useAppProps {
-  // message: MessageInstance;
+  message: MessageInstance;
   notification: NotificationInstance;
-  // modal: ModalHookAPI;
+  modal: ModalHookAPI;
 }
 
 const AppContext: InjectionKey<Reactive<useAppProps>> = Symbol('AppContext');
@@ -43,9 +43,9 @@ export const useAppContextInject = () => {
   return inject(
     AppContext,
     reactive({
-      // message: {},
+      message: {},
       notification: {},
-      // modal: {},
+      modal: {},
     } as useAppProps),
   );
 };

@@ -3,7 +3,7 @@ import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import pickAttrs from '@/vc-util/pickAttrs';
 import type { VueNode } from '@/vc-util/type';
 import { CloseOutlined } from '@ant-design/icons-vue';
-import { type AriaAttributes, type VNode } from 'vue';
+import { computed, ref, type AriaAttributes, type Ref, type VNode } from 'vue';
 import { useLocale } from '../../locale';
 import defaultLocale from '../../locale/en_US';
 import extendsObject from '../extendsObject';
@@ -139,21 +139,30 @@ export function computeClosable(
   return [true, closeIcon, closeBtnIsDisabled, ariaProps];
 }
 
+// @ts-ignore 111
 function useClosable(
-  propCloseCollection?: ClosableCollection,
-  contextCloseCollection?: ClosableCollection | null,
-  fallbackCloseCollection: FallbackCloseCollection = EmptyFallbackCloseCollection,
+  propCloseCollection?: Ref<ClosableCollection>,
+  contextCloseCollection?: Ref<ClosableCollection | null>,
+  fallbackCloseCollection: Ref<FallbackCloseCollection> = ref(EmptyFallbackCloseCollection),
 ) {
   const [contextLocale] = useLocale('global', defaultLocale.global);
-  return computeClosable(
-    propCloseCollection,
-    contextCloseCollection,
-    {
-      closeIcon: <CloseOutlined />,
-      ...fallbackCloseCollection,
-    },
-    contextLocale.value.close,
+  const data = computed(() =>
+    computeClosable(
+      propCloseCollection?.value,
+      contextCloseCollection?.value,
+      {
+        closeIcon: <CloseOutlined />,
+        ...fallbackCloseCollection?.value,
+      },
+      contextLocale.value.close,
+    ),
   );
+  return [
+    computed(() => data.value?.[0]),
+    computed(() => data.value?.[1]),
+    computed(() => data.value?.[2]),
+    computed(() => data.value?.[3]),
+  ] as const;
 }
 
 export default useClosable;

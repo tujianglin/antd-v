@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import Render from '@/vc-component/render';
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import { ref } from 'vue';
 import SingleObserver from './SingleObserver/index.vue';
 
@@ -37,11 +37,13 @@ defineExpose({
 </script>
 <template>
   <SingleObserver
-    v-for="(child, index) in $slots.default?.()"
+    v-for="(child, index) in flattenChildren($slots.default?.())"
     v-bind="props"
     :key="child?.key || `${INTERNAL_PREFIX_KEY}-${index}`"
     :ref="index === 0 ? changeRef : undefined"
   >
-    <Render :content="child" />
+    <template #default="{ domRef }">
+      <component :is="child" :ref="index === 0 && domRef" />
+    </template>
   </SingleObserver>
 </template>

@@ -132,6 +132,6 @@ const onClick = async (e: MouseEvent) => {
     :loading="loading"
     :prefix-cls="prefixCls"
   >
-    <slot></slot>
+    <component :is="$slots?.default" />
   </Button>
 </template>

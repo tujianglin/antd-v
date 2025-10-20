@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import Portal from '@/vc-component/portal';
 import type { PortalProps } from '@/vc-component/portal/index.vue';
-import { computed, getCurrentInstance, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, getCurrentInstance, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { RefContextProvider } from './context';
 import type { DrawerPanelEvents } from './DrawerPanel.vue';
 import type { DrawerPopupProps } from './DrawerPopup.vue';
@@ -16,11 +16,23 @@ export interface DrawerProps extends Omit<DrawerPopupProps, 'prefixCls' | 'inlin
   onClose?: (e: MouseEvent | KeyboardEvent) => void;
   destroyOnHidden?: boolean;
   getContainer?: PortalProps['getContainer'];
-  panelRef?: HTMLDivElement;
   classNames?: DrawerClassNames;
   styles?: DrawerStyles;
+  /** Size of the drawer (width for left/right placement, height for top/bottom placement) */
+  size?: number | string;
+  /** Maximum size of the drawer */
+  maxSize?: number;
+  /** Default size for uncontrolled resizable drawer */
+  defaultSize?: number | string;
+  /** Resizable configuration - boolean to enable/disable or object with optional callbacks */
+  resizable?:
+    | boolean
+    | {
+        onResize?: (size: number) => void;
+        onResizeStart?: () => void;
+        onResizeEnd?: () => void;
+      };
 }
-
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
@@ -32,7 +44,7 @@ const {
   width = 378,
   mask = true,
   maskClosable = true,
-  getContainer,
+  getContainer = undefined,
   forceRender,
   afterOpenChange,
   destroyOnHidden,
@@ -42,9 +54,6 @@ const {
   onClick,
   onKeydown,
   onKeyup,
-
-  // Refs
-  panelRef,
 } = defineProps<DrawerProps>();
 
 const animatedVisible = ref(false);
@@ -83,9 +92,10 @@ const internalAfterOpenChange: DrawerProps['afterOpenChange'] = (nextVisible) =>
     lastActiveRef.value?.focus({ preventScroll: true });
   }
 };
+const drawerPopupRef = useTemplateRef('drawerPopupRef');
 
 // =========================== Context ============================
-const refContext = computed(() => ({ panel: panelRef }));
+const refContext = computed(() => ({ panel: drawerPopupRef.value?.el }));
 
 const eventHandlers = computed(() => ({
   onMouseenter,
@@ -113,6 +123,15 @@ const drawerPopupProps = computed(
     ...eventHandlers.value,
   }),
 );
+
+defineExpose({
+  get wrapper() {
+    return drawerPopupRef.value?.wrapper;
+  },
+  get el() {
+    return drawerPopupRef.value?.el;
+  },
+});
 </script>
 <template>
   <template v-if="!forceRender && !animatedVisible && !mergedOpen && destroyOnHidden"></template>
@@ -123,8 +142,8 @@ const drawerPopupProps = computed(
       :get-container="getContainer"
       :auto-lock="mask && (mergedOpen || animatedVisible)"
     >
-      <DrawerPopup v-bind="drawerPopupProps">
-        <slot></slot>
+      <DrawerPopup ref="drawerPopupRef" v-bind="drawerPopupProps">
+        <component :is="$slots.default" />
       </DrawerPopup>
     </Portal>
   </RefContextProvider>

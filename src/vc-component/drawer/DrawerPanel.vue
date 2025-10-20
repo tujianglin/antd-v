@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import pickAttrs from '@/vc-util/pickAttrs';
 import clsx from 'clsx';
-import { type CSSProperties } from 'vue';
+import { onMounted, ref, type CSSProperties } from 'vue';
 
 export interface DrawerPanelRef {
   focus: VoidFunction;
@@ -26,6 +26,10 @@ export interface DrawerPanelProps extends DrawerPanelEvents {
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { prefixCls, class: className, ...restProps } = defineProps<DrawerPanelProps>();
+const isMounted = ref(false);
+onMounted(() => {
+  isMounted.value = true;
+});
 </script>
 <template>
   <div
@@ -34,6 +38,6 @@ const { prefixCls, class: className, ...restProps } = defineProps<DrawerPanelPro
     aria-modal="true"
     v-bind="{ ...pickAttrs($props, { aria: true }), ...restProps }"
   >
-    <slot></slot>
+    <slot v-if="isMounted"></slot>
   </div>
 </template>

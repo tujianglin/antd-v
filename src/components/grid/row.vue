@@ -32,7 +32,9 @@ export interface RowProps {
 
 defineOptions({ name: 'Row', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const props = defineProps<RowProps>();
+const props = withDefaults(defineProps<RowProps>(), {
+  wrap: true,
+});
 
 const _RowAligns = ['top', 'middle', 'bottom', 'stretch'] as const;
 const _RowJustify = ['start', 'end', 'center', 'space-around', 'space-between', 'space-evenly'] as const;

@@ -1,6 +1,6 @@
 import { isArray } from 'lodash-es';
 import { cloneVNode, Fragment, isVNode, type VNode } from 'vue';
-import type { AnyObject, VueNode } from '../type';
+import type { AnyObject } from '../type';
 
 /**
  * 获取插槽中的唯一子元素
@@ -27,10 +27,10 @@ export function onlyChild(slots): VNode {
 export function isValidNode(node): boolean {
   // 如果是数组，检查第一个元素是否为有效的虚拟节点
   if (isArray(node)) {
-    return isVNode(node[0]);
+    return isVueNode(node[0]);
   }
   // 检查节点是否为有效的虚拟节点
-  return isVNode(node);
+  return isVueNode(node);
 }
 
 /**
@@ -93,7 +93,7 @@ export function cloneElement(element: any, props?: RenderProps) {
  * @param node - 可能是 VNode、字符串、数字、null、undefined、函数或组件
  * @returns 如果是有效的 Vue 节点则返回 true，否则返回 false
  */
-export function isVueNode(node: VueNode): boolean {
+export function isVueNode(node): boolean {
   // 1. 空值判断
   if (node === null) return false;
 

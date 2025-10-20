@@ -1,5 +1,5 @@
 import type { CSSMotionProps } from '@/vc-component/motion';
-import type { VueKey } from '@/vc-util/type';
+import type { VueKey, VueNode } from '@/vc-util/type';
 import type { CSSProperties, HTMLAttributes } from 'vue';
 
 export type CollapsibleType = 'header' | 'icon' | 'disabled';
@@ -42,7 +42,7 @@ export type SemanticName = 'header' | 'title' | 'body' | 'icon';
 
 export interface CollapsePanelProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'style'> {
   id?: string;
-  header?: any;
+  header?: VueNode;
   prefixCls?: string;
   headerClass?: string;
   showArrow?: boolean;
@@ -55,9 +55,9 @@ export interface CollapsePanelProps extends /** @vue-ignore */ Omit<HTMLAttribut
   destroyOnHidden?: boolean;
   accordion?: boolean;
   forceRender?: boolean;
-  extra?: any;
+  extra?: VueNode;
   onItemClick?: (panelKey: VueKey) => void;
-  expandIcon?: (props: object) => any;
+  expandIcon?: (props: object) => VueNode;
   panelKey?: VueKey;
   role?: string;
   collapsible?: CollapsibleType;

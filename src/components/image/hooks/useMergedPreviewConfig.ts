@@ -25,14 +25,11 @@ export default function useMergedPreviewConfig<T extends PreviewConfig | GroupPr
     'ImagePreview',
     computed(() => previewConfig?.value?.zIndex),
   );
-  const maskProps = useMergedMask(
+  const [mergedPreviewMask, blurClassName] = useMergedMask(
     computed(() => previewConfig?.value?.mask as MaskType),
     computed(() => contextPreviewConfig?.value?.mask as MaskType),
     computed(() => `${prefixCls.value}-preview`),
   );
-
-  const mergedPreviewMask = computed(() => maskProps.value?.[0]);
-  const blurClassName = computed(() => maskProps.value?.[1]);
 
   return computed(() => {
     if (!previewConfig.value) {

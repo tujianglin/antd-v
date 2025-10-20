@@ -1,7 +1,8 @@
 import Render from '@/vc-component/render';
 import type { VueKey } from '@/vc-util/type';
+import { reactiveComputed, type ReactiveComputedReturn } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, ref, type Ref } from 'vue';
+import { ref } from 'vue';
 import type { HolderRef } from './Holder.vue';
 import Holder from './Holder.vue';
 import type { ArgsProps, ConfigOptions, MessageInstance, MessageType, NoticeType, TypeOpen } from './interface';
@@ -16,11 +17,11 @@ type HolderProps = ConfigOptions & {
 };
 let keyIndex = 0;
 
-export function useInternalMessage(messageConfig?: HolderProps): readonly [Ref<MessageInstance>, any] {
+export function useInternalMessage(messageConfig?: HolderProps): readonly [ReactiveComputedReturn<MessageInstance>, any] {
   const holderRef = ref<HolderRef>(null);
 
   // ================================ API ================================
-  const wrapAPI = computed<MessageInstance>(() => {
+  const wrapAPI = reactiveComputed<MessageInstance>(() => {
     // Wrap with notification content
 
     // >>> close

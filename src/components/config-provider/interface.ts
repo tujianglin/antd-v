@@ -5,13 +5,16 @@ import type {
   BadgeConfig,
   ButtonConfig,
   CardConfig,
+  CardMetaConfig,
   CascaderConfig,
   CheckboxConfig,
+  CollapseConfig,
   ComponentStyleConfig,
   ConfigConsumerProps,
   CSPConfig,
   DatePickerConfig,
   DirectionType,
+  DrawerConfig,
   EmptyConfig,
   FlexConfig,
   FloatButtonConfig,
@@ -23,6 +26,7 @@ import type {
   MentionsConfig,
   MenuConfig,
   MessageConfig,
+  ModalConfig,
   NotificationConfig,
   OTPConfig,
   PaginationConfig,
@@ -32,14 +36,18 @@ import type {
   QRcodeConfig,
   RadioConfig,
   RangePickerConfig,
+  RibbonConfig,
   SelectConfig,
+  SkeletonConfig,
   SpaceConfig,
+  SpinConfig,
   TabsConfig,
   TagConfig,
   TextAreaConfig,
   ThemeConfig,
   TimePickerConfig,
   TooltipConfig,
+  TourConfig,
   TransferConfig,
   TreeSelectConfig,
   Variant,
@@ -120,19 +128,19 @@ export interface ConfigProviderProps {
   carousel?: ComponentStyleConfig;
   cascader?: CascaderConfig;
   treeSelect?: TreeSelectConfig;
-  // collapse?: CollapseConfig;
+  collapse?: CollapseConfig;
   divider?: ComponentStyleConfig;
-  // drawer?: DrawerConfig;
+  drawer?: DrawerConfig;
   typography?: ComponentStyleConfig;
-  // skeleton?: SkeletonConfig;
-  // spin?: SpinConfig;
+  skeleton?: SkeletonConfig;
+  spin?: SpinConfig;
   segmented?: ComponentStyleConfig;
   statistic?: ComponentStyleConfig;
   steps?: ComponentStyleConfig;
   image?: ImageConfig;
   layout?: ComponentStyleConfig;
   mentions?: MentionsConfig;
-  // modal?: ModalConfig;
+  modal?: ModalConfig;
   progress?: ComponentStyleConfig;
   result?: ComponentStyleConfig;
   slider?: ComponentStyleConfig;
@@ -147,7 +155,7 @@ export interface ConfigProviderProps {
   badge?: BadgeConfig;
   radio?: RadioConfig;
   rate?: ComponentStyleConfig;
-  // ribbon?: RibbonConfig;
+  ribbon?: RibbonConfig;
   switch?: ComponentStyleConfig;
   transfer?: TransferConfig;
   avatar?: ComponentStyleConfig;
@@ -155,7 +163,7 @@ export interface ConfigProviderProps {
   tag?: TagConfig;
   // table?: TableConfig;
   card?: CardConfig;
-  // cardMeta?: CardMetaConfig;
+  cardMeta?: CardMetaConfig;
   tabs?: TabsConfig;
   timeline?: ComponentStyleConfig;
   timePicker?: TimePickerConfig;
@@ -171,7 +179,7 @@ export interface ConfigProviderProps {
    * Wave is special component which only patch on the effect of component interaction.
    */
   wave?: WaveConfig;
-  // tour?: TourConfig;
+  tour?: TourConfig;
   tooltip?: TooltipConfig;
   popover?: PopoverConfig;
   popconfirm?: PopconfirmConfig;

@@ -38,22 +38,22 @@ const {
   componentDisabled,
   segmented,
   statistic,
-  // spin,
+  spin,
   calendar,
   carousel,
   cascader,
-  // collapse,
+  collapse,
   typography,
   checkbox,
   descriptions,
   divider,
   // drawer,
-  // skeleton,
+  skeleton,
   steps,
   image,
   layout,
   mentions,
-  // modal,
+  modal,
   progress,
   result,
   slider,
@@ -68,7 +68,7 @@ const {
   badge,
   radio,
   rate,
-  // ribbon,
+  ribbon,
   switch: SWITCH,
   transfer,
   avatar,
@@ -76,7 +76,7 @@ const {
   tag,
   // table,
   card,
-  // cardMeta,
+  cardMeta,
   tabs,
   timeline,
   timePicker,
@@ -90,7 +90,7 @@ const {
   wave,
   dropdown,
   warning: warningConfig,
-  // tour,
+  tour,
   tooltip,
   popover,
   popconfirm,
@@ -146,17 +146,17 @@ const baseConfig = computed(() => ({
   theme: mergedTheme,
   segmented,
   statistic,
-  // spin,
+  spin,
   calendar,
   carousel,
   cascader,
-  // collapse,
+  collapse,
   typography,
   checkbox,
   descriptions,
   divider,
   // drawer,
-  // skeleton,
+  skeleton,
   steps,
   image,
   input,
@@ -164,7 +164,7 @@ const baseConfig = computed(() => ({
   otp,
   layout,
   mentions,
-  // modal,
+  modal,
   progress,
   result,
   slider,
@@ -176,7 +176,7 @@ const baseConfig = computed(() => ({
   badge,
   radio,
   rate,
-  // ribbon,
+  ribbon,
   switch: SWITCH,
   transfer,
   avatar,
@@ -184,7 +184,7 @@ const baseConfig = computed(() => ({
   tag,
   // table,
   card,
-  // cardMeta,
+  cardMeta,
   tabs,
   timeline,
   timePicker,
@@ -198,7 +198,7 @@ const baseConfig = computed(() => ({
   wave,
   dropdown,
   warning: warningConfig,
-  // tour,
+  tour,
   tooltip,
   popover,
   popconfirm,
@@ -291,7 +291,7 @@ const memoTheme = computed(() => {
 });
 
 const slots = useSlots();
-const childNode = () => {
+const ChildNode = () => {
   let result = slots.default?.() as any;
   if (locale) {
     result = (
@@ -314,6 +314,7 @@ const childNode = () => {
   if (theme) {
     result = <DesignTokenContextProvider value={memoTheme.value}>{result}</DesignTokenContextProvider>;
   }
+
   if (componentDisabled !== undefined) {
     result = <DisabledContextProvider disabled={componentDisabled}>{result}</DisabledContextProvider>;
   }
@@ -322,6 +323,6 @@ const childNode = () => {
 </script>
 <template>
   <ConfigContextProvider :value="memoedConfig">
-    <component :is="childNode()" />
+    <ChildNode />
   </ConfigContextProvider>
 </template>

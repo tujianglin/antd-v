@@ -23,10 +23,10 @@ function useMergedMask(
   mask?: Ref<MaskType>,
   contextMask?: Ref<MaskType>,
   prefixCls?: Ref<string>,
-): ComputedRef<[boolean, { [key: string]: string | undefined }]> {
-  return computed(() => {
+): [ComputedRef<boolean>, ComputedRef<{ [key: string]: string | undefined }>] {
+  const data = computed(() => {
     const maskConfig = normalizeMaskConfig(mask.value);
-    const contextMaskConfig = normalizeMaskConfig(contextMask.value);
+    const contextMaskConfig = normalizeMaskConfig(contextMask?.value);
 
     const mergedConfig: MaskConfig = {
       ...contextMaskConfig,
@@ -37,6 +37,8 @@ function useMergedMask(
 
     return [mergedConfig.enabled !== false, { mask: className }];
   });
+
+  return [computed(() => data.value?.[0] as boolean), computed(() => data.value?.[1] as { [key: string]: string | undefined })];
 }
 
 export default useMergedMask;

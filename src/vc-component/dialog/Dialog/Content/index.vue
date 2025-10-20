@@ -1,7 +1,6 @@
 <script lang="tsx" setup>
 import CSSMotion from '@/vc-component/motion';
 import type { CSSMotionRef } from '@/vc-component/motion/CSSMotion.vue';
-import { falseToUndefined } from '@/vc-util/props';
 import { composeRef } from '@/vc-util/ref';
 import clsx from 'clsx';
 import { computed, ref, type CSSProperties } from 'vue';
@@ -40,6 +39,9 @@ const panelRef = ref<PanelRef>(null);
 
 // ============================== Refs ==============================
 defineExpose({
+  get el() {
+    return panelRef.value;
+  },
   focus: () => {
     panelRef.value?.focus();
   },
@@ -85,7 +87,7 @@ function onPrepare() {
   >
     <template #default="{ class: motionClassName, style: motionStyle, ref: motionRef }">
       <Panel
-        v-bind="falseToUndefined($props)"
+        v-bind="$props"
         :ref="composeRef((el) => (panelRef = el), motionRef)"
         :title="title"
         :aria-id="ariaId"

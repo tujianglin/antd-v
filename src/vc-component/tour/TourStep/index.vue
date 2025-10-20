@@ -11,7 +11,7 @@ const { current, renderPanel } = defineProps<DefaultPanelProps>();
 </script>
 <template>
   <template v-if="typeof renderPanel === 'function'">
-    <Render :content="renderPanel($props, current)" />
+    <Render :content="renderPanel({ ...$attrs, ...$props }, current)" />
   </template>
-  <DefaultPanel v-else v-bind="$props" />
+  <DefaultPanel v-else v-bind="{ ...$attrs, ...$props }" />
 </template>

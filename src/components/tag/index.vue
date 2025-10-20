@@ -154,8 +154,10 @@ const handleCloseClick = (e: MouseEvent) => {
   visible.value = false;
 };
 
-const closeProps = computed(() =>
-  useClosable(pickClosable(vm.props), pickClosable(tagContext?.value), {
+const [, mergedCloseIcon] = useClosable(
+  computed(() => pickClosable(vm.props)),
+  computed(() => pickClosable(tagContext?.value)),
+  computed(() => ({
     closable: false,
     closeIconRender: (iconNode: VueNode | boolean) => {
       const replacement = (
@@ -171,10 +173,8 @@ const closeProps = computed(() =>
         class: clsx(originProps?.class, `${prefixCls.value}-close-icon`),
       }));
     },
-  }),
+  })),
 );
-
-const mergedCloseIcon = computed(() => closeProps.value?.[1]);
 
 // ====================== Render ======================
 const slots = useSlots();

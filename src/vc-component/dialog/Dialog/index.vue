@@ -4,10 +4,10 @@ import KeyCode from '@/vc-util/KeyCode';
 import pickAttrs from '@/vc-util/pickAttrs';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import { computed, onBeforeUnmount, ref, useId, watch, type CSSProperties } from 'vue';
+import { computed, onBeforeUnmount, ref, useId, useTemplateRef, watch, type CSSProperties } from 'vue';
 import type { IDialogPropTypes } from '../IDialogPropTypes';
 import { getMotionName } from '../util';
-import Content, { type ContentRef } from './Content/index.vue';
+import Content from './Content/index.vue';
 import Mask from './Mask.vue';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -46,8 +46,8 @@ const {
 } = defineProps<IDialogPropTypes>();
 
 const lastOutSideActiveElementRef = ref<HTMLElement>(null);
-const wrapperRef = ref<HTMLDivElement>(null);
-const contentRef = ref<ContentRef>(null);
+const wrapperRef = useTemplateRef('wrapperRef');
+const contentRef = useTemplateRef('contentRef');
 
 const animatedVisible = ref(visible);
 
@@ -172,6 +172,12 @@ const mergedStyle = computed<CSSProperties>(() => ({
   ...modalStyles?.wrapper,
   display: !animatedVisible.value ? 'none' : null,
 }));
+
+defineExpose({
+  get el() {
+    return contentRef.value?.el;
+  },
+});
 </script>
 <template>
   <div :class="clsx(`${prefixCls}-root`, rootClassName)" :style="rootStyle" v-bind="pickAttrs($props, { data: true })">

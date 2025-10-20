@@ -21,15 +21,15 @@ import type { CheckboxProps } from '../checkbox';
 import type { CollapseProps } from '../collapse';
 import type { ColorPickerProps } from '../color-picker';
 import type { DatePickerProps, RangePickerProps } from '../date-picker';
-// import type { DescriptionsProps } from '../descriptions';
+import type { DescriptionsProps } from '../descriptions';
 import type { DividerProps } from '../divider';
-// import type { DrawerProps } from '../drawer';
+import type { DrawerProps } from '../drawer/index.vue';
 import type { DropdownProps } from '../dropdown';
 import type { EmptyProps } from '../empty';
 import type { FlexProps } from '../flex/interface';
 import type { FloatButtonGroupProps } from '../float-button/interface';
 // import type { FormProps } from '../form/Form';
-import type { ImageProps } from '../image/index.vue';
+import type { ImageProps } from '../image';
 import type { InputProps, SearchProps, TextAreaProps } from '../input';
 import type { InputNumberProps } from '../input-number';
 import type { OTPProps } from '../input/OTP/interface';
@@ -38,13 +38,13 @@ import type { Locale } from '../locale';
 import type { MentionsProps } from '../mentions';
 import type { MenuProps } from '../menu';
 import type { ArgsProps as MessageProps } from '../message';
-// import type { ModalProps } from '../modal';
+import type { ModalProps } from '../modal';
 import type { ArgsProps as NotificationProps } from '../notification';
 import type { PaginationProps } from '../pagination';
 import type { PopconfirmProps } from '../popconfirm';
 import type { PopoverProps } from '../popover';
 import type { ProgressProps } from '../progress';
-import type { QRCodeProps } from '../qrcode/index.vue';
+import type { QRCodeProps } from '../qrcode';
 import type { RadioProps } from '../radio';
 import type { ResultProps } from '../result';
 import type { SegmentedProps } from '../segmented';
@@ -54,11 +54,13 @@ import type { SliderProps } from '../slider';
 import type { SpaceProps } from '../space';
 import type { SpinProps } from '../spin';
 // import type { SplitterProps } from '../splitter';
-// import type { StatisticProps } from '../statistic';
+import type { StatisticProps } from '../statistic';
 import type { StepsProps } from '../steps';
 import type { SwitchProps } from '../switch';
 // import type { TableProps } from '../table';
+import type { VueNode } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
+import type { MaskType } from '../_util/hooks/useMergedMask';
 import type { RibbonProps } from '../badge/Ribbon.vue';
 import type { ButtonProps } from '../button';
 import type { CardMetaProps, CardProps } from '../card';
@@ -68,14 +70,12 @@ import type { AliasToken, MappingAlgorithm, OverrideToken } from '../theme/inter
 import type { TimePickerProps } from '../time-picker';
 import type { TimelineProps } from '../timeline';
 import type { TooltipProps } from '../tooltip';
-import type { RenderEmptyHandler } from './defaultRenderEmpty.vue';
-// import type { TourProps } from '../tour/interface';
-import type { VueNode } from '@/vc-util/type';
-import type { MaskType } from '../_util/hooks/useMergedMask';
+import type { TourProps } from '../tour/interface';
 import type { TransferProps } from '../transfer';
 import type { TreeProps } from '../tree';
 import type { TreeSelectProps } from '../tree-select';
 import type { UploadProps } from '../upload';
+import type { RenderEmptyHandler } from './defaultRenderEmpty.vue';
 
 export const defaultPrefixCls = 'ant';
 export const defaultIconPrefixCls = 'anticon';
@@ -178,14 +178,17 @@ export type CheckboxConfig = ComponentStyleConfig & Pick<CheckboxProps, 'classNa
 
 export type MenuConfig = ComponentStyleConfig & Pick<MenuProps, 'expandIcon' | 'classNames' | 'styles'>;
 
-// export type TourConfig = ComponentStyleConfig & Pick<TourProps, 'closeIcon' | 'classNames' | 'styles'>;
+export type TourConfig = ComponentStyleConfig & Pick<TourProps, 'closeIcon' | 'classNames' | 'styles'>;
 
-// export type DescriptionsConfig = ComponentStyleConfig & Pick<DescriptionsProps, 'classNames' | 'styles'>;
+export type DescriptionsConfig = ComponentStyleConfig & Pick<DescriptionsProps, 'classNames' | 'styles'>;
 
 export type EmptyConfig = ComponentStyleConfig & Pick<EmptyProps, 'classNames' | 'styles' | 'image'>;
 
-// export type ModalConfig = ComponentStyleConfig &
-//   Pick<ModalProps, 'classNames' | 'styles' | 'closeIcon' | 'closable' | 'centered' | 'okButtonProps' | 'cancelButtonProps'>;
+export type ModalConfig = ComponentStyleConfig &
+  Pick<
+    ModalProps,
+    'classNames' | 'styles' | 'closeIcon' | 'closable' | 'centered' | 'okButtonProps' | 'cancelButtonProps' | 'mask'
+  >;
 
 export type TabsConfig = ComponentStyleConfig &
   Pick<TabsProps, 'indicator' | 'more' | 'moreIcon' | 'addIcon' | 'removeIcon' | 'classNames' | 'styles'>;
@@ -225,7 +228,7 @@ export type CalendarConfig = ComponentStyleConfig & Pick<CalendarProps, 'classNa
 
 export type CardMetaConfig = ComponentStyleConfig & Pick<CardMetaProps, 'classNames' | 'styles'>;
 
-// export type DrawerConfig = ComponentStyleConfig & Pick<DrawerProps, 'classNames' | 'styles' | 'closeIcon' | 'closable'>;
+export type DrawerConfig = ComponentStyleConfig & Pick<DrawerProps, 'classNames' | 'styles' | 'closeIcon' | 'closable' | 'mask'>;
 
 export type DividerConfig = ComponentStyleConfig & Pick<DividerProps, 'classNames' | 'styles'>;
 
@@ -270,7 +273,7 @@ export type StepsConfig = ComponentStyleConfig & Pick<StepsProps, 'classNames' |
 
 export type SpinConfig = ComponentStyleConfig & Pick<SpinProps, 'indicator' | 'classNames' | 'styles'>;
 
-// export type StatisticConfig = ComponentStyleConfig & Pick<StatisticProps, 'classNames' | 'styles'>;
+export type StatisticConfig = ComponentStyleConfig & Pick<StatisticProps, 'classNames' | 'styles'>;
 
 export type SwitchStyleConfig = ComponentStyleConfig & Pick<SwitchProps, 'classNames' | 'styles'>;
 
@@ -336,7 +339,7 @@ export interface ConfigComponentProps {
   anchor?: AnchorStyleConfig;
   button?: ButtonConfig;
   divider?: DividerConfig;
-  // drawer?: DrawerConfig;
+  drawer?: DrawerConfig;
   calendar?: CalendarConfig;
   // carousel?: ComponentStyleConfig;
   cascader?: CascaderConfig;
@@ -349,11 +352,11 @@ export interface ConfigComponentProps {
   spin?: SpinConfig;
   segmented?: SegmentedConfig;
   steps?: StepsConfig;
-  // statistic?: StatisticConfig;
+  statistic?: StatisticConfig;
   image?: ImageConfig;
   layout?: ComponentStyleConfig;
   mentions?: MentionsConfig;
-  // modal?: ModalConfig;
+  modal?: ModalConfig;
   progress?: ProgressConfig;
   result?: ResultConfig;
   slider?: SliderConfig;
@@ -361,7 +364,7 @@ export interface ConfigComponentProps {
   // masonry?: MasonryConfig;
   menu?: MenuConfig;
   checkbox?: CheckboxConfig;
-  // descriptions?: DescriptionsConfig;
+  descriptions?: DescriptionsConfig;
   empty?: EmptyConfig;
   badge?: BadgeConfig;
   radio?: RadioConfig;
@@ -377,7 +380,7 @@ export interface ConfigComponentProps {
   tabs?: TabsConfig;
   timeline?: TimelineConfig;
   timePicker?: TimePickerConfig;
-  // tour?: TourConfig;
+  tour?: TourConfig;
   tooltip?: TooltipConfig;
   popover?: PopoverConfig;
   popconfirm?: PopconfirmConfig;
@@ -392,7 +395,7 @@ export interface ConfigComponentProps {
   flex?: FlexConfig;
   wave?: WaveConfig;
   qrcode?: QRcodeConfig;
-  // watermark?: ComponentStyleConfig;
+  watermark?: ComponentStyleConfig;
 }
 
 export interface ConfigConsumerProps extends ConfigComponentProps {

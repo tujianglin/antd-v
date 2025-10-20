@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import type { CSSMotionProps } from '@/vc-component/motion';
 import KeyCode from '@/vc-util/KeyCode';
-import { computed, getCurrentInstance, onBeforeUnmount, ref, watch, type CSSProperties, type VNode } from 'vue';
+import { computed, getCurrentInstance, onBeforeUnmount, ref, useTemplateRef, watch, type CSSProperties, type VNode } from 'vue';
 import { DrawerContextProvider, useDrawerContextInject, type DrawerContextProps } from './context';
 import type { DrawerPanelEvents } from './DrawerPanel.vue';
 import type { DrawerClassNames, DrawerStyles } from './inter';
@@ -11,6 +11,9 @@ import { parseWidthHeight } from './util';
 import DrawerPanel from './DrawerPanel.vue';
 import pickAttrs from '@/vc-util/pickAttrs';
 import Render from '@/vc-component/render';
+import type { VueNode } from '@/vc-util/type';
+import useDrag from './hooks/useDrag';
+import { reactiveComputed } from '@vueuse/core';
 
 export type Placement = 'left' | 'right' | 'top' | 'bottom';
 
@@ -39,6 +42,10 @@ export interface DrawerPopupProps extends DrawerPanelEvents {
   style?: CSSProperties;
   width?: number | string;
   height?: number | string;
+  /** Size of the drawer (width for left/right placement, height for top/bottom placement) */
+  size?: number | string;
+  /** Maximum size of the drawer */
+  maxSize?: number;
 
   // Mask
   mask?: boolean;
@@ -59,7 +66,18 @@ export interface DrawerPopupProps extends DrawerPanelEvents {
 
   // styles
   styles?: DrawerStyles;
-  drawerRender?: (node: any) => any;
+  drawerRender?: (node: VueNode) => VueNode;
+
+  // resizable
+  /** Default size for uncontrolled resizable drawer */
+  defaultSize?: number | string;
+  resizable?:
+    | boolean
+    | {
+        onResize?: (size: number) => void;
+        onResizeStart?: () => void;
+        onResizeEnd?: () => void;
+      };
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -88,6 +106,8 @@ const {
   motion,
   width,
   height,
+  size,
+  maxSize,
 
   // Mask
   mask,
@@ -108,17 +128,23 @@ const {
 
   styles,
   drawerRender,
+  resizable,
+  defaultSize,
 } = defineProps<DrawerPopupProps>();
 
 const slots = defineSlots<{ default?: () => VNode[] }>();
 // ================================ Refs ================================
-const panelRef = ref<HTMLDivElement>(null);
+const panelRef = useTemplateRef('panelRef');
 const sentinelStartRef = ref<HTMLDivElement>(null);
 const sentinelEndRef = ref<HTMLDivElement>(null);
+const wrapperRef = ref<HTMLDivElement>(null);
 
 defineExpose({
   get el() {
     return panelRef.value;
+  },
+  get wrapper() {
+    return wrapperRef.value;
   },
 });
 
@@ -220,7 +246,7 @@ const maskNode = () => {
               ...maskStyle,
               ...styles?.mask,
             }}
-            onClick={(e) => (maskClosable && open ? onClose(e) : undefined)}
+            onClick={(e) => (maskClosable && open ? onClose?.(e) : undefined)}
             ref={maskRef}
           />
         ),
@@ -232,6 +258,20 @@ const maskNode = () => {
 // =========================== Panel ============================
 const motionProps = computed(() => (typeof motion === 'function' ? motion(placement) : motion));
 
+// ============================ Size ============================
+const currentSize = ref<number>();
+const isHorizontal = computed(() => placement === 'left' || placement === 'right');
+
+// Aggregate size logic with backward compatibility using useMemo
+const mergedSize = computed(() => {
+  const legacySize = isHorizontal.value ? width : height;
+
+  const nextMergedSize = size ?? legacySize ?? currentSize.value ?? defaultSize ?? (isHorizontal.value ? 378 : undefined);
+
+  return parseWidthHeight(nextMergedSize);
+});
+
+// >>> Style
 const wrapperStyle = computed(() => {
   const result: CSSProperties = {};
 
@@ -261,6 +301,32 @@ const wrapperStyle = computed(() => {
   return result;
 });
 
+// =========================== Resize ===========================
+
+const isResizable = computed(() => !!resizable);
+const resizeConfig = computed(() => (typeof resizable === 'object' && resizable) || {});
+
+const onInternalResize = (size: number) => {
+  currentSize.value = size;
+  resizeConfig?.value?.onResize?.(size);
+};
+
+const { dragElementProps, isDragging } = useDrag(
+  reactiveComputed(() => ({
+    prefixCls: `${prefixCls}-resizable`,
+    direction: placement,
+    class: drawerClassNames?.dragger,
+    style: styles?.dragger,
+    maxSize,
+    containerRef: wrapperRef.value,
+    currentSize: mergedSize.value,
+    onResize: onInternalResize,
+    onResizeStart: resizeConfig?.value?.onResizeStart,
+    onResizeEnd: resizeConfig?.value?.onResizeEnd,
+  })),
+);
+
+// =========================== Events ===========================
 const eventHandlers = computed(() => ({
   onMouseenter,
   onMouseover,
@@ -287,6 +353,7 @@ const panelNode = () => (
         const content = (
           <DrawerPanel
             id={id}
+            ref={motionRef}
             prefixCls={prefixCls}
             class={clsx(className, drawerClassNames?.section)}
             style={{
@@ -301,8 +368,13 @@ const panelNode = () => (
         );
         return (
           <div
-            ref={motionRef}
-            class={clsx(`${prefixCls}-content-wrapper`, drawerClassNames?.wrapper, motionClassName)}
+            ref={wrapperRef}
+            class={clsx(
+              `${prefixCls}-content-wrapper`,
+              isDragging.value && `${prefixCls}-content-wrapper-dragging`,
+              drawerClassNames?.wrapper,
+              !isDragging.value && motionClassName,
+            )}
             style={{
               ...wrapperStyle.value,
               ...motionStyle,
@@ -310,6 +382,7 @@ const panelNode = () => (
             }}
             {...pickAttrs(vm.props, { data: true })}
           >
+            {isResizable.value && <div {...dragElementProps.value}></div>}
             <Render content={drawerRender ? drawerRender(content) : content}></Render>
           </div>
         );

@@ -1,7 +1,6 @@
 <script lang="tsx" setup>
 import Portal from '@/vc-component/portal';
-import { falseToUndefined } from '@/vc-util/props';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, useTemplateRef, watch } from 'vue';
 import { RefContextProvider } from './context';
 import Dialog from './Dialog/index.vue';
 import type { IDialogPropTypes } from './IDialogPropTypes';
@@ -15,12 +14,17 @@ const {
   destroyOnHidden = false,
   afterClose,
   closable,
-  panelRef,
+  keyboard = true,
+  focusTriggerAfterClose = true,
+  mask = true,
+  maskClosable = true,
 } = defineProps<IDialogPropTypes>();
 
 const animatedVisible = ref<boolean>(visible);
 
-const refContext = computed(() => ({ panel: panelRef }));
+const dialogRef = useTemplateRef('dialogRef');
+
+const refContext = computed(() => ({ panel: dialogRef.value?.el as unknown as HTMLDivElement }));
 
 watch(
   () => visible,
@@ -31,6 +35,12 @@ watch(
   },
   { immediate: true },
 );
+
+defineExpose({
+  get panel() {
+    return dialogRef.value?.el;
+  },
+});
 </script>
 <template>
   <RefContextProvider v-if="forceRender || !destroyOnHidden || animatedVisible" :value="refContext">
@@ -41,7 +51,12 @@ watch(
       :auto-lock="visible || animatedVisible"
     >
       <Dialog
-        v-bind="falseToUndefined($props)"
+        v-bind="$props"
+        ref="dialogRef"
+        :keyboard="keyboard"
+        :focus-trigger-after-close="focusTriggerAfterClose"
+        :mask="mask"
+        :mask-closable="maskClosable"
         :destroy-on-hidden="destroyOnHidden"
         :after-close="
           () => {

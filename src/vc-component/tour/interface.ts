@@ -1,4 +1,5 @@
 import type { TriggerProps } from '@/vc-component/trigger';
+import type { VueNode } from '@/vc-util/type';
 import type { AriaAttributes, CSSProperties, HTMLAttributes } from 'vue';
 import type { Gap } from './hooks/useTarget';
 import type { PlacementType } from './placements';
@@ -13,8 +14,8 @@ export type HTMLAriaDataAttributes = /** @vue-ignore */ AriaAttributes & {
 export interface TourStepInfo {
   arrow?: boolean | { pointAtCenter: boolean };
   target?: HTMLElement | (() => HTMLElement) | null | (() => null);
-  title: any;
-  description?: any;
+  title: VueNode;
+  description?: VueNode;
   placement?: PlacementType;
   mask?:
     | boolean
@@ -26,8 +27,8 @@ export interface TourStepInfo {
   class?: string;
   style?: CSSProperties;
   scrollIntoViewOptions?: boolean | ScrollIntoViewOptions;
-  closeIcon?: any;
-  closable?: boolean | ({ closeIcon?: any } & HTMLAriaDataAttributes);
+  closeIcon?: VueNode | boolean;
+  closable?: boolean | ({ closeIcon?: VueNode | boolean } & HTMLAriaDataAttributes);
 }
 
 export interface TourStepProps extends TourStepInfo {
@@ -36,7 +37,7 @@ export interface TourStepProps extends TourStepInfo {
   current?: number;
   onClose?: () => void;
   onFinish?: () => void;
-  renderPanel?: (step: any, current: number) => any;
+  renderPanel?: (step: any, current: number) => VueNode;
   onPrev?: () => void;
   onNext?: () => void;
   classNames?: Partial<Record<SemanticName, string>>;
@@ -52,7 +53,7 @@ export interface TourProps extends Pick<TriggerProps, 'onPopupAlign'> {
   onChange?: (current: number) => void;
   onClose?: (current: number) => void;
   onFinish?: () => void;
-  closeIcon?: TourStepProps['closeIcon'];
+  closeIcon?: TourStepProps['closeIcon'] | boolean;
   closable?: TourStepProps['closable'];
   mask?:
     | boolean
@@ -65,7 +66,7 @@ export interface TourProps extends Pick<TriggerProps, 'onPopupAlign'> {
   rootClassName?: string;
   placement?: PlacementType;
   prefixCls?: string;
-  renderPanel?: (props: DefaultPanelProps, current: number) => any;
+  renderPanel?: (props: DefaultPanelProps, current: number) => VueNode;
   gap?: Gap;
   animated?: boolean | { placeholder: boolean };
   scrollIntoViewOptions?: boolean | ScrollIntoViewOptions;

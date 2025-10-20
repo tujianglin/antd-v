@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
-import Trigger, { type TriggerRef } from '@/vc-component/trigger';
+import Trigger from '@/vc-component/trigger';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, useTemplateRef, watch } from 'vue';
 import { useClosable } from './hooks/useClosable';
 import useTarget from './hooks/useTarget';
 import type { TourProps, TourStepInfo } from './interface';
@@ -41,7 +41,7 @@ const {
   ...restProps
 } = defineProps<TourProps>();
 
-const triggerRef = ref<TriggerRef>();
+const triggerRef = useTemplateRef('triggerRef');
 
 const mergedCurrent = defineModel('current', {
   default: 0,
@@ -83,14 +83,14 @@ const mergedClosable = useClosable(
   computed(() => currentStep.closable),
   computed(() => currentStep.closeIcon),
   computed(() => closable),
-  closeIcon,
+  computed(() => closeIcon),
 );
 
 const mergedMask = computed(() => mergedOpen.value && (currentStep.mask ?? mask));
 const mergedScrollIntoViewOptions = computed(() => stepScrollIntoViewOptions.value ?? scrollIntoViewOptions);
 
 // ====================== Align Target ======================
-const placeholderRef = ref(null);
+const placeholderRef = useTemplateRef('placeholderRef');
 
 const inlineMode = computed(() => getPopupContainer === false);
 
@@ -177,6 +177,12 @@ const getPopupElement = () => (
     closable={mergedClosable.value}
   />
 );
+
+defineExpose({
+  get el() {
+    return 1;
+  },
+});
 </script>
 <template>
   <Mask
@@ -207,7 +213,7 @@ const getPopupElement = () => (
     :popup="getPopupElement"
     :force-render="false"
     auto-destroy
-    :z-index="zIndex"
+    :z-index="zIndex + 1"
     :arrow="!!mergedArrow"
   >
     <Placeholder

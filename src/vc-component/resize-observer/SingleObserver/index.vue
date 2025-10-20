@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import findDOMNode from '@/vc-util/Dom/findDOMNode';
-import { getCurrentInstance, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useCollectionContextInject } from '../context';
 import type { ResizeObserverProps } from '../index.vue';
 import { observe, unobserve } from '../utils/observerUtil';
@@ -65,10 +65,7 @@ const onInternalResize = (target: HTMLElement) => {
 };
 
 const currentElement = ref();
-const wm = getCurrentInstance();
 const registerObserver = () => {
-  const elementRef = findDOMNode(wm);
-  currentElement.value = elementRef;
   if (currentElement.value && !props.disabled) {
     observe(currentElement.value, onInternalResize as any);
   } else {
@@ -96,7 +93,11 @@ defineExpose({
     return currentElement.value;
   },
 });
+
+const changeRef = (el) => {
+  currentElement.value = findDOMNode(el) || el?.el;
+};
 </script>
 <template>
-  <slot :dom-ref="currentElement"></slot>
+  <slot :dom-ref="changeRef"></slot>
 </template>

@@ -26,7 +26,7 @@ export interface PortalProps {
 
 defineOptions({ name: 'Portal', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { open, autoLock, getContainer, debug, autoDestroy = true } = defineProps<PortalProps>();
+const { open, autoLock, getContainer = undefined, debug, autoDestroy = true } = defineProps<PortalProps>();
 
 const getPortalContainer = (getContainer: GetContainer) => {
   if (getContainer === false) {
@@ -92,7 +92,7 @@ const renderInline = computed(() => mergedContainer.value === undefined || inlin
 </script>
 <template>
   <OrderContextProvider v-if="mergedRender && canUseDom() && innerContainer !== undefined" :value="queueCreate">
-    <template v-if="renderInline">
+    <template v-if="!renderInline">
       <slot></slot>
     </template>
     <Teleport v-else :to="mergedContainer || 'body'">

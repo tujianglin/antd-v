@@ -15,9 +15,9 @@ import type { ComponentToken as CheckboxComponentToken } from '../../checkbox/st
 import type { ComponentToken as CollapseComponentToken } from '../../collapse/style';
 import type { ComponentToken as ColorPickerComponentToken } from '../../color-picker/style';
 import type { ComponentToken as DatePickerComponentToken } from '../../date-picker/style';
-// import type { ComponentToken as DescriptionsComponentToken } from '../../descriptions/style';
+import type { ComponentToken as DescriptionsComponentToken } from '../../descriptions/style';
 import type { ComponentToken as DividerComponentToken } from '../../divider/style';
-// import type { ComponentToken as DrawerComponentToken } from '../../drawer/style';
+import type { ComponentToken as DrawerComponentToken } from '../../drawer/style';
 import type { ComponentToken as DropdownComponentToken } from '../../dropdown/style';
 import type { ComponentToken as EmptyComponentToken } from '../../empty/style';
 import type { ComponentToken as FlexComponentToken } from '../../flex/style';
@@ -33,7 +33,7 @@ import type { ComponentToken as LayoutComponentToken } from '../../layout/style'
 import type { ComponentToken as MentionsComponentToken } from '../../mentions/style';
 import type { ComponentToken as MenuComponentToken } from '../../menu/style';
 import type { ComponentToken as MessageComponentToken } from '../../message/style';
-// import type { ComponentToken as ModalComponentToken } from '../../modal/style';
+import type { ComponentToken as ModalComponentToken } from '../../modal/style';
 import type { ComponentToken as NotificationComponentToken } from '../../notification/style';
 import type { ComponentToken as PaginationComponentToken } from '../../pagination/style';
 import type { ComponentToken as PopconfirmComponentToken } from '../../popconfirm/style';
@@ -50,7 +50,7 @@ import type { ComponentToken as SliderComponentToken } from '../../slider/style'
 import type { ComponentToken as SpaceComponentToken } from '../../space/style';
 import type { ComponentToken as SpinComponentToken } from '../../spin/style';
 // import type { ComponentToken as SplitterComponentToken } from '../../splitter/style';
-// import type { ComponentToken as StatisticComponentToken } from '../../statistic/style';
+import type { ComponentToken as StatisticComponentToken } from '../../statistic/style';
 import type { ComponentToken as StepsComponentToken } from '../../steps/style';
 import type { ComponentToken as SwitchComponentToken } from '../../switch/style';
 // import type { ComponentToken as TableComponentToken } from '../../table/style';
@@ -58,7 +58,7 @@ import type { ComponentToken as TabsComponentToken } from '../../tabs/style';
 import type { ComponentToken as TagComponentToken } from '../../tag/style';
 import type { ComponentToken as TimelineComponentToken } from '../../timeline/style';
 import type { ComponentToken as TooltipComponentToken } from '../../tooltip/style';
-// import type { ComponentToken as TourComponentToken } from '../../tour/style';
+import type { ComponentToken as TourComponentToken } from '../../tour/style';
 import type { ComponentToken as TransferComponentToken } from '../../transfer/style';
 import type { ComponentToken as TreeSelectComponentToken } from '../../tree-select/style';
 import type { ComponentToken as TreeComponentToken } from '../../tree/style';
@@ -80,9 +80,9 @@ export interface ComponentTokenMap {
   ColorPicker?: ColorPickerComponentToken;
   Collapse?: CollapseComponentToken;
   DatePicker?: DatePickerComponentToken;
-  // Descriptions?: DescriptionsComponentToken;
+  Descriptions?: DescriptionsComponentToken;
   Divider?: DividerComponentToken;
-  // Drawer?: DrawerComponentToken;
+  Drawer?: DrawerComponentToken;
   Dropdown?: DropdownComponentToken;
   Empty?: EmptyComponentToken;
   Flex?: FlexComponentToken;
@@ -107,7 +107,7 @@ export interface ComponentTokenMap {
   Skeleton?: SkeletonComponentToken;
   Slider?: SliderComponentToken;
   Spin?: SpinComponentToken;
-  // Statistic?: StatisticComponentToken;
+  Statistic?: StatisticComponentToken;
   Switch?: SwitchComponentToken;
   // Splitter?: SplitterComponentToken;
   Tag?: TagComponentToken;
@@ -120,14 +120,14 @@ export interface ComponentTokenMap {
   Calendar?: CalendarComponentToken;
   Steps?: StepsComponentToken;
   Menu?: MenuComponentToken;
-  // Modal?: ModalComponentToken;
+  Modal?: ModalComponentToken;
   Message?: MessageComponentToken;
   Upload?: UploadComponentToken;
   Tooltip?: TooltipComponentToken;
   // Table?: TableComponentToken;
   Space?: SpaceComponentToken;
   Progress?: ProgressComponentToken;
-  // Tour?: TourComponentToken;
+  Tour?: TourComponentToken;
   QRCode?: QRCodeComponentToken;
   App?: AppComponentToken;
 

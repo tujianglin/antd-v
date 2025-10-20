@@ -10,9 +10,9 @@ const defaultOptions: MutationObserverInit = {
 const useMutateObserver = (
   nodeOrList: Ref<HTMLElement | HTMLElement[] | SVGElement | SVGElement[]>,
   callback: Ref<MutationCallback>,
-  optionss: Ref<MutationObserverInit>,
+  optionss?: Ref<MutationObserverInit>,
 ) => {
-  const options = computed(() => optionss.value || defaultOptions);
+  const options = computed(() => optionss?.value || defaultOptions);
   watch(
     [options, nodeOrList],
 

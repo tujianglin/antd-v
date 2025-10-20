@@ -1,6 +1,7 @@
 import type { VueKey } from '@/vc-util/type';
+import { reactiveComputed, type ReactiveComputedReturn } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, ref, toRefs, type Ref } from 'vue';
+import { ref, toRefs } from 'vue';
 import { computeClosable, pickClosable } from '../_util/hooks/useClosable';
 import { useConfigContextInject } from '../config-provider/context';
 import Holder, { type HolderRef } from './Holder.vue';
@@ -20,11 +21,13 @@ type HolderProps = NotificationConfig & {
 // ==============================================================================
 // ==                                   Hook                                   ==
 // ==============================================================================
-export function useInternalNotification(notificationConfig?: HolderProps): readonly [Ref<NotificationInstance>, any] {
+export function useInternalNotification(
+  notificationConfig?: HolderProps,
+): readonly [ReactiveComputedReturn<NotificationInstance>, any] {
   const holderRef = ref<HolderRef>(null);
   const { notification: notificationContext } = toRefs(useConfigContextInject());
   // ================================ API ================================
-  const wrapAPI = computed<NotificationInstance>(() => {
+  const wrapAPI = reactiveComputed<NotificationInstance>(() => {
     // Wrap with notification content
 
     // >>> Open

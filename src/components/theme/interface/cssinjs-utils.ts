@@ -22,5 +22,3 @@ export type FullToken<C extends TokenMapKey<ComponentTokenMap>> = FullTokenTypeU
 export type GetDefaultToken<C extends TokenMapKey<ComponentTokenMap>> = GetDefaultTokenTypeUtil<ComponentTokenMap, AliasToken, C>;
 
 export type GenStyleFn<C extends TokenMapKey<ComponentTokenMap>> = GenStyleFnTypeUtil<ComponentTokenMap, AliasToken, C>;
-
-// const a: FullTokenTypeUtil<ComponentTokenMap, AliasToken, 'Button'> = {};

@@ -3,6 +3,8 @@ import clsx from 'clsx';
 import { computed, Fragment, resolveDynamicComponent, toRefs, type CSSProperties } from 'vue';
 import { devUseWarning } from '../_util/warning';
 import { useConfigContextInject } from '../config-provider';
+import useMessage from '../message/useMessage';
+import useModal from '../modal/useModal';
 import useNotification from '../notification/useNotification';
 import {
   AppConfigContextProvider,
@@ -28,7 +30,7 @@ const {
   class: className,
   rootClassName,
   message,
-  // notification,
+  notification,
   style,
   component = 'div',
 } = defineProps<AppProps>();
@@ -46,17 +48,17 @@ const appConfig = useAppConfigContextInject();
 
 const mergedAppConfig = computed<AppConfig>(() => ({
   message: { ...appConfig.message, ...message },
-  // notification: { ...appConfig.notification, ...notification },
+  notification: { ...appConfig.notification, ...notification },
 }));
 
-// const [messageApi, messageContextHolder] = useMessage(mergedAppConfig.value.message);
+const [messageApi, MessageContextHolder] = useMessage(mergedAppConfig.value.message);
 const [notificationApi, NotificationContextHolder] = useNotification(mergedAppConfig.value.notification);
-// const [ModalApi, ModalContextHolder] = useModal();
+const [ModalApi, ModalContextHolder] = useModal();
 
 const memoizedContextValue = computed<useAppProps>(() => ({
-  // message: messageApi,
-  notification: notificationApi.value,
-  // modal: ModalApi,
+  message: messageApi,
+  notification: notificationApi,
+  modal: ModalApi,
 }));
 
 // https://github.com/ant-design/ant-design/issues/48802#issuecomment-2097813526
@@ -78,6 +80,8 @@ const rootProps = computed<AppProps>(() => ({
   <AppContextProvider :value="memoizedContextValue">
     <AppConfigContextProvider :value="{ ...mergedAppConfig }">
       <Dynamic v-bind="{ ...(component === false ? undefined : rootProps) }">
+        <ModalContextHolder />
+        <MessageContextHolder />
         <NotificationContextHolder />
         <slot></slot>
       </Dynamic>

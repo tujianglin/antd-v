@@ -63,16 +63,15 @@ const noticePrefixCls = computed(() => `${prefixCls.value}-notice`);
 const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 const vm = getCurrentInstance() as unknown as { props: PurePanelProps };
-const closeProps = computed(() =>
-  useClosable(pickClosable(vm.props), pickClosable(notificationContext.value), {
+const [rawClosable, mergedCloseIcon, , ariaProps] = useClosable(
+  computed(() => pickClosable(vm.props)),
+  computed(() => pickClosable(notificationContext.value)),
+  computed(() => ({
     closable: true,
     closeIcon: <CloseOutlined class={`${prefixCls.value}-close-icon`} />,
     closeIconRender: (icon) => getCloseIcon(prefixCls.value, icon),
-  }),
+  })),
 );
-const rawClosable = computed(() => closeProps.value?.[0]);
-const mergedCloseIcon = computed(() => closeProps.value?.[1]);
-const ariaProps = computed(() => closeProps.value?.[3]);
 
 const mergedClosable = computed<any>(() =>
   rawClosable.value

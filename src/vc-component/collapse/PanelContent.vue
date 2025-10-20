@@ -23,6 +23,8 @@ watch(
   () => {
     if (forceRender || isActive) {
       rendered.value = true;
+    } else {
+      rendered.value = false;
     }
   },
   { immediate: true, deep: true },
