@@ -81,12 +81,12 @@ const GlobalHolder = defineComponent({
 
     expose({
       get instance() {
-        const instance: MessageInstance = { ...api.value };
+        const instance: MessageInstance = { ...api };
 
         Object.keys(instance).forEach((method) => {
           instance[method as keyof MessageInstance] = (...args: any[]) => {
             sync.value?.();
-            return (api.value as any)[method](...args);
+            return (api as any)[method](...args);
           };
         });
         return instance;
