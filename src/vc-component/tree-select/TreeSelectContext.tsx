@@ -30,7 +30,7 @@ export interface TreeSelectContextProps {
 
 const TreeSelectContext: InjectionKey<Reactive<TreeSelectContextProps>> = Symbol('TreeSelectContext');
 
-export const useTreeSelectContextInject = () => {
+export const useTreeSelectContextInject = (): Partial<TreeSelectContextProps> => {
   return inject(TreeSelectContext, reactive<Partial<TreeSelectContextProps>>({}));
 };
 

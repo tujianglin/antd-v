@@ -26,7 +26,7 @@ export default function useIcons(
     showArrow?: boolean;
     componentName: string;
   }>,
-) {
+): any {
   const {
     suffixIcon,
     clearIcon,

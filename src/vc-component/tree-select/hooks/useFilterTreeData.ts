@@ -3,7 +3,7 @@ import type { TreeSelectProps } from '../TreeSelect.vue';
 import type { DataNode, FieldNames } from '../interface';
 import { fillLegacyProps } from '../utils/legacyUtil';
 
-type FilterFn = TreeSelectProps['showSearch']['filterTreeNode'];
+type FilterFn = Exclude<TreeSelectProps['showSearch'], boolean>['filterTreeNode'];
 const useFilterTreeData = (
   treeData: Ref<DataNode[]>,
   searchValue: Ref<string>,

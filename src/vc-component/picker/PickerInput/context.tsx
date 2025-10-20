@@ -17,7 +17,7 @@ export interface PickerContextProps<DateType = any> {
 
 const PickerContext: InjectionKey<Reactive<PickerContextProps>> = Symbol('PickerContext');
 
-export const usePickerContextInject = () => {
+export const usePickerContextInject = (): Reactive<Partial<PickerContextProps>> => {
   return inject(PickerContext, reactive<Partial<PickerContextProps>>({}));
 };
 

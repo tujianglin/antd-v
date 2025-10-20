@@ -131,7 +131,7 @@ export function getRadioSelectKeys(data, selectedKeys, key) {
   const res = [];
   const pkObjArr = [];
   const selPkObjArr = [];
-  loopData(data, (item, index, pos) => {
+  loopData(data, (item, _, pos) => {
     if (selectedKeys.indexOf(item.key) > -1) {
       pkObjArr.push([pos, item.key]);
     }

@@ -77,7 +77,7 @@ export interface PanelContextProps<DateType extends object = any>
 /** Used for each single Panel. e.g. DatePanel */
 const PanelContext: InjectionKey<Reactive<PanelContextProps>> = Symbol('PanelContext');
 
-export const usePanelContextInject = () => {
+export const usePanelContextInject = (): Reactive<Partial<PanelContextProps>> => {
   return inject(PanelContext, reactive<Partial<PanelContextProps>>({}));
 };
 

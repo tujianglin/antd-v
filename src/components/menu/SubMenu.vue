@@ -57,7 +57,7 @@ const titleNode = () => {
   return result;
 };
 
-const contextValue = computed<MenuContextProps>(() => ({ ...context, firstLevel: false }));
+const contextValue = computed<MenuContextProps>(() => ({ ...(context as any), firstLevel: false }));
 
 // ============================ zIndex ============================
 const [zIndex] = useZIndex('Menu');

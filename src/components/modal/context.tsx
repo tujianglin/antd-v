@@ -10,8 +10,8 @@ import { defineComponent, inject, provide, reactive, type InjectionKey, type Pro
 
 const ModalContext: InjectionKey<Reactive<ModalContextProps>> = Symbol('ModalContext');
 
-export const useModalContextInject = () => {
-  return inject(ModalContext, reactive({} as ModalContextProps));
+export const useModalContextInject = (): Reactive<Partial<ModalContextProps>> => {
+  return inject(ModalContext, reactive<Partial<ModalContextProps>>({}));
 };
 
 export const useModalContextProvider = (props: Reactive<ModalContextProps>) => {

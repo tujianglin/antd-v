@@ -32,9 +32,4 @@ export default {
    * @warring 🔥 Do not use in production. 🔥
    */
   defaultConfig,
-  /**
-   * @private Private variable
-   * @warring 🔥 Do not use in production. 🔥
-   */
-  _internalContext: useDesignTokenContextInject,
 };

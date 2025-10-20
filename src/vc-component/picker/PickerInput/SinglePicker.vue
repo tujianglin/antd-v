@@ -231,7 +231,7 @@ const [mergedValue, setInnerValue, getCalendarValue, triggerCalendarChange, trig
   false,
   order,
   value,
-  onInternalCalendarChange,
+  onInternalCalendarChange as any,
   onInternalOk,
 );
 

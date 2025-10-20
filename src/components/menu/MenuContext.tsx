@@ -39,16 +39,16 @@ export interface MenuContextProps {
 
 const MenuContext: InjectionKey<Reactive<MenuContextProps>> = Symbol('MenuContext');
 
-export const useMenuContextInject = () => {
+export const useMenuContextInject = (): Reactive<Partial<MenuContextProps>> => {
   return inject(
     MenuContext,
-    reactive({
+    reactive<Partial<MenuContextProps>>({
       prefixCls: '',
       firstLevel: true,
       inlineCollapsed: false,
       styles: null!,
       classNames: null!,
-    } as MenuContextProps),
+    }),
   );
 };
 
@@ -78,8 +78,8 @@ export interface OverrideContextProps {
 
 const OverrideContext: InjectionKey<Reactive<OverrideContextProps>> = Symbol('OverrideContext');
 
-export const useOverrideContextInject = () => {
-  return inject(OverrideContext, reactive({} as OverrideContextProps));
+export const useOverrideContextInject = (): Reactive<OverrideContextProps> => {
+  return inject(OverrideContext, reactive<OverrideContextProps>({}));
 };
 
 export const useOverrideContextProvider = (props: Reactive<OverrideContextProps>) => {

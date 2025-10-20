@@ -9,7 +9,7 @@ export interface TabContextProps {
 
 const TabContext: InjectionKey<Reactive<TabContextProps>> = Symbol('TabContext');
 
-export const useTabContextInject = () => {
+export const useTabContextInject = (): Reactive<Partial<TabContextProps>> => {
   return inject(TabContext, reactive<Partial<TabContextProps>>({}));
 };
 

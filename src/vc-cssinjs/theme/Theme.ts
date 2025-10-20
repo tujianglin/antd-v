@@ -8,7 +8,7 @@ let uuid = 0;
  * Use `createTheme` first which will help to manage the theme instance cache.
  */
 export default class Theme<DesignToken extends TokenType, DerivativeToken extends TokenType> {
-  private derivatives: DerivativeFunc<DesignToken, DerivativeToken>[];
+  private derivatives: any[];
   public readonly id: number;
 
   constructor(derivatives: DerivativeFunc<DesignToken, DerivativeToken> | DerivativeFunc<DesignToken, DerivativeToken>[]) {

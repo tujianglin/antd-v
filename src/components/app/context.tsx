@@ -11,8 +11,8 @@ export interface AppConfig {
 
 const AppConfigContext: InjectionKey<Reactive<AppConfig>> = Symbol('AppConfigContext');
 
-export const useAppConfigContextInject = () => {
-  return inject(AppConfigContext, reactive({} as AppConfig));
+export const useAppConfigContextInject = (): Reactive<AppConfig> => {
+  return inject(AppConfigContext, reactive<AppConfig>({}));
 };
 
 export const useAppConfigContextProvider = (props: Reactive<AppConfig>) => {

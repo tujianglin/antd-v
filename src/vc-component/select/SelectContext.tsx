@@ -51,8 +51,8 @@ export interface SelectContextProps {
 
 const SelectContext: InjectionKey<Reactive<SelectContextProps>> = Symbol('SelectContext');
 
-export const useSelectContextInject = () => {
-  return inject(SelectContext, reactive({} as SelectContextProps));
+export const useSelectContextInject = (): Reactive<Partial<SelectContextProps>> => {
+  return inject(SelectContext, reactive<Partial<SelectContextProps>>({}));
 };
 
 export const useSelectContextProvider = (props: Reactive<SelectContextProps>) => {

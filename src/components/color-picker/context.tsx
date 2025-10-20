@@ -42,8 +42,8 @@ export interface PanelPresetsContextProps {
 
 const PanelPickerContext: InjectionKey<Reactive<PanelPickerContextProps>> = Symbol('PanelPickerContext');
 
-export const usePanelPickerContextInject = () => {
-  return inject(PanelPickerContext, reactive({} as PanelPickerContextProps));
+export const usePanelPickerContextInject = (): Reactive<Partial<PanelPickerContextProps>> => {
+  return inject(PanelPickerContext, reactive<Partial<PanelPickerContextProps>>({}));
 };
 
 export const usePanelPickerContextProvider = (props: Reactive<PanelPickerContextProps>) => {

@@ -35,8 +35,8 @@ export interface DesignTokenProviderProps {
 }
 
 export const DesignTokenContext: InjectionKey<Reactive<DesignTokenProviderProps>> = Symbol('DesignTokenContext');
-export const useDesignTokenContextInject = () => {
-  return inject(DesignTokenContext, reactive(defaultConfig as DesignTokenProviderProps));
+export const useDesignTokenContextInject = (): Reactive<Partial<DesignTokenProviderProps>> => {
+  return inject(DesignTokenContext, reactive<Partial<DesignTokenProviderProps>>(defaultConfig));
 };
 
 export const useDesignTokenContextProvider = (props: Reactive<DesignTokenProviderProps>) => {
