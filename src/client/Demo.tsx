@@ -1,15 +1,37 @@
-import { QRCode, Space, theme } from '@/components';
+import { ConfigProvider, Timeline } from '@/components';
 
-const App = () => {
-  const { useToken } = theme;
-  const { token } = useToken();
-
-  return (
-    <Space>
-      <QRCode value="https://ant.design/" color={token.value.colorSuccessText} />
-      <QRCode value="https://ant.design/" color={token.value.colorInfoText} bgColor={token.value.colorBgLayout} />
-    </Space>
-  );
-};
+const App = () => (
+  <ConfigProvider
+    theme={{
+      components: {
+        Timeline: {
+          tailColor: 'red',
+          tailWidth: 10,
+          dotBorderWidth: 1,
+          dotBg: 'yellow',
+          dotSize: 20,
+          itemPaddingBottom: 10,
+        },
+      },
+    }}
+  >
+    <Timeline
+      items={[
+        {
+          content: 'Create a services site 2015-09-01',
+        },
+        {
+          content: 'Solve initial network problems 2015-09-01',
+        },
+        {
+          content: 'Technical testing 2015-09-01',
+        },
+        {
+          content: 'Network problems being solved 2015-09-01',
+        },
+      ]}
+    />
+  </ConfigProvider>
+);
 
 export default App;

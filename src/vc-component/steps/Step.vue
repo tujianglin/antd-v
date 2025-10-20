@@ -122,8 +122,8 @@ const accessibilityProps = computed(() => {
 // ========================= Render =========================
 const mergedStatus = computed(() => status.value || 'wait');
 
-const hasTitle = computed(() => hasContent(title));
-const hasSubTitle = computed(() => hasContent(subTitle));
+const hasTitle = computed(() => hasContent(title?.value));
+const hasSubTitle = computed(() => hasContent(subTitle?.value));
 
 const classString = computed(() =>
   clsx(
@@ -135,7 +135,7 @@ const classString = computed(() =>
       [`${itemCls.value}-disabled`]: disabled?.value === true,
       [`${itemCls.value}-empty-header`]: !hasTitle.value && !hasSubTitle.value,
     },
-    className,
+    className?.value,
     classNames.item,
     itemClassNames?.value?.root,
   ),

@@ -56,7 +56,7 @@ import type { ComponentToken as SwitchComponentToken } from '../../switch/style'
 // import type { ComponentToken as TableComponentToken } from '../../table/style';
 import type { ComponentToken as TabsComponentToken } from '../../tabs/style';
 import type { ComponentToken as TagComponentToken } from '../../tag/style';
-// import type { ComponentToken as TimelineComponentToken } from '../../timeline/style';
+import type { ComponentToken as TimelineComponentToken } from '../../timeline/style';
 import type { ComponentToken as TooltipComponentToken } from '../../tooltip/style';
 // import type { ComponentToken as TourComponentToken } from '../../tour/style';
 import type { ComponentToken as TransferComponentToken } from '../../transfer/style';
@@ -114,7 +114,7 @@ export interface ComponentTokenMap {
   Tree?: TreeComponentToken;
   TreeSelect?: TreeSelectComponentToken;
   // Typography?: TypographyComponentToken;
-  // Timeline?: TimelineComponentToken;
+  Timeline?: TimelineComponentToken;
   Transfer?: TransferComponentToken;
   Tabs?: TabsComponentToken;
   Calendar?: CalendarComponentToken;

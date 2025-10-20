@@ -59,16 +59,16 @@ import type { StepsProps } from '../steps';
 import type { SwitchProps } from '../switch';
 // import type { TableProps } from '../table';
 import { reactiveComputed } from '@vueuse/core';
+import type { RibbonProps } from '../badge/Ribbon.vue';
 import type { ButtonProps } from '../button';
+import type { CardMetaProps, CardProps } from '../card';
 import type { TabsProps } from '../tabs';
 import type { TagProps } from '../tag/index.vue';
 import type { AliasToken, MappingAlgorithm, OverrideToken } from '../theme/interface';
 import type { TimePickerProps } from '../time-picker';
-import type { RenderEmptyHandler } from './defaultRenderEmpty.vue';
-// import type { TimelineProps } from '../timeline';
-import type { RibbonProps } from '../badge/Ribbon.vue';
-import type { CardMetaProps, CardProps } from '../card';
+import type { TimelineProps } from '../timeline';
 import type { TooltipProps } from '../tooltip';
+import type { RenderEmptyHandler } from './defaultRenderEmpty.vue';
 // import type { TourProps } from '../tour/interface';
 import type { VueNode } from '@/vc-util/type';
 import type { MaskType } from '../_util/hooks/useMergedMask';
@@ -292,7 +292,7 @@ export type RangePickerConfig = ComponentStyleConfig & Pick<RangePickerProps, 'v
 
 export type TimePickerConfig = ComponentStyleConfig & Pick<TimePickerProps, 'variant' | 'classNames' | 'styles'>;
 
-// export type TimelineConfig = ComponentStyleConfig & Pick<TimelineProps, 'classNames' | 'styles'>;
+export type TimelineConfig = ComponentStyleConfig & Pick<TimelineProps, 'classNames' | 'styles'>;
 
 export type MentionsConfig = ComponentStyleConfig & Pick<MentionsProps, 'variant' | 'classNames' | 'styles'>;
 
@@ -375,7 +375,7 @@ export interface ConfigComponentProps {
   card?: CardConfig;
   cardMeta?: CardMetaConfig;
   tabs?: TabsConfig;
-  // timeline?: TimelineConfig;
+  timeline?: TimelineConfig;
   timePicker?: TimePickerConfig;
   // tour?: TourConfig;
   tooltip?: TooltipConfig;
