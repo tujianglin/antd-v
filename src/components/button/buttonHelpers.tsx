@@ -1,3 +1,4 @@
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import clsx from 'clsx';
 import { Fragment, h, type VNode } from 'vue';
 import type {
@@ -84,6 +85,15 @@ export function splitCNCharsBySpace(
   // 普通 VNode
   const { props, children, type } = child;
 
+  // 如果是Render组件
+  if ((type as any).name === 'Render') {
+    if (typeof child.props.content === 'string' || typeof child.props.content === 'number') {
+      const str = String(child.props.content);
+      const content = isTwoCNChar(str) ? str.split('').join(SPACE) : str;
+      return h('span', { class: className, style }, content);
+    }
+  }
+
   // 如果它是一个 HTML 标签节点，并且 children 是双中文字符
   if (isString(type) && typeof children === 'string' && isTwoCNChar(children)) {
     return h(
@@ -100,7 +110,6 @@ export function splitCNCharsBySpace(
   // 其余情况：合并 class 和 style
   const mergedClass = clsx(props?.class, className);
   const mergedStyle = { ...props?.style, ...style };
-
   return h(
     type as any,
     {
@@ -122,7 +131,7 @@ export function spaceChildren(
   const childList: (VNode | string | number)[] = [];
   let isPrevChildPure = false;
 
-  for (const child of children) {
+  for (const child of flattenChildren(children)) {
     let current: string | number | VNode = child;
 
     // 获取文本内容

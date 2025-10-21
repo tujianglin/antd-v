@@ -1,7 +1,9 @@
 import type { VueNode } from '@/vc-util/type';
 import type { ButtonHTMLAttributes, Component, CSSProperties, HtmlHTMLAttributes, VNode } from 'vue';
 import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
+import type { BadgeProps } from '../badge';
 import type { ButtonHTMLType, ButtonSemanticName } from '../button/interface';
+import type { TooltipProps } from '../tooltip';
 
 export type FloatButtonElement = HTMLAnchorElement & HTMLButtonElement;
 
@@ -15,7 +17,7 @@ export type FloatButtonShape = 'circle' | 'square';
 
 export type FloatButtonGroupTrigger = 'click' | 'hover';
 
-// export type FloatButtonBadgeProps = Omit<BadgeProps, 'status' | 'text' | 'title' | 'children'>;
+export type FloatButtonBadgeProps = Omit<BadgeProps, 'status' | 'text' | 'title' | 'children'>;
 
 export type FloatButtonSemanticName = ButtonSemanticName;
 
@@ -38,10 +40,10 @@ export interface FloatButtonProps {
   content?: VueNode;
   type?: FloatButtonType;
   shape?: FloatButtonShape;
-  // tooltip?: VueNode | TooltipProps;
+  tooltip?: VueNode | TooltipProps;
   href?: string;
   target?: HTMLAttributeAnchorTarget;
-  // badge?: FloatButtonBadgeProps;
+  badge?: FloatButtonBadgeProps;
   /**
    * @since 5.21.0
    * @default button

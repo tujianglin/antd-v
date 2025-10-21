@@ -11,6 +11,7 @@ import CompactItem from './CompactItem.vue';
 import useStyle from './style';
 import Render from '@/vc-component/render';
 import { isEmpty } from 'lodash-es';
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 
 export interface SpaceCompactProps {
   class?: string;
@@ -64,7 +65,7 @@ const compactItemContext = useSpaceCompactItemContextInject();
 const slots = useSlots();
 
 const nodes = computed(() => {
-  const childNodes = slots.default?.() || [];
+  const childNodes = flattenChildren(slots.default?.()) || [];
   return childNodes.map((child, i) => {
     const key = child?.key || `${prefixCls.value}-item-${i}`;
     return (
