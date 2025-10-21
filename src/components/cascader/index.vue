@@ -38,7 +38,6 @@ import { reactiveComputed } from '@vueuse/core';
 import type { Placement } from '@/vc-component/select/interface';
 import { omit } from 'lodash-es';
 import mergedBuiltinPlacements from '../select/mergedBuiltinPlacements';
-import type { SingleValueType } from '@/vc-component/cascader/Cascader.vue';
 
 // Align the design since we use `@rc-component/select` in root. This help:
 // - List search content will show all content
@@ -129,7 +128,7 @@ const {
   ...rest
 } = defineProps<CascaderAutoProps>();
 
-const value = defineModel<SingleValueType[]>('value');
+const value = defineModel<any[]>('value');
 
 function highlightKeyword(str: string, lowerKeyword: string, prefixCls?: string) {
   const cells = str
@@ -376,5 +375,7 @@ const restProps = computed(() => omit(rest, ['suffixIcon']) as any);
     :choice-transition-name="getTransitionName(rootPrefixCls, '', choiceTransitionName)"
     :transition-name="getTransitionName(rootPrefixCls, 'slide-up', transitionName)"
     :get-popup-container="getPopupContainer || getContextPopupContainer"
-  />
+  >
+    <slot></slot>
+  </RcCascader>
 </template>

@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
-import { Cascader, Flex, Switch } from '@/components';
-import { ref } from 'vue';
+import { Cascader } from '@/components';
+import { SmileOutlined } from '@ant-design/icons-vue';
 
 interface Option {
-  value: string | number;
+  value: string;
   label: string;
   children?: Option[];
 }
@@ -42,14 +42,19 @@ const options: Option[] = [
     ],
   },
 ];
-
-const disabled = ref(false);
 </script>
 <template>
-  <Flex vertical gap="small" align="flex-start">
-    <Switch v-model:checked="disabled" checked-children="Enabled" un-checked-children="Disabled" aria-label="disabled switch" />
-    <Cascader.Panel :options="options" :disabled="disabled" />
-    <Cascader.Panel multiple :options="options" :disabled="disabled" />
-    <Cascader.Panel />
-  </Flex>
+  <Cascader :suffix-icon="SmileOutlined" :options="options" placeholder="Please select" />
+  <br />
+  <br />
+  <Cascader suffix-icon="ab" :options="options" placeholder="Please select" />
+  <br />
+  <br />
+  <Cascader :expand-icon="SmileOutlined" :options="options" placeholder="Please select" />
+  <br />
+  <br />
+  <Cascader expand-icon="ab" :options="options" placeholder="Please select" />
+  <br />
+  <br />
+  <Cascader :prefix="SmileOutlined" :options="options" placeholder="Please select" />
 </template>

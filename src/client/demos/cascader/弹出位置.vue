@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
-import { Cascader, Flex, Switch } from '@/components';
+import { Cascader, Radio } from '@/components';
 import { ref } from 'vue';
 
 interface Option {
-  value: string | number;
+  value: string;
   label: string;
   children?: Option[];
 }
@@ -43,13 +43,20 @@ const options: Option[] = [
   },
 ];
 
-const disabled = ref(false);
+const placement = ref<'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight'>('topLeft');
 </script>
 <template>
-  <Flex vertical gap="small" align="flex-start">
-    <Switch v-model:checked="disabled" checked-children="Enabled" un-checked-children="Disabled" aria-label="disabled switch" />
-    <Cascader.Panel :options="options" :disabled="disabled" />
-    <Cascader.Panel multiple :options="options" :disabled="disabled" />
-    <Cascader.Panel />
-  </Flex>
+  <Radio.Group
+    v-model:value="placement"
+    option-type="button"
+    :options="[
+      { label: 'topLeft', value: 'topLeft' },
+      { label: 'topRight', value: 'topRight' },
+      { label: 'bottomLeft', value: 'bottomLeft' },
+      { label: 'bottomRight', value: 'bottomRight' },
+    ]"
+  />
+  <br />
+  <br />
+  <Cascader :options="options" placeholder="Please select" :placement="placement" />
 </template>

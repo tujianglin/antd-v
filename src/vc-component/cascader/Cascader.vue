@@ -2,6 +2,7 @@
 import { BaseSelect, type BaseSelectProps, type BaseSelectPropsWithoutPrivate, type BaseSelectRef } from '@/vc-component/select';
 import type { DisplayValueType, Placement } from '@/vc-component/select/interface';
 import type { BuildInPlacements } from '@/vc-component/trigger';
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import useControlledState from '@/vc-util/hooks/useControlledState';
 import type { VueNode } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
@@ -399,7 +400,7 @@ const domRef = ref();
       :popup-class-name="popupClassName"
       :placement="placement"
       @popup-visible-change="onInternalPopupVisibleChange"
-      :get-raw-input-element="() => $slots.default?.()[0]"
+      :get-raw-input-element="() => flattenChildren($slots.default?.())[0]"
     />
   </CascaderContextProvider>
 </template>

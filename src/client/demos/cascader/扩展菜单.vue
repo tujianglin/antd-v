@@ -1,9 +1,8 @@
 <script lang="tsx" setup>
-import { Cascader, Flex, Switch } from '@/components';
-import { ref } from 'vue';
+import { Cascader, Divider } from '@/components';
 
 interface Option {
-  value: string | number;
+  value: string;
   label: string;
   children?: Option[];
 }
@@ -43,13 +42,14 @@ const options: Option[] = [
   },
 ];
 
-const disabled = ref(false);
+const popupRender = (menus) => (
+  <div>
+    {menus}
+    <Divider style={{ margin: 0 }} />
+    <div style={{ padding: '8px' }}>The footer is not very short.</div>
+  </div>
+);
 </script>
 <template>
-  <Flex vertical gap="small" align="flex-start">
-    <Switch v-model:checked="disabled" checked-children="Enabled" un-checked-children="Disabled" aria-label="disabled switch" />
-    <Cascader.Panel :options="options" :disabled="disabled" />
-    <Cascader.Panel multiple :options="options" :disabled="disabled" />
-    <Cascader.Panel />
-  </Flex>
+  <Cascader :options="options" :popup-render="popupRender" placeholder="Please select" />
 </template>
