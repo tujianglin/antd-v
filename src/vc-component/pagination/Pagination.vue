@@ -218,12 +218,12 @@ function runIfEnterJumpNext(event: KeyboardEvent) {
 
 function renderPrev(prevPage: number) {
   const prevButton = itemRender.value(prevPage, 'prev', getItemIcon(prevIcon, 'prev page'));
-  return isValidElement(prevButton) ? cloneVNode(prevButton, { disabled: !hasPrev.value }) : prevButton;
+  return isValidElement(prevButton) ? cloneVNode(prevButton, !hasPrev.value && { disabled: true }) : prevButton;
 }
 
 function renderNext(nextPage: number) {
   const nextButton = itemRender.value(nextPage, 'next', getItemIcon(nextIcon, 'next page'));
-  return isValidElement(nextButton) ? cloneVNode(nextButton, { disabled: !hasNext.value }) : nextButton;
+  return isValidElement(nextButton) ? cloneVNode(nextButton, !hasNext.value && { disabled: true }) : nextButton;
 }
 
 function handleGoTO(event: any) {
@@ -274,8 +274,8 @@ const goButton = computed(() => showQuickJumper && (showQuickJumper as any).goBu
 // ================== Simple ==================
 // FIXME: ts type
 const isReadOnly = computed(() => (typeof simple === 'object' ? simple.readOnly : !simple));
-const gotoButton = (): any => {
-  let result = <Render content={goButton.value}></Render>;
+const gotoButton = () => {
+  let result = goButton.value;
   if (simple) {
     if (goButton.value) {
       if (typeof goButton.value === 'boolean') {
@@ -454,7 +454,7 @@ const prev = () => {
   } else {
     result = <Render content={result}></Render>;
   }
-  return result;
+  return <Render content={result}></Render>;
 };
 
 const next = () => {
@@ -487,7 +487,7 @@ const next = () => {
   } else {
     result = <Render content={result}></Render>;
   }
-  return result;
+  return <Render content={result}></Render>;
 };
 
 const cls = computed(() => {

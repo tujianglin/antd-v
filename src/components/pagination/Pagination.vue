@@ -16,6 +16,7 @@ import type { VueNode } from '@/vc-util/type';
 import { computed, toRefs, type CSSProperties } from 'vue';
 import clsx from 'clsx';
 import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons-vue';
+import { omit } from 'lodash-es';
 
 export type SemanticName = 'root' | 'item';
 export interface PaginationProps
@@ -53,10 +54,12 @@ const {
   size: customizeSize,
   locale: customLocale,
   responsive,
-  showSizeChanger,
+  showSizeChanger = true,
   pageSizeOptions,
   styles,
   classNames: paginationClassNames,
+  onChange,
+  showPrevNextJumpers = true,
   ...restProps
 } = defineProps<PaginationProps>();
 
@@ -109,7 +112,7 @@ const mergedPageSizeOptions = computed(() => {
 
 // Render size changer
 const sizeChangerRender: RcPaginationProps['sizeChangerRender'] = (info) => {
-  const { disabled, size: pageSize, onSizeChange, 'aria-label': ariaLabel, className: sizeChangerClassName, options } = info;
+  const { disabled, size: pageSize, onSizeChange, 'aria-label': ariaLabel, class: sizeChangerClassName, options } = info;
 
   const { class: propSizeChangerClassName, onChange: propSizeChangerOnChange } =
     (mergedShowSizeChangerSelectProps.value as unknown as SelectProps) || {};
@@ -118,11 +121,11 @@ const sizeChangerRender: RcPaginationProps['sizeChangerRender'] = (info) => {
   // So it make the option value must be string
   // Just for compatible
   const selectedValue = options.find((option) => String(option.value) === String(pageSize))?.value;
-
   return (
     <Select
-      {...(mergedShowSizeChangerSelectProps.value as any)}
+      {...omit(mergedShowSizeChangerSelectProps.value as any, ['onChange'])}
       disabled={disabled}
+      allowClear={false}
       showSearch={{}}
       popupMatchSelectWidth={false}
       getPopupContainer={(triggerNode) => triggerNode.parentNode}
@@ -141,7 +144,7 @@ const sizeChangerRender: RcPaginationProps['sizeChangerRender'] = (info) => {
 
 // ============================= Render =============================
 const iconsProps = computed<Record<PropertyKey, VueNode>>(() => {
-  const ellipsis = () => <span class={`${prefixCls.value}-item-ellipsis`}>•••</span>;
+  const Ellipsis = () => <span class={`${prefixCls.value}-item-ellipsis`}>•••</span>;
   const prevIcon = () => (
     <button class={`${prefixCls.value}-item-link`} type="button" tabindex={-1}>
       {direction.value === 'rtl' ? <RightOutlined /> : <LeftOutlined />}
@@ -161,7 +164,7 @@ const iconsProps = computed<Record<PropertyKey, VueNode>>(() => {
         ) : (
           <DoubleLeftOutlined class={`${prefixCls.value}-item-link-icon`} />
         )}
-        {ellipsis}
+        <Ellipsis></Ellipsis>
       </div>
     </a>
   );
@@ -174,7 +177,7 @@ const iconsProps = computed<Record<PropertyKey, VueNode>>(() => {
         ) : (
           <DoubleRightOutlined class={`${prefixCls.value}-item-link-icon`} />
         )}
-        {ellipsis}
+        <Ellipsis></Ellipsis>
       </div>
     </a>
   );
@@ -214,6 +217,7 @@ const mergedStyle = computed<CSSProperties>(() => ({
     v-bind="{ ...restProps, ...iconsProps }"
     v-model:page-size="pageSize"
     v-model:current="current"
+    :show-prev-next-jumpers="showPrevNextJumpers"
     :styles="{ item: { ...contextStyles?.item, ...styles?.item } }"
     :class-names="{
       item: clsx(contextClassNames?.item, paginationClassNames?.item),
@@ -226,5 +230,12 @@ const mergedStyle = computed<CSSProperties>(() => ({
     :page-size-options="mergedPageSizeOptions"
     :show-size-changer="mergedShowSizeChanger"
     :size-changer-render="sizeChangerRender"
+    @change="
+      (val1, val2) => {
+        current = val1;
+        pageSize = val2;
+        onChange?.(val1, val2);
+      }
+    "
   />
 </template>

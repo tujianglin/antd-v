@@ -9,7 +9,7 @@ export type SizeChangerRender = (info: {
   size: number;
   onSizeChange: (value: string | number) => void;
   'aria-label': string;
-  className: string;
+  class: string;
   options: {
     label: string;
     value: string | number;
@@ -56,15 +56,10 @@ const mergeBuildOptionText = computed(() =>
   typeof buildOptionText === 'function' ? buildOptionText : (value: string | number) => `${value} ${locale.items_per_page}`,
 );
 
-const handleChange = (e) => {
-  goInputText.value = e.target.value;
-};
-
 const handleBlur = (e: FocusEvent) => {
   if (goButton() || goInputText.value === '') {
     return;
   }
-  goInputText.value = '';
   if (
     e.relatedTarget &&
     ((e.relatedTarget as HTMLDivElement).className.includes(`${rootPrefixCls}-item-link`) ||
@@ -73,6 +68,7 @@ const handleBlur = (e: FocusEvent) => {
     return;
   }
   quickGo?.(getValidValue.value);
+  goInputText.value = '';
 };
 
 const go = (e: any) => {
@@ -111,7 +107,7 @@ const changeSelect = () => {
         changeSize?.(Number(nextValue));
       },
       'aria-label': locale.page_size,
-      className: `${prefixCls.value}-size-changer`,
+      class: `${prefixCls.value}-size-changer`,
       options: getPageSizeOptions().map((opt) => ({
         label: mergeBuildOptionText.value(opt),
         value: opt,
@@ -147,8 +143,7 @@ const goInput = () => {
         <input
           disabled={disabled}
           type="text"
-          value={goInputText.value}
-          onChange={handleChange}
+          v-model={goInputText.value}
           onKeyup={go}
           onBlur={handleBlur}
           aria-label={locale.page}
