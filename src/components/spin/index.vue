@@ -119,7 +119,7 @@ const spinClassName = computed(() => {
       [`${prefixCls.value}-lg`]: size === 'large',
       [`${prefixCls.value}-spinning`]: spinning.value,
       [`${prefixCls.value}-show-text`]: !!tip,
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
     },
     className,
     !fullscreen && rootClassName,

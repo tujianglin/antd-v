@@ -26,11 +26,11 @@ const Content = () => {
   }
 
   if (position === 'right') {
-    content = assertExtra.right;
+    content = assertExtra?.right;
   }
 
   if (position === 'left') {
-    content = assertExtra.left;
+    content = assertExtra?.left;
   }
   return content;
 };

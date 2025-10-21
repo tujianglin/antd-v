@@ -115,7 +115,7 @@ const inputNumberClass = computed(() => {
     {
       [`${prefixCls.value}-lg`]: mergedSize.value === 'large',
       [`${prefixCls.value}-sm`]: mergedSize.value === 'small',
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
     },
     hashId.value,
     mergedClassNames.value?.input,

@@ -191,7 +191,7 @@ const extendedClassName = computed(() =>
     {
       [`${prefixCls.value}-${align}`]: !!align,
       [`${prefixCls.value}-mini`]: isSmall.value,
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
       [`${prefixCls.value}-bordered`]: token?.value?.wireframe,
     },
     contextClassName?.value,

@@ -160,7 +160,7 @@ const PopupTrigger = (props) => {
     class: clsx(
       `${prefixCls.value}-trigger`,
       {
-        [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+        [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
       },
       child.props?.class,
       props?.class,
@@ -184,7 +184,7 @@ const onInnerOpenChange = (nextOpen: boolean) => {
 // =========================== Overlay ============================
 const overlayClassNameCustomized = computed(() =>
   clsx(hashId.value, cssVarCls.value, rootCls.value, contextClassName?.value, mergedClassNames.value?.root, {
-    [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+    [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
   }),
 );
 

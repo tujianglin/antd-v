@@ -117,7 +117,7 @@ const collapseClassName = computed(() =>
     `${prefixCls.value}-icon-placement-${mergedPlacement.value}`,
     {
       [`${prefixCls.value}-borderless`]: !bordered,
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
       [`${prefixCls.value}-ghost`]: !!ghost,
       [`${prefixCls.value}-${mergedSize.value}`]: mergedSize.value !== 'middle',
     },

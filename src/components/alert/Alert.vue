@@ -198,7 +198,7 @@ const alertCls = computed(() => {
       [`${prefixCls.value}-with-description`]: !!(slots.description || description),
       [`${prefixCls.value}-no-icon`]: !isShowIcon.value,
       [`${prefixCls.value}-banner`]: !!banner,
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
     },
     contextClassName?.value,
     className,

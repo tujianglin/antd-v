@@ -79,7 +79,7 @@ const classes = computed(() =>
     {
       [`${prefixCls.value}-small`]: mergedSize.value === 'small',
       [`${prefixCls.value}-loading`]: loading,
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
     },
     className,
     rootClassName,

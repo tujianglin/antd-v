@@ -113,7 +113,7 @@ const classString = computed(() => {
   return clsx(
     groupPrefixCls.value,
     {
-      [`${groupPrefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${groupPrefixCls.value}-rtl`]: direction?.value === 'rtl',
     },
     className,
     rootClassName,
@@ -139,7 +139,7 @@ defineExpose({
             :prefix-cls="prefixCls"
             :disabled="'disabled' in option ? option.disabled : restProps.disabled"
             :value="option.value"
-            :checked="value.includes(option.value)"
+            :checked="value?.includes(option.value)"
             @change="option.onChange"
             :class="clsx(`${groupPrefixCls}-item`, option.class)"
             :style="option.style"

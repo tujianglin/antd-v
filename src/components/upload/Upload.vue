@@ -447,7 +447,7 @@ const mergedRootCls = computed(() =>
     contextClassNames?.value?.root,
     uploadClassNames?.root,
     {
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
       [`${prefixCls.value}-picture-card-wrapper`]: listType === 'picture-card',
       [`${prefixCls.value}-picture-circle-wrapper`]: listType === 'picture-circle',
     },
@@ -464,7 +464,7 @@ const dragCls = computed(() =>
     [`${prefixCls.value}-drag-uploading`]: mergedFileList.value.some((file) => file.status === 'uploading'),
     [`${prefixCls.value}-drag-hover`]: dragState.value === 'dragover',
     [`${prefixCls.value}-disabled`]: mergedDisabled.value,
-    [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+    [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
   }),
 );
 

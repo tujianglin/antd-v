@@ -192,7 +192,7 @@ const breadcrumbClassName = computed(() =>
     prefixCls.value,
     contextClassName?.value,
     {
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
     },
     className,
     rootClassName,

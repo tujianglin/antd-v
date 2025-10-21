@@ -182,7 +182,7 @@ const mergedClassName = computed(() => {
   return clsx(
     prefixCls.value,
     {
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
       [`${prefixCls.value}-${size.value}`]: !!size.value,
       [`${prefixCls.value}-with-button`]: !!enterButton,
     },

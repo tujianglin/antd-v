@@ -136,7 +136,7 @@ const classString = computed(() =>
       [`${prefixCls.value}-dashed`]: !!dashed,
       [`${prefixCls.value}-${variant}`]: variant !== 'solid',
       [`${prefixCls.value}-plain`]: !!plain,
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
       [`${prefixCls.value}-no-default-orientation-margin-start`]: hasMarginStart.value,
       [`${prefixCls.value}-no-default-orientation-margin-end`]: hasMarginEnd.value,
       [`${prefixCls.value}-${sizeCls.value}`]: !!sizeCls.value,

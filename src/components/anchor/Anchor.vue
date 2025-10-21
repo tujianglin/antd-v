@@ -287,7 +287,7 @@ const wrapperClass = computed(() => {
     `${prefixCls.value}-wrapper`,
     {
       [`${prefixCls.value}-wrapper-horizontal`]: anchorDirection === 'horizontal',
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
     },
     className,
     contextClassName?.value,

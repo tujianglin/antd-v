@@ -94,7 +94,7 @@ const checkboxProps = computed(() => {
       }
     };
     result.name = checkboxGroup.name;
-    result.checked = checkboxGroup.value.includes(value.value);
+    result.checked = checkboxGroup.value?.includes(value.value);
   }
   return { ...restProps, ...result };
 });
@@ -103,7 +103,7 @@ const classString = computed(() => {
   return clsx(
     `${prefixCls.value}-wrapper`,
     {
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
       [`${prefixCls.value}-wrapper-checked`]: checkboxProps.value.checked,
       [`${prefixCls.value}-wrapper-disabled`]: mergedDisabled.value,
     },

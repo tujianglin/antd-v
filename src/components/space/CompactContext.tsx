@@ -42,7 +42,7 @@ export const useCompactItemContext = (prefixCls: Ref<string>, direction: Ref<Dir
       result = clsx(`${prefixCls.value}-compact${separator}item`, {
         [`${prefixCls.value}-compact${separator}first-item`]: compactItemContext.isFirstItem,
         [`${prefixCls.value}-compact${separator}last-item`]: compactItemContext.isLastItem,
-        [`${prefixCls.value}-compact${separator}item-rtl`]: direction.value === 'rtl',
+        [`${prefixCls.value}-compact${separator}item-rtl`]: direction?.value === 'rtl',
       });
     }
     return result;

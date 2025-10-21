@@ -61,7 +61,7 @@ const ribbonCls = computed(() => {
     prefixCls.value,
     `${prefixCls.value}-placement-${placement}`,
     {
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
       [`${prefixCls.value}-color-${color}`]: colorInPreset.value,
     },
     className,

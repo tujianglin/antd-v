@@ -189,7 +189,7 @@ const classString = computed(() =>
       [`${prefixCls.value}-steps`]: steps,
       [`${prefixCls.value}-show-info`]: showInfo,
       [`${prefixCls.value}-${size}`]: typeof size === 'string',
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
     },
     contextClassName?.value,
     className,

@@ -145,7 +145,7 @@ const classString = computed(() =>
       [`${prefixCls.value}-contain-tabs`]: tabList?.length,
       [`${prefixCls.value}-${mergedSize.value}`]: mergedSize?.value,
       [`${prefixCls.value}-type-${type}`]: !!type,
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
     },
     className,
     rootClassName,

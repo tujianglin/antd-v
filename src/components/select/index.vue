@@ -228,7 +228,7 @@ const mergedPopupClassName = computed(() =>
     mergedClassNames?.value?.popup?.root,
     popupClassName,
     {
-      [`${prefixCls.value}-dropdown-${direction.value}`]: direction.value === 'rtl',
+      [`${prefixCls.value}-dropdown-${direction.value}`]: direction?.value === 'rtl',
     },
     rootClassName,
     cssVarCls.value,
@@ -248,7 +248,7 @@ const mergedClassName = computed(() =>
     {
       [`${prefixCls.value}-lg`]: mergedSize.value === 'large',
       [`${prefixCls.value}-sm`]: mergedSize.value === 'small',
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
       [`${prefixCls.value}-${variant.value}`]: enableVariantCls?.value,
       [`${prefixCls.value}-in-form-item`]: isFormItemInput?.value,
     },

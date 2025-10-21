@@ -192,7 +192,7 @@ const badgeClassName = computed(() =>
     {
       [`${prefixCls.value}-status`]: hasStatus.value,
       [`${prefixCls.value}-not-a-wrapper`]: !slots.default,
-      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
     },
     className,
     rootClassName,
