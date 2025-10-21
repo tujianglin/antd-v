@@ -82,7 +82,7 @@
     "tsc-alias": "^1.8.16",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
-    "vite": "^7.1.7",
+    "vite": "^7.1.11",
     "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^3.0.3"
   },
