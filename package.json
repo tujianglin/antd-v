@@ -4,13 +4,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && vue-tsc --project ./tsconfig.build.json",
+    "build": "vite build && vue-tsc --project ./tsconfig.build.json --emitDeclarationOnly && tsc-alias -p tsconfig.build.json",
     "preview": "vite preview",
     "preinstall": "npx only-allow pnpm"
   },
   "exports": {
     ".": {
-      "types": "./dist/typings/index.d.ts",
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.umd.js"
     },
@@ -18,7 +18,7 @@
   },
   "main": "./dist/index.umd.js",
   "module": "./dist/index.js",
-  "types": "./dist/typings/index.d.ts",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "dist"
   ],
@@ -79,6 +79,7 @@
     "stylelint-order": "^7.0.0",
     "stylelint-prettier": "^5.0.3",
     "stylis": "^4.3.6",
+    "tsc-alias": "^1.8.16",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.35.1",
     "vite": "^7.1.7",

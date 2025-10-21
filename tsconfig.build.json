@@ -6,14 +6,18 @@
     "declaration": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
-    "declarationDir": "./dist/typings",
     "lib": ["esnext", "dom", "DOM.Iterable"],
     "moduleResolution": "bundler",
     "target": "esnext",
     "module": "es2015",
     "types": ["@types/node"],
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "outDir": "dist/types",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["src/**/*.test.*"]
