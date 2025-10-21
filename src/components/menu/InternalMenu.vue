@@ -132,7 +132,6 @@ overrideObj.validator?.({ mode });
 // ========================== Click ==========================
 // Tell dropdown that item clicked
 const onItemClick = (e) => {
-  selectedKeys.value = [e.key];
   onClick?.(e);
   overrideObj.onClick?.();
 };

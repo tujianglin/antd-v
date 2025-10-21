@@ -284,8 +284,8 @@ function onMouseout(e: MouseEvent) {
               ...miscStyle,
               ...motionStyle,
               boxSizing: 'border-box',
-              zIndex,
               ...style,
+              zIndex,
             }"
             @mouseenter="onMouseenter"
             @mouseout="onMouseout"

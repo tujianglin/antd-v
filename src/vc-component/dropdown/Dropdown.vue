@@ -39,7 +39,7 @@ export interface DropdownProps
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
-  arrow = false,
+  arrow = undefined,
   prefixCls = 'rc-dropdown',
   transitionName,
   animation,
@@ -51,7 +51,7 @@ const {
   hideAction,
   overlayClassName,
   overlayStyle,
-  visible,
+  visible = undefined,
   trigger = ['hover'],
   autofocus,
   overlay,
@@ -60,7 +60,7 @@ const {
 } = defineProps<DropdownProps>();
 
 const triggerVisible = ref<boolean>();
-const mergedVisible = computed(() => visible || triggerVisible.value);
+const mergedVisible = computed(() => visible ?? triggerVisible.value);
 const mergedMotionName = computed(() => (animation ? `${prefixCls}-${animation}` : transitionName));
 
 const triggerRef = useTemplateRef('triggerRef');

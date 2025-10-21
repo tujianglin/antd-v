@@ -1,6 +1,6 @@
 import KeyCode from '@/vc-util/KeyCode';
 import raf from '@/vc-util/raf';
-import { ref, watch, type Ref } from 'vue';
+import { onBeforeUnmount, shallowRef, watch, type Ref } from 'vue';
 
 const { ESC, TAB } = KeyCode;
 
@@ -13,10 +13,10 @@ interface UseAccessibilityProps {
 }
 
 export default function useAccessibility({ visible, triggerRef, onVisibleChange, autofocus, overlayRef }: UseAccessibilityProps) {
-  const focusMenuRef = ref<boolean>(false);
+  const focusMenuRef = shallowRef<boolean>(false);
 
   const handleCloseMenuAndReturnFocus = () => {
-    if (visible) {
+    if (visible.value) {
       triggerRef.value?.focus?.();
       onVisibleChange?.(false);
     }
@@ -55,16 +55,13 @@ export default function useAccessibility({ visible, triggerRef, onVisibleChange,
   watch(
     () => visible.value,
     () => {
-      if (visible) {
+      if (visible.value) {
         window.addEventListener('keydown', handleKeyDown);
-        if (autofocus) {
+        if (autofocus.value) {
           // FIXME: hack with raf
           raf(focusMenu, 3);
         }
-        return () => {
-          window.removeEventListener('keydown', handleKeyDown);
-          focusMenuRef.value = false;
-        };
+        return () => {};
       }
       return () => {
         focusMenuRef.value = false;
@@ -72,4 +69,12 @@ export default function useAccessibility({ visible, triggerRef, onVisibleChange,
     },
     { immediate: true },
   );
+
+  onBeforeUnmount(() => {
+    if (visible.value) {
+      window.removeEventListener('keydown', handleKeyDown);
+      focusMenuRef.value = false;
+    }
+    focusMenuRef.value = false;
+  });
 }

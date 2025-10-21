@@ -125,7 +125,6 @@ const ReturnNode = () => {
   <Tooltip
     v-if="!disableMenuItemTitleTooltip"
     v-bind="tooltipProps"
-    :open="false"
     :placement="direction === 'rtl' ? 'left' : 'right'"
     :class-names="{ root: `${prefixCls}-inline-collapsed-tooltip` }"
   >

@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, getCurrentInstance, toRefs, type CSSProperties, type VNode } from 'vue';
+import { computed, getCurrentInstance, toRefs, type ComponentInstance, type CSSProperties, type VNode } from 'vue';
 import RcDropdown from '@/vc-component/dropdown';
 import type { MenuProps as RcMenuProps } from '@/vc-component/menu';
 import type { AlignType } from '@/vc-component/trigger';
@@ -10,7 +10,6 @@ import getPlacements from '../_util/placements';
 import { devUseWarning } from '../_util/warning';
 import { useComponentConfig } from '../config-provider/context';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
-import type { MenuProps } from '../menu';
 import Menu from '../menu';
 import { useToken } from '../theme/internal';
 import useStyle from './style';
@@ -33,6 +32,8 @@ export type DropdownArrowOptions = {
 };
 
 type SemanticName = 'root' | 'item' | 'itemTitle' | 'itemIcon' | 'itemContent';
+
+type MenuProps = Partial<ComponentInstance<typeof Menu>['$props']>;
 
 export interface DropdownProps {
   classNames?: Partial<Record<SemanticName, string>>;
@@ -290,7 +291,9 @@ const RenderNode = () => {
       autoDestroy={destroyOnHidden}
     >
       {{
-        default: (props) => <PopupTrigger {...props}> </PopupTrigger>,
+        default: (props) => {
+          return <PopupTrigger {...props}> </PopupTrigger>;
+        },
       }}
     </RcDropdown>
   );

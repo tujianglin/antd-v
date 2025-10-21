@@ -373,8 +373,6 @@ onUpdated(() => {
 });
 
 const internalTriggerOpen = (nextOpen: boolean) => {
-  setMergedOpen(nextOpen);
-
   // Enter or Pointer will both trigger open state change
   // We only need take one to avoid duplicated change event trigger
   // Use `lastTriggerRef` to record last open type
@@ -382,6 +380,7 @@ const internalTriggerOpen = (nextOpen: boolean) => {
     lastTriggerRef.value.push(nextOpen);
     onOpenChange?.(nextOpen);
   }
+  setMergedOpen(nextOpen);
 };
 
 // Trigger for delay

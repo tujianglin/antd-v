@@ -3,7 +3,7 @@ const autoAdjustOverflow = {
   adjustY: 1,
 };
 
-const targetOffset = [0, 0];
+const targetOffset = [0, -4];
 
 const placements = {
   topLeft: {
