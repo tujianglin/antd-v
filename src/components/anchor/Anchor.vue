@@ -6,7 +6,6 @@ import { computed, getCurrentInstance, nextTick, onBeforeUnmount, ref, toRefs, w
 import { Affix } from '..';
 import getScroll from '../_util/getScroll';
 import scrollTo from '../_util/scrollTo';
-import { devUseWarning } from '../_util/warning';
 import type { AffixProps } from '../affix/index.vue';
 import { useComponentConfig, useConfigContextInject } from '../config-provider/context';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
@@ -102,17 +101,6 @@ const {
   classNames: anchorClassNames,
   styles,
 } = defineProps<AnchorProps>();
-
-// =================== Warning =====================
-if (process.env.NODE_ENV !== 'production') {
-  const warning = devUseWarning('Anchor');
-
-  warning(
-    !(anchorDirection === 'horizontal' && items?.some((n) => 'children' in n)),
-    'usage',
-    '`Anchor items#children` is not supported when `Anchor` direction is horizontal.',
-  );
-}
 
 function getDefaultContainer() {
   return window;

@@ -15,21 +15,11 @@ export interface AnchorLinkBaseProps {
   replace?: boolean;
 }
 
-export interface AnchorLinkProps extends AnchorLinkBaseProps {
-  children?: any;
-}
+export interface AnchorLinkProps extends AnchorLinkBaseProps {}
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const {
-  href,
-  title,
-  prefixCls: customizePrefixCls,
-  children,
-  class: className,
-  target,
-  replace,
-} = defineProps<AnchorLinkProps>();
+const { href, title, prefixCls: customizePrefixCls, class: className, target, replace } = defineProps<AnchorLinkProps>();
 
 const {
   registerLink,
@@ -120,6 +110,6 @@ const titleClassName = computed(() =>
     >
       <Render :content="title" />
     </a>
-    <Render v-if="direction !== 'horizontal'" :content="children" />
+    <slot v-if="direction !== 'horizontal'"></slot>
   </div>
 </template>
