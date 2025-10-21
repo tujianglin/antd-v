@@ -382,7 +382,7 @@ const ListNode = () => {
               {typeof optionRender.value === 'function' ? optionRender.value(item, { index: itemIndex }) : content}
             </div>
             {isValidElement(menuItemSelectedIcon.value) || selected}
-            {iconVisible && (
+            {iconVisible && mode.value === 'multiple' && (
               <TransBtn
                 class={`${itemPrefixCls}-option-state`}
                 customizeIcon={menuItemSelectedIcon.value}
