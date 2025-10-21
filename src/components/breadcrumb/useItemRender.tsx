@@ -1,3 +1,5 @@
+import Render from '@/vc-component/render';
+import { isVueNode } from '@/vc-util/Children/util';
 import pickAttrs from '@/vc-util/pickAttrs';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
@@ -16,13 +18,15 @@ function getBreadcrumbName(route: InternalRouteType, params: any) {
     return null;
   }
   const paramsKeys = Object.keys(params).join('|');
-  return typeof route.title === 'object'
-    ? route.title
-    : String(route.title).replace(new RegExp(`:(${paramsKeys})`, 'g'), (replacement, key) => params[key] || replacement);
+  return typeof route.title === 'string' || typeof route.title === 'number' ? (
+    String(route.title).replace(new RegExp(`:(${paramsKeys})`, 'g'), (replacement, key) => params[key] || replacement)
+  ) : (
+    <Render content={route.title}></Render>
+  );
 }
 
 export function renderItem(prefixCls: string, item: ItemType, children: VueNode, href?: string) {
-  if (children === null || children === undefined) {
+  if (!isVueNode(children)) {
     return null;
   }
 
@@ -39,13 +43,13 @@ export function renderItem(prefixCls: string, item: ItemType, children: VueNode,
   if (href !== undefined) {
     return (
       <a {...passedProps} class={clsx(`${prefixCls}-link`, className)} href={href}>
-        {children}
+        <Render content={children}></Render>
       </a>
     );
   }
   return (
     <span {...passedProps} class={clsx(`${prefixCls}-link`, className)}>
-      {children}
+      <Render content={children}></Render>
     </span>
   );
 }

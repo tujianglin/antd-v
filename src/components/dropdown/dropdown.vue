@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, getCurrentInstance, toRefs, useSlots, type CSSProperties, type VNode } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties, type VNode } from 'vue';
 import RcDropdown from '@/vc-component/dropdown';
 import type { MenuProps as RcMenuProps } from '@/vc-component/menu';
 import type { AlignType } from '@/vc-component/trigger';
@@ -51,13 +51,10 @@ export interface DropdownProps {
   align?: AlignType;
   getPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
   prefixCls?: string;
-  className?: string;
+  class?: string;
   rootClassName?: string;
   transitionName?: string;
   placement?: Placement;
-  /** @deprecated please use `classNames.root` instead.*/
-  overlayClassName?: string;
-  /** @deprecated please use `styles.root` instead.*/
   overlayStyle?: CSSProperties;
   forceRender?: boolean;
   mouseEnterDelay?: number;
@@ -86,7 +83,10 @@ const {
   styles,
   destroyOnHidden,
 } = defineProps<DropdownProps>();
-const slots = useSlots();
+
+const slots = defineSlots<{
+  default?: () => VNode[];
+}>();
 
 const _Placements = ['topLeft', 'topCenter', 'topRight', 'bottomLeft', 'bottomCenter', 'bottomRight', 'top', 'bottom'] as const;
 
@@ -271,8 +271,8 @@ const vm = getCurrentInstance();
 const RenderNode = () => {
   let renderNode = (
     <RcDropdown
+      {...omit(vm.props, ['rootClassName', 'onOpenChange', 'onVisibleChange'])}
       alignPoint={alignPoint.value}
-      {...omit(vm.props, ['rootClassName', 'onOpenChange'])}
       mouseEnterDelay={mouseEnterDelay}
       mouseLeaveDelay={mouseLeaveDelay}
       visible={mergedOpen.value}

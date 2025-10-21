@@ -118,13 +118,9 @@ const mergedProps = computed(() => {
 });
 
 // ========================= Style ==========================
-const [mergedClassNames, mergedStyles] = useMergeSemantic<
-  BreadcrumbClassNamesType<T>,
-  BreadcrumbStylesType<T>,
-  BreadcrumbProps<T>
->(
-  computed(() => [contextClassNames?.value as any, breadcrumbClassNames]),
-  computed(() => [contextStyles?.value as any, styles]),
+const [mergedClassNames, mergedStyles] = useMergeSemantic(
+  computed(() => [contextClassNames?.value, breadcrumbClassNames]),
+  computed(() => [contextStyles?.value, styles]),
   undefined,
   computed(() => ({
     props: mergedProps.value,

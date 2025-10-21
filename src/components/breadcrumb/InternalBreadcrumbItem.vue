@@ -8,6 +8,7 @@ import { DownOutlined } from '@ant-design/icons-vue';
 import Render from '@/vc-component/render';
 import BreadcrumbSeparator from './BreadcrumbSeparator.vue';
 import type { BreadcrumbItemProps } from './BreadcrumbItem.vue';
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -28,7 +29,11 @@ const renderBreadcrumbNode = (breadcrumbItem: VueNode) => {
         let mergedLabel: VueNode = label ?? title;
 
         if (path) {
-          mergedLabel = <a href={`${href}${path}`}>{mergedLabel}</a>;
+          mergedLabel = (
+            <a href={`${href}${path}`}>
+              <Render content={mergedLabel}></Render>
+            </a>
+          );
         }
         return {
           ...itemProps,
@@ -41,7 +46,7 @@ const renderBreadcrumbNode = (breadcrumbItem: VueNode) => {
     return (
       <Dropdown placement="bottom" {...mergeDropDownProps}>
         <span class={`${prefixCls}-overlay-link`}>
-          {breadcrumbItem}
+          <Render content={breadcrumbItem}></Render>
           <DownOutlined />
         </span>
       </Dropdown>
@@ -52,7 +57,7 @@ const renderBreadcrumbNode = (breadcrumbItem: VueNode) => {
 
 const slots = useSlots();
 
-const link = computed(() => renderBreadcrumbNode(slots.default?.()));
+const link = computed(() => renderBreadcrumbNode(flattenChildren(slots.default?.())));
 </script>
 <template>
   <template v-if="link !== undefined && link !== null">
