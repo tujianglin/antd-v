@@ -105,7 +105,7 @@ const accessibilityProps = computed(() => {
     result.role = 'button';
     result.tabindex = 0;
     result.onClick = (e) => {
-      onItemClick.value?.(e);
+      onItemClick?.value?.(e);
       onClick(index);
     };
 

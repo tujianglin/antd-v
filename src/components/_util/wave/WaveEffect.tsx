@@ -23,7 +23,7 @@ const WaveEffect = defineComponent({
     component: String,
     registerUnmount: Function as PropType<() => UnmountType | null>,
     colorSource: {
-      type: Object as PropType<WaveProps['colorSource']>,
+      type: String as PropType<WaveProps['colorSource']>,
     },
   },
   setup(props) {

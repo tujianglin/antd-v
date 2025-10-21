@@ -11,7 +11,7 @@ import PanelArrow from './PanelArrow.vue';
 import ProgressIcon from './ProgressIcon.vue';
 import useStyle from './style';
 import type { VueNode } from '@/vc-util/type';
-import { computed, toRefs, type CSSProperties } from 'vue';
+import { computed, toRefs, type CSSProperties, type VNode } from 'vue';
 import { useInternalContextInject } from './context';
 import { isEmpty } from 'lodash-es';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons-vue';
@@ -21,10 +21,10 @@ import clsx from 'clsx';
 
 type RcIconRenderTypeInfo = Parameters<NonNullable<RcStepsProps['iconRender']>>[1];
 
-export type IconRenderType = (
-  oriNode: VueNode,
-  info: Pick<RcIconRenderTypeInfo, 'index' | 'active' | 'item' | 'components'>,
-) => VueNode;
+export type IconRenderType = (props: {
+  iconNode: VueNode;
+  info: Pick<RcIconRenderTypeInfo, 'index' | 'active' | 'item' | 'components'>;
+}) => VueNode;
 
 interface StepItem {
   class?: string;
@@ -114,11 +114,17 @@ const {
   onChange,
 
   // Render
-  iconRender,
+  iconRender: defaultIconRender,
 
   // MISC
   ...restProps
 } = defineProps<StepsProps>();
+
+const slots = defineSlots<{
+  iconRender: (props: Parameters<IconRenderType>[0]) => VNode[];
+}>();
+
+const iconRender = computed(() => slots.iconRender || defaultIconRender);
 
 const waveEffectClassNames: StepsProps['classNames'] = {
   itemIcon: TARGET_CLS,
@@ -251,12 +257,15 @@ const internalIconRender: RcStepsProps['iconRender'] = (_, info) => {
   );
 
   // Custom Render Props
-  if (iconRender) {
-    iconNode = iconRender(iconNode, {
-      index,
-      active,
-      item,
-      components: { Icon: StepIcon },
+  if (iconRender.value) {
+    iconNode = iconRender.value({
+      iconNode,
+      info: {
+        index,
+        active,
+        item,
+        components: { Icon: StepIcon },
+      },
     });
   } else if (typeof legacyProgressDotRender.value === 'function') {
     iconNode = (legacyProgressDotRender.value as any)?.(iconNode, {

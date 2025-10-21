@@ -5,6 +5,7 @@ import { StepsContextProvider, type StepsContextProps } from './Context';
 import type StepIcon from './StepIcon.vue';
 import clsx from 'clsx';
 import Render from '@/vc-component/render';
+import type { VueNode } from '@/vc-util/type';
 
 export type Status = 'error' | 'process' | 'finish' | 'wait';
 
@@ -39,12 +40,10 @@ export type StepItem = {
 export type StepIconRender = (info: {
   index: number;
   status: Status;
-  title: any;
-  // @deprecated Please use `content` instead.
-  description: any;
-  content: any;
-  node: any;
-}) => any;
+  title: VueNode;
+  content: VueNode;
+  node: VueNode;
+}) => VueNode;
 
 export type RenderInfo = {
   index: number;
@@ -68,8 +67,8 @@ export interface StepsProps {
   // a11y
   /** Internal usage of antd. Do not deps on this. */
   components?: {
-    root?: any;
-    item?: any;
+    root?: VueNode;
+    item?: VueNode;
   };
 
   // data
@@ -81,15 +80,15 @@ export interface StepsProps {
 
   // render
   iconRender?: (
-    originNode: any,
+    originNode: VueNode,
     info: RenderInfo & {
       components: {
         Icon: typeof StepIcon;
       };
     },
   ) => any;
-  itemRender?: (originNode: any, info: RenderInfo) => any;
-  itemWrapperRender?: (originNode: any) => any;
+  itemRender?: (originNode: VueNode, VueNode: RenderInfo) => VueNode;
+  itemWrapperRender?: (originNode: VueNode) => VueNode;
 }
 
 const {

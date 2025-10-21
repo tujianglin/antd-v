@@ -23,13 +23,15 @@ const dashArray = computed(() => `calc(var(--progress-r) * 2 * ${(Math.PI * perc
     width="100%"
     height="100%"
     xmlns="http://www.w3.org/2000/svg"
-    aria-valuemax="{100}"
-    aria-valuemin="{0}"
-    aria-valuenow="{percent}"
+    :aria-valuemax="100"
+    :aria-valuemin="0"
+    :aria-valuenow="percent"
   >
     <title>Progress</title>
     <circle :class="clsx(circleCls, `${circleCls}-rail`)" />
-    <circle :class="clsx(circleCls, `${circleCls}-ptg`)" :strokeDasharray="dashArray" transform="rotate(-90 50 50)" />
+    <circle :class="clsx(circleCls, `${circleCls}-ptg`)" :stroke-dasharray="dashArray" transform="rotate(-90 50 50)" />
   </svg>
   <slot></slot>
 </template>
+
+<style scoped></style>
