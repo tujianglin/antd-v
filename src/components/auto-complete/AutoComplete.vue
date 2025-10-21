@@ -1,4 +1,6 @@
 <script lang="tsx" setup>
+import { isValidElement } from '@/vc-util/Children/util';
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
@@ -41,10 +43,30 @@ const {
   classNames,
 } = defineProps<AutoCompleteProps>();
 
+const slots = defineSlots<{
+  default: () => VueNode[];
+}>();
+
 type SemanticName = 'root' | 'prefix' | 'input';
 type PopupSemantic = 'root' | 'listItem' | 'list';
 
+function isSelectOptionOrSelectOptGroup(child: any): boolean {
+  return child?.type && (child.type.isSelectOption || child.type.isSelectOptGroup);
+}
+
 const { getPrefixCls } = toRefs(useConfigContextInject());
+
+// ============================= Input =============================
+const customizeInput = computed(() => {
+  const childNodes = flattenChildren(slots.default?.());
+  let result;
+  if (childNodes.length === 1 && isValidElement(childNodes[0]) && !isSelectOptionOrSelectOptGroup(childNodes[0])) {
+    [result] = childNodes;
+  }
+  return result;
+});
+
+const getInputElement = computed(() => (customizeInput.value ? () => customizeInput.value! : undefined));
 
 const prefixCls = computed(() => getPrefixCls.value('select', customizePrefixCls));
 
@@ -75,5 +97,6 @@ const mergedStyles = computed(() => ({
     :styles="mergedStyles"
     :mode="Select.SECRET_COMBOBOX_MODE_DO_NOT_USE as SelectProps['mode']"
     @popup-visible-change="onOpenChange"
+    :get-input-element="getInputElement"
   />
 </template>

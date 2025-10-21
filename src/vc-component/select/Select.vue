@@ -475,7 +475,7 @@ const OMIT_DOM_PROPS = ['inputValue'];
 <template>
   <SelectContextProvider :value="selectContext">
     <BaseSelect
-      v-bind="restProps"
+      v-bind="{ ...restProps, ...$attrs }"
       v-model:open="open"
       show-scroll-bar="optional"
       :id="mergedId"
