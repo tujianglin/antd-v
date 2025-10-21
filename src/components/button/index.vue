@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, toRefs, useAttrs, watch } from 'vue';
+import { computed, getCurrentInstance, onBeforeUnmount, onMounted, ref, toRefs, useAttrs, watch, watchEffect } from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import { Wave } from '../_util/wave';
 import { useConfigContextInject } from '../config-provider';
@@ -9,7 +9,7 @@ import { useComponentConfig } from '../config-provider/context';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import useSize from '../config-provider/hooks/useSize';
 import { useCompactItemContext } from '../space/CompactContext';
-import { ButtonTypeMap, getLoadingConfig, isUnBorderedButtonVariant, spaceChildren } from './buttonHelpers';
+import { ButtonTypeMap, getLoadingConfig, isTwoCNChar, isUnBorderedButtonVariant, spaceChildren } from './buttonHelpers';
 import type {
   BaseButtonProps,
   ButtonClassNamesType,
@@ -31,12 +31,12 @@ defineOptions({ name: 'Button', inheritAttrs: false, compatConfig: { MODE: 3 } }
 
 const {
   _skipSemantic,
-  loading = false,
+  loading = undefined,
   prefixCls: customizePrefixCls,
   color,
   variant,
   type = 'default',
-  danger = false,
+  danger = undefined,
   shape: customizeShape,
   size: customizeSize,
   disabled: customDisabled,
@@ -44,14 +44,14 @@ const {
   rootClassName,
   icon,
   iconPosition = 'start',
-  ghost = false,
-  block = false,
+  ghost = undefined,
+  block = undefined,
   htmlType = 'button',
   classNames: buttonClassNames,
   styles,
   style: customStyle = {},
-  autoInsertSpace = false,
-  autofocus = false,
+  autoInsertSpace = undefined,
+  autofocus = undefined,
   onClick,
   ...rest
 } = defineProps<ButtonProps>();
@@ -113,7 +113,7 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('button'));
 
-const mergedInsertSpace = computed(() => autoInsertSpace ?? contextAutoInsertSpace.value ?? true);
+const mergedInsertSpace = computed(() => autoInsertSpace ?? contextAutoInsertSpace?.value ?? true);
 
 const prefixCls = computed(() => getPrefixCls.value('btn', customizePrefixCls));
 
@@ -125,13 +125,6 @@ const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 const loadingOrDelay = computed((): LoadingConfigType => getLoadingConfig(loading));
 
 const innerLoading = ref(false);
-watch(
-  loadingOrDelay,
-  (val) => {
-    innerLoading.value = val.loading;
-  },
-  { immediate: true, deep: true },
-);
 
 const hasTwoCNChar = ref(false);
 
@@ -145,24 +138,53 @@ const needInserted = computed(
 // Record for mount status.
 // This will help to no to show the animation of loading on the first mount.
 const isMountRef = ref(true);
+
+let delayTimer: ReturnType<typeof setTimeout> | null = null;
+watch(
+  loadingOrDelay,
+  (val) => {
+    if (val.delay > 0) {
+      delayTimer = setTimeout(() => {
+        delayTimer = null;
+        innerLoading.value = true;
+      }, val.delay);
+    } else {
+      innerLoading.value = val.loading;
+    }
+  },
+  { immediate: true, deep: true },
+);
+
+// Two chinese characters check
+watchEffect(() => {
+  // FIXME: for HOC usage like <FormatMessage />
+  if (!buttonRef.value || !mergedInsertSpace.value) {
+    return;
+  }
+  const buttonText = buttonRef.value.textContent.trim() || '';
+  if (needInserted.value && isTwoCNChar(buttonText)) {
+    if (!hasTwoCNChar.value) {
+      hasTwoCNChar.value = true;
+    }
+  } else if (hasTwoCNChar.value) {
+    hasTwoCNChar.value = false;
+  }
+});
+
 onMounted(() => {
   isMountRef.value = false;
+  if (autofocus && buttonRef.value) {
+    buttonRef.value?.focus();
+  }
 });
 
 onBeforeUnmount(() => {
   isMountRef.value = true;
+  if (delayTimer) {
+    clearTimeout(delayTimer);
+    delayTimer = null;
+  }
 });
-
-watch(
-  () => autofocus,
-  async (val) => {
-    await nextTick();
-    if (val) {
-      buttonRef.value?.focus();
-    }
-  },
-  { immediate: true },
-);
 
 const handleClick = (e) => {
   if (innerLoading.value || mergedDisabled.value) {
@@ -250,7 +272,7 @@ const iconSharedProps = computed(() => ({
   style: mergedStyles?.value?.icon,
 }));
 
-const mergedRef = useComposeRef();
+const mergedRef = useComposeRef({}, buttonRef);
 
 const iconNode = () => {
   return iconSlot.value && !innerLoading.value ? (

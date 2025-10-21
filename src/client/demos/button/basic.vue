@@ -1,6 +1,7 @@
+<script lang="tsx" setup>
 import { Button, Flex } from '@/components';
-
-const App = () => (
+</script>
+<template>
   <Flex gap="small" wrap>
     <Button type="primary">Primary Button</Button>
     <Button>Default Button</Button>
@@ -8,6 +9,4 @@ const App = () => (
     <Button type="text">Text Button</Button>
     <Button type="link">Link Button</Button>
   </Flex>
-);
-
-export default App;
+</template>
