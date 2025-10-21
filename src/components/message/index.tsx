@@ -1,9 +1,9 @@
-import { render } from '@/vc-util/Dom/render';
 import type { VueKey } from '@/vc-util/type';
 import { computed, defineComponent, onMounted, ref, toRefs, type PropType } from 'vue';
 import { useAppConfigContextInject } from '../app/context';
 import ConfigProvider, { useConfigContextInject } from '../config-provider';
 import { globalConfig } from '../config-provider/global';
+import { unstableSetRender } from '../config-provider/UnstableContext';
 import type { ArgsProps, ConfigOptions, MessageInstance, MessageType, NoticeType, TypeOpen } from './interface';
 import PurePanel from './PurePanel.vue';
 import useMessage, { useInternalMessage } from './useMessage';
@@ -145,8 +145,9 @@ const flushMessageQueue = () => {
     message = newMessage;
 
     // Delay render to avoid sync issue
+    const reactRender = unstableSetRender();
     act(() => {
-      render(
+      reactRender(
         () => (
           <GlobalHolderWrapper
             ref={(node) => {

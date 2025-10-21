@@ -99,9 +99,11 @@ export default function confirm(config: ModalFuncProps) {
       const reactRender = unstableSetRender();
 
       reactUnmount = reactRender(
-        <ConfigProvider prefixCls={rootPrefixCls} iconPrefixCls={iconPrefixCls} theme={theme}>
-          {global.holderRender ? global.holderRender(dom) : dom}
-        </ConfigProvider>,
+        () => (
+          <ConfigProvider prefixCls={rootPrefixCls} iconPrefixCls={iconPrefixCls} theme={theme}>
+            {global.holderRender ? global.holderRender(dom) : dom}
+          </ConfigProvider>
+        ),
         container,
       );
     });

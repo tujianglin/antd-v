@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import { toRefs, type VNode } from 'vue';
-import { Empty } from '../empty';
+import Empty from '../empty';
 import { useConfigContextInject } from './context';
 
 export type RenderEmptyHandler = (componentName?: ComponentName) => VNode;

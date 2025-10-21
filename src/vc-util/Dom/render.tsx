@@ -12,7 +12,7 @@ export function render(component: Component, container: ContainerType, props?: R
   let mountEl: HTMLElement;
   if (container instanceof DocumentFragment) {
     mountEl = document.createElement('div');
-    container.appendChild(mountEl);
+    document.body.appendChild(mountEl);
   } else {
     mountEl = container as HTMLElement;
   }

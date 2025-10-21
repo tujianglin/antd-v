@@ -1,9 +1,12 @@
+export type { Breakpoint } from './_util/responsiveObserver';
 export { default as Affix } from './affix';
 export type { AffixProps, AffixRef } from './affix';
 export { default as Alert } from './alert';
 export type { AlertProps } from './alert';
 export { default as Anchor } from './anchor';
 export type { AnchorLinkProps, AnchorProps } from './anchor';
+export { default as App } from './app';
+export type { AppProps } from './app';
 export { default as AutoComplete } from './auto-complete';
 export type { AutoCompleteProps } from './auto-complete';
 export { default as Avatar } from './avatar';
@@ -13,14 +16,16 @@ export type { BadgeProps } from './badge';
 export { default as Breadcrumb } from './breadcrumb';
 export type { BreadcrumbProps } from './breadcrumb';
 export { default as Button } from './button';
+export type { ButtonProps } from './button';
 export { default as Calendar } from './calendar';
 export type { CalendarMode, CalendarProps } from './calendar';
 export { default as Card } from './card';
 export type { CardProps } from './card';
 export { default as Cascader } from './cascader';
-export type { CascaderAutoProps, CascaderPanelAutoProps, CascaderPanelProps, CascaderProps } from './cascader';
+export type { CascaderAutoProps, CascaderProps } from './cascader';
+export type { CascaderPanelAutoProps, CascaderPanelProps } from './cascader/Panel.vue';
 export { default as Checkbox } from './checkbox';
-export type { CheckboxProps } from './checkbox';
+export type { CheckboxChangeEvent, CheckboxProps, CheckboxRef } from './checkbox';
 export { default as Col } from './col';
 export type { ColProps } from './col';
 export { default as Collapse } from './collapse';
@@ -38,14 +43,23 @@ export type { DividerProps } from './divider';
 export { default as Drawer } from './drawer';
 export type { DrawerProps } from './drawer';
 export { default as Dropdown } from './dropdown';
-export type { DropdownProps } from './dropdown';
+export type {
+  // typo, but we need to support it for backwards compatibility
+  // https://github.com/ant-design/ant-design/pull/35161
+  DropdownProps as DropDownProps,
+  DropdownProps,
+} from './dropdown';
+export { default as Empty } from './empty';
+export type { EmptyProps } from './empty';
 export { default as Flex } from './flex';
-export type { FlexProps } from './flex';
+export type { FlexProps } from './flex/interface';
 export { default as FloatButton } from './float-button';
+export type { FloatButtonGroupProps, FloatButtonProps, FloatButtonRef } from './float-button';
 export { default as Grid } from './grid';
 export { default as Image } from './image';
 export type { ImageProps } from './image';
 export { default as Input } from './input';
+export type { InputProps, InputRef } from './input';
 export { default as InputNumber } from './input-number';
 export type { InputNumberProps } from './input-number';
 export { default as Layout } from './layout';
@@ -71,7 +85,7 @@ export type { ProgressProps } from './progress';
 export { default as QRCode } from './qrcode';
 export type { QRCodeProps, QRPropsCanvas, QRPropsSvg } from './qrcode/interface';
 export { default as Radio } from './radio';
-export type { RadioProps } from './radio';
+export type { RadioChangeEvent, RadioGroupProps, RadioProps } from './radio';
 export { default as Rate } from './rate';
 export type { RateProps } from './rate';
 export { default as Result } from './result';
@@ -120,5 +134,9 @@ export { default as TreeSelect } from './tree-select';
 export type { TreeSelectProps } from './tree-select';
 export { default as Upload } from './upload';
 export type { DraggerProps, UploadFile, UploadProps } from './upload';
+export { default as version } from './version';
 export { default as Watermark } from './watermark';
 export type { WatermarkProps } from './watermark';
+
+// TODO: Remove in v6
+export { unstableSetRender } from './config-provider/UnstableContext';
