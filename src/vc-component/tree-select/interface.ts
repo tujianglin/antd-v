@@ -1,5 +1,5 @@
 import type { DataNode as TreeDataNode } from '@/vc-component/tree/interface';
-import type { VueKey } from '@/vc-util/type';
+import type { VueKey, VueNode } from '@/vc-util/type';
 
 export type { VueKey };
 
@@ -14,7 +14,7 @@ export type SelectSource = 'option' | 'selection' | 'input' | 'clear';
 export interface LabeledValueType {
   key?: VueKey;
   value?: VueKey;
-  label?: any;
+  label?: VueNode;
   /** Only works on `treeCheckStrictly` */
   halfChecked?: boolean;
 }

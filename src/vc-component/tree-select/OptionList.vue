@@ -72,7 +72,7 @@ const {
 
 const treeRef = useTemplateRef('treeRef');
 
-const memoTreeData = computed(() => treeData?.value as TreeProps['treeData']);
+const memoTreeData = computed(() => (treeData?.value || []) as TreeProps['treeData']);
 
 // ========================== Values ==========================
 const mergedCheckedKeys = computed(() => {

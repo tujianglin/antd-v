@@ -43,7 +43,7 @@ export interface SearchConfig {
 export interface TreeSelectProps<ValueType = any, OptionType extends DataNode = DataNode>
   extends Omit<BaseSelectPropsWithoutPrivate, 'mode' | 'classNames' | 'styles' | 'showSearch'> {
   prefixCls?: string;
-  id?: string;
+  id?: string | number;
   styles?: Partial<Record<SemanticName, CSSProperties>> & {
     popup?: Partial<Record<PopupSemantic, CSSProperties>>;
   };
@@ -604,7 +604,7 @@ defineExpose({
         :search-value="mergedSearchValue"
         @search="onInternalSearch"
         :-option-list="OptionList"
-        :empty-options="!mergedTreeData.length"
+        :empty-options="!mergedTreeData?.length"
         @popup-visible-change="onInternalPopupVisibleChange"
         :popup-match-select-width="popupMatchSelectWidth"
       />

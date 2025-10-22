@@ -34,7 +34,7 @@ const SwitcherIconCom = (props: SwitcherIconProps) => {
     }
 
     if (typeof showLeafIcon !== 'boolean' && !!showLeafIcon) {
-      const leafIcon = typeof showLeafIcon === 'function' ? showLeafIcon(treeNodeProps) : showLeafIcon;
+      const leafIcon = typeof showLeafIcon === 'function' ? (showLeafIcon as any)(treeNodeProps) : showLeafIcon;
       const leafCls = `${prefixCls}-switcher-line-custom-icon`;
 
       if (isValidElement(leafIcon)) {
@@ -55,7 +55,7 @@ const SwitcherIconCom = (props: SwitcherIconProps) => {
 
   const switcherCls = `${prefixCls}-switcher-icon`;
 
-  const switcher = typeof switcherIcon === 'function' ? switcherIcon(treeNodeProps) : switcherIcon;
+  const switcher = typeof switcherIcon === 'function' ? (switcherIcon as any)(treeNodeProps) : switcherIcon;
 
   if (isValidElement(switcher)) {
     return cloneElement(switcher, {

@@ -21,7 +21,7 @@ export interface TreeNodeProps<TreeDataType extends BasicDataNode = DataNode> {
   prefixCls?: string;
   class?: string;
   style?: CSSProperties;
-  id?: string;
+  id?: string | number;
 
   // By parent
   expanded?: boolean;

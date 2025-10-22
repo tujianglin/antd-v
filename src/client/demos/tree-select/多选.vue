@@ -1,9 +1,6 @@
 <script lang="tsx" setup>
 import { TreeSelect } from '@/components';
-import { SmileOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
-
-const icon = <SmileOutlined />;
 const treeData = [
   {
     value: 'parent 1',
@@ -15,11 +12,27 @@ const treeData = [
         children: [
           {
             value: 'leaf1',
-            title: 'my leaf',
+            title: 'leaf1',
           },
           {
             value: 'leaf2',
-            title: 'your leaf',
+            title: 'leaf2',
+          },
+          {
+            value: 'leaf3',
+            title: 'leaf3',
+          },
+          {
+            value: 'leaf4',
+            title: 'leaf4',
+          },
+          {
+            value: 'leaf5',
+            title: 'leaf5',
+          },
+          {
+            value: 'leaf6',
+            title: 'leaf6',
           },
         ],
       },
@@ -28,8 +41,8 @@ const treeData = [
         title: 'parent 1-1',
         children: [
           {
-            value: 'sss',
-            title: <b style={{ color: '#08c' }}>sss</b>,
+            value: 'leaf11',
+            title: <b style={{ color: '#08c' }}>leaf11</b>,
           },
         ],
       },
@@ -37,38 +50,21 @@ const treeData = [
   },
 ];
 
-const value = ref();
+const value = ref<string>();
 </script>
 <template>
   <TreeSelect
     show-search
-    :suffix-icon="icon"
     class="!w-full"
     v-model:value="value"
     :styles="{
       popup: {
-        root: { maxHeight: `${400}px`, overflow: 'auto' },
+        root: { maxHeight: '400px', overflow: 'auto' },
       },
     }"
     placeholder="Please select"
     allow-clear
-    tree-default-expand-all
-    :tree-data="treeData"
-  />
-  <br />
-  <br />
-  <TreeSelect
-    show-search
-    prefix="Prefix"
-    class="!w-full"
-    v-model:value="value"
-    :styles="{
-      popup: {
-        root: { maxHeight: `${400}px`, overflow: 'auto' },
-      },
-    }"
-    placeholder="Please select"
-    allow-clear
+    multiple
     tree-default-expand-all
     :tree-data="treeData"
   />
