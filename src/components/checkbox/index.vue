@@ -103,7 +103,7 @@ const classString = computed(() => {
   return clsx(
     `${prefixCls.value}-wrapper`,
     {
-      [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
+      [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
       [`${prefixCls.value}-wrapper-checked`]: checkboxProps.value.checked,
       [`${prefixCls.value}-wrapper-disabled`]: mergedDisabled.value,
     },

@@ -52,7 +52,7 @@ const {
 } = defineProps<CheckboxGroupProps>();
 
 const { getPrefixCls, direction } = toRefs(useConfigContextInject());
-const value = defineModel<InternalCheckboxValueType[]>('value');
+const value = defineModel<InternalCheckboxValueType[]>('value', { default: [] });
 const registeredValues = ref([]);
 const domRef = useTemplateRef('domRef');
 
@@ -74,7 +74,7 @@ const registerValue: CheckboxGroupContext['registerValue'] = (val) => {
 };
 
 const toggleOption: CheckboxGroupContext['toggleOption'] = (option) => {
-  const optionIndex = value.value.indexOf(option.value);
+  const optionIndex = value?.value?.indexOf(option.value);
   const newValue = [...value.value];
   if (optionIndex === -1) {
     newValue.push(option.value);
