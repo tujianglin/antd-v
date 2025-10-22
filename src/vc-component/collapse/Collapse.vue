@@ -63,8 +63,8 @@ const onItemClick = (key: VueKey) => {
   activeKey.value = [...activeKey.value, key];
 };
 
-const mergedChildren = () => {
-  return useItems(items, {
+const mergedChildren = computed(() =>
+  useItems(items, {
     prefixCls,
     accordion,
     openMotion,
@@ -75,8 +75,8 @@ const mergedChildren = () => {
     activeKey: activeKey.value,
     classNames: customizeClassNames,
     styles,
-  });
-};
+  }),
+);
 </script>
 <template>
   <div

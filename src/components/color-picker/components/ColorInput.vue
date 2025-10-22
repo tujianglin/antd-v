@@ -56,6 +56,7 @@ const inputProps = computed(() => ({ value, prefixCls, onChange }));
       :class="`${prefixCls}-format-select`"
       size="small"
       :options="selectOptions"
+      :allow-clear="false"
     />
     <div :class="colorInputPrefixCls">
       <ColorHsbInput v-if="colorFormat === FORMAT_HSB" v-bind="inputProps" />
