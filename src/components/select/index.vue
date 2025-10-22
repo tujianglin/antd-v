@@ -103,7 +103,7 @@ const {
   popupMatchSelectWidth = true,
   direction: propDirection,
   style,
-  allowClear = true,
+  allowClear = undefined,
   variant: customizeVariant,
   popupStyle,
   transitionName,

@@ -52,7 +52,6 @@ const {
   listHeight = 200,
   listItemHeight = 20,
   labelRender,
-
   // Value
   labelInValue,
   onChange,

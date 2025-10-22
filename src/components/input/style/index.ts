@@ -758,7 +758,7 @@ const genRangeStyle: GenerateStyle<InputToken> = (token) => {
   return {
     [`${componentCls}-out-of-range`]: {
       [`&, & input, & textarea, ${componentCls}-show-count-suffix, ${componentCls}-data-count`]: {
-        color: token.colorError,
+        color: `${token.colorError} !important`,
       },
     },
   };

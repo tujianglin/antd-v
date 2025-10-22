@@ -9,6 +9,7 @@ import { BaseInput } from '../input';
 import ResizableTextArea from './ResizableTextArea.vue';
 import type { HolderRef } from '../input/BaseInput.vue';
 import findDOMNode from '@/vc-util/Dom/findDOMNode';
+import type { VueNode } from '@/vc-util/type';
 
 defineOptions({ inheritAttrs: false });
 
@@ -163,7 +164,7 @@ function handleReset(e: MouseEvent) {
 
 const suffixNode = computed(() => {
   let suffixNode = suffix;
-  let dataCount;
+  let dataCount: VueNode;
   if (countConfig.show) {
     if (countConfig.showFormatter) {
       dataCount = countConfig.showFormatter({
@@ -172,9 +173,8 @@ const suffixNode = computed(() => {
         maxlength: mergedMax.value,
       });
     } else {
-      dataCount = `${valueLength.value}${hasMaxLength.value ? ` / ${mergedMax.value}` : ''}`;
+      dataCount = `${valueLength.value || 0}${hasMaxLength.value ? ` / ${mergedMax.value}` : ''}`;
     }
-
     suffixNode = (
       <>
         <Render content={suffixNode}></Render>

@@ -175,6 +175,7 @@ const button = computed(() => {
   if (addonAfterSlot.value) {
     button = [button, cloneVNode(<Render content={addonAfterSlot.value}></Render>, { key: 'addonAfter' })];
   }
+  console.log(enterButton, searchIcon.value);
   return button;
 });
 

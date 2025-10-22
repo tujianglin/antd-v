@@ -123,10 +123,10 @@ export const FormItemPrefixContextProvider = defineComponent({
 export interface FormItemStatusContextProps {
   isFormItemInput?: boolean;
   status?: ValidateStatus;
-  errors?: VueKey[];
-  warnings?: VueKey[];
+  errors?: VueNode[];
+  warnings?: VueNode[];
   hasFeedback?: boolean;
-  feedbackIcon?: VueKey;
+  feedbackIcon?: VueNode;
   name?: any;
 }
 

@@ -15,23 +15,20 @@ import RcInput from '@/vc-component/input';
 import ContextIsolator from '../_util/ContextIsolator';
 import type { InputClassNamesType, InputProps, InputStylesType } from './interface';
 import type { ValueType } from '@/vc-component/input/interface';
-
-type Slots = {
-  addonBefore?: () => VNode[];
-  addonAfter?: () => VNode[];
-  suffix?: () => VNode[];
-};
+import { useFormItemInputContextInject } from '../form/context';
+import { getMergedStatus, getStatusClassNames } from '../_util/statusUtils';
 
 defineOptions({ name: 'Input', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
   prefixCls: customizePrefixCls,
+  status: customStatus,
   size: customSize,
   disabled: customDisabled,
   onBlur,
   onFocus,
   suffix,
-  allowClear = true,
+  allowClear = undefined,
   addonAfter,
   addonBefore,
   class: className,
@@ -43,7 +40,11 @@ const {
   variant: customVariant,
   ...rest
 } = defineProps<InputProps>();
-const slots = defineSlots<Slots>();
+const slots = defineSlots<{
+  addonBefore?: () => VNode[];
+  addonAfter?: () => VNode[];
+  suffix?: () => VNode[];
+}>();
 
 const value = defineModel<ValueType>('value');
 
@@ -98,9 +99,21 @@ const [mergedClassNames, mergedStyles] = useMergeSemantic<InputClassNamesType, I
   computed(() => ({ props: mergedProps.value })),
 );
 
-const suffixNode = computed(() => {
+// ===================== Status =====================
+const { status: contextStatus, hasFeedback, feedbackIcon } = toRefs(useFormItemInputContextInject());
+const mergedStatus = computed(() => getMergedStatus(contextStatus?.value, customStatus));
+
+const suffixNode = () => {
+  if (hasFeedback?.value || suffixSlot?.value) {
+    return (
+      <>
+        <Render content={suffixSlot.value}></Render>
+        {hasFeedback?.value && <Render content={feedbackIcon.value}></Render>}
+      </>
+    );
+  }
   return suffixSlot.value && <Render content={suffixSlot.value}></Render>;
-});
+};
 
 const mergedAllowClear = computed(() => getAllowClear((contextAllowClear?.value as any) ?? allowClear));
 
@@ -151,9 +164,12 @@ defineExpose({} as ComponentInstance<typeof RcInput>);
         mergedClassNames.input,
         hashId,
       ),
-      variant: clsx({
-        [`${prefixCls}-${variant}`]: enableVariantCls,
-      }),
+      variant: clsx(
+        {
+          [`${prefixCls}-${variant}`]: enableVariantCls,
+        },
+        getStatusClassNames(prefixCls, mergedStatus),
+      ),
       affixWrapper: clsx(
         {
           [`${prefixCls}-affix-wrapper-sm`]: mergedSize === 'small',
@@ -175,6 +191,7 @@ defineExpose({} as ComponentInstance<typeof RcInput>);
           [`${prefixCls}-group-wrapper-rtl`]: direction === 'rtl',
           [`${prefixCls}-group-wrapper-${variant}`]: enableVariantCls,
         },
+        getStatusClassNames(`${prefixCls}-group-wrapper`, mergedStatus, hasFeedback),
         hashId,
       ),
     }"
