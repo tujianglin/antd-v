@@ -3,6 +3,7 @@ import KeyCode from '@/vc-util/KeyCode';
 import clsx from 'clsx';
 import { computed, getCurrentInstance } from 'vue';
 import Render from '@/vc-component/render';
+import type { VueNode } from '@/vc-util/type';
 
 export interface StarProps {
   value?: number;
@@ -12,8 +13,8 @@ export interface StarProps {
   disabled?: boolean;
   onHover?: (e: MouseEvent, index: number) => void;
   onClick?: (e: MouseEvent | KeyboardEvent, index: number) => void;
-  character?: any | ((props: StarProps) => any);
-  characterRender?: (origin: any, props: StarProps) => any;
+  character?: VueNode | ((props: StarProps) => VueNode);
+  characterRender?: (origin: VueNode, props: StarProps) => VueNode;
   focused?: boolean;
   count?: number;
 }
@@ -68,7 +69,7 @@ const classNameList = computed(() => {
 
 // >>>>> Node
 const vm = getCurrentInstance();
-const characterNode = computed(() => (typeof character === 'function' ? character(vm.props) : character));
+const characterNode = computed(() => (typeof character === 'function' ? (character as any)(vm.props) : character));
 
 const changeRef = (instance) => {
   vm.exposed = instance || {};
@@ -95,7 +96,7 @@ const Start = () => {
         </div>
       </div>
     </li>
-  );
+  ) as VueNode;
 
   if (characterRender) {
     result = characterRender(result, vm.props);
