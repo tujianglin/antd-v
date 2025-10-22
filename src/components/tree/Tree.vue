@@ -16,8 +16,8 @@ import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import { HolderOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
 
-export type SwitcherIcon = any | ((props: AntTreeNodeProps) => any);
-export type TreeLeafIcon = any | ((props: AntTreeNodeProps) => any);
+export type SwitcherIcon = VueNode | ((props: AntTreeNodeProps) => VueNode);
+export type TreeLeafIcon = VueNode | ((props: AntTreeNodeProps) => VueNode);
 type TreeIcon = VueNode | ((props: AntdTreeNodeAttribute) => VueNode);
 
 export interface AntdTreeNodeAttribute {
