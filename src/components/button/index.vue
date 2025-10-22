@@ -26,6 +26,7 @@ import DefaultLoadingIcon from './DefaultLoadingIcon.vue';
 import Render from '@/vc-component/render';
 import { isValidElement, isValidNode } from '@/vc-util/Children/util';
 import { useComposeRef } from '@/vc-util/ref';
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 
 defineOptions({ name: 'Button', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -232,6 +233,7 @@ const [mergedClassNames, mergedStyles] = useMergeSemantic<ButtonClassNamesType, 
 );
 
 const classes = computed(() => {
+  const children = flattenChildren(defaultSlot.value);
   return clsx(
     prefixCls.value,
     hashId.value,
@@ -245,7 +247,7 @@ const classes = computed(() => {
       [`${prefixCls.value}-color-${mergedColorText.value}`]: mergedColorText.value,
       [`${prefixCls.value}-variant-${mergedVariant.value}`]: mergedVariant.value,
       [`${prefixCls.value}-${sizeCls.value}`]: sizeCls.value,
-      [`${prefixCls.value}-icon-only`]: !isValidElement(defaultSlot.value) && defaultSlot.value.length === 0 && !!iconType?.value,
+      [`${prefixCls.value}-icon-only`]: !isValidElement(children) && children.length === 0 && !!iconType?.value,
       [`${prefixCls.value}-background-ghost`]: ghost && !isUnBorderedButtonVariant(mergedVariant.value),
       [`${prefixCls.value}-loading`]: innerLoading.value,
       [`${prefixCls.value}-two-chinese-chars`]: hasTwoCNChar?.value && mergedInsertSpace.value && !innerLoading?.value,
