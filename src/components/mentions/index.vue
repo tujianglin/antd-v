@@ -167,7 +167,7 @@ const mergedClassName = computed(() =>
 <template>
   <RcMentions
     ref="innerRef"
-    v-bind="restProps"
+    v-bind="{ ...$attrs, ...restProps }"
     v-model:value="mergedValue"
     :silent="loading"
     :prefix-cls="prefixCls"
