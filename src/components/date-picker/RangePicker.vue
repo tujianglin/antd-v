@@ -77,7 +77,7 @@ const value = defineModel<DateType[]>('value', {
 });
 
 const pickerValue = defineModel<DateType[]>('pickerValue');
-const open = defineModel<boolean>('open');
+const open = defineModel<boolean>('open', { default: undefined });
 
 const pickerType = computed(() => (picker === TIME ? 'timePicker' : 'datePicker'));
 

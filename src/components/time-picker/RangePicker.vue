@@ -10,7 +10,7 @@ const { allowClear = true } = defineProps<TimeRangePickerProps>();
 
 const value = defineModel<DateType[]>('value');
 const pickerValue = defineModel<DateType[]>('pickerValue');
-const open = defineModel<boolean>('open');
+const open = defineModel<boolean>('open', { default: undefined });
 
 const domRef = useTemplateRef('domRef');
 

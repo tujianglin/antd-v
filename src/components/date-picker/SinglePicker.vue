@@ -83,7 +83,7 @@ const value = defineModel<DateType | DateType[] | null>('value', {
   },
 });
 const pickerValue = defineModel<DateType | DateType[]>('pickerValue');
-const open = defineModel<boolean>('open');
+const open = defineModel<boolean>('open', { default: undefined });
 
 const [mergedClassNames, mergedStyles] = useMergedPickerSemantic(
   computed(() => pickerType),

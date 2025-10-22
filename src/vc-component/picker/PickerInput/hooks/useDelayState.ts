@@ -10,7 +10,7 @@ export default function useDelayState<T>(
   value: Ref<T>,
   onChange?: (next: T) => void,
 ): [state: Ref<T>, setState: (nextState: T, immediately?: boolean) => void] {
-  const [state, setState] = useControlledState<T>(value.value, undefined);
+  const [state, setState] = useControlledState<T>(false as T, value);
 
   const nextValueRef = ref<T>(value.value);
 
@@ -21,7 +21,6 @@ export default function useDelayState<T>(
   };
   const doUpdate = () => {
     setState(nextValueRef.value);
-
     if (onChange && state.value !== nextValueRef.value) {
       onChange?.(nextValueRef.value);
     }
