@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'vue';
+import type { Orientation } from '../_util/hooks/useOrientation';
 import type { AbstractCheckboxGroupProps, AbstractCheckboxProps } from '../checkbox/interface';
 import type { SizeType } from '../config-provider/SizeContext';
 
@@ -14,10 +15,12 @@ export interface RadioGroupProps extends AbstractCheckboxGroupProps {
   name?: string;
   id?: string;
   optionType?: RadioGroupOptionType;
+  orientation?: Orientation;
   buttonStyle?: RadioGroupButtonStyle;
   onFocus?: (e: FocusEvent) => void;
   onBlur?: (e: FocusEvent) => void;
   block?: boolean;
+  vertical?: boolean;
 }
 
 export interface RadioGroupContextProps {

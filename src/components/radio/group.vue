@@ -1,7 +1,9 @@
 <script lang="tsx" setup>
 import Render from '@/vc-component/render';
+import pickAttrs from '@/vc-util/pickAttrs';
 import clsx from 'clsx';
 import { computed, toRefs, useId } from 'vue';
+import useOrientation from '../_util/hooks/useOrientation';
 import { useConfigContextInject } from '../config-provider';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useSize from '../config-provider/hooks/useSize';
@@ -30,6 +32,8 @@ const {
   onMouseleave,
   onFocus,
   onBlur,
+  orientation,
+  vertical,
 } = defineProps<RadioGroupProps>();
 const value = defineModel('value');
 const { getPrefixCls, direction } = toRefs(useConfigContextInject());
@@ -51,6 +55,10 @@ const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
 const mergedSize = useSize(computed(() => customizeSize));
+const [, mergedVertical] = useOrientation(
+  computed(() => orientation),
+  computed(() => vertical),
+);
 
 const classString = computed(() => {
   return clsx(
@@ -72,8 +80,12 @@ const memoizedValue = computed(() => ({ onChange: onRadioChange, value: value.va
 </script>
 <template>
   <div
-    v-bind="{ ...$attrs, aria: true, data: true }"
-    :class="classString"
+    v-bind="pickAttrs({ ...$attrs }, { aria: true, data: true })"
+    :class="
+      clsx(classString, {
+        [`${prefixCls}-group-vertical`]: mergedVertical,
+      })
+    "
     :style="style"
     @mouseenter="onMouseenter"
     @mouseleave="onMouseleave"
