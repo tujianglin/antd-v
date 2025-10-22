@@ -407,7 +407,7 @@ const inputProps = computed(() => {
       autocomplete="off"
       @keydown="onSharedKeyDown"
       @blur="onSharedBlur"
-      v-bind="{ ...omit(restProps, ['onBlur', 'onKeydown']), ...inputProps, ...$attrs }"
+      v-bind="{ ...$attrs, ...omit(restProps, ['onBlur', 'onKeydown']), ...inputProps }"
       :value="inputValue"
       @input="onInternalChange"
       :class="classNames.input"

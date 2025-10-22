@@ -1,3 +1,4 @@
+import type { DateType } from '@/vc-util/type';
 import { reactiveComputed, type ReactiveComputedReturn } from '@vueuse/core';
 import {
   computed,
@@ -39,9 +40,9 @@ export const SharedPanelContextProvider = defineComponent({
   },
 });
 
-export interface PanelContextProps<DateType extends object = any>
+export interface PanelContextProps
   extends Pick<
-    SharedPanelProps<DateType>,
+    SharedPanelProps,
     | 'prefixCls'
     | 'cellRender'
     | 'generateConfig'
@@ -98,10 +99,10 @@ export const PanelContextProvider = defineComponent({
 /**
  * Get shared props for the SharedPanelProps interface.
  */
-export function useInfo<DateType extends object = any>(
-  props: ReactiveComputedReturn<SharedPanelProps<DateType>>,
+export function useInfo(
+  props: ReactiveComputedReturn<SharedPanelProps>,
   panelType: ComputedRef<PanelMode>,
-): [info: ComputedRef<PanelContextProps<DateType>>, now: ComputedRef<DateType>] {
+): [info: ComputedRef<PanelContextProps>, now: ComputedRef] {
   // TODO: this is not good to get from each props.
   // Should move to `SharedPanelContext` instead.
 
@@ -138,7 +139,7 @@ export function useInfo<DateType extends object = any>(
         nextIcon: props.nextIcon,
         superPrevIcon: props.superPrevIcon,
         superNextIcon: props.superNextIcon,
-      }) as PanelContextProps<DateType>,
+      }) as PanelContextProps,
   );
 
   return [info, now];

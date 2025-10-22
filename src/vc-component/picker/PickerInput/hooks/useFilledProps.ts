@@ -1,3 +1,4 @@
+import type { DateType } from '@/vc-util/type';
 import warning from '@/vc-util/warning';
 import { reactiveComputed, type ReactiveComputedReturn } from '@vueuse/core';
 import { computed, ref, toRefs, type ComputedRef, type Ref } from 'vue';
@@ -12,10 +13,10 @@ import { useFieldFormat } from './useFieldFormat';
 import useInputReadOnly from './useInputReadOnly';
 import useInvalidate from './useInvalidate';
 
-type UseInvalidate<DateType extends object = any> = typeof useInvalidate<DateType>;
+type UseInvalidate = typeof useInvalidate;
 
-type PickedProps<DateType extends object = any> = Pick<
-  RangePickerProps<DateType>,
+type PickedProps = Pick<
+  RangePickerProps,
   | 'generateConfig'
   | 'locale'
   | 'picker'
@@ -40,9 +41,9 @@ type PickedProps<DateType extends object = any> = Pick<
 
 type ExcludeBooleanType<T> = T extends boolean ? never : T;
 
-type GetGeneric<T> = T extends PickedProps<infer U> ? U : never;
+type GetGeneric<T> = T extends PickedProps ? DateType : never;
 
-type ToArrayType<T, DateType> = T extends any[] ? T : DateType[];
+type ToArrayType<T> = T extends any[] ? T : DateType[];
 
 function useList<T>(value: Ref<T | T[]>, fillMode: Ref<boolean> = ref(false)) {
   return computed(() => {
@@ -63,8 +64,8 @@ export type FilledProps<InProps extends PickedProps, DateType extends GetGeneric
   UpdaterProps & {
     picker: PickerMode;
     showTime?: ExcludeBooleanType<InProps['showTime']>;
-    value?: ToArrayType<DateType | DateType[], DateType>;
-    pickerValue?: ToArrayType<DateType | DateType[], DateType>;
+    value?: ToArrayType<DateType | DateType[]>;
+    pickerValue?: ToArrayType<DateType | DateType[]>;
   };
 
 /**
@@ -86,9 +87,9 @@ export default function useFilledProps<
   filledProps: ComputedRef<FilledProps<InProps, DateType, UpdaterProps>>,
   internalPicker: ComputedRef<InternalMode>,
   complexPicker: ComputedRef<boolean>,
-  formatList: Ref<FormatType<any>[]>,
+  formatList: Ref<FormatType[]>,
   maskFormat: Ref<string>,
-  isInvalidateDate: ReturnType<UseInvalidate<DateType>>,
+  isInvalidateDate: ReturnType<UseInvalidate>,
 ] {
   const {
     generateConfig,
@@ -153,7 +154,7 @@ export default function useFilledProps<
   });
 
   // ======================== Format ========================
-  const [formatList, maskFormat] = useFieldFormat<DateType>(internalPicker, mergedLocale, format);
+  const [formatList, maskFormat] = useFieldFormat(internalPicker, mergedLocale, format);
 
   // ======================= ReadOnly =======================
   const mergedInputReadOnly = useInputReadOnly(formatList, inputReadOnly, multiple);

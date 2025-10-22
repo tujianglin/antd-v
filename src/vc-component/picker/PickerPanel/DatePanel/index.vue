@@ -1,4 +1,4 @@
-<script lang="tsx" setup generic="DateType extends object = any">
+<script lang="tsx" setup>
 import { reactiveComputed } from '@vueuse/core';
 import { computed, getCurrentInstance } from 'vue';
 import type { PanelMode, SharedPanelProps } from '../../interface';
@@ -8,8 +8,9 @@ import clsx from 'clsx';
 import PanelHeader from '../PanelHeader.vue';
 import Render from '@/vc-component/render';
 import PanelBody from '../PanelBody.vue';
+import type { DateType } from '@/vc-util/type';
 
-export interface DatePanelProps<DateType extends object> extends SharedPanelProps<DateType> {
+export interface DatePanelProps extends SharedPanelProps {
   panelName?: PanelMode;
   rowClassName?: (date: DateType) => string;
 
@@ -33,7 +34,7 @@ const {
   onSelect,
   onHover,
   showWeek,
-} = defineProps<DatePanelProps<DateType>>();
+} = defineProps<DatePanelProps>();
 
 const vm = getCurrentInstance();
 

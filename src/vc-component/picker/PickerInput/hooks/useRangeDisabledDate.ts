@@ -8,17 +8,17 @@ import type { RangeValueType } from '../RangePicker.vue';
  * RangePicker need additional logic to handle the `disabled` case. e.g.
  * [disabled, enabled] should end date not before start date
  */
-export default function useRangeDisabledDate<DateType extends object = any>(
-  values: RangeValueType<DateType>,
+export default function useRangeDisabledDate(
+  values: RangeValueType,
   disabled: [boolean, boolean],
   activeIndexList: number[],
-  generateConfig: GenerateConfig<DateType>,
+  generateConfig: GenerateConfig,
   locale: Locale,
-  disabledDate?: DisabledDate<DateType>,
+  disabledDate?: DisabledDate,
 ) {
   const activeIndex = activeIndexList[activeIndexList.length - 1];
 
-  const rangeDisabledDate: DisabledDate<DateType> = (date, info) => {
+  const rangeDisabledDate: DisabledDate = (date, info) => {
     const [start, end] = values;
 
     const mergedInfo = {

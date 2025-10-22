@@ -1,13 +1,14 @@
+import type { DateType } from '@/vc-util/type';
 import type { GenerateConfig } from '../../../generate';
 import type { Unit } from './TimeColumn.vue';
 
-export function findValidateTime<DateType>(
+export function findValidateTime(
   date: DateType,
   getHourUnits: () => Unit<number>[],
   getMinuteUnits: (hour: number) => Unit<number>[],
   getSecondUnits: (hour: number, minute: number) => Unit<number>[],
   getMillisecondUnits: (hour: number, minute: number, second: number) => Unit<number>[],
-  generateConfig: GenerateConfig<DateType>,
+  generateConfig: GenerateConfig,
 ) {
   let nextDate = date;
 

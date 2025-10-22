@@ -1,4 +1,4 @@
-<script lang="tsx" setup generic="DateType extends object = any">
+<script lang="tsx" setup>
 import pickAttrs from '@/vc-util/pickAttrs';
 import { reactiveComputed } from '@vueuse/core';
 import { omit } from 'lodash-es';
@@ -32,10 +32,11 @@ import { pickTriggerProps } from '../PickerTrigger/util';
 import clsx from 'clsx';
 import SingleSelector from './Selector/SingleSelector/index.vue';
 import useControlledState from '@/vc-util/hooks/useControlledState';
+import type { DateType } from '@/vc-util/type';
 
 // TODO: isInvalidateDate with showTime.disabledTime should not provide `range` prop
 
-export interface BasePickerProps<DateType extends object = any> extends SharedPickerProps<DateType> {
+export interface BasePickerProps extends SharedPickerProps {
   // Structure
   id?: string;
 
@@ -68,7 +69,7 @@ export interface BasePickerProps<DateType extends object = any> extends SharedPi
   ) => void;
 
   // Preset
-  presets?: ValueDate<DateType>[];
+  presets?: ValueDate[];
 
   // Control
   disabled?: boolean;
@@ -78,19 +79,17 @@ export interface BasePickerProps<DateType extends object = any> extends SharedPi
   onPanelChange?: (values: DateType, modes: PanelMode) => void;
 }
 
-export interface PickerProps<DateType extends object = any>
-  extends BasePickerProps<DateType>,
-    Omit<SharedTimeProps<DateType>, 'format'> {}
+export interface PickerProps extends BasePickerProps, Omit<SharedTimeProps, 'format'> {}
 
 /** Internal usage. For cross function get same aligned props */
-export type ReplacedPickerProps<DateType extends object = any> = {
+export type ReplacedPickerProps = {
   onChange?: (date: DateType | DateType[], dateString: string | string[]) => void;
   onCalendarChange?: (date: DateType | DateType[], dateString: string | string[], info: BaseInfo) => void;
 };
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const props = withDefaults(defineProps<PickerProps<DateType>>(), {
+const props = withDefaults(defineProps<PickerProps>(), {
   allowClear: true,
   showNow: true,
   picker: 'date',
@@ -231,7 +230,7 @@ const [mergedValue, setInnerValue, getCalendarValue, triggerCalendarChange, trig
   false,
   order,
   value,
-  onInternalCalendarChange as any,
+  onInternalCalendarChange,
   onInternalOk,
 );
 
@@ -273,7 +272,7 @@ const onInternalChange = computed(
 );
 
 // ======================== Value =========================
-const [, triggerSubmitChange] = useRangeValue<any>(
+const [, triggerSubmitChange] = useRangeValue(
   computed(() => ({
     ...filledProps.value,
     onChange: onInternalChange.value,
@@ -478,48 +477,50 @@ const panelProps = computed(() => {
   } as unknown as PopupProps;
 });
 // >>> Render
-const panel = () => (
-  <Popup
-    // MISC
-    {...omit(panelProps.value, ['onSubmit'])}
-    showNow={mergedShowNow.value}
-    showTime={showTime.value}
-    // Disabled
-    disabledDate={disabledDate.value}
-    // Focus
-    onFocus={onPanelFocus}
-    onBlur={onSharedBlur}
-    // Mode
-    picker={picker.value}
-    mode={mergedMode.value}
-    internalMode={internalMode.value}
-    onPanelChange={triggerModeChange}
-    // Value
-    format={maskFormat.value}
-    value={calendarValue.value}
-    isInvalid={isInvalidateDate as any}
-    onChange={null}
-    onSelect={onPanelSelect}
-    // PickerValue
-    pickerValue={currentPickerValue.value}
-    defaultOpenValue={showTime?.value?.defaultOpenValue}
-    onPickerValueChange={setCurrentPickerValue}
-    // Hover
-    hoverValue={hoverValues.value}
-    onHover={onPanelHover}
-    // Submit
-    needConfirm={needConfirm.value}
-    onSubmit={triggerConfirm}
-    onOk={triggerOk}
-    // Preset
-    presets={presetList.value}
-    onPresetHover={onPresetHover}
-    onPresetSubmit={onPresetSubmit}
-    onNow={onNow}
-    // Render
-    cellRender={onInternalCellRender.value}
-  />
-);
+const panel = () => {
+  return (
+    <Popup
+      // MISC
+      {...omit(panelProps.value, ['onSubmit', 'onOk', 'onPickerValueChange'])}
+      showNow={mergedShowNow.value}
+      showTime={showTime.value}
+      // Disabled
+      disabledDate={disabledDate.value}
+      // Focus
+      onFocus={onPanelFocus}
+      onBlur={onSharedBlur}
+      // Mode
+      picker={picker.value}
+      mode={mergedMode.value}
+      internalMode={internalMode.value}
+      onPanelChange={triggerModeChange}
+      // Value
+      format={maskFormat.value}
+      value={calendarValue.value}
+      isInvalid={isInvalidateDate as any}
+      onChange={null}
+      onSelect={onPanelSelect}
+      // PickerValue
+      pickerValue={currentPickerValue.value}
+      defaultOpenValue={showTime?.value?.defaultOpenValue}
+      onPickerValueChange={setCurrentPickerValue}
+      // Hover
+      hoverValue={hoverValues.value}
+      onHover={onPanelHover}
+      // Submit
+      needConfirm={needConfirm.value}
+      onSubmit={triggerConfirm}
+      onOk={triggerOk}
+      // Preset
+      presets={presetList.value}
+      onPresetHover={onPresetHover as any}
+      onPresetSubmit={onPresetSubmit as any}
+      onNow={onNow}
+      // Render
+      cellRender={onInternalCellRender.value}
+    />
+  );
+};
 
 // ========================================================
 // ==                      Selector                      ==
@@ -618,7 +619,7 @@ watch(
       @close="onPopupClose"
     >
       <SingleSelector
-        v-bind="{ ...omit(filledProps, ['onChange', 'onOpenChange']) }"
+        v-bind="{ ...omit(filledProps, ['onChange', 'onOpenChange']) as any }"
         ref="selectorRef"
         :class="clsx(filledProps.class, rootClassName, mergedClassNames.root)"
         :style="{

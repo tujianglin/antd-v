@@ -1,9 +1,9 @@
 import type { AlignType, BuildInPlacements } from '@/vc-component/trigger';
-import type { VueNode } from '@/vc-util/type';
+import type { DateType, VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 import type { GenerateConfig } from './generate';
 
-export type NullableDateType<DateType> = DateType | null | undefined;
+export type NullableDateType = DateType | null | undefined;
 
 export type Locale = {
   locale: string;
@@ -91,7 +91,7 @@ export type InternalMode = PanelMode | 'datetime';
 
 export type PickerMode = Exclude<PanelMode, 'datetime' | 'decade'>;
 
-export type DisabledDate<DateType = any> = (
+export type DisabledDate = (
   date: DateType,
   info: {
     type: PanelMode;
@@ -108,7 +108,7 @@ export interface BaseInfo {
   range?: 'start' | 'end';
 }
 
-export interface CellRenderInfo<DateType> extends BaseInfo {
+export interface CellRenderInfo extends BaseInfo {
   prefixCls: string;
   // The cell wrapper element
   originNode: VueNode;
@@ -118,14 +118,11 @@ export interface CellRenderInfo<DateType> extends BaseInfo {
   subType?: 'hour' | 'minute' | 'second' | 'millisecond' | 'meridiem';
 }
 
-export type CellRender<DateType, CurrentType = DateType | number | string> = (
-  current: CurrentType,
-  info: CellRenderInfo<DateType>,
-) => any;
+export type CellRender<CurrentType = DateType | number | string> = (current: CurrentType, info: CellRenderInfo) => VueNode;
 
-export interface ValueDate<DateType = any> {
+export interface ValueDate {
   label: VueNode;
-  value: DateType | (() => DateType);
+  value: DateType | DateType[] | (() => DateType | DateType[]);
 }
 
 // ========================== Time ==========================
@@ -136,7 +133,7 @@ export interface DisabledTimes {
   disabledMilliseconds?: (hour: number, minute: number, second: number) => number[];
 }
 
-export interface SharedTimeProps<DateType extends object = any> {
+export interface SharedTimeProps {
   /** Only work in picker is `time` */
   format?: string;
   /** Only work in picker is `time` */
@@ -175,19 +172,16 @@ export interface SharedTimeProps<DateType extends object = any> {
   changeOnScroll?: boolean;
 }
 
-export type RangeTimeProps<DateType extends object = any> = Omit<
-  SharedTimeProps<DateType>,
-  'defaultOpenValue' | 'disabledTime'
-> & {
+export type RangeTimeProps = Omit<SharedTimeProps, 'defaultOpenValue' | 'disabledTime'> & {
   defaultOpenValue?: DateType[];
 
   disabledTime?: (date: DateType, range: 'start' | 'end', info: { from?: DateType }) => DisabledTimes;
 };
 
 // ======================= Components =======================
-export type OnPanelChange<DateType> = (value: DateType, mode: PanelMode) => void;
+export type OnPanelChange = (value: DateType, mode: PanelMode) => void;
 
-export type LimitDate<DateType extends object = any> =
+export type LimitDate =
   | DateType
   | ((info: {
       /**
@@ -197,13 +191,13 @@ export type LimitDate<DateType extends object = any> =
       from?: DateType;
     }) => DateType | null | undefined);
 
-export interface SharedPanelProps<DateType extends object = any> {
+export interface SharedPanelProps {
   // Style
   prefixCls: string;
 
   // Date Library
   locale: Locale;
-  generateConfig: GenerateConfig<DateType>;
+  generateConfig: GenerateConfig;
 
   // Value
   pickerValue: DateType;
@@ -226,12 +220,12 @@ export interface SharedPanelProps<DateType extends object = any> {
   onModeChange: (mode: PanelMode, date?: DateType) => void;
 
   // Limitation
-  disabledDate?: DisabledDate<DateType>;
+  disabledDate?: DisabledDate;
   minDate?: DateType;
   maxDate?: DateType;
 
   // Render
-  cellRender?: CellRender<DateType>;
+  cellRender?: CellRender;
 
   // Hover
   /** @private Only used for RangePicker passing. */
@@ -244,7 +238,7 @@ export interface SharedPanelProps<DateType extends object = any> {
   /**
    * Only used for `date` mode.
    */
-  showTime?: SharedTimeProps<DateType>;
+  showTime?: SharedTimeProps;
 
   // Week
   /**
@@ -260,16 +254,16 @@ export interface SharedPanelProps<DateType extends object = any> {
 }
 
 export type Components = Partial<
-  Record<InternalMode, any> & {
+  Record<InternalMode, VueNode> & {
     button?: VueNode;
     input?: VueNode;
   }
 >;
 
 // ========================= Picker =========================
-export type CustomFormat<DateType> = (value: DateType) => string;
+export type CustomFormat = (value: DateType) => string;
 
-export type FormatType<DateType = any> = string | CustomFormat<DateType>;
+export type FormatType = string | CustomFormat;
 
 export type SharedHTMLAttrs = {
   required?: boolean;
@@ -294,10 +288,10 @@ export type PreviewValueType = 'hover';
 
 export type PanelSemanticName = 'root' | 'header' | 'body' | 'content' | 'item' | 'footer';
 
-export interface SharedPickerProps<DateType extends object = any>
+export interface SharedPickerProps
   extends SharedHTMLAttrs,
     Pick<
-      SharedPanelProps<DateType>,
+      SharedPanelProps,
       // Icon
       'prevIcon' | 'nextIcon' | 'superPrevIcon' | 'superNextIcon'
     > {
@@ -319,12 +313,12 @@ export interface SharedPickerProps<DateType extends object = any>
 
   // Config
   locale: Locale;
-  generateConfig: GenerateConfig<DateType>;
+  generateConfig: GenerateConfig;
 
   // Picker
   picker?: PickerMode;
   /** Only work when picker is `date` or `time` */
-  showTime?: boolean | SharedTimeProps<DateType>;
+  showTime?: boolean | SharedTimeProps;
   /** Only work when picker is `date` */
   showWeek?: boolean;
   /**
@@ -334,8 +328,8 @@ export interface SharedPickerProps<DateType extends object = any>
    * Once use config mode, it must be fill with format your config.
    */
   format?:
-    | FormatType<DateType>
-    | FormatType<DateType>[]
+    | FormatType
+    | FormatType[]
     | {
         format: string;
         type?: 'mask';
@@ -363,7 +357,7 @@ export interface SharedPickerProps<DateType extends object = any>
   order?: boolean;
 
   // Disabled
-  disabledDate?: DisabledDate<DateType>;
+  disabledDate?: DisabledDate;
   /** Limit the selectable range. This will limit picker navigation also */
   minDate?: DateType;
   /** Limit the selectable range. This will limit picker navigation also */
@@ -404,7 +398,7 @@ export interface SharedPickerProps<DateType extends object = any>
 
   // Render
   components?: Components;
-  cellRender?: CellRender<DateType>;
+  cellRender?: CellRender;
   /**
    * When use `date` picker,
    * Show the button to set current datetime.
@@ -441,7 +435,7 @@ export interface OpenConfig {
 }
 
 export type OnOpenChange = (open: boolean, config?: OpenConfig) => void;
-export interface SelectorProps<DateType = any> extends SharedHTMLAttrs {
+export interface SelectorProps extends SharedHTMLAttrs {
   picker: PickerMode;
 
   prefix?: VueNode;
@@ -459,7 +453,7 @@ export interface SelectorProps<DateType = any> extends SharedHTMLAttrs {
   /** `preventDefault` is deprecated which will remove from future version. */
   onKeydown?: LegacyOnKeyDown;
   locale: Locale;
-  generateConfig: GenerateConfig<DateType>;
+  generateConfig: GenerateConfig;
 
   // Direction
   direction?: 'ltr' | 'rtl';
@@ -471,7 +465,7 @@ export interface SelectorProps<DateType = any> extends SharedHTMLAttrs {
   onClear: VoidFunction;
 
   // Change
-  format: FormatType<DateType>[];
+  format: FormatType[];
   /**
    * Convert with user typing for the format template.
    * This will force align the input with template mask.

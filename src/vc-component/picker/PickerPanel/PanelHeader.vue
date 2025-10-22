@@ -1,11 +1,12 @@
 <script lang="tsx" setup>
 import Render from '@/vc-component/render';
+import type { DateType } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, toRefs, type CSSProperties } from 'vue';
 import { isSameOrAfter } from '../utils/dateUtil';
 import { usePanelContextInject, usePickerHackContextInject } from './context';
 
-export interface HeaderProps<DateType extends object> {
+export interface HeaderProps {
   offset?: (distance: number, date: DateType) => DateType;
   superOffset?: (distance: number, date: DateType) => DateType;
   onChange?: (date: DateType) => void;
@@ -24,7 +25,7 @@ const {
 
   getStart,
   getEnd,
-} = defineProps<HeaderProps<any>>();
+} = defineProps<HeaderProps>();
 
 const HIDDEN_STYLE: CSSProperties = {
   visibility: 'hidden',

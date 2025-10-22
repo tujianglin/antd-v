@@ -1,16 +1,12 @@
 import useControlledState from '@/vc-util/hooks/useControlledState';
+import type { DateType } from '@/vc-util/type';
 import { computed, nextTick, ref, watch, type Ref } from 'vue';
 import type { GenerateConfig } from '../../generate';
 import type { InternalMode, Locale, PanelMode } from '../../interface';
 import { fillTime, isSame } from '../../utils/dateUtil';
 import type { RangePickerProps } from '../RangePicker.vue';
 
-export function offsetPanelDate<DateType = any>(
-  generateConfig: GenerateConfig<DateType>,
-  picker: InternalMode,
-  date: DateType,
-  offset: number,
-) {
+export function offsetPanelDate(generateConfig: GenerateConfig, picker: InternalMode, date: DateType, offset: number) {
   switch (picker) {
     case 'date':
     case 'week':
@@ -33,20 +29,20 @@ export function offsetPanelDate<DateType = any>(
 
 const EMPTY_LIST: any = [];
 
-export default function useRangePickerValue<DateType extends object, ValueType extends DateType[]>(
-  generateConfig: Ref<GenerateConfig<DateType>>,
+export default function useRangePickerValue(
+  generateConfig: Ref<GenerateConfig>,
   locale: Ref<Locale>,
-  calendarValue: Ref<ValueType>,
+  calendarValue: Ref<DateType[]>,
   modes: Ref<PanelMode[]>,
   open: Ref<boolean>,
   activeIndex: Ref<number>,
   pickerMode: Ref<InternalMode>,
   multiplePanel: Ref<boolean>,
-  pickerValue: Ref<ValueType> = ref(EMPTY_LIST),
+  pickerValue: Ref<DateType[]> = ref(EMPTY_LIST),
   // This is legacy from origin logic.
   // We will take `showTime.defaultValue` as the part of `pickerValue`
-  timeDefaultValue: Ref<ValueType> = ref(EMPTY_LIST),
-  onPickerValueChange?: RangePickerProps<DateType>['onPickerValueChange'],
+  timeDefaultValue: Ref<DateType[]> = ref(EMPTY_LIST),
+  onPickerValueChange?: RangePickerProps['onPickerValueChange'],
   minDate?: Ref<DateType>,
   maxDate?: Ref<DateType>,
 ): [currentIndexPickerValue: Ref<DateType>, setCurrentIndexPickerValue: (value: DateType) => void] {

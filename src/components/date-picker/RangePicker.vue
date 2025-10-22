@@ -1,6 +1,5 @@
-<script lang="tsx" setup generic="DateType extends AnyObject = AnyObject">
+<script lang="tsx" setup>
 import { computed, getCurrentInstance, h, toRefs, useTemplateRef } from 'vue';
-import type { AnyObject } from '../_util/type';
 import useMergedPickerSemantic from './hooks/useMergedPickerSemantic';
 import { useConfigContextInject } from '../config-provider';
 import { useCompactItemContext } from '../space/CompactContext';
@@ -25,6 +24,7 @@ import SuffixIcon from './generatePicker/SuffixIcon.vue';
 import { SwapRightOutlined } from '@ant-design/icons-vue';
 import type { RangePickerProps } from './interface';
 import dayjs from 'dayjs';
+import type { DateType } from '@/vc-util/type';
 
 const {
   prefixCls: customizePrefixCls,
@@ -47,7 +47,7 @@ const {
   allowClear = true,
   valueFormat,
   ...restProps
-} = defineProps<RangePickerProps<DateType> & { generateConfig: GenerateConfig<DateType> }>();
+} = defineProps<RangePickerProps & { generateConfig: GenerateConfig }>();
 
 const value = defineModel<DateType[]>('value', {
   get(e: any) {
@@ -76,7 +76,7 @@ const value = defineModel<DateType[]>('value', {
   },
 });
 
-const pickerValue = defineModel<any[]>('pickerValue');
+const pickerValue = defineModel<DateType[]>('pickerValue');
 const open = defineModel<boolean>('open');
 
 const pickerType = computed(() => (picker === TIME ? 'timePicker' : 'datePicker'));

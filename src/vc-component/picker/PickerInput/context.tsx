@@ -4,10 +4,10 @@ import type { GenerateConfig } from '../generate';
 import type { FilledClassNames, FilledStyles } from '../hooks/useSemantic';
 import type { Components, Locale } from '../interface';
 
-export interface PickerContextProps<DateType = any> {
+export interface PickerContextProps {
   prefixCls: string;
   locale: Locale;
-  generateConfig: GenerateConfig<DateType>;
+  generateConfig: GenerateConfig;
   /** Customize button component */
   button?: Components['button'];
   input?: Components['input'];

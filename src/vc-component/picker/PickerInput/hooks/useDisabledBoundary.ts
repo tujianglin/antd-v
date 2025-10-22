@@ -1,21 +1,22 @@
+import type { DateType } from '@/vc-util/type';
 import type { Ref } from 'vue';
 import type { GenerateConfig } from '../../generate';
 import type { DisabledDate, InternalMode, Locale } from '../../interface';
 import { isSame } from '../../utils/dateUtil';
 
-export type IsInvalidBoundary<DateType> = (currentDate: DateType, type: InternalMode, fromDate?: DateType) => boolean;
+export type IsInvalidBoundary = (currentDate: DateType, type: InternalMode, fromDate?: DateType) => boolean;
 
 /**
  * Merge `disabledDate` with `minDate` & `maxDate`.
  */
-export default function useDisabledBoundary<DateType extends object = any>(
-  generateConfig: Ref<GenerateConfig<DateType>>,
+export default function useDisabledBoundary(
+  generateConfig: Ref<GenerateConfig>,
   locale: Ref<Locale>,
-  disabledDate?: Ref<DisabledDate<DateType>>,
+  disabledDate?: Ref<DisabledDate>,
   minDate?: Ref<DateType>,
   maxDate?: Ref<DateType>,
 ) {
-  const mergedDisabledDate = <DisabledDate<DateType>>((date, info) => {
+  const mergedDisabledDate = <DisabledDate>((date, info) => {
     if (disabledDate?.value && disabledDate?.value(date, info)) {
       return true;
     }

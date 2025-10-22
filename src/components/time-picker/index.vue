@@ -1,9 +1,7 @@
 <script lang="tsx" setup>
-import type { VueNode } from '@/vc-util/type';
-import type { Dayjs } from 'dayjs';
+import type { DateType, VueNode } from '@/vc-util/type';
 import { computed, useTemplateRef, type CSSProperties } from 'vue';
 import type { InputStatus } from '../_util/statusUtils';
-import type { AnyObject } from '../_util/type';
 import DatePicker from '../date-picker';
 import type {
   PickerClassNames as DatePickerClassNames,
@@ -21,18 +19,18 @@ export type TimePickerStyles = Partial<Record<keyof Omit<TimePickerClassNames, '
   popup?: Partial<Record<keyof Exclude<TimePickerClassNames['popup'], string>, CSSProperties>>;
 };
 
-export type PickerTimeProps<DateType extends AnyObject> = PickerPropsWithMultiple<DateType, GenericTimePickerProps<DateType>>;
+export type PickerTimeProps = PickerPropsWithMultiple<GenericTimePickerProps>;
 
-export type RangePickerTimeProps<DateType extends AnyObject> = Omit<RangePickerProps<DateType>, 'showTime' | 'picker'>;
+export type RangePickerTimeProps = Omit<RangePickerProps, 'showTime' | 'picker'>;
 
 export interface TimePickerLocale {
   placeholder?: string;
   rangePlaceholder?: [string, string];
 }
 
-export interface TimeRangePickerProps extends Omit<RangePickerTimeProps<Dayjs>, 'picker'> {}
+export interface TimeRangePickerProps extends Omit<RangePickerTimeProps, 'picker'> {}
 
-export interface TimePickerProps extends Omit<PickerTimeProps<Dayjs>, 'picker' | 'classNames' | 'styles'> {
+export interface TimePickerProps extends Omit<PickerTimeProps, 'picker' | 'classNames' | 'styles'> {
   addon?: () => VueNode;
   status?: InputStatus;
   rootClassName?: string;
@@ -45,8 +43,8 @@ defineOptions({ name: 'TimePicker', inheritAttrs: false, compatConfig: { MODE: 3
 
 const { addon, renderExtraFooter, variant, allowClear = true, ...restProps } = defineProps<TimePickerProps>();
 
-const value = defineModel<any>('value');
-const pickerValue = defineModel<any>('pickerValue');
+const value = defineModel<DateType>('value');
+const pickerValue = defineModel<DateType>('pickerValue');
 const open = defineModel<boolean>('open');
 
 const timePickerRef = useTemplateRef('timePickerRef');

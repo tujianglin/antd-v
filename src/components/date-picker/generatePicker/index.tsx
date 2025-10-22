@@ -1,12 +1,11 @@
 import type { GenerateConfig } from '@/vc-component/picker/generate/index';
 
-import type { AnyObject } from '../../_util/type';
 import generateRangePicker from './generateRangePicker';
 import generateSinglePicker from './generateSinglePicker';
 
 export type { PickerLocale, PickerProps } from './interface';
 
-const generatePicker = <DateType extends AnyObject = AnyObject>(generateConfig: GenerateConfig<DateType>) => {
+const generatePicker = (generateConfig: GenerateConfig) => {
   // =========================== Picker ===========================
   const { DatePicker, WeekPicker, MonthPicker, YearPicker, TimePicker, QuarterPicker } = generateSinglePicker(generateConfig);
 

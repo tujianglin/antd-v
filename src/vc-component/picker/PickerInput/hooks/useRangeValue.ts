@@ -1,4 +1,5 @@
 import useControlledState from '@/vc-util/hooks/useControlledState';
+import type { DateType } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
 import { computed, toRefs, watch, type Ref } from 'vue';
 import type { GenerateConfig } from '../../generate';
@@ -33,10 +34,10 @@ const EMPTY_VALUE: any[] = [];
 //    * Update `needSubmit` mark to true
 //    * trigger onChange by `needSubmit` and update stateValue
 
-type TriggerCalendarChange<ValueType extends object[]> = (calendarValues: ValueType) => void;
+type TriggerCalendarChange = (calendarValues: DateType[]) => void;
 
-function useUtil<MergedValueType extends object[], DateType extends MergedValueType[number] = any>(
-  generateConfig: Ref<GenerateConfig<DateType>>,
+function useUtil<MergedValueType extends object[]>(
+  generateConfig: Ref<GenerateConfig>,
   locale: Ref<Locale>,
   formatList: Ref<FormatType[]>,
 ) {
@@ -66,11 +67,8 @@ function useUtil<MergedValueType extends object[], DateType extends MergedValueT
   return [getDateTexts, isSameDates] as const;
 }
 
-function orderDates<DateType extends object, DatesType extends DateType[]>(
-  dates: DatesType,
-  generateConfig: GenerateConfig<DateType>,
-) {
-  return [...dates].sort((a, b) => (generateConfig.isAfter(a, b) ? 1 : -1)) as DatesType;
+function orderDates(dates: DateType[], generateConfig: GenerateConfig) {
+  return [...dates].sort((a, b) => (generateConfig.isAfter(a, b) ? 1 : -1)) as DateType[];
 }
 
 /**
@@ -100,8 +98,8 @@ function useCalendarValue<MergedValueType extends object[]>(mergedValue: Ref<Mer
  * Control the internal `value` align with prop `value` and provide a temp `calendarValue` for ui.
  * `calendarValue` will be reset when blur & focus & open.
  */
-export function useInnerValue<ValueType extends DateType[], DateType extends object = any>(
-  generateConfig: Ref<GenerateConfig<DateType>>,
+export function useInnerValue(
+  generateConfig: Ref<GenerateConfig>,
   locale: Ref<Locale>,
   formatList: Ref<FormatType[]>,
   /** Used for RangePicker. `true` means [DateType, DateType] or will be DateType[] */
@@ -112,30 +110,30 @@ export function useInnerValue<ValueType extends DateType[], DateType extends obj
    * So when `rangeValue` is `true`, order will be ignored.
    */
   order: Ref<boolean>,
-  value?: Ref<ValueType>,
-  onCalendarChange?: (dates: ValueType, dateStrings: ReplaceListType<Required<ValueType>, string>, info: BaseInfo) => void,
-  onOk?: (dates: ValueType) => void,
+  value?: Ref<DateType[]>,
+  onCalendarChange?: (dates: DateType[], dateStrings: ReplaceListType<Required<DateType[]>, string>, info: BaseInfo) => void,
+  onOk?: (dates: DateType[]) => void,
 ) {
   // This is the root value which will sync with controlled or uncontrolled value
   const [innerValue, setInnerValue] = useControlledState(undefined, value);
 
-  const mergedValue = computed(() => innerValue.value || (EMPTY_VALUE as ValueType));
+  const mergedValue = computed(() => innerValue.value || (EMPTY_VALUE as DateType[]));
 
   // ========================= Inner Values =========================
   const [calendarValue, setCalendarValue] = useCalendarValue(mergedValue);
 
   // ============================ Change ============================
-  const [getDateTexts, isSameDates] = useUtil<ValueType>(generateConfig, locale, formatList);
+  const [getDateTexts, isSameDates] = useUtil<DateType[]>(generateConfig, locale, formatList);
 
-  const triggerCalendarChange: TriggerCalendarChange<ValueType> = (nextCalendarValues: ValueType) => {
-    let clone = [...nextCalendarValues] as ValueType;
+  const triggerCalendarChange: TriggerCalendarChange = (nextCalendarValues: DateType[]) => {
+    let clone = [...nextCalendarValues] as DateType[];
 
     if (rangeValue) {
       for (let i = 0; i < 2; i += 1) {
         clone[i] = clone[i] || null;
       }
     } else if (order.value) {
-      clone = orderDates(clone.filter((date) => date) as ValueType, generateConfig.value);
+      clone = orderDates(clone.filter((date) => date) as DateType[], generateConfig.value);
     }
 
     // Update merged value
@@ -160,16 +158,13 @@ export function useInnerValue<ValueType extends DateType[], DateType extends obj
   return [mergedValue, setInnerValue, calendarValue, triggerCalendarChange, triggerOk] as const;
 }
 
-export default function useRangeValue<ValueType extends DateType[], DateType extends object = any>(
-  info: Ref<
-    Pick<RangePickerProps<DateType>, 'generateConfig' | 'locale' | 'allowEmpty' | 'order' | 'picker'> &
-      ReplacedPickerProps<DateType>
-  >,
-  mergedValue: Ref<ValueType>,
-  setInnerValue: (nextValue: ValueType) => void,
-  calendarValue: Ref<ValueType>,
-  triggerCalendarChange: TriggerCalendarChange<ValueType>,
-  disabled: Ref<ReplaceListType<Required<ValueType>, boolean>>,
+export default function useRangeValue(
+  info: Ref<Pick<RangePickerProps, 'generateConfig' | 'locale' | 'allowEmpty' | 'order' | 'picker'> & ReplacedPickerProps>,
+  mergedValue: Ref<DateType[]>,
+  setInnerValue: (nextValue: DateType[]) => void,
+  calendarValue: Ref<DateType[]>,
+  triggerCalendarChange: TriggerCalendarChange,
+  disabled: Ref<ReplaceListType<Required<DateType[]>, boolean>>,
   formatList: Ref<FormatType[]>,
   focused: Ref<boolean>,
   open: Ref<boolean>,
@@ -179,7 +174,7 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
   /** Trigger `onChange` by check `disabledDate` */
   flushSubmit: (index: number, needTriggerChange: boolean) => void,
   /** Trigger `onChange` directly without check `disabledDate` */
-  triggerSubmitChange: (value: ValueType) => boolean,
+  triggerSubmitChange: (value: DateType[]) => boolean,
 ] {
   const {
     // MISC
@@ -198,7 +193,7 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
   const orderOnChange = computed(() => (disabled?.value?.some((d) => d) ? false : order.value));
 
   // ============================= Util =============================
-  const [getDateTexts, isSameDates] = useUtil<ValueType>(generateConfig, locale, formatList);
+  const [getDateTexts, isSameDates] = useUtil<DateType[]>(generateConfig, locale, formatList);
 
   // ============================ Values ============================
   // Used for trigger `onChange` event.
@@ -219,10 +214,10 @@ export default function useRangeValue<ValueType extends DateType[], DateType ext
   );
 
   // ============================ Submit ============================
-  const triggerSubmit = (nextValue?: ValueType) => {
+  const triggerSubmit = (nextValue?: DateType[]) => {
     const isNullValue = nextValue === null;
 
-    let clone = [...(nextValue || submitValue())] as ValueType;
+    let clone = [...(nextValue || submitValue())] as DateType[];
 
     // Fill null value
     if (isNullValue) {

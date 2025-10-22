@@ -5,8 +5,9 @@ import { formatValue, isInRange, isSame } from '../utils/dateUtil';
 import { usePanelContextInject, usePickerHackContextInject } from './context';
 import clsx from 'clsx';
 import Render from '@/vc-component/render';
+import type { DateType } from '@/vc-util/type';
 
-export interface PanelBodyProps<DateType = any> {
+export interface PanelBodyProps {
   rowNum: number;
   colNum: number;
   baseDate: DateType;
@@ -18,7 +19,7 @@ export interface PanelBodyProps<DateType = any> {
   getCellText: (date: DateType) => any;
   getCellClassName: (date: DateType) => Record<string, any>;
 
-  disabledDate?: DisabledDate<DateType>;
+  disabledDate?: DisabledDate;
 
   // Used for date panel
   headerCells?: any[];

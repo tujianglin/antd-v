@@ -1,7 +1,8 @@
 <!-- eslint-disable unused-imports/no-unused-vars -->
 <!-- eslint-disable no-unused-vars -->
-<script lang="tsx" setup generic="DateType extends object = any">
+<script lang="tsx" setup>
 import useControlledState from '@/vc-util/hooks/useControlledState';
+import type { DateType } from '@/vc-util/type';
 import warning from '@/vc-util/warning';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
@@ -38,9 +39,9 @@ export interface PickerPanelRef {
   nativeElement: HTMLDivElement;
 }
 
-export interface BasePickerPanelProps<DateType extends object = any>
+export interface BasePickerPanelProps
   extends Pick<
-      SharedPanelProps<DateType>,
+      SharedPanelProps,
       // MISC
       | 'locale'
       | 'generateConfig'
@@ -56,7 +57,7 @@ export interface BasePickerPanelProps<DateType extends object = any>
       | 'superPrevIcon'
       | 'superNextIcon'
     >,
-    SharedTimeProps<DateType> {
+    SharedTimeProps {
   tabindex?: number;
   // Style
   prefixCls?: string;
@@ -77,11 +78,11 @@ export interface BasePickerPanelProps<DateType extends object = any>
    * Compatible with origin API.
    * Not mean the PickerPanel `onChange` event.
    */
-  onPanelChange?: OnPanelChange<DateType>;
+  onPanelChange?: OnPanelChange;
   picker?: PickerMode;
 
   // Time
-  showTime?: true | SharedTimeProps<DateType>;
+  showTime?: true | SharedTimeProps;
 
   // Week
   /**
@@ -90,7 +91,7 @@ export interface BasePickerPanelProps<DateType extends object = any>
   showWeek?: boolean;
 
   // Cell
-  cellRender?: CellRender<DateType>;
+  cellRender?: CellRender;
 
   // Hover
   /** @private Used for Picker passing */
@@ -107,7 +108,7 @@ export interface BasePickerPanelProps<DateType extends object = any>
   hideHeader?: boolean;
 }
 
-export interface SinglePickerPanelProps<DateType extends object = any> extends BasePickerPanelProps<DateType> {
+export interface SinglePickerPanelProps extends BasePickerPanelProps {
   multiple?: false;
 
   defaultValue?: DateType | null;
@@ -115,7 +116,7 @@ export interface SinglePickerPanelProps<DateType extends object = any> extends B
   onChange?: (date: DateType) => void;
 }
 
-export type PickerPanelProps<DateType extends object = any> = BasePickerPanelProps<DateType> & {
+export type PickerPanelProps = BasePickerPanelProps & {
   /** multiple selection. Not support time or datetime picker */
   multiple?: boolean;
 
@@ -170,7 +171,7 @@ const {
   components = {},
 
   hideHeader,
-} = defineProps<PickerPanelProps<DateType>>();
+} = defineProps<PickerPanelProps>();
 
 const DefaultComponents: Components = {
   date: DatePanel,

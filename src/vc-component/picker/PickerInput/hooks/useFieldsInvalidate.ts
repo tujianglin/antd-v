@@ -1,3 +1,4 @@
+import type { DateType } from '@/vc-util/type';
 import { computed, ref, type Ref } from 'vue';
 import { fillIndex } from '../../utils/miscUtil';
 import type useInvalidate from './useInvalidate';
@@ -5,9 +6,9 @@ import type useInvalidate from './useInvalidate';
 /**
  * Used to control each fields invalidate status
  */
-export default function useFieldsInvalidate<DateType extends object, ValueType extends DateType[]>(
-  calendarValue: Ref<ValueType>,
-  isInvalidateDate: ReturnType<typeof useInvalidate<DateType>>,
+export default function useFieldsInvalidate(
+  calendarValue: Ref<DateType[]>,
+  isInvalidateDate: ReturnType<typeof useInvalidate>,
   allowEmpty: Ref<boolean[]> = ref([]),
 ) {
   const fieldsInvalidates = ref<[boolean, boolean]>([false, false]);

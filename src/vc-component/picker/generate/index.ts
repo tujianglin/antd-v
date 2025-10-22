@@ -1,4 +1,6 @@
-export type GenerateConfig<DateType> = {
+import type { DateType } from '@/vc-util/type';
+
+export type GenerateConfig = {
   // Get
   getWeekDay: (value: DateType) => number;
   getMillisecond: (value: DateType) => number;

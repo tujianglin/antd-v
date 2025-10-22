@@ -1,4 +1,5 @@
-<script lang="tsx" setup generic="DateType extends object = any">
+<script lang="tsx" setup>
+import type { DateType } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
 import { computed, getCurrentInstance, toRefs } from 'vue';
@@ -8,7 +9,7 @@ import { formatValue } from '../../../utils/dateUtil';
 import { usePanelContextInject, usePickerHackContextInject } from '../../context';
 import TimeColumn from './TimeColumn.vue';
 
-export type TimePanelBodyProps<DateType extends object = any> = SharedPanelProps<DateType>;
+export type TimePanelBodyProps = SharedPanelProps;
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -22,7 +23,7 @@ const {
 
   // MISC
   changeOnScroll,
-} = defineProps<SharedTimeProps<DateType>>();
+} = defineProps<SharedTimeProps>();
 
 function isAM(hour: number) {
   return hour < 12;

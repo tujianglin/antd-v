@@ -1,9 +1,14 @@
 import type { PickerProps as RcPickerProps, RangePickerProps as RcRangePickerProps } from '@/vc-component/picker';
-import type { PanelSemanticName as PopupSemantic, Locale as RcPickerLocale, SemanticName } from '@/vc-component/picker/interface';
+import type {
+  PanelSemanticName as PopupSemantic,
+  Locale as RcPickerLocale,
+  SharedPanelProps as RcSharedPanelProps,
+  SemanticName,
+} from '@/vc-component/picker/interface';
 
+import type { DateType } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
 import type { InputStatus } from '../_util/statusUtils';
-import type { AnyObject } from '../_util/type';
 import type { Variant } from '../config-provider';
 import type { SizeType } from '../config-provider/SizeContext';
 import type { TimePickerLocale } from '../time-picker/index.vue';
@@ -11,6 +16,8 @@ import type { TimePickerLocale } from '../time-picker/index.vue';
 const _DataPickerPlacements = ['bottomLeft', 'bottomRight', 'topLeft', 'topRight'] as const;
 
 type DataPickerPlacement = (typeof _DataPickerPlacements)[number];
+
+export type SharedPanelProps = RcSharedPanelProps;
 
 export type PickerLocale = {
   lang: RcPickerLocale & AdditionalPickerLocaleLangProps;
@@ -59,23 +66,22 @@ type InjectDefaultProps<Props> = Omit<Props, 'locale' | 'generateConfig' | 'hide
 };
 
 /** Base Single Picker props */
-export type PickerProps<DateType extends AnyObject = any> = InjectDefaultProps<RcPickerProps<DateType>>;
+export type PickerProps = InjectDefaultProps<RcPickerProps>;
 
 /** Base Range Picker props */
-export type RangePickerProps<DateType extends AnyObject = any> = InjectDefaultProps<RcRangePickerProps<DateType>>;
+export type RangePickerProps = InjectDefaultProps<RcRangePickerProps>;
 
-export type GenericTimePickerProps<DateType extends AnyObject = any> = Omit<PickerProps<DateType>, 'picker' | 'showTime'>;
+export type GenericTimePickerProps = Omit<PickerProps, 'picker' | 'showTime'>;
 
 /**
  * Single Picker has the `multiple` prop,
  * which will make the `value` be `DateType[]` type.
  * Here to be a generic which accept the `ValueType` for developer usage.
  */
-export type PickerPropsWithMultiple<
-  DateType extends AnyObject = any,
-  InnerPickerProps extends PickerProps<DateType> = PickerProps<DateType>,
-  ValueType = DateType,
-> = Omit<InnerPickerProps, 'onChange' | 'onOk'> & {
-  onChange?: (date: ValueType, dateString: string | string[]) => void;
-  onOk?: (date: ValueType) => void;
+export type PickerPropsWithMultiple<InnerPickerProps extends PickerProps = PickerProps> = Omit<
+  InnerPickerProps,
+  'onChange' | 'onOk'
+> & {
+  onChange?: (date: DateType, dateString: string | string[]) => void;
+  onOk?: (date: DateType) => void;
 };

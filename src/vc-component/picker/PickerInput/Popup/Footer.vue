@@ -1,5 +1,6 @@
 <script lang="tsx" setup>
 import Render from '@/vc-component/render';
+import type { DateType } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, toRefs } from 'vue';
 import type { GenerateConfig } from '../../generate';
@@ -8,14 +9,14 @@ import type { DisabledDate, InternalMode, PanelMode, SharedPickerProps } from '.
 import { usePickerContextInject } from '../context';
 import type { PopupShowTimeConfig } from './index.vue';
 
-export interface FooterProps<DateType extends object = any> {
+export interface FooterProps {
   mode: PanelMode;
   internalMode: InternalMode;
   renderExtraFooter?: SharedPickerProps['renderExtraFooter'];
   showNow: boolean;
-  generateConfig: GenerateConfig<DateType>;
-  disabledDate: DisabledDate<DateType>;
-  showTime?: PopupShowTimeConfig<DateType>;
+  generateConfig: GenerateConfig;
+  disabledDate: DisabledDate;
+  showTime?: PopupShowTimeConfig;
 
   // Invalid
   /** From Footer component used only. Check if can OK button click */

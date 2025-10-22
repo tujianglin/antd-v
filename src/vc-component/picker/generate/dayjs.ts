@@ -1,4 +1,3 @@
-import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -112,7 +111,7 @@ const parseNoMatchNotice = () => {
   // noteOnce(false, 'Not match any format. Please help to fire a issue about this.');
 };
 
-const generateConfig: GenerateConfig<Dayjs> = {
+const generateConfig: GenerateConfig = {
   // get
   getNow: () => {
     const now = dayjs();

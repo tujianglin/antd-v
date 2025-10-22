@@ -2,11 +2,11 @@ import { computed, type Ref } from 'vue';
 import type { FormatType, InternalMode, Locale, SharedPickerProps } from '../../interface';
 import { getRowFormat, toArray } from '../../utils/miscUtil';
 
-export function useFieldFormat<DateType = any>(
+export function useFieldFormat(
   picker: Ref<InternalMode>,
   locale: Ref<Locale>,
   format?: Ref<SharedPickerProps['format']>,
-): [formatList: Ref<FormatType<DateType>[]>, maskFormat?: Ref<string>] {
+): [formatList: Ref<FormatType[]>, maskFormat?: Ref<string>] {
   const formatList = computed(() => {
     const rawFormat = getRowFormat(picker.value, locale.value, format.value);
     return toArray(rawFormat);

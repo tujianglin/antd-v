@@ -1,6 +1,5 @@
-<script lang="tsx" setup generic="DateType extends AnyObject = AnyObject">
+<script lang="tsx" setup>
 import { computed, getCurrentInstance, h, toRefs, useTemplateRef } from 'vue';
-import type { AnyObject } from '../_util/type';
 import type { PickerProps } from './generatePicker';
 import useMergedPickerSemantic from './hooks/useMergedPickerSemantic';
 import { useConfigContextInject } from '../config-provider';
@@ -25,6 +24,7 @@ import type { GenerateConfig } from '@/vc-component/picker/generate';
 import { getMergedStatus, getStatusClassNames } from '../_util/statusUtils';
 import SuffixIcon from './generatePicker/SuffixIcon.vue';
 import dayjs from 'dayjs';
+import type { DateType } from '@/vc-util/type';
 
 const {
   prefixCls: customizePrefixCls,
@@ -50,7 +50,7 @@ const {
   allowClear = true,
   valueFormat,
   ...restProps
-} = defineProps<PickerProps<DateType> & { pickerType?: 'timePicker' | 'datePicker'; generateConfig: GenerateConfig<DateType> }>();
+} = defineProps<PickerProps & { pickerType?: 'timePicker' | 'datePicker'; generateConfig: GenerateConfig }>();
 
 const value = defineModel<DateType | DateType[] | null>('value', {
   get(e: any) {
@@ -131,7 +131,6 @@ const hasLegacyOnSelect = computed(() => onSelect.value && picker === 'time' && 
 
 const onInternalCalendarChange: typeof onCalendarChange = (date, dateStr, info) => {
   onCalendarChange?.(date, dateStr, info);
-
   if (hasLegacyOnSelect.value) {
     onSelect?.value?.(date as any);
   }

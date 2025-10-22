@@ -1,11 +1,12 @@
+import type { DateType } from '@/vc-util/type';
 import warning from '@/vc-util/warning';
 import { computed, type ComputedRef, type Ref } from 'vue';
 import type { ValueDate } from '../../interface';
 
-export default function usePresets<DateType = any>(
-  presets?: Ref<ValueDate<DateType>[]>,
+export default function usePresets(
+  presets?: Ref<ValueDate[]>,
   legacyRanges?: Ref<Record<string, DateType | (() => DateType)>>,
-): ComputedRef<ValueDate<DateType>[]> {
+): ComputedRef<ValueDate[]> {
   return computed(() => {
     if (presets.value) {
       return presets.value;

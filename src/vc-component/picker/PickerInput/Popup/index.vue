@@ -1,4 +1,4 @@
-<script lang="tsx" setup generic="DateType extends object = any">
+<script lang="tsx" setup>
 import type { ResizeObserverProps } from '@/vc-component/resize-observer';
 import { computed, getCurrentInstance, ref, toRefs, watch } from 'vue';
 import type { RangeTimeProps, SharedPickerProps, SharedTimeProps, ValueDate } from '../../interface';
@@ -10,24 +10,20 @@ import PresetPanel from './PresetPanel.vue';
 import clsx from 'clsx';
 import ResizeObserver from '@/vc-component/resize-observer';
 import { omit } from 'lodash-es';
+import type { DateType } from '@/vc-util/type';
 
-export type PopupShowTimeConfig<DateType extends object = any> = Omit<
-  RangeTimeProps<DateType>,
-  'defaultValue' | 'defaultOpenValue' | 'disabledTime'
-> &
-  Pick<SharedTimeProps<DateType>, 'disabledTime'>;
+export type PopupShowTimeConfig = Omit<RangeTimeProps, 'defaultValue' | 'defaultOpenValue' | 'disabledTime'> &
+  Pick<SharedTimeProps, 'disabledTime'>;
 
-export interface PopupProps<DateType extends object = any, PresetValue = DateType>
-  extends FooterProps<DateType>,
-    PopupPanelProps<DateType> {
+export interface PopupProps extends FooterProps, PopupPanelProps {
   onFocus?: (event: FocusEvent) => void;
   onBlur?: (event: FocusEvent) => void;
   panelRender?: SharedPickerProps['panelRender'];
 
   // Presets
-  presets: ValueDate<DateType>[];
-  onPresetHover: (presetValue: PresetValue) => void;
-  onPresetSubmit: (presetValue: PresetValue) => void;
+  presets: ValueDate[];
+  onPresetHover: (presetValue: DateType[]) => void;
+  onPresetSubmit: (presetValue: DateType[]) => void;
 
   // Range
   activeInfo?: [activeInputLeft: number, activeInputRight: number, selectorWidth: number];
@@ -78,7 +74,7 @@ const {
   defaultOpenValue,
   onOk,
   onSubmit,
-} = defineProps<PopupProps<DateType>>();
+} = defineProps<PopupProps>();
 
 const { prefixCls } = toRefs(usePickerContextInject());
 const panelPrefixCls = computed(() => `${prefixCls.value}-panel`);
@@ -181,8 +177,8 @@ const onFooterSubmit = () => {
     onSelect(defaultOpenValue);
   }
 
-  onOk();
-  onSubmit();
+  onOk?.();
+  onSubmit?.();
 };
 
 const vm = getCurrentInstance();

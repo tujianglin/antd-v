@@ -1,4 +1,5 @@
 <script lang="tsx" setup>
+import type { DateType } from '@/vc-util/type';
 import { useTemplateRef } from 'vue';
 import DatePicker from '../date-picker';
 import type { TimeRangePickerProps } from './index.vue';
@@ -7,8 +8,8 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { allowClear = true } = defineProps<TimeRangePickerProps>();
 
-const value = defineModel<any[]>('value');
-const pickerValue = defineModel<any[]>('pickerValue');
+const value = defineModel<DateType[]>('value');
+const pickerValue = defineModel<DateType[]>('pickerValue');
 const open = defineModel<boolean>('open');
 
 const domRef = useTemplateRef('domRef');

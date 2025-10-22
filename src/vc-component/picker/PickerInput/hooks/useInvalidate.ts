@@ -1,3 +1,4 @@
+import type { DateType } from '@/vc-util/type';
 import type { Ref } from 'vue';
 import type { GenerateConfig } from '../../generate';
 import type { PanelMode, RangeTimeProps, SharedPickerProps, SharedTimeProps } from '../../interface';
@@ -5,11 +6,11 @@ import type { PanelMode, RangeTimeProps, SharedPickerProps, SharedTimeProps } fr
 /**
  * Check if provided date is valid for the `disabledDate` & `showTime.disabledTime`.
  */
-export default function useInvalidate<DateType extends object = any>(
-  generateConfig: Ref<GenerateConfig<DateType>>,
+export default function useInvalidate(
+  generateConfig: Ref<GenerateConfig>,
   picker: Ref<PanelMode>,
-  disabledDate?: SharedPickerProps<DateType>['disabledDate'],
-  showTime?: Ref<SharedTimeProps<DateType> | RangeTimeProps<DateType>>,
+  disabledDate?: SharedPickerProps['disabledDate'],
+  showTime?: Ref<SharedTimeProps | RangeTimeProps>,
 ) {
   // Check disabled date
   const isInvalidate = (date: DateType, info?: { from?: DateType; activeIndex: number }) => {

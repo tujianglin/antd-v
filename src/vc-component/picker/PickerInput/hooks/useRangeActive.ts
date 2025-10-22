@@ -4,14 +4,14 @@ import useLockEffect from './useLockEffect';
 
 export type OperationType = 'input' | 'panel';
 
-export type NextActive<DateType> = (nextValue: RangeValueType<DateType>) => number | null;
+export type NextActive = (nextValue: RangeValueType) => number | null;
 
 /**
  * When user first focus one input, any submit will trigger focus another one.
  * When second time focus one input, submit will not trigger focus again.
  * When click outside to close the panel, trigger event if it can trigger onChange.
  */
-export default function useRangeActive<DateType>(
+export default function useRangeActive(
   disabled: Ref<boolean[]>,
   empty: Ref<boolean[]> = ref([]),
   mergedOpen: Ref<boolean> = ref(false),
@@ -20,7 +20,7 @@ export default function useRangeActive<DateType>(
   triggerFocus: (focused: boolean) => void,
   lastOperation: (type?: OperationType) => OperationType,
   activeIndex: Ref<number>,
-  nextActiveIndex: NextActive<DateType>,
+  nextActiveIndex: NextActive,
   activeListRef: Ref<number[]>,
   updateSubmitIndex: (index: number | null) => void,
   hasActiveSubmitValue: (index: number) => boolean,
@@ -54,7 +54,7 @@ export default function useRangeActive<DateType>(
 
   // ============================ Strategy ============================
   // Trigger when input enter or input blur or panel close
-  const nextActiveIndex: NextActive<DateType> = (nextValue: RangeValueType<DateType>) => {
+  const nextActiveIndex: NextActive = (nextValue: RangeValueType) => {
     const list = activeListRef.value;
     const filledActiveSet = new Set(list.filter((index) => nextValue[index] || empty.value[index]));
     const nextIndex = list[list.length - 1] === 0 ? 1 : 0;

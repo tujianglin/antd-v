@@ -1,5 +1,6 @@
-<script lang="tsx" setup generic="DateType extends object = any">
+<script lang="tsx" setup>
 import Render from '@/vc-component/render';
+import type { DateType } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, getCurrentInstance, h, toRefs, useAttrs, useTemplateRef } from 'vue';
 import type { InternalMode, SelectorProps, SharedHTMLAttrs } from '../../../interface';
@@ -13,9 +14,7 @@ import Icon from '../Icon.vue';
 import Input from '../Input.vue';
 import MultipleDates from './MultipleDates.vue';
 
-export interface SingleSelectorProps<DateType extends object = any>
-  extends SelectorProps<DateType>,
-    Pick<PickerProps, 'multiple' | 'maxTagCount'> {
+export interface SingleSelectorProps extends SelectorProps, Pick<PickerProps, 'multiple' | 'maxTagCount'> {
   id?: string;
 
   value?: DateType[];
@@ -105,7 +104,7 @@ const {
   removeIcon,
 
   ...restProps
-} = defineProps<SingleSelectorProps<DateType>>();
+} = defineProps<SingleSelectorProps>();
 
 const attrs = useAttrs() as SharedHTMLAttrs;
 
@@ -150,7 +149,7 @@ const onMultipleRemove = (date: DateType) => {
 
 // ======================== Inputs ========================
 const vm = getCurrentInstance();
-const [getInputProps, getText] = useInputProps<DateType>(
+const [getInputProps, getText] = useInputProps(
   computed(() => {
     return {
       ...vm.props,

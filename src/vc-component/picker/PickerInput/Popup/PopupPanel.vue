@@ -1,4 +1,5 @@
-<script lang="tsx" setup generic="DateType extends object = any">
+<script lang="tsx" setup>
+import type { DateType } from '@/vc-util/type';
 import { omit } from 'lodash-es';
 import { computed, getCurrentInstance, toRefs } from 'vue';
 import { PickerPanel } from '../..';
@@ -8,11 +9,11 @@ import { usePickerContextInject } from '../context';
 import { offsetPanelDate } from '../hooks/useRangePickerValue';
 import { type FooterProps } from './Footer.vue';
 
-export type MustProp<DateType extends object> = Required<Pick<PickerPanelProps<DateType>, 'mode' | 'onPanelChange'>>;
+export type MustProp = Required<Pick<PickerPanelProps, 'mode' | 'onPanelChange'>>;
 
-export type PopupPanelProps<DateType extends object = any> = MustProp<DateType> &
-  Omit<PickerPanelProps<DateType>, 'onPickerValueChange' | 'showTime'> &
-  FooterProps<DateType> & {
+export type PopupPanelProps = MustProp &
+  Omit<PickerPanelProps, 'onPickerValueChange' | 'showTime'> &
+  FooterProps & {
     multiplePanel?: boolean;
     range?: boolean;
 
@@ -22,7 +23,7 @@ export type PopupPanelProps<DateType extends object = any> = MustProp<DateType> 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { picker, multiplePanel, pickerValue, onPickerValueChange, needConfirm, onSubmit, range, hoverValue } =
-  defineProps<PopupPanelProps<DateType>>();
+  defineProps<PopupPanelProps>();
 
 const { prefixCls, generateConfig } = toRefs(usePickerContextInject());
 

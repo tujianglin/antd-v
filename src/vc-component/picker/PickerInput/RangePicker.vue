@@ -1,4 +1,4 @@
-<script lang="tsx" setup generic="DateType extends object = any">
+<script lang="tsx" setup>
 import pickAttrs from '@/vc-util/pickAttrs';
 import { reactiveComputed } from '@vueuse/core';
 import { omit } from 'lodash-es';
@@ -35,23 +35,23 @@ import { PickerContextProvider } from './context';
 import PickerTrigger from '../PickerTrigger/index.vue';
 import { pickTriggerProps } from '../PickerTrigger/util';
 import clsx from 'clsx';
-import type { VueNode } from '@/vc-util/type';
+import type { DateType, VueNode } from '@/vc-util/type';
 import useControlledState from '@/vc-util/hooks/useControlledState';
 
-export type RangeValueType<DateType> = [start: DateType | null | undefined, end: DateType | null | undefined];
+export type RangeValueType = DateType[];
 
 /** Used for change event, it should always be not undefined */
-export type NoUndefinedRangeValueType<DateType> = [start: DateType | null, end: DateType | null];
+export type NoUndefinedRangeValueType = DateType[];
 
-export interface BaseRangePickerProps<DateType extends object> extends Omit<SharedPickerProps<DateType>, 'showTime' | 'id'> {
+export interface BaseRangePickerProps extends Omit<SharedPickerProps, 'showTime' | 'id'> {
   // Structure
   id?: SelectorIdType;
 
   separator?: VueNode;
 
-  onChange?: (dates: NoUndefinedRangeValueType<DateType> | null, dateStrings: [string, string]) => void;
-  onCalendarChange?: (dates: NoUndefinedRangeValueType<DateType>, dateStrings: [string, string], info: BaseInfo) => void;
-  onOk?: (values: NoUndefinedRangeValueType<DateType>) => void;
+  onChange?: (dates: NoUndefinedRangeValueType | null, dateStrings: [string, string]) => void;
+  onCalendarChange?: (dates: NoUndefinedRangeValueType, dateStrings: [string, string], info: BaseInfo) => void;
+  onOk?: (values: NoUndefinedRangeValueType) => void;
 
   // Placeholder
   placeholder?: [string, string];
@@ -70,28 +70,26 @@ export interface BaseRangePickerProps<DateType extends object> extends Omit<Shar
   ) => void;
 
   // Preset
-  presets?: ValueDate<Exclude<RangeValueType<DateType>, null>>[];
+  presets?: ValueDate[];
 
   // Control
   disabled?: boolean | [boolean, boolean];
   allowEmpty?: boolean | [boolean, boolean];
 
   // Time
-  showTime?: boolean | RangeTimeProps<DateType>;
+  showTime?: boolean | RangeTimeProps;
 
   // Mode
   mode?: [startMode: PanelMode, endMode: PanelMode];
   /** Trigger on each `mode` or `pickerValue` changed. */
-  onPanelChange?: (values: NoUndefinedRangeValueType<DateType>, modes: [startMode: PanelMode, endMode: PanelMode]) => void;
+  onPanelChange?: (values: NoUndefinedRangeValueType, modes: [startMode: PanelMode, endMode: PanelMode]) => void;
 }
 
-export interface RangePickerProps<DateType extends object>
-  extends BaseRangePickerProps<DateType>,
-    Omit<RangeTimeProps<DateType>, 'format' | 'defaultOpenValue'> {}
+export interface RangePickerProps extends BaseRangePickerProps, Omit<RangeTimeProps, 'format' | 'defaultOpenValue'> {}
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const props = withDefaults(defineProps<RangePickerProps<DateType>>(), {
+const props = withDefaults(defineProps<RangePickerProps>(), {
   allowClear: true,
   showNow: false,
   picker: 'date',
@@ -196,9 +194,7 @@ const {
 
   // Native
   onClick,
-} = toRefs(
-  reactiveComputed(() => filledProps.value) as FilledProps<RangePickerProps<DateType>, DateType, ReturnType<typeof updateProps>>,
-);
+} = toRefs(reactiveComputed(() => filledProps.value) as FilledProps<RangePickerProps, DateType, ReturnType<typeof updateProps>>);
 const selectorRef = ref();
 
 defineExpose({
@@ -269,7 +265,7 @@ const onSharedBlur = (event: FocusEvent, index?: number) => {
 
 // ======================= ShowTime =======================
 /** Used for Popup panel */
-const mergedShowTime = computed<PopupShowTimeConfig<DateType> & Pick<RangeTimeProps<DateType>, 'defaultOpenValue'>>(() => {
+const mergedShowTime = computed<PopupShowTimeConfig & Pick<RangeTimeProps, 'defaultOpenValue'>>(() => {
   if (!showTime.value) {
     return null;
   }
@@ -305,7 +301,7 @@ const multiplePanel = computed(() => internalMode.value === picker.value && inte
 const mergedShowNow = useShowNow(picker, mergedMode, showNow);
 
 // ======================== Value =========================
-const [flushSubmit, triggerSubmitChange] = useRangeValue<any>(
+const [flushSubmit, triggerSubmitChange] = useRangeValue(
   filledProps as any,
   mergedValue,
   setInnerValue,
@@ -332,7 +328,7 @@ const mergedDisabledDate = computed(() =>
 );
 
 // ======================= Validate =======================
-const [submitInvalidates, onSelectorInvalid] = useFieldsInvalidate<any, any>(calendarValue, isInvalidateDate, allowEmpty);
+const [submitInvalidates, onSelectorInvalid] = useFieldsInvalidate(calendarValue, isInvalidateDate, allowEmpty);
 
 // ===================== Picker Value =====================
 const [currentPickerValue, setCurrentPickerValue] = useRangePickerValue(
@@ -361,7 +357,7 @@ const triggerModeChange = (nextPickerValue: DateType, nextMode: PanelMode, trigg
 
   // Compatible with `onPanelChange`
   if (onPanelChange.value && triggerEvent !== false) {
-    const clonePickerValue: RangeValueType<DateType> = [...calendarValue.value];
+    const clonePickerValue: RangeValueType = [...calendarValue.value];
     if (nextPickerValue) {
       clonePickerValue[activeIndex.value] = nextPickerValue;
     }
@@ -425,7 +421,7 @@ const onSelectorClear = () => {
 
 // ======================== Hover =========================
 const hoverSource = ref<'cell' | 'preset'>(null);
-const internalHoverValues = ref<RangeValueType<DateType>>(null);
+const internalHoverValues = ref<RangeValueType>(null);
 
 const hoverValues = computed(() => {
   return internalHoverValues.value || calendarValue.value;
@@ -451,12 +447,12 @@ const activeInfo = ref<[activeInputLeft: number, activeInputRight: number, selec
 // ======================= Presets ========================
 const presetList = usePresets(presets);
 
-const onPresetHover = (nextValues: RangeValueType<DateType> | null) => {
+const onPresetHover = (nextValues: RangeValueType | null) => {
   internalHoverValues.value = nextValues;
   hoverSource.value = 'preset';
 };
 
-const onPresetSubmit = (nextValues: RangeValueType<DateType>) => {
+const onPresetSubmit = (nextValues: RangeValueType) => {
   const passed = triggerSubmitChange(nextValues);
 
   if (passed) {
@@ -487,7 +483,7 @@ const onPanelMouseDown = () => {
 
 // >>> Calendar
 const onPanelSelect = (date: DateType) => {
-  const clone: RangeValueType<DateType> = fillIndex(calendarValue.value, activeIndex.value, date);
+  const clone: RangeValueType = fillIndex(calendarValue.value, activeIndex.value, date);
 
   // Only trigger calendar event but not update internal `calendarValue` state
   triggerCalendarChange(clone);
@@ -542,9 +538,9 @@ const panelProps = computed(() => {
 // >>> Render
 const panel = () => {
   return (
-    <Popup<any>
+    <Popup
       // MISC
-      {...(panelProps.value as any)}
+      {...(omit(panelProps.value, ['onSubmit', 'onOk', 'onPickerValueChange']) as any)}
       showNow={mergedShowNow.value}
       showTime={mergedShowTime.value}
       // Range
