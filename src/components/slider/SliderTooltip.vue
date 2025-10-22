@@ -50,7 +50,7 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-  <Tooltip ref="innerRef" v-bind="$props" :open="mergedOpen">
+  <Tooltip ref="innerRef" v-bind="$props" :open="mergedOpen" auto-adjust-overflow>
     <template #title> {{ title }} </template>
     <slot></slot>
   </Tooltip>
