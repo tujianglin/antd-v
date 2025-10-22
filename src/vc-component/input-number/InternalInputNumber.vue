@@ -1,4 +1,5 @@
 <script lang="tsx" setup>
+import { watchOnce } from '@vueuse/core';
 import clsx from 'clsx';
 import { computed, onBeforeUnmount, shallowRef, useTemplateRef, watch } from 'vue';
 import type { DecimalClass, ValueType } from '../mini-decimal';
@@ -125,7 +126,7 @@ function mergedFormatter(number: string, userTyping: boolean) {
  */
 const inputValue = shallowRef<string | number>('');
 
-watch(
+watchOnce(
   value,
   (val) => {
     const initValue = val;
@@ -241,7 +242,10 @@ function triggerValueUpdate(newValue: DecimalClass, userTyping: boolean): Decima
     // Trigger event
     if (!updateValue.equals(decimalValue.value)) {
       setUncontrolledDecimalValue(updateValue);
-      onChange?.(updateValue.isEmpty() ? null : getDecimalValue(stringMode, updateValue));
+      const val = updateValue.isEmpty() ? null : getDecimalValue(stringMode, updateValue);
+      inputValue.value = val;
+      inputValueRef.value = val;
+      onChange?.(val);
       // Reformat input if value is not controlled
       if (value.value === undefined) {
         setInputValue(updateValue, userTyping);
@@ -259,12 +263,11 @@ const onNextPromise = useFrame();
 
 // >>> Collect input value
 const collectInputValue = (inputStr: string) => {
-  recordCursor();
-
   // Update inputValueRef in case input can not parse as number
   // Refresh ref value immediately since it may used by formatter
   inputValueRef.value = inputStr;
   inputValue.value = inputStr;
+  recordCursor();
 
   // Parse number
   if (!compositionRef.value) {
@@ -418,7 +421,7 @@ watch(
 );
 
 watch(
-  () => value.value,
+  value,
   (val) => {
     const newValue = getMiniDecimal(val);
     decimalValue.value = newValue;
@@ -435,7 +438,7 @@ watch(
 
 // ============================ Cursor ============================
 watch(
-  () => inputValue.value,
+  inputValue,
   () => {
     if (formatter) {
       restoreCursor();
@@ -453,8 +456,8 @@ const onWheel = (event) => {
 
 watch(
   [() => changeOnWheel, () => focus],
-  ([val1, val2]) => {
-    if (val1 && val2) {
+  () => {
+    if (changeOnWheel && focus) {
       const input = inputRef.value;
       if (input) {
         input.addEventListener('wheel', onWheel, { passive: false });
@@ -523,7 +526,7 @@ defineExpose({
         :class="inputClassName"
         :disabled="disabled"
         :readonly="readonly"
-        @change="onInternalInput"
+        @input="onInternalInput"
         @blur="onBlur"
         @focus="focus = true"
       />

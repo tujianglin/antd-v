@@ -16,6 +16,8 @@ import RcInputNumber from '@/vc-component/input-number';
 import ContextIsolator from '../_util/ContextIsolator';
 import Render from '@/vc-component/render';
 import type { ValueType } from '@/vc-component/mini-decimal';
+import { useFormItemInputContextInject } from '../form/context';
+import { getMergedStatus, getStatusClassNames } from '../_util/statusUtils';
 
 defineOptions({ name: 'InputNumber', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -24,11 +26,12 @@ const {
   size: customizeSize,
   disabled: customDisabled,
   prefixCls: customizePrefixCls,
-  addonBefore,
-  addonAfter,
-  prefix,
-  suffix,
+  addonBefore: customAddonBefore,
+  addonAfter: customAddonAfter,
+  prefix: customPrefix,
+  suffix: customSuffix,
   readonly = false,
+  status: customStatus,
   controls = true,
   variant: customVariant,
   class: className,
@@ -47,10 +50,10 @@ const slots = defineSlots<{
   suffix?: () => VNode[];
 }>();
 
-const addonBeforeSlot = computed(() => slots.addonBefore || addonBefore);
-const addonAfterSlot = computed(() => slots.addonAfter || addonAfter);
-const prefixSlot = computed(() => slots.prefix || prefix);
-const suffixSlot = computed(() => slots.suffix || suffix);
+const addonBefore = computed(() => slots.addonBefore || customAddonBefore);
+const addonAfter = computed(() => slots.addonAfter || customAddonAfter);
+const prefix = computed(() => slots.prefix || customPrefix);
+const suffix = computed(() => slots.suffix || customSuffix);
 
 const value = defineModel<ValueType>('value');
 
@@ -99,6 +102,9 @@ const { upIcon, downIcon } = toRefs(
   }),
 );
 
+const { hasFeedback, status: contextStatus, isFormItemInput, feedbackIcon } = toRefs(useFormItemInputContextInject());
+const mergedStatus = computed(() => getMergedStatus(contextStatus?.value, customStatus));
+
 const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
 
 // ===================== Disabled =====================
@@ -110,12 +116,15 @@ const [variant, enableVariantCls] = useVariant(
   computed(() => customVariant),
 );
 
+const suffixNode = () => hasFeedback?.value && <Render content={feedbackIcon?.value}></Render>;
+
 const inputNumberClass = computed(() => {
   return clsx(
     {
       [`${prefixCls.value}-lg`]: mergedSize.value === 'large',
       [`${prefixCls.value}-sm`]: mergedSize.value === 'small',
       [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
+      [`${prefixCls.value}-in-form-item`]: isFormItemInput?.value,
     },
     hashId.value,
     mergedClassNames.value?.input,
@@ -145,20 +154,19 @@ defineExpose({} as ComponentInstance<typeof RcInputNumber>);
     :prefix-cls="prefixCls"
     :readonly="readonly"
     :controls="controlsTemp"
-    :prefix="prefixSlot"
-    :suffix="suffixSlot"
-    :addon-before="
-      addonBeforeSlot && h(ContextIsolator, { space: true }, { default: () => h(Render, { content: addonBeforeSlot }) })
-    "
-    :addon-after="
-      addonAfterSlot && h(ContextIsolator, { space: true }, { default: () => h(Render, { content: addonAfterSlot }) })
-    "
+    :prefix="prefix"
+    :suffix="suffixNode || suffix"
+    :addon-before="addonBefore && h(ContextIsolator, { space: true }, () => [h(Render, { content: addonBefore })])"
+    :addon-after="addonAfter && h(ContextIsolator, { space: true }, () => [h(Render, { content: addonAfter })])"
     :class-names="{
       ...mergedClassNames,
       input: inputNumberClass,
-      variant: clsx({
-        [`${prefixCls}-${variant}`]: enableVariantCls,
-      }),
+      variant: clsx(
+        {
+          [`${prefixCls}-${variant}`]: enableVariantCls,
+        },
+        getStatusClassNames(prefixCls, mergedStatus, hasFeedback),
+      ),
       affixWrapper: clsx(
         {
           [`${prefixCls}-affix-wrapper-sm`]: mergedSize === 'small',
@@ -181,6 +189,8 @@ defineExpose({} as ComponentInstance<typeof RcInputNumber>);
           [`${prefixCls}-group-wrapper-rtl`]: direction === 'rtl',
           [`${prefixCls}-group-wrapper-${variant}`]: enableVariantCls,
         },
+        getStatusClassNames(`${prefixCls}-group-wrapper`, mergedStatus, hasFeedback),
+        hashId,
         hashId,
       ),
     }"
