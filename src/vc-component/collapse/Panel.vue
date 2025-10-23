@@ -101,7 +101,7 @@ const domRef = ref(null);
 <template>
   <div v-bind="resetProps" ref="domRef" :class="collapsePanelClassNames">
     <div v-bind="headerProps">
-      <Render v-if="showArrow" :content="iconNode" />
+      <Render v-if="showArrow" :content="iconNode" v-bind="collapsibleProps" />
       <span
         :class="clsx(`${prefixCls}-title`, customizeClassNames?.title)"
         :style="styles?.title"
