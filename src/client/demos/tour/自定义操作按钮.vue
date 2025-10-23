@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { Button, Divider, Space, Tour, type TourProps } from '@/components';
+import { Button, Divider, Render, Space, Tour, type TourProps } from '@/components';
 import { EllipsisOutlined } from '@ant-design/icons-vue';
 import { ref, useTemplateRef } from 'vue';
 
@@ -26,6 +26,24 @@ const steps: TourProps['steps'] = [
     target: () => ref3.value!,
   },
 ];
+
+const actionsRender = (originNode, { current, total }) => {
+  return () => (
+    <>
+      {current !== total - 1 && (
+        <Button
+          size="small"
+          onClick={() => {
+            open.value = false;
+          }}
+        >
+          Skip
+        </Button>
+      )}
+      <Render content={originNode}></Render>
+    </>
+  );
+};
 </script>
 <template>
   <Button type="primary" @click="() => (open = true)"> Begin Tour </Button>
@@ -35,15 +53,5 @@ const steps: TourProps['steps'] = [
     <Button ref="ref2" type="primary"> Save </Button>
     <Button ref="ref3" :icon="EllipsisOutlined" />
   </Space>
-  <Tour
-    :open="open"
-    @close="() => (open = false)"
-    :steps="steps"
-    :mask="{
-      style: {
-        boxShadow: 'inset 0 0 15px #333',
-      },
-      color: 'rgba(80, 255, 255, .4)',
-    }"
-  />
+  <Tour :open="open" @close="() => (open = false)" :steps="steps" :actions-render="actionsRender" />
 </template>

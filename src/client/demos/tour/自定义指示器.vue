@@ -26,6 +26,12 @@ const steps: TourProps['steps'] = [
     target: () => ref3.value!,
   },
 ];
+
+const indicatorsRender = (current, total) => (
+  <span>
+    {current + 1} / {total}
+  </span>
+);
 </script>
 <template>
   <Button type="primary" @click="() => (open = true)"> Begin Tour </Button>
@@ -35,15 +41,5 @@ const steps: TourProps['steps'] = [
     <Button ref="ref2" type="primary"> Save </Button>
     <Button ref="ref3" :icon="EllipsisOutlined" />
   </Space>
-  <Tour
-    :open="open"
-    @close="() => (open = false)"
-    :steps="steps"
-    :mask="{
-      style: {
-        boxShadow: 'inset 0 0 15px #333',
-      },
-      color: 'rgba(80, 255, 255, .4)',
-    }"
-  />
+  <Tour :open="open" @close="() => (open = false)" :steps="steps" :indicators-render="indicatorsRender" />
 </template>

@@ -162,7 +162,7 @@ const DefaultActionsNode = () => (
         </div>
         <div :class="clsx(`${prefixCls}-actions`, tourClassNames?.actions)" :style="styles?.actions">
           <Render v-if="actionsRender" :content="actionsRender(DefaultActionsNode, { current, total })" />
-          <DefaultActionsNode />
+          <DefaultActionsNode v-else />
         </div>
       </div>
     </div>
