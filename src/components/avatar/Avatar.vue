@@ -241,10 +241,16 @@ const ChildrenToRender = () => {
   }
   return childrenToRender;
 };
+
+defineExpose({
+  get el() {
+    return avatarNodeRef.value;
+  },
+});
 </script>
 <template>
   <span
-    v-bind="others"
+    v-bind="{ ...others, ...$attrs }"
     :style="{ ...sizeStyle, ...responsiveSizeStyle, ...contextStyle, ...style }"
     :class="classString"
     ref="avatarNodeRef"
