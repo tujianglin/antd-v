@@ -6,6 +6,7 @@ import type { SizeType } from '../config-provider/SizeContext';
 export type SpaceSize = SizeType | number;
 type SemanticName = 'root' | 'item' | 'separator';
 export interface SpaceProps {
+  id?: string;
   prefixCls?: string;
   class?: string;
   rootClassName?: string;

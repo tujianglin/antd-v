@@ -1,4 +1,5 @@
 import { ReloadOutlined } from '@ant-design/icons-vue';
+import { propsToCamelCase } from '../_util/type';
 import Button from '../button';
 import type { Locale } from '../locale';
 import Spin from '../spin';
@@ -14,7 +15,8 @@ export type QRcodeStatusProps = {
 
 const defaultSpin = <Spin />;
 
-export default function QRcodeStatus({ prefixCls, locale, onRefresh, statusRender, status }: QRcodeStatusProps) {
+export default function QRcodeStatus(props: QRcodeStatusProps) {
+  const { prefixCls, locale, onRefresh, statusRender, status } = propsToCamelCase(props);
   const defaultExpiredNode = (
     <>
       <p class={`${prefixCls}-expired`}>{locale?.expired}</p>
