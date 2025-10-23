@@ -20,7 +20,7 @@ const useMergedArrow = (
     return {
       ...contextArrowConfig,
       ...arrowConfig,
-      show: (contextArrowConfig.show || false) === arrowConfig.show ? (contextArrowConfig.show ?? true) : arrowConfig.show,
+      show: arrowConfig.show ?? contextArrowConfig.show ?? true,
     };
   });
 };

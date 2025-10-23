@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
-import { cloneVNode, computed, toRefs, type VNode } from 'vue';
+import { computed, toRefs, type VNode } from 'vue';
 import { useComponentConfig } from '../config-provider/context';
 import type { AbstractTooltipProps } from '../tooltip/index.vue';
 // CSSINJS
-import { isValidElement } from '@/vc-util/Children/util';
+import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import KeyCode from '@/vc-util/KeyCode';
 import clsx from 'clsx';
@@ -33,12 +33,16 @@ const {
   styles,
   classNames: popoverClassNames,
   motion,
-  arrow: popoverArrow,
+  arrow: popoverArrow = undefined,
   autoAdjustOverflow = true,
   ...restProps
 } = defineProps<PopoverProps>();
 
-const slots = defineSlots<{ default?: () => VNode[]; title?: () => VNode[]; content?: () => VNode[] }>();
+const slots = defineSlots<{
+  default?: () => VNode[];
+  title?: () => VNode[];
+  content?: () => VNode[];
+}>();
 
 const title = computed(() => slots.title || defaultTitle);
 const content = computed(() => slots.content || defaultContent);
@@ -123,7 +127,7 @@ const children = computed(() => flattenChildren(slots.default?.())?.[0]);
     <component
       v-if="children"
       :is="
-        cloneVNode(children, {
+        cloneElement(children, {
           onKeydown: (e) => {
             if (isValidElement(children)) {
               children?.props?.onKeydown?.(e);

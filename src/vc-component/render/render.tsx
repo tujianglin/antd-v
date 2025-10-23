@@ -1,7 +1,7 @@
 import { isComponent } from '@/vc-util/Children/util';
 import type { VueNode } from '@/vc-util/type';
 import { isArray, isBoolean } from 'lodash-es';
-import { cloneVNode, defineComponent, h, isVNode, type Component, type PropType } from 'vue';
+import { cloneVNode, defineComponent, getCurrentInstance, h, isVNode, type Component, type PropType } from 'vue';
 
 export default defineComponent({
   inheritAttrs: false,
@@ -12,7 +12,13 @@ export default defineComponent({
       default: undefined,
     },
   },
-  setup(props, { attrs, slots }) {
+  setup(props, { attrs, slots, expose }) {
+    const vm = getCurrentInstance();
+    expose({
+      get el() {
+        return vm.exposed;
+      },
+    });
     return () => {
       if (isBoolean(props.content)) {
         return null;
