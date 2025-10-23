@@ -17,6 +17,7 @@ import Render from '@/vc-component/render';
 import { keysToCamelCaseShallow } from '@/vc-util/props';
 import type { VueNode } from '@/vc-util/type';
 import { replaceElement } from '@/vc-util/Children/util';
+import { propsToCamelCase } from '../_util/type';
 
 export interface AlertRef {
   nativeElement: HTMLDivElement;
@@ -89,7 +90,7 @@ const {
   afterClose,
   showIcon,
   closable,
-  closeIcon,
+  closeIcon = undefined,
   action,
   id,
   styles,
@@ -127,7 +128,7 @@ const IconNode = (props: IconNodeProps) => {
 };
 
 const CloseIconNode = (props: CloseIconProps) => {
-  const { isClosable, prefixCls, closeIcon, handleClose, ariaProps } = keysToCamelCaseShallow(props);
+  const { isClosable, prefixCls, closeIcon, handleClose, ariaProps } = propsToCamelCase(props);
   const mergedCloseIcon = closeIcon === true || closeIcon === undefined ? <CloseOutlined /> : closeIcon;
   return isClosable ? (
     <button type="button" onClick={handleClose} class={`${prefixCls}-close-icon`} tabindex={0} {...ariaProps}>
