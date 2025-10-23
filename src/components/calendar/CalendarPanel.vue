@@ -6,8 +6,8 @@ import { useComponentConfig } from '../config-provider/context';
 import { useLocale } from '../locale';
 import enUS from './locale/en_US';
 import useStyle from './style';
-import type { AnyObject, VueNode } from '@/vc-util/type';
-import { computed, toRefs, type CSSProperties } from 'vue';
+import type { VueNode } from '@/vc-util/type';
+import { computed, toRaw, toRefs, type CSSProperties } from 'vue';
 import { reactiveComputed } from '@vueuse/core';
 import type { GenerateConfig } from '@/vc-component/picker/generate';
 import useControlledState from '@/vc-util/hooks/useControlledState';
@@ -15,10 +15,9 @@ import clsx from 'clsx';
 import Render from '@/vc-component/render';
 import CalendarHeader from './Header/index.vue';
 import { PickerPanel as RCPickerPanel } from '@/vc-component/picker';
-import type { Dayjs } from 'dayjs';
 
 export type CalendarMode = 'year' | 'month';
-export type HeaderRender<DateType> = (config: {
+export type HeaderRender = (config: {
   value: DateType;
   type: CalendarMode;
   onChange: (date: DateType) => void;
@@ -31,7 +30,7 @@ export interface SelectInfo {
 export type DateType = any;
 
 type SemanticName = 'root' | 'header' | 'body' | 'content' | 'item';
-export interface CalendarProps<DateType extends Dayjs = Dayjs> {
+export interface CalendarProps {
   prefixCls?: string;
   class?: string;
   rootClassName?: string;
@@ -42,9 +41,9 @@ export interface CalendarProps<DateType extends Dayjs = Dayjs> {
   validRange?: [DateType, DateType];
   disabledDate?: (date: DateType) => boolean;
   monthCellRender?: (date: DateType) => VueNode;
-  cellRender?: (date: DateType, info: CellRenderInfo<DateType>) => VueNode;
-  fullCellRender?: (date: DateType, info: CellRenderInfo<DateType>) => VueNode;
-  headerRender?: HeaderRender<DateType>;
+  cellRender?: (date: DateType, info: CellRenderInfo) => VueNode;
+  fullCellRender?: (date: DateType, info: CellRenderInfo) => VueNode;
+  headerRender?: HeaderRender;
   value?: DateType;
   defaultValue?: DateType;
   mode?: CalendarMode;
@@ -80,19 +79,19 @@ const {
   classNames: calendarClassNames,
   generateConfig,
   locale: customLocale,
-} = defineProps<CalendarProps & { generateConfig?: GenerateConfig<any> }>();
+} = defineProps<CalendarProps & { generateConfig?: GenerateConfig }>();
 
-const isSameYear = <T extends AnyObject>(date1: T, date2: T, config: GenerateConfig<T>) => {
+const isSameYear = (date1: DateType, date2: DateType, config: GenerateConfig) => {
   const { getYear } = config;
   return date1 && date2 && getYear(date1) === getYear(date2);
 };
 
-const isSameMonth = <T extends AnyObject>(date1: T, date2: T, config: GenerateConfig<T>) => {
+const isSameMonth = (date1: DateType, date2: DateType, config: GenerateConfig) => {
   const { getMonth } = config;
   return isSameYear(date1, date2, config) && getMonth(date1) === getMonth(date2);
 };
 
-const isSameDate = <T extends AnyObject>(date1: T, date2: T, config: GenerateConfig<T>) => {
+const isSameDate = (date1: DateType, date2: DateType, config: GenerateConfig) => {
   const { getDate } = config;
   return isSameMonth(date1, date2, config) && getDate(date1) === getDate(date2);
 };
@@ -162,19 +161,18 @@ const triggerPanelChange = (date: DateType, newMode: CalendarMode) => {
 };
 
 const triggerChange = (date: DateType) => {
-  setMergedValue(date);
-
   if (!isSameDate(date, mergedValue.value, generateConfig)) {
     // Trigger when month panel switch month
     if (
-      (panelMode.value === 'date' && !isSameMonth(date, mergedValue.value, generateConfig)) ||
-      (panelMode.value === 'month' && !isSameYear(date, mergedValue.value, generateConfig))
+      (panelMode.value === 'date' && !isSameMonth(date, toRaw(mergedValue.value), generateConfig)) ||
+      (panelMode.value === 'month' && !isSameYear(date, toRaw(mergedValue.value), generateConfig))
     ) {
       triggerPanelChange(date, mergedMode.value);
     }
 
     onChange?.(date);
   }
+  setMergedValue(date);
 };
 
 const triggerModeChange = (newMode: CalendarMode) => {
@@ -189,7 +187,7 @@ const onInternalSelect = (date: DateType, source: SelectInfo['source']) => {
 };
 
 // ====================== Render ======================
-const dateRender = (date: DateType, info: CellRenderInfo<DateType>): VueNode => {
+const dateRender = (date: DateType, info: CellRenderInfo): VueNode => {
   if (fullCellRender) {
     return fullCellRender(date, info);
   }
@@ -206,7 +204,7 @@ const dateRender = (date: DateType, info: CellRenderInfo<DateType>): VueNode => 
   );
 };
 
-const monthRender = (date: DateType, info: CellRenderInfo<DateType>): VueNode => {
+const monthRender = (date: DateType, info: CellRenderInfo): VueNode => {
   if (fullCellRender) {
     return fullCellRender(date, info);
   }
