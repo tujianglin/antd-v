@@ -1,7 +1,18 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import { computed, getCurrentInstance, onBeforeUnmount, onMounted, ref, toRefs, useAttrs, watch, watchEffect } from 'vue';
+import {
+  computed,
+  getCurrentInstance,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  toRefs,
+  useAttrs,
+  watch,
+  watchEffect,
+  type VNode,
+} from 'vue';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import { Wave } from '../_util/wave';
 import { useConfigContextInject } from '../config-provider';
@@ -14,7 +25,6 @@ import type {
   BaseButtonProps,
   ButtonClassNamesType,
   ButtonProps,
-  ButtonSlots,
   ButtonStylesType,
   ColorVariantPairType,
   LoadingConfigType,
@@ -43,7 +53,7 @@ const {
   disabled: customDisabled,
   class: className,
   rootClassName,
-  icon,
+  icon: customIcon,
   iconPosition = 'start',
   ghost = undefined,
   block = undefined,
@@ -58,9 +68,12 @@ const {
 } = defineProps<ButtonProps>();
 
 // Slots
-const slots = defineSlots<ButtonSlots>();
-const iconSlot = computed(() => slots.icon || icon);
-const defaultSlot = computed(() => slots.default?.() || []);
+const slots = defineSlots<{
+  icon?: () => VNode[];
+  default?: () => VNode[];
+}>();
+const icon = computed(() => slots.icon || customIcon);
+const children = computed(() => flattenChildren(slots.default?.()) || []);
 
 const { button } = toRefs(useConfigContextInject());
 
@@ -132,7 +145,7 @@ const hasTwoCNChar = ref(false);
 const buttonRef = ref<HTMLButtonElement | HTMLAnchorElement>(null);
 
 const needInserted = computed(
-  () => defaultSlot.value.length === 1 && !iconSlot.value && !isUnBorderedButtonVariant(mergedVariant.value),
+  () => children.value.length === 1 && !icon.value && !isUnBorderedButtonVariant(mergedVariant.value),
 );
 
 // ========================= Mount ==========================
@@ -204,7 +217,7 @@ const sizeFullName = useSize(computed(() => (ctxSize) => customizeSize ?? compac
 
 const sizeCls = computed(() => (sizeFullName.value ? (sizeClassNameMap[sizeFullName.value] ?? '') : ''));
 
-const iconType = computed(() => (innerLoading.value ? 'loading' : iconSlot.value));
+const iconType = computed(() => (innerLoading.value ? 'loading' : icon.value));
 
 const linkButtonRestProps = computed(() => omit(rest as ButtonProps & { navigate: any }, ['navigate']));
 
@@ -233,7 +246,6 @@ const [mergedClassNames, mergedStyles] = useMergeSemantic<ButtonClassNamesType, 
 );
 
 const classes = computed(() => {
-  const children = flattenChildren(defaultSlot.value);
   return clsx(
     prefixCls.value,
     hashId.value,
@@ -247,7 +259,7 @@ const classes = computed(() => {
       [`${prefixCls.value}-color-${mergedColorText.value}`]: mergedColorText.value,
       [`${prefixCls.value}-variant-${mergedVariant.value}`]: mergedVariant.value,
       [`${prefixCls.value}-${sizeCls.value}`]: sizeCls.value,
-      [`${prefixCls.value}-icon-only`]: !isValidElement(children) && children.length === 0 && !!iconType?.value,
+      [`${prefixCls.value}-icon-only`]: !isValidElement(children.value) && children.value.length === 0 && !!iconType?.value,
       [`${prefixCls.value}-background-ghost`]: ghost && !isUnBorderedButtonVariant(mergedVariant.value),
       [`${prefixCls.value}-loading`]: innerLoading.value,
       [`${prefixCls.value}-two-chinese-chars`]: hasTwoCNChar?.value && mergedInsertSpace.value && !innerLoading?.value,
@@ -277,9 +289,9 @@ const iconSharedProps = computed(() => ({
 const mergedRef = useComposeRef({}, buttonRef);
 
 const iconNode = () => {
-  return iconSlot.value && !innerLoading.value ? (
+  return icon.value && !innerLoading.value ? (
     <IconWrapper prefixCls={prefixCls.value} {...iconSharedProps.value}>
-      <Render content={iconSlot.value}></Render>
+      <Render content={icon.value}></Render>
     </IconWrapper>
   ) : loading && typeof loading === 'object' && loading.icon ? (
     <IconWrapper prefixCls={prefixCls.value} {...iconSharedProps.value}>
@@ -287,7 +299,7 @@ const iconNode = () => {
     </IconWrapper>
   ) : (
     <DefaultLoadingIcon
-      existIcon={!!iconSlot.value}
+      existIcon={!!icon.value}
       prefixCls={prefixCls.value}
       loading={innerLoading.value}
       mount={isMountRef.value}
@@ -297,9 +309,9 @@ const iconNode = () => {
 };
 
 const contentNode = () => {
-  return isValidNode(defaultSlot.value)
+  return isValidNode(children.value)
     ? spaceChildren(
-        defaultSlot.value,
+        children.value,
         needInserted.value && mergedInsertSpace.value,
         mergedStyles.value.content,
         mergedClassNames.value.content,

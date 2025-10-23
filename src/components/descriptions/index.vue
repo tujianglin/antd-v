@@ -2,7 +2,7 @@
 import Render from '@/vc-component/render';
 import type { VueKey, VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { computed, toRefs, type CSSProperties } from 'vue';
+import { computed, toRefs, type CSSProperties, type VNode } from 'vue';
 import type { Breakpoint } from '../_util/responsiveObserver';
 import { matchScreen } from '../_util/responsiveObserver';
 import { useComponentConfig } from '../config-provider/context';
@@ -50,8 +50,8 @@ defineOptions({ name: 'Descriptions', inheritAttrs: false, compatConfig: { MODE:
 
 const {
   prefixCls: customizePrefixCls,
-  title,
-  extra,
+  title: customTitle,
+  extra: extraTitle,
   column,
   colon = true,
   bordered,
@@ -67,12 +67,12 @@ const {
 } = defineProps<DescriptionsProps>();
 
 const slots = defineSlots<{
-  title?: () => VueNode[];
-  extra?: () => VueNode[];
+  title?: () => VNode[];
+  extra?: () => VNode[];
 }>();
 
-const titleSlot = computed(() => slots.title?.() || title);
-const extraSlot = computed(() => slots.extra?.() || extra);
+const title = computed(() => slots.title || customTitle);
+const extra = computed(() => slots.extra || extraTitle);
 
 const {
   getPrefixCls,
@@ -151,29 +151,29 @@ const contextValue = computed(() => ({
       }"
     >
       <div
-        v-if="titleSlot || extraSlot"
+        v-if="title || extra"
         :class="clsx(`${prefixCls}-header`, contextClassNames.header, descriptionsClassNames?.header)"
         :style="{ ...contextStyles.header, ...styles?.header }"
       >
         <div
-          v-if="titleSlot"
+          v-if="title"
           :class="clsx(`${prefixCls}-title`, contextClassNames.title, descriptionsClassNames?.title)"
           :style="{
             ...contextStyles.title,
             ...styles?.title,
           }"
         >
-          <Render :content="titleSlot" />
+          <Render :content="title" />
         </div>
         <div
-          v-if="extraSlot"
+          v-if="extra"
           :class="clsx(`${prefixCls}-extra`, contextClassNames.extra, descriptionsClassNames?.extra)"
           :style="{
             ...contextStyles.extra,
             ...styles?.extra,
           }"
         >
-          <Render :content="extraSlot" />
+          <Render :content="extra" />
         </div>
       </div>
       <div :class="`${prefixCls}-view`">

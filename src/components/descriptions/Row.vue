@@ -29,71 +29,72 @@ function renderCells(
   { colon, prefixCls, bordered }: RowProps,
   { component, type, showLabel, showContent, styles: rootStyles }: CellConfig & DescriptionsContextProps,
 ) {
-  return items.map(
-    ({ label, children, prefixCls: itemPrefixCls = prefixCls, class: className, style, span = 1, key, styles }, index) => {
-      if (typeof component === 'string') {
-        return (
+  return () =>
+    items.map(
+      ({ label, children, prefixCls: itemPrefixCls = prefixCls, class: className, style, span = 1, key, styles }, index) => {
+        if (typeof component === 'string') {
+          return (
+            <Cell
+              key={`${type}-${key || index}`}
+              class={className}
+              style={style}
+              styles={{
+                label: {
+                  ...rootStyles?.label,
+                  ...styles?.label,
+                },
+                content: {
+                  ...rootStyles?.content,
+                  ...styles?.content,
+                },
+              }}
+              span={span}
+              colon={colon}
+              component={component}
+              itemPrefixCls={itemPrefixCls}
+              bordered={bordered}
+              label={showLabel ? label : null}
+              content={showContent ? children : null}
+              type={type}
+            />
+          );
+        }
+
+        return [
           <Cell
-            key={`${type}-${key || index}`}
+            key={`label-${key || index}`}
             class={className}
-            style={style}
-            styles={{
-              label: {
-                ...rootStyles?.label,
-                ...styles?.label,
-              },
-              content: {
-                ...rootStyles?.content,
-                ...styles?.content,
-              },
+            style={{
+              ...rootStyles?.label,
+              ...style,
+              ...styles?.label,
             }}
-            span={span}
+            span={1}
             colon={colon}
-            component={component}
+            component={component[0]}
             itemPrefixCls={itemPrefixCls}
             bordered={bordered}
-            label={showLabel ? label : null}
-            content={showContent ? children : null}
-            type={type}
-          />
-        );
-      }
-
-      return [
-        <Cell
-          key={`label-${key || index}`}
-          class={className}
-          style={{
-            ...rootStyles?.label,
-            ...style,
-            ...styles?.label,
-          }}
-          span={1}
-          colon={colon}
-          component={component[0]}
-          itemPrefixCls={itemPrefixCls}
-          bordered={bordered}
-          label={label}
-          type="label"
-        />,
-        <Cell
-          key={`content-${key || index}`}
-          class={className}
-          style={{
-            ...rootStyles?.content,
-            ...style,
-            ...styles?.content,
-          }}
-          span={span * 2 - 1}
-          component={component[1]}
-          itemPrefixCls={itemPrefixCls}
-          bordered={bordered}
-          content={children}
-          type="content"
-        />,
-      ];
-    },
-  );
+            label={label}
+            type="label"
+          />,
+          <Cell
+            key={`content-${key || index}`}
+            class={className}
+            style={{
+              ...rootStyles?.content,
+              ...style,
+              ...styles?.content,
+            }}
+            span={span * 2 - 1}
+            component={component[1]}
+            itemPrefixCls={itemPrefixCls}
+            bordered={bordered}
+            content={children}
+            type="content"
+          />,
+        ];
+      },
+    );
 }
 
 const descContext = useDescriptionsContextInject();
@@ -104,7 +105,7 @@ const descContext = useDescriptionsContextInject();
       <Render :content="renderCells(row, $props, { component: 'th', type: 'label', showLabel: true, ...descContext })" />
     </tr>
     <tr :key="`content-${index}`" :class="`${prefixCls}-row`">
-      <Render :content="renderCells(row, $props, { component: 'td', type: 'content', showLabel: true, ...descContext })" />
+      <Render :content="renderCells(row, $props, { component: 'td', type: 'content', showContent: true, ...descContext })" />
     </tr>
   </template>
   <tr v-else :key="index" :class="`${prefixCls}-row`">

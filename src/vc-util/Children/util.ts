@@ -106,7 +106,7 @@ export function isVueNode(node): boolean {
   if (typeof node === 'function') {
     try {
       const result = (node as any)?.();
-      return isVueNode(result);
+      return isVueNode(result) || isVNode(result);
     } catch {
       return false;
     }

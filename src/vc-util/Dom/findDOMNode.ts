@@ -7,7 +7,7 @@ export default function findDOMNode(instance: any): HTMLDivElement {
   if (isArray(instance)) {
     instance = instance[0];
   }
-  node = instance?.vnode?.el || (instance && (instance.$el || instance.el || instance));
+  node = instance?.vnode?.el || (instance && (instance.$el || instance?.el || instance));
   while (node && !node.tagName) {
     node = node.nextSibling;
   }

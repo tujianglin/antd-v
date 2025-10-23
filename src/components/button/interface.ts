@@ -1,5 +1,5 @@
 import type { VueNode } from '@/vc-util/type';
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, CSSProperties, HTMLAttributes, VNode } from 'vue';
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, CSSProperties, HTMLAttributes } from 'vue';
 import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
 import type { SizeType } from '../config-provider/SizeContext';
 import { PresetColors } from '../theme/internal';
@@ -67,11 +67,6 @@ export interface ButtonProps extends BaseButtonProps, /** @vue-ignore */ MergedH
   autofocus?: boolean | undefined;
   onClick?: ButtonHTMLAttributes['onClick'];
 }
-
-export type ButtonSlots = {
-  icon?: () => VNode[];
-  default?: () => VNode[];
-};
 
 export type ColorVariantPairType = [color?: ButtonColorType, variant?: ButtonVariantType];
 export type LoadingConfigType = {
