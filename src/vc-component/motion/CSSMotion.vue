@@ -130,7 +130,13 @@ const [status, statusStep, statusStyle, mergedVisible] = useStatus(
   supportMotion,
   computed(() => visible),
   getDomElement,
-  reactiveComputed(() => falseToUndefined(vm.props)),
+  reactiveComputed(
+    () =>
+      ({
+        ...falseToUndefined(vm.props),
+        motionAppear: vm.props.motionAppear ?? false,
+      }) as any,
+  ),
 );
 
 // Record whether content has rendered

@@ -176,19 +176,16 @@ export default function useStatus(
   );
 
   const active = computed(() => isActive(step.value));
-  watch(
-    () => active.value,
-    () => {
-      activeRef.value = active.value;
-    },
-  );
+  watch(active, () => {
+    activeRef.value = active.value;
+  });
 
   // ============================ Status ============================
   const visibleRef = ref<boolean | null>(null);
 
   // Update with new status
   watch(
-    () => visible.value,
+    visible,
     async () => {
       await nextTick();
       // When use Suspense, the `visible` will repeat trigger,

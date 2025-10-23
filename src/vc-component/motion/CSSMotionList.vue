@@ -61,7 +61,7 @@ function removeKey(removeKey: string | number) {
 }
 </script>
 <template>
-  <component :is="props.component || 'div'">
+  <component v-if="props.component" :is="props.component || 'div'">
     <OriginCSSMotion
       v-for="({ status, ...eventProps }, index) in state.keyEntities"
       :key="eventProps.key"
@@ -85,4 +85,27 @@ function removeKey(removeKey: string | number) {
       </template>
     </OriginCSSMotion>
   </component>
+  <OriginCSSMotion
+    v-else
+    v-for="({ status, ...eventProps }, index) in state.keyEntities"
+    :key="eventProps.key"
+    v-bind="{
+      ...omit(props, ['onVisibleChanged']),
+      ...$attrs,
+      visible: status === STATUS_ADD || status === STATUS_KEEP,
+      eventProps,
+    }"
+    @visible-changed="
+      (changedVisible) => {
+        props.onVisibleChanged?.(changedVisible, { key: eventProps.key });
+        if (!changedVisible) {
+          removeKey(eventProps.key);
+        }
+      }
+    "
+  >
+    <template #default="{ ref: motionRef, ...motionProps }">
+      <slot v-bind="{ ...motionProps, index }" :ref="motionRef"></slot>
+    </template>
+  </OriginCSSMotion>
 </template>

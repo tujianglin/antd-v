@@ -2,7 +2,7 @@ import { updateCSS } from '@/vc-util/Dom/dynamicCSS';
 import hash from '@emotion/hash';
 import { reactiveComputed } from '@vueuse/core';
 import { computed, type ComputedRef, type Reactive } from 'vue';
-import { ATTR_MARK, ATTR_TOKEN, CSS_IN_JS_INSTANCE, useStyleInject } from '../StyleContext';
+import { ATTR_MARK, ATTR_TOKEN, CSS_IN_JS_INSTANCE, useStyleContextInject } from '../StyleContext';
 import type Theme from '../theme/Theme';
 import { flattenToken, memoResult, token2key, toStyleStr } from '../util';
 import { transformToken } from '../util/css-variables';
@@ -141,7 +141,7 @@ export default function useCacheToken<DerivativeToken, DesignToken = DerivativeT
   tokens: ComputedRef<Partial<DesignToken>[]>,
   option: ComputedRef<Option<DerivativeToken, DesignToken>>,
 ): Reactive<TokenCacheValue<DerivativeToken>> {
-  const styleContext = useStyleInject();
+  const styleContext = useStyleContextInject();
 
   // Basic - We do basic cache here
   const mergedToken = computed(() => {
@@ -179,7 +179,7 @@ export default function useCacheToken<DerivativeToken, DesignToken = DerivativeT
         ignore: cssVar.ignore,
         unitless: cssVar.unitless,
         preserve: cssVar.preserve,
-        hashPriority: styleContext.value.hashPriority,
+        hashPriority: styleContext.hashPriority,
         hashCls: cssVar.hashed ? hashCls : undefined,
       }) as [any, string];
       tokenWithCssVar._hashId = hashId;
@@ -195,7 +195,7 @@ export default function useCacheToken<DerivativeToken, DesignToken = DerivativeT
     },
     ({ cssVarKey }) => {
       // Remove token will remove all related style
-      cleanTokenStyle(cssVarKey, styleContext.value.cache.instanceId);
+      cleanTokenStyle(cssVarKey, styleContext.cache.instanceId);
     },
     ({ cssVarStr, cssVarKey }) => {
       if (!cssVarStr) {
@@ -205,10 +205,10 @@ export default function useCacheToken<DerivativeToken, DesignToken = DerivativeT
       const style = updateCSS(cssVarStr, hash(`css-var-${cssVarKey}`), {
         mark: ATTR_MARK,
         prepend: 'queue',
-        attachTo: styleContext.value.container,
+        attachTo: styleContext.container,
         priority: -999,
       });
-      (style as any)[CSS_IN_JS_INSTANCE] = styleContext.value.cache.instanceId;
+      (style as any)[CSS_IN_JS_INSTANCE] = styleContext.cache.instanceId;
       style.setAttribute(ATTR_TOKEN, cssVarKey);
     },
   );

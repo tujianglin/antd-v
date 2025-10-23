@@ -1,7 +1,7 @@
 import { removeCSS, updateCSS } from '@/vc-util/Dom/dynamicCSS';
 import { reactiveComputed } from '@vueuse/core';
 import { computed, toRefs, type Ref } from 'vue';
-import { ATTR_MARK, ATTR_TOKEN, CSS_IN_JS_INSTANCE, useStyleInject } from '../StyleContext';
+import { ATTR_MARK, ATTR_TOKEN, CSS_IN_JS_INSTANCE, useStyleContextInject } from '../StyleContext';
 import { isClientSide, toStyleStr } from '../util';
 import type { TokenWithCSSVar } from '../util/css-variables';
 import { transformToken } from '../util/css-variables';
@@ -32,7 +32,7 @@ const useCSSVarRegister = <V, T extends Record<string, V>>(
   fn: () => T,
 ) => {
   const { key, prefix, unitless, ignore, token, hashId, scope } = toRefs(reactiveComputed(() => config.value));
-  const styleContext = useStyleInject();
+  const styleContext = useStyleContextInject();
   const { _tokenKey: tokenKey } = toRefs(reactiveComputed(() => token.value));
   const stylePath = computed(() => [...config.value.path, key.value, scope.value || '', tokenKey.value]);
 
@@ -46,7 +46,7 @@ const useCSSVarRegister = <V, T extends Record<string, V>>(
         unitless: unitless.value,
         ignore: ignore.value,
         scope: scope.value || '',
-        hashPriority: styleContext.value.hashPriority,
+        hashPriority: styleContext.hashPriority,
         hashCls: hashId?.value,
       });
       const styleId = uniqueHash(stylePath.value, cssVarsStr);
@@ -64,11 +64,11 @@ const useCSSVarRegister = <V, T extends Record<string, V>>(
       const style = updateCSS(cssVarsStr, styleId, {
         mark: ATTR_MARK,
         prepend: 'queue',
-        attachTo: styleContext.value.container,
+        attachTo: styleContext.container,
         priority: -999,
       });
 
-      (style as any)[CSS_IN_JS_INSTANCE] = styleContext.value.cache.instanceId;
+      (style as any)[CSS_IN_JS_INSTANCE] = styleContext.cache.instanceId;
 
       // Used for `useCacheToken` to remove on batch when token removed
       style.setAttribute(ATTR_TOKEN, key.value);

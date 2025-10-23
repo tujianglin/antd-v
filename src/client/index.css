@@ -1,12 +1,16 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+@layer theme, base, components, utilities, antd;
+
 #app {
   @apply h-[100vh] w-[100vw];
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+@layer components {
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
 }

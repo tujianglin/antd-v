@@ -9,5 +9,7 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 const { style, height, hasControlInside = false, ...restProps } = defineProps<DraggerProps>();
 </script>
 <template>
-  <Upload :has-control-inside="hasControlInside" v-bind="restProps" type="drag" :style="{ ...style, height: `${height}px` }" />
+  <Upload :has-control-inside="hasControlInside" v-bind="restProps" type="drag" :style="{ ...style, height: `${height}px` }">
+    <slot></slot>
+  </Upload>
 </template>

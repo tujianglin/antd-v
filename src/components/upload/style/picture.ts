@@ -9,7 +9,6 @@ const genPictureStyle: GenerateStyle<UploadToken> = (token) => {
   const { componentCls, iconCls, uploadThumbnailSize, uploadProgressOffset, calc } = token;
   const listCls = `${componentCls}-list`;
   const itemCls = `${listCls}-item`;
-
   return {
     [`${componentCls}-wrapper`]: {
       // ${listCls} 增加优先级
@@ -67,6 +66,9 @@ const genPictureStyle: GenerateStyle<UploadToken> = (token) => {
               fill: token.colorErrorBg,
             },
             [`svg path[fill='${blue.primary}']`]: {
+              fill: token.colorError,
+            },
+            [`svg path[fill='#1890ff']`]: {
               fill: token.colorError,
             },
           },

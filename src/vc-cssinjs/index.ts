@@ -7,8 +7,7 @@ import Keyframes from './Keyframes';
 import type { Linter } from './linters/index';
 import { legacyNotSelectorLinter, logicalPropertiesLinter, NaNLinter, parentSelectorLinter } from './linters/index';
 import type { StyleProviderProps } from './StyleContext';
-import StyleContext, { createCache } from './StyleContext';
-import StyleProvider from './StyleProvider.vue';
+import { createCache, StyleProvider } from './StyleContext';
 import type { AbstractCalculator, DerivativeFunc, TokenType } from './theme';
 import { createTheme, genCalc, Theme } from './theme';
 import type { Transformer } from './transformers/interface';
@@ -32,7 +31,6 @@ export {
   NaNLinter,
   parentSelectorLinter,
   px2remTransformer,
-  StyleContext,
   StyleProvider,
   Theme,
   // util

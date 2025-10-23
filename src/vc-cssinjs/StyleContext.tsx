@@ -1,8 +1,21 @@
-import { getCurrentInstance, inject, provide, shallowRef, unref, watch, type InjectionKey, type Ref, type ShallowRef } from 'vue';
+import { reactiveComputed } from '@vueuse/core';
+import {
+  defineComponent,
+  getCurrentInstance,
+  inject,
+  provide,
+  reactive,
+  ref,
+  watch,
+  type InjectionKey,
+  type PropType,
+  type Reactive,
+  type Ref,
+} from 'vue';
 import CacheEntity from './Cache';
 import type { Linter } from './linters/interface';
+import { AUTO_PREFIX } from './transformers/autoPrefix';
 import type { Transformer } from './transformers/interface';
-
 export const ATTR_TOKEN = 'data-token-hash';
 export const ATTR_MARK = 'data-css-hash';
 export const ATTR_CACHE_PATH = 'data-cache-path';
@@ -73,6 +86,8 @@ export interface StyleContextProps {
   linters?: Linter[];
   /** Wrap css in a layer to avoid global style conflict */
   layer?: boolean;
+  /** Hardcode here since transformer not support take effect on serialize currently */
+  autoPrefix?: boolean;
 }
 
 const getCache = () => {
@@ -94,57 +109,67 @@ const getCache = () => {
   return cache;
 };
 
-const StyleContextKey: InjectionKey<ShallowRef<Partial<StyleContextProps>>> = Symbol('StyleContextKey');
+const StyleContext: InjectionKey<Reactive<Partial<StyleContextProps>>> = Symbol('StyleContext');
 
 export type UseStyleProviderProps = Partial<StyleContextProps> | Ref<Partial<StyleContextProps>>;
 
-export type StyleProviderProps = Partial<StyleContextProps>;
+export type StyleProviderProps = Partial<Omit<StyleContextProps, 'autoPrefix'>>;
 
 const defaultStyleContext: StyleContextProps = {
   hashPriority: 'low',
   cache: createCache(),
   defaultCache: true,
+  autoPrefix: false,
 };
 
-export const useStyleInject = () => {
+export const useStyleContextInject = () => {
   const cache = getCache();
-  return inject(StyleContextKey, shallowRef({ ...defaultStyleContext, cache }));
+  return inject(StyleContext, reactive({ ...defaultStyleContext, cache }));
 };
 
-export const useStyleProvider = (props: UseStyleProviderProps) => {
-  const parentContext = useStyleInject();
+export const useStyleContextProvider = (props: Reactive<StyleContextProps>) => {
+  provide(StyleContext, props);
+};
 
-  const context = shallowRef<Partial<StyleContextProps>>({
-    ...defaultStyleContext,
-    cache: createCache(),
-  });
+export const StyleProvider = defineComponent({
+  props: {
+    value: Object as PropType<Partial<StyleContextProps>>,
+  },
+  setup(props, { slots }) {
+    const parentContext = useStyleContextInject();
 
-  watch(
-    [() => unref(props), parentContext],
-    ([propsValue]) => {
-      const mergedContext: Partial<StyleContextProps> = {
-        ...parentContext.value,
-      };
-      (Object.keys(propsValue) as (keyof StyleContextProps)[]).forEach((key) => {
-        const value = propsValue[key];
-        if (propsValue[key] !== undefined) {
-          (mergedContext as any)[key] = value;
+    const context = ref<StyleContextProps>({
+      ...defaultStyleContext,
+      cache: createCache(),
+    });
+
+    watch(
+      [() => props.value, () => parentContext],
+      ([propsValue]) => {
+        const mergedContext = {
+          ...parentContext,
+        } as StyleContextProps;
+        (Object.keys(propsValue) as (keyof StyleContextProps)[]).forEach((key) => {
+          const value = propsValue[key];
+          if (propsValue[key] !== undefined) {
+            (mergedContext as any)[key] = value;
+          }
+        });
+
+        const { cache, transformers = [] } = propsValue;
+        mergedContext.cache = mergedContext.cache || createCache();
+        mergedContext.defaultCache = !cache && parentContext.defaultCache;
+        // autoPrefix
+        if (transformers.includes(AUTO_PREFIX)) {
+          mergedContext.autoPrefix = true;
         }
-      });
 
-      const { cache } = propsValue;
-      mergedContext.cache = mergedContext.cache || createCache();
-      mergedContext.defaultCache = !cache && parentContext.value.defaultCache;
-      context.value = mergedContext;
-    },
-    { immediate: true },
-  );
+        context.value = mergedContext;
+      },
+      { immediate: true, deep: true },
+    );
 
-  provide(StyleContextKey, context);
-  return context;
-};
-
-export default {
-  useStyleInject,
-  useStyleProvider,
-};
+    useStyleContextProvider(reactiveComputed(() => context.value));
+    return () => <>{slots.default?.()}</>;
+  },
+});

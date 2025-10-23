@@ -3,14 +3,14 @@ import hash from '@emotion/hash';
 import type * as CSS from 'csstype';
 // @ts-ignore 111
 import unitless from '@emotion/unitless';
-import { compile, serialize, stringify } from 'stylis';
+import { compile, middleware, prefixer, serialize, stringify } from 'stylis';
 import { computed, type ComputedRef } from 'vue';
 import type { Theme, Transformer } from '..';
 import type Keyframes from '../Keyframes';
 import type { Linter } from '../linters/index';
 import { contentQuotesLinter, hashedAnimationLinter } from '../linters/index';
 import type { HashPriority } from '../StyleContext';
-import { ATTR_CACHE_PATH, ATTR_MARK, CSS_IN_JS_INSTANCE, useStyleInject } from '../StyleContext';
+import { ATTR_CACHE_PATH, ATTR_MARK, CSS_IN_JS_INSTANCE, useStyleContextInject } from '../StyleContext';
 import { isClientSide, toStyleStr } from '../util';
 import { CSS_FILE_STYLE, existPath, getStyleAndHash } from '../util/cacheMapUtil';
 import type { ExtractStyle } from './useGlobalCache';
@@ -55,8 +55,10 @@ export interface CSSObject extends CSSPropertiesWithMultiValues, CSSPseudos, CSS
 // ==                                 Parser                                 ==
 // ============================================================================
 // Preprocessor style content to browser support one
-export function normalizeStyle(styleStr: string) {
-  const serialized = serialize(compile(styleStr), stringify);
+export function normalizeStyle(styleStr: string, autoPrefix: boolean) {
+  const serialized = autoPrefix
+    ? serialize(compile(styleStr), middleware([prefixer, stringify]))
+    : serialize(compile(styleStr), stringify);
   // eslint-disable-next-line no-useless-escape
   return serialized.replace(/\{%%%\:[^;];}/g, ';');
 }
@@ -305,11 +307,11 @@ export default function useStyleRegister(
   }>,
   styleFn: () => CSSInterpolation,
 ) {
-  const styleContext = useStyleInject();
+  const styleContext = useStyleContextInject();
 
   const fullPath = computed(() => {
     let list = [info.value.hashId || ''];
-    if (styleContext.value.layer) {
+    if (styleContext.layer) {
       list = [...list, 'layer'];
     }
     list = [...list, ...info.value.path];
@@ -317,8 +319,8 @@ export default function useStyleRegister(
   });
   // Check if need insert style
   let isMergedClientSide = isClientSide;
-  if (process.env.NODE_ENV !== 'production' && styleContext.value.mock !== undefined) {
-    isMergedClientSide = styleContext.value.mock === 'client';
+  if (process.env.NODE_ENV !== 'production' && styleContext.mock !== undefined) {
+    isMergedClientSide = styleContext.mock === 'client';
   }
   useGlobalCache<StyleCacheValue>(
     STYLE_PREFIX,
@@ -335,7 +337,7 @@ export default function useStyleRegister(
           return [inlineCacheStyleStr, styleHash, {}, clientOnly, order];
         }
       }
-      const { hashPriority, transformers, linters, layer: enableLayer } = styleContext.value;
+      const { hashPriority, transformers, linters, layer: enableLayer, autoPrefix } = styleContext;
       // Generate style
       const styleObj = styleFn();
       const [parsedStyle, effectStyle] = parseStyle(styleObj, {
@@ -347,7 +349,7 @@ export default function useStyleRegister(
         linters,
       });
 
-      const styleStr = normalizeStyle(parsedStyle);
+      const styleStr = normalizeStyle(parsedStyle, autoPrefix || false);
       const styleId = uniqueHash(fullPath.value, styleStr);
 
       return [styleStr, styleId, effectStyle, clientOnly, order];
@@ -365,7 +367,7 @@ export default function useStyleRegister(
     (cacheValue) => {
       const { nonce } = info.value;
       const [styleStr, styleId, effectStyle, , priority] = cacheValue;
-      const { container, cache, layer: enableLayer } = styleContext.value;
+      const { container, cache, layer: enableLayer, autoPrefix } = styleContext;
 
       if (isMergedClientSide && styleStr !== CSS_FILE_STYLE) {
         const mergedCSSConfig: Parameters<typeof updateCSS>[2] = {
@@ -397,7 +399,10 @@ export default function useStyleRegister(
         // ================= Inject Layer Style =================
         // Inject layer style
         effectLayerKeys.forEach((effectKey) => {
-          updateCSS(normalizeStyle(effectStyle[effectKey]), `_layer-${effectKey}`, { ...mergedCSSConfig, prepend: true });
+          updateCSS(normalizeStyle(effectStyle[effectKey], autoPrefix || false), `_layer-${effectKey}`, {
+            ...mergedCSSConfig,
+            prepend: true,
+          });
         });
 
         // ==================== Inject Style ====================
@@ -414,7 +419,7 @@ export default function useStyleRegister(
         // ================ Inject Effect Style =================
         // Inject client side effect style
         effectRestKeys.forEach((effectKey) => {
-          updateCSS(normalizeStyle(effectStyle[effectKey]), `_effect-${effectKey}`, mergedCSSConfig);
+          updateCSS(normalizeStyle(effectStyle[effectKey], autoPrefix || false), `_effect-${effectKey}`, mergedCSSConfig);
         });
       }
     },
@@ -423,7 +428,7 @@ export default function useStyleRegister(
 
 export const extract: ExtractStyle<StyleCacheValue> = (cache, effectStyles, options) => {
   const [styleStr, styleId, effectStyle, clientOnly, order]: StyleCacheValue = cache;
-  const { plain } = options || {};
+  const { plain, autoPrefix } = options || {};
 
   // Skip client only style
   if (clientOnly) {
@@ -448,7 +453,7 @@ export const extract: ExtractStyle<StyleCacheValue> = (cache, effectStyles, opti
       // Effect style can be reused
       if (!effectStyles[effectKey]) {
         effectStyles[effectKey] = true;
-        const effectStyleStr = normalizeStyle(effectStyle[effectKey]);
+        const effectStyleStr = normalizeStyle(effectStyle[effectKey], autoPrefix || false);
         const effectStyleHTML = toStyleStr(effectStyleStr, undefined, `_effect-${effectKey}`, sharedAttrs, plain);
 
         if (effectKey.startsWith('@layer')) {

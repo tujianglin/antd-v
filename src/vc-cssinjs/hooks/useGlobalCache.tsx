@@ -1,6 +1,6 @@
 import { shallowRef, watch, watchEffect, type Ref, type ShallowRef } from 'vue';
 import { pathKey, type KeyType } from '../Cache';
-import { useStyleInject } from '../StyleContext';
+import { useStyleContextInject } from '../StyleContext';
 import useHMR from './useHMR';
 
 export type ExtractStyle<CacheValue> = (
@@ -8,8 +8,11 @@ export type ExtractStyle<CacheValue> = (
   effectStyles: Record<string, boolean>,
   options?: {
     plain?: boolean;
+    autoPrefix?: boolean;
   },
 ) => [order: number, styleId: string, style: string] | null;
+
+const effectMap = new Map<string, boolean>();
 
 export default function useGlobalCache<CacheType>(
   prefix: string,
@@ -19,7 +22,7 @@ export default function useGlobalCache<CacheType>(
   // Add additional effect trigger by `useInsertionEffect`
   onCacheEffect?: (cachedValue: CacheType) => void,
 ): ShallowRef<CacheType> {
-  const styleContext = useStyleInject();
+  const styleContext = useStyleContextInject();
   const fullPathStr = shallowRef('');
   const cacheEntity = shallowRef('');
   const cacheContent = shallowRef<CacheType | null>(null);
@@ -30,7 +33,7 @@ export default function useGlobalCache<CacheType>(
   const HMRUpdate = useHMR();
 
   const buildCache = () => {
-    styleContext.value.cache.opUpdate(fullPathStr.value, (prevCache) => {
+    styleContext.cache.opUpdate(fullPathStr.value, (prevCache) => {
       const [times = 0, cache] = prevCache || [undefined, undefined];
 
       // HMR should always ignore cache since developer may change it
@@ -47,11 +50,12 @@ export default function useGlobalCache<CacheType>(
   };
 
   const clearCache = (pathStr: string) => {
-    styleContext.value.cache.opUpdate(pathStr, (prevCache) => {
+    styleContext.cache.opUpdate(pathStr, (prevCache) => {
       const [times = 0, cache] = prevCache || [];
       const nextCount = times - 1;
       if (nextCount === 0) {
         onCacheRemove?.(cache, false);
+        effectMap.delete(fullPathStr.value);
         return null;
       }
 
@@ -65,9 +69,18 @@ export default function useGlobalCache<CacheType>(
       if (oldStr) clearCache(oldStr);
       buildCache();
 
-      cacheEntity.value = styleContext.value.cache.opGet(newStr) as any;
+      cacheEntity.value = styleContext.cache.opGet(newStr) as any;
       cacheContent.value = cacheEntity.value![1];
-      onCacheEffect(cacheContent.value);
+      if (!effectMap.has(fullPathStr.value)) {
+        onCacheEffect?.(cacheContent.value);
+        effectMap.set(fullPathStr.value, true);
+
+        // 微任务清理混存，可以认为是单次 batch render 中只触发一次 effect
+        Promise.resolve().then(() => {
+          effectMap.delete(fullPathStr.value);
+        });
+      }
+
       onCleanup(() => {
         clearCache(fullPathStr.value);
       });

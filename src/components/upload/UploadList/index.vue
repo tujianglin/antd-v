@@ -8,7 +8,7 @@ import Button from '../../button';
 import type { UploadFile, UploadListProps } from '../interface';
 import { isImageUrl, previewImage } from '../utils';
 import ListItem from './ListItem.vue';
-import { computed, onMounted, ref, toRefs, watch, type VNode } from 'vue';
+import { computed, ref, toRefs, watch, type VNode } from 'vue';
 import { FileTwoTone, LoadingOutlined, PaperClipOutlined, PictureTwoTone } from '@ant-design/icons-vue';
 import type { VueNode } from '@/vc-util/type';
 import { cloneElement, isValidElement } from '@/vc-util/Children/util';
@@ -66,10 +66,6 @@ watch([() => listType, () => items, () => previewFile], () => {
       forceUpdate();
     });
   });
-});
-
-onMounted(() => {
-  motionAppear.value = true;
 });
 
 // ============================= Events =============================

@@ -36,8 +36,6 @@ export interface UploadRef<T = any> {
 defineOptions({ name: 'Upload', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
-  fileList,
-  defaultFileList,
   onRemove,
   showUploadList = true,
   listType = 'text',
@@ -75,6 +73,8 @@ const slots = defineSlots<{
   default: () => VNode[];
 }>();
 
+const fileList = defineModel<Array<UploadFile<any>>>('fileList', { default: [] });
+
 const LIST_IGNORE = `__LIST_IGNORE_${Date.now()}__`;
 
 const config = useComponentConfig('upload');
@@ -85,10 +85,7 @@ const mergedDisabled = computed(() => customDisabled ?? disabled?.value);
 
 const customRequest = computed(() => resetProps.customRequest || config.customRequest);
 
-const [mergedFileList, setMergedFileList] = useControlledState(
-  defaultFileList || [],
-  computed(() => fileList),
-);
+const [mergedFileList, setMergedFileList] = useControlledState([], fileList);
 
 const dragState = ref<string>('drop');
 
@@ -96,18 +93,15 @@ const upload = ref<typeof RcUpload>(null);
 const wrapRef = ref<HTMLSpanElement>(null);
 
 // Control mode will auto fill file uid if not provided
-watch(
-  () => fileList,
-  () => {
-    const timestamp = Date.now();
+watch(fileList, () => {
+  const timestamp = Date.now();
 
-    (fileList || []).forEach((file, index) => {
-      if (!file.uid && !Object.isFrozen(file)) {
-        file.uid = `__AUTO__${timestamp}_${index}__`;
-      }
-    });
-  },
-);
+  (fileList.value || []).forEach((file, index) => {
+    if (!file.uid && !Object.isFrozen(file)) {
+      file.uid = `__AUTO__${timestamp}_${index}__`;
+    }
+  });
+});
 
 const onInternalChange = (file: UploadFile, changedFileList: UploadFile[], event?: { percent: number }) => {
   let cloneList = [...changedFileList];
@@ -144,6 +138,7 @@ const onInternalChange = (file: UploadFile, changedFileList: UploadFile[], event
     cloneList.some((f) => f.uid === file.uid)
   ) {
     nextTick(() => {
+      fileList.value = changeInfo?.fileList;
       onChange?.(changeInfo);
     });
   }

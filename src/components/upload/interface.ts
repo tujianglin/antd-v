@@ -89,10 +89,8 @@ export type SemanticName = 'root' | 'list' | 'item';
 export interface UploadProps<T = any> extends Pick<RcUploadProps, 'hasControlInside' | 'pastable'> {
   type?: UploadType;
   name?: string;
-  defaultFileList?: Array<UploadFile<T>>;
-  fileList?: Array<UploadFile<T>>;
   action?: string | ((file: RcFile) => string) | ((file: RcFile) => PromiseLike<string>);
-  directory?: boolean;
+  webkitdirectory?: boolean;
   data?: Record<string, unknown> | ((file: UploadFile<T>) => Record<string, unknown> | Promise<Record<string, unknown>>);
   method?: 'POST' | 'PUT' | 'PATCH' | 'post' | 'put' | 'patch';
   headers?: HttpRequestHeader;
@@ -124,6 +122,7 @@ export interface UploadProps<T = any> extends Pick<RcUploadProps, 'hasControlIns
   isImageUrl?: (file: UploadFile<T>) => boolean;
   progress?: UploadListProgressProps;
   itemRender?: ItemRender<T>;
+  fileList?: UploadFile<T>[];
   /** Config max count of `fileList`. Will replace current one when `maxCount` is 1 */
   maxCount?: number;
 }
