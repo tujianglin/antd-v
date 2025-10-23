@@ -429,8 +429,17 @@ const defaultGetPrefixCls = (suffixCls?: string, customizePrefixCls?: string) =>
 
 const ConfigContext: InjectionKey<Reactive<ConfigConsumerProps>> = Symbol('ConfigContext');
 
-export const useConfigContextInject = (): ConfigConsumerProps => {
-  return inject(ConfigContext, reactive({ getPrefixCls: defaultGetPrefixCls, iconPrefixCls: defaultIconPrefixCls }));
+export const useConfigContextInject = (): Reactive<ConfigConsumerProps> => {
+  return inject(
+    ConfigContext,
+    reactive({
+      getPrefixCls: defaultGetPrefixCls,
+      iconPrefixCls: defaultIconPrefixCls,
+      renderEmpty: undefined,
+      getTargetContainer: undefined,
+      getPopupContainer: undefined,
+    }),
+  );
 };
 
 export const useConfigContextProvider = (props: Reactive<ConfigConsumerProps>) => {

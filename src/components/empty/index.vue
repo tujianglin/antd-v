@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import type { VueNode } from '@/vc-util/type';
-import { computed, toRefs, type CSSProperties } from 'vue';
+import { computed, toRefs, type CSSProperties, type VNode } from 'vue';
 import DefaultEmptyImg from './empty';
 import SimpleEmptyImg from './simple';
 import { useComponentConfig } from '../config-provider/context';
@@ -9,21 +9,6 @@ import useStyle from './style';
 import { useLocale } from '../locale';
 import clsx from 'clsx';
 import Render from '@/vc-component/render';
-
-defineOptions({ name: 'Empty', inheritAttrs: false, compatConfig: { MODE: 3 } });
-const {
-  class: className,
-  rootClassName,
-  prefixCls: customizePrefixCls,
-  image,
-  description,
-  style,
-  classNames: emptyClassNames,
-  styles,
-  ...restProps
-} = defineProps<EmptyProps>();
-const defaultEmptyImg = <DefaultEmptyImg />;
-const simpleEmptyImg = <SimpleEmptyImg />;
 
 export interface TransferLocale {
   description: string;
@@ -36,10 +21,36 @@ export interface EmptyProps {
   rootClassName?: string;
   style?: CSSProperties;
   image?: VueNode;
-  description?: VueNode;
+  description?: boolean | VueNode;
   classNames?: Partial<Record<SemanticName, string>>;
   styles?: Partial<Record<SemanticName, CSSProperties>>;
 }
+
+defineOptions({ name: 'Empty', inheritAttrs: false, compatConfig: { MODE: 3 } });
+const {
+  class: className,
+  rootClassName,
+  prefixCls: customizePrefixCls,
+  image: customImage,
+  description: customDescription = undefined,
+  style,
+  classNames: emptyClassNames,
+  styles,
+  ...restProps
+} = defineProps<EmptyProps>();
+
+const slots = defineSlots<{
+  default?: () => VNode[];
+  image?: () => VNode[];
+  description?: () => VNode[];
+}>();
+
+const description = computed(() => slots.description || customDescription);
+const image = computed(() => slots.image || customImage);
+
+const defaultEmptyImg = <DefaultEmptyImg />;
+const simpleEmptyImg = <SimpleEmptyImg />;
+
 const {
   getPrefixCls,
   direction,
@@ -60,10 +71,10 @@ const [hashId, cssVarCls] = useStyle(prefixCls);
 
 const [locale] = useLocale('Empty');
 
-const des = computed(() => (typeof description !== 'undefined' ? description : locale?.value?.description));
+const des = computed(() => (description.value === false ? '' : description.value || locale?.value?.description));
 const alt = computed(() => (typeof des.value === 'string' ? des.value : 'empty'));
 
-const mergedImage = computed(() => image ?? contextImage?.value ?? defaultEmptyImg);
+const mergedImage = computed(() => image.value ?? contextImage?.value ?? defaultEmptyImg);
 </script>
 <template>
   <div
@@ -90,9 +101,9 @@ const mergedImage = computed(() => image ?? contextImage?.value ?? defaultEmptyI
       <Render v-else :content="mergedImage" />
     </div>
     <div v-if="des" :class="clsx(`${prefixCls}-description`, mergedClassNames.description)" :style="mergedStyles.description">
-      {{ des }}
+      <Render :content="des" />
     </div>
-    <div v-if="$slots?.default" :class="clsx(`${prefixCls}-footer`, mergedClassNames.footer)" :style="mergedStyles.footer">
+    <div v-if="slots?.default" :class="clsx(`${prefixCls}-footer`, mergedClassNames.footer)" :style="mergedStyles.footer">
       <slot></slot>
     </div>
   </div>

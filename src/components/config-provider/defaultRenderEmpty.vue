@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { toRefs, type VNode } from 'vue';
+import { computed, toRefs, type VNode } from 'vue';
 import Empty from '../empty';
 import { useConfigContextInject } from './context';
 
@@ -22,7 +22,7 @@ const { componentName } = defineProps<EmptyProps>();
 
 const { getPrefixCls } = toRefs(useConfigContextInject());
 
-const prefix = getPrefixCls.value('empty');
+const prefix = computed(() => getPrefixCls.value('empty'));
 </script>
 <template>
   <template v-if="componentName === 'Table' || componentName === 'List'">

@@ -2,5 +2,5 @@
 import { Empty } from '@/components';
 </script>
 <template>
-  <Empty :description="false" />
+  <Empty />
 </template>
