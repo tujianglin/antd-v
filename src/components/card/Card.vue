@@ -4,7 +4,7 @@ import type { Tab, TabBarExtraContent } from '@/vc-component/tabs/interface';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import { computed, toRefs, useSlots, type CSSProperties, type HTMLAttributes } from 'vue';
+import { computed, toRefs, type CSSProperties, type HTMLAttributes, type VNode } from 'vue';
 import { useComponentConfig } from '../config-provider/context';
 import useSize from '../config-provider/hooks/useSize';
 import useVariant from '../form/hooks/useVariants';
@@ -43,8 +43,6 @@ export interface CardProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'titl
   tabList?: CardTabListType[];
   tabBarExtraContent?: TabBarExtraContent;
   onTabChange?: (key: string) => void;
-  activeTabKey?: string;
-  defaultActiveTabKey?: string;
   tabProps?: TabsProps;
   classNames?: Partial<Record<SemanticName, string>>;
   styles?: Partial<Record<SemanticName, CSSProperties>>;
@@ -61,17 +59,15 @@ const {
   class: className,
   rootClassName,
   style,
-  extra,
-  title,
+  extra: customExtra,
+  title: customTitle,
   loading,
   variant: customVariant,
   size: customizeSize,
   type,
-  cover,
+  cover: customCover,
   actions,
   tabList,
-  activeTabKey,
-  defaultActiveTabKey,
   tabBarExtraContent,
   hoverable,
   tabProps = {},
@@ -80,7 +76,18 @@ const {
   ...others
 } = defineProps<CardProps>();
 
-const slots = useSlots();
+const slots = defineSlots<{
+  default: () => VNode[];
+  extra: () => VNode[];
+  title: () => VNode[];
+  cover: () => VNode[];
+}>();
+
+const activeTabKey = defineModel<string>('activeTabKey');
+
+const extra = computed(() => slots.extra || customExtra);
+const title = computed(() => slots.title || customTitle);
+const cover = computed(() => slots.cover || customCover);
 
 const {
   getPrefixCls,
@@ -97,6 +104,7 @@ const [variant] = useVariant(
 
 const onTabChange = (key: string) => {
   others.onTabChange?.(key);
+  activeTabKey.value = key;
 };
 
 const moduleClass = (moduleName: CardClassNamesModule) =>
@@ -115,10 +123,9 @@ const isContainGrid = computed(() => {
 const prefixCls = computed(() => getPrefixCls.value('card', customizePrefixCls));
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
-const hasActiveTabKey = computed(() => activeTabKey !== undefined);
 const extraProps = computed(() => ({
   ...tabProps,
-  [hasActiveTabKey.value ? 'activeKey' : 'defaultActiveKey']: hasActiveTabKey.value ? activeTabKey : defaultActiveTabKey,
+  activeKey: activeTabKey.value,
   tabBarExtraContent,
 }));
 
@@ -166,24 +173,16 @@ const mergedStyle = computed(() => ({
 <template>
   <div v-bind="divProps" :class="classString" :style="mergedStyle">
     <div
-      v-if="slots.title || slots.extra || title || extra || tabList"
+      v-if="title || extra || tabList"
       :class="clsx(`${prefixCls}-head`, moduleClass('header'))"
       :style="moduleStyle('header')"
     >
       <div :class="`${prefixCls}-head-wrapper`">
-        <div
-          v-if="slots.title || title"
-          :class="clsx(`${prefixCls}-head-title`, moduleClass('title'))"
-          :style="moduleStyle('title')"
-        >
-          <slot name="title">
-            <Render :content="title" />
-          </slot>
+        <div v-if="title" :class="clsx(`${prefixCls}-head-title`, moduleClass('title'))" :style="moduleStyle('title')">
+          <Render :content="title" />
         </div>
-        <div v-if="slots.extra || extra" :class="clsx(`${prefixCls}-extra`, moduleClass('extra'))" :style="moduleStyle('extra')">
-          <slot name="extra">
-            <Render :content="extra" />
-          </slot>
+        <div v-if="extra" :class="clsx(`${prefixCls}-extra`, moduleClass('extra'))" :style="moduleStyle('extra')">
+          <Render :content="extra" />
         </div>
       </div>
       <Tabs
@@ -196,9 +195,7 @@ const mergedStyle = computed(() => ({
       />
     </div>
     <div v-if="cover" :class="coverClasses" :style="moduleStyle('cover')">
-      <slot name="cover">
-        <Render :content="cover" />
-      </slot>
+      <Render :content="cover" />
     </div>
     <div :class="bodyClasses" :style="moduleStyle('body')">
       <Skeleton v-if="loading" loading active :paragraph="{ rows: 4 }" :title="false">
