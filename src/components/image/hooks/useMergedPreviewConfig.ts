@@ -32,10 +32,7 @@ export default function useMergedPreviewConfig<T extends PreviewConfig | GroupPr
   );
 
   return computed(() => {
-    if (!previewConfig.value) {
-      return previewConfig.value;
-    }
-    const { cover, getContainer, closeIcon, rootClassName: previewRootClassName } = previewConfig.value as PreviewConfig;
+    const { cover, getContainer, closeIcon, rootClassName: previewRootClassName } = (previewConfig?.value as PreviewConfig) || {};
     return {
       motionName: getTransitionName(`${prefixCls.value}-preview`, 'fade'),
       ...previewConfig.value,

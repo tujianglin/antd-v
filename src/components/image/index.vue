@@ -82,9 +82,9 @@ const mergedPreviewConfig = useMergedPreviewConfig(
 
 // ============================= Semantic =============================
 const mergedLegacyClassNames = computed(() => ({
-  cover: clsx(contextPreviewMaskClassName, previewMaskClassName),
+  cover: clsx(contextPreviewMaskClassName?.value, previewMaskClassName?.value),
   popup: {
-    root: clsx(contextPreviewRootClassName, previewRootClassName),
+    root: clsx(contextPreviewRootClassName?.value, previewRootClassName?.value),
   },
 }));
 
