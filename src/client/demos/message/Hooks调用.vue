@@ -3,13 +3,17 @@ import { Button, message } from '@/components';
 import { defineComponent } from 'vue';
 export default defineComponent({
   setup() {
+    const [messageApi, ContextHolder] = message.useMessage();
+
     const info = () => {
-      message.info('This is a normal message');
+      messageApi.info('Hello, Ant Design!');
     };
+
     return () => (
       <>
+        <ContextHolder></ContextHolder>
         <Button type="primary" onClick={info}>
-          Static Method
+          Display normal message
         </Button>
       </>
     );
