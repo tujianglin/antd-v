@@ -1,19 +1,20 @@
 <script lang="tsx" setup generic="DateType extends object = any">
 import Render from '@/vc-component/render';
+import type { DateType } from '@/vc-util/type';
 import type { ValueDate } from '../../interface';
 
-export interface PresetPanelProps<ValueType = any> {
+export interface PresetPanelProps {
   prefixCls: string;
-  presets: ValueDate<ValueType>[];
-  onClick: (value: ValueType) => void;
-  onHover: (value: ValueType) => void;
+  presets: ValueDate[];
+  onClick: (value: DateType) => void;
+  onHover: (value: DateType) => void;
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { prefixCls, presets, onClick, onHover } = defineProps<PresetPanelProps<DateType>>();
+const { prefixCls, presets, onClick, onHover } = defineProps<PresetPanelProps>();
 
-function executeValue<ValueType extends object>(value: ValueDate<ValueType>['value']): ValueType {
+function executeValue(value: ValueDate['value']): any {
   return typeof value === 'function' ? value() : value;
 }
 </script>

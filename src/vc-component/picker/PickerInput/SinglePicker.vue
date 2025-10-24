@@ -518,6 +518,9 @@ const panel = () => {
       onNow={onNow}
       // Render
       cellRender={onInternalCellRender.value}
+      // Styles
+      classNames={mergedClassNames.value}
+      styles={mergedStyles.value}
     />
   );
 };
@@ -619,9 +622,9 @@ watch(
       @close="onPopupClose"
     >
       <SingleSelector
-        v-bind="{ ...omit(filledProps, ['onChange', 'onOpenChange']) as any }"
+        v-bind="{ ...omit(filledProps,[ 'onChange', 'onOpenChange']) as any }"
         ref="selectorRef"
-        :class="clsx(filledProps.class, rootClassName, mergedClassNames.root)"
+        :class="clsx(rootClassName, mergedClassNames.root)"
         :style="{
           ...mergedStyles.root,
           ...filledProps.style as any,

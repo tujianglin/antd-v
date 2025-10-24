@@ -582,6 +582,9 @@ const panel = () => {
       onNow={onNow}
       // Render
       cellRender={onInternalCellRender.value}
+      // Styles
+      classNames={mergedClassNames.value}
+      styles={mergedStyles.value}
     />
   );
 };
@@ -727,7 +730,7 @@ if (process.env.NODE_ENV !== 'production') {
       <RangeSelector
         v-bind="{ ...omit(filledProps, ['onChange', 'onFocus', 'onBlur']) }"
         :ref="(el) => (selectorRef = el)"
-        :class="clsx(filledProps.class, rootClassName, mergedClassNames.root)"
+        :class="clsx(rootClassName, mergedClassNames.root)"
         :style="{
           ...mergedStyles.root,
           ...filledProps.style as any,

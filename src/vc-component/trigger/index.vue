@@ -16,7 +16,8 @@ import {
 
 import type { CSSMotionProps } from '@/vc-component/motion';
 import ResizeObserver from '@/vc-component/resize-observer';
-import { isDOM } from '@/vc-util/Dom/findDOMNode';
+import { cloneElement } from '@/vc-util/Children/util';
+import { flattenChildren, isDOM } from '@/vc-util/Dom/findDOMNode';
 import { getShadowRoot } from '@/vc-util/Dom/shadow';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
@@ -138,7 +139,7 @@ const {
   hideAction,
 
   // Open
-  popupVisible,
+  popupVisible = undefined,
   defaultPopupVisible,
   onOpenChange,
   afterOpenChange,
@@ -195,6 +196,7 @@ const {
 
 const slots = defineSlots<{
   popup: () => VNode[];
+  default: () => VNode[];
 }>();
 
 const popupSlot = computed(() => slots.popup?.() || popup);
@@ -247,8 +249,12 @@ const targetEle = ref<HTMLElement>(null);
 // Used for forwardRef target. Not use internal
 const externalForwardRef = shallowRef<HTMLElement>(null);
 
+const triggerRef = ref();
+
 const setTargetRef = (node) => {
-  const { el } = node || {};
+  const { el: targetEl } = triggerRef.value || {};
+  const { el: nodeEl } = node || {};
+  const el = nodeEl || targetEl;
   if (isDOM(el) && targetEle.value !== el) {
     targetEle.value = el;
     externalForwardRef.value = el;
@@ -790,10 +796,15 @@ const triggerProps = computed(() => ({
   ...mergedChildrenProps.value,
   ...passedProps.value,
 }));
+
+const Child = () => {
+  const trigger = cloneElement(flattenChildren(slots.default?.())[0], { ...triggerProps.value, ref: triggerRef });
+  return trigger;
+};
 </script>
 <template>
   <ResizeObserver :disabled="!mergedOpen" :ref="setTargetRef" @resize="onTargetResize">
-    <slot v-bind="triggerProps"></slot>
+    <Child />
   </ResizeObserver>
   <TriggerContextProvider v-if="rendedRef && (!uniqueContext || !unique)" :value="context">
     <Popup

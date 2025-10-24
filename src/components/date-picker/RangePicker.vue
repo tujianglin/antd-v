@@ -115,7 +115,7 @@ const [mergedAllowClear] = useIcons(
 const mergedComponents = useComponents(computed(() => components)) as typeof components;
 
 // ===================== Size =====================
-const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize ?? ctx));
+const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize?.value ?? ctx));
 
 // ===================== Disabled =====================
 const disabled = useDisabledContextInject();

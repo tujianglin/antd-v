@@ -2,6 +2,7 @@
 import type { TriggerProps } from '@/vc-component/trigger';
 import Trigger from '@/vc-component/trigger';
 import type { ActionType, AlignType, AnimationType, BuildInPlacements } from '@/vc-component/trigger/interface';
+import { cloneElement } from '@/vc-util/Children/util';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, ref, useTemplateRef, type CSSProperties } from 'vue';
@@ -142,8 +143,6 @@ const triggerHideAction = computed(() => {
     <template #popup>
       <Overlay ref="overlayRef" :overlay="overlay" :prefix-cls="prefixCls" :arrow="arrow" />
     </template>
-    <template #default="props">
-      <slot v-bind="{ ...props, class: clsx(props?.class, mergedVisible && getOpenClassName) }"></slot>
-    </template>
+    <component :is="cloneElement($slots.default?.()?.[0], { class: clsx(mergedVisible && getOpenClassName) })" />
   </Trigger>
 </template>

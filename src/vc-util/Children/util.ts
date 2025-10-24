@@ -8,9 +8,9 @@ import type { AnyObject } from '../type';
  * @returns 返回插槽中的唯一子元素
  * @throws 当插槽中没有恰好一个子元素时抛出错误
  */
-export function onlyChild(slots): VNode {
+export function onlyChild(child): VNode {
   // 获取默认插槽中的子元素数组，如果不存在则返回空数组
-  const children = slots.default?.() || [];
+  const children = child || [];
   // 验证子元素数量是否为1
   if (children.length !== 1) {
     throw new Error(`Expected exactly one child, but got ${children.length}.`);
@@ -83,10 +83,6 @@ export const replaceElement = (element: any, replacement: any, props?: RenderPro
   return cloneVNode(element, typeof props === 'function' ? props(element.props || {}) : props);
 };
 
-export function cloneElement(element: any, props?: RenderProps) {
-  return replaceElement(element, element, props) as any;
-}
-
 /**
  * 判断传入的节点是否是有效的 Vue 节点
  *
@@ -119,4 +115,28 @@ export function isVueNode(node): boolean {
 
   // 5. 检查是否是 VNode，且不是 Fragment
   return isVNode(node) && node.type !== Fragment;
+}
+
+export function isEmptyElement(c: any) {
+  return (
+    c && (c.type === Comment || (c.type === Fragment && c.children.length === 0) || (c.type === Text && c.children.trim() === ''))
+  );
+}
+
+export function filterEmpty(children = []) {
+  const res = [];
+  children.forEach((child) => {
+    if (Array.isArray(child)) {
+      res.push(...child);
+    } else if (child?.type === Fragment) {
+      res.push(...filterEmpty(child.children));
+    } else {
+      res.push(child);
+    }
+  });
+  return res.filter((c) => !isEmptyElement(c));
+}
+
+export function cloneElement(element: any, props?: RenderProps) {
+  return replaceElement(element, element, props) as any;
 }

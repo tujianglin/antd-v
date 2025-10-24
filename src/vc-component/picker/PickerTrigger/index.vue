@@ -82,6 +82,6 @@ const realPlacement = computed(() => getRealPlacement(placement, direction === '
     <template #popup>
       <Render :content="popupElement" />
     </template>
-    <slot></slot>
+    <component :is="$slots.default" />
   </Trigger>
 </template>

@@ -22,8 +22,8 @@ export interface PopupProps extends FooterProps, PopupPanelProps {
 
   // Presets
   presets: ValueDate[];
-  onPresetHover: (presetValue: DateType[]) => void;
-  onPresetSubmit: (presetValue: DateType[]) => void;
+  onPresetHover: (presetValue: DateType | DateType[]) => void;
+  onPresetSubmit: (presetValue: DateType | DateType[]) => void;
 
   // Range
   activeInfo?: [activeInputLeft: number, activeInputRight: number, selectorWidth: number];
@@ -40,6 +40,9 @@ export interface PopupProps extends FooterProps, PopupPanelProps {
   onOk: VoidFunction;
 
   onPanelMouseDown?: (e: MouseEvent) => void;
+
+  classNames?: SharedPickerProps['classNames'];
+  styles?: SharedPickerProps['styles'];
 }
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -74,6 +77,8 @@ const {
   defaultOpenValue,
   onOk,
   onSubmit,
+  classNames,
+  styles,
 } = defineProps<PopupProps>();
 
 const { prefixCls } = toRefs(usePickerContextInject());
@@ -245,10 +250,11 @@ const marginRight = 'marginRight';
     v-else
     @mousedown="onPanelMouseDown"
     :tabindex="-1"
-    :class="clsx(containerPrefixCls, `${prefixCls}-${internalMode}-panel-container`)"
+    :class="clsx(containerPrefixCls, `${prefixCls}-${internalMode}-panel-container`, classNames?.popup?.container)"
     :style="{
       [rtl ? marginRight : marginLeft]: `${containerOffset}px`,
       [rtl ? marginLeft : marginRight]: 'auto',
+      ...styles?.popup?.container,
     }"
     @focusin="onFocus"
     @focusout="onBlur"

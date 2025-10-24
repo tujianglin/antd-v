@@ -1,9 +1,10 @@
+<!-- eslint-disable no-unused-vars -->
 <script lang="tsx" setup>
 import type { ActionType, AlignType, ArrowType, TriggerProps } from '@/vc-component/trigger';
 import Trigger from '@/vc-component/trigger';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { computed, getCurrentInstance, ref, useId, type CSSProperties, type VNode } from 'vue';
+import { cloneVNode, computed, getCurrentInstance, useId, useTemplateRef, type CSSProperties, type VNode } from 'vue';
 import Render from '../render';
 import type { TriggerRef } from '../trigger/index.vue';
 import placements from './placements';
@@ -70,37 +71,38 @@ const {
   destroyOnHidden = false,
   getTooltipContainer,
   arrowContent: _,
-  overlay,
+  overlay: customOverlay,
   id: _1,
   showArrow = true,
   classNames: tooltipClassNames,
   styles: tooltipStyles,
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  visible = undefined,
   ...restProps
 } = defineProps<TooltipProps>();
 
 const slots = defineSlots<{
   overlay: () => VNode[];
+  default: () => VNode[];
 }>();
 
-const overlaySlot = computed(() => slots.overlay?.() || overlay);
+const overlay = computed(() => slots.overlay || customOverlay);
 
 const mergedId = useId();
-const triggerRef = ref<TriggerRef>(null);
+const triggerRef = useTemplateRef('triggerRef');
+
+const vm = getCurrentInstance() as { props: TooltipProps };
+
+const extraProps = computed(() => {
+  const res = JSON.parse(JSON.stringify(restProps));
+  res.popupVisible = vm.props?.visible;
+  return res;
+});
 
 defineExpose({
   get el() {
     return triggerRef.value;
   },
-});
-
-const vm = getCurrentInstance();
-
-const extraProps = computed(() => {
-  const res = JSON.parse(JSON.stringify(restProps));
-  if ((vm.props as unknown as TooltipProps).visible) {
-    res.popupVisible = (vm.props as unknown as TooltipProps).visible;
-  }
-  return res;
 });
 </script>
 <template>
@@ -124,9 +126,7 @@ const extraProps = computed(() => {
     :arrow="showArrow"
     v-bind="extraProps"
   >
-    <template #default="props">
-      <slot :aria-describedby="overlaySlot ? mergedId : null" v-bind="props"></slot>
-    </template>
+    <component :is="cloneVNode(slots.default?.()[0], { 'aria-describedby': overlay ? mergedId : null })" />
     <template #popup>
       <Popup
         key="content"
@@ -135,7 +135,7 @@ const extraProps = computed(() => {
         :body-class-name="tooltipClassNames?.body"
         :overlay-inner-style="{ ...tooltipStyles?.body }"
       >
-        <Render :content="overlaySlot" />
+        <Render :content="overlay" />
       </Popup>
     </template>
   </Trigger>

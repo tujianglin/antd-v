@@ -178,8 +178,6 @@ defineExpose({
     <template #popup>
       <div @mousedown="onPopupMouseEnter"><Render :content="popupNode" /></div>
     </template>
-    <template #default="props">
-      <slot v-bind="props"></slot>
-    </template>
+    <slot></slot>
   </Trigger>
 </template>

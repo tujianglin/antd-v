@@ -4,7 +4,17 @@ import type { placements as Placements } from '@/vc-component/tooltip/placements
 import type { TooltipProps as RcTooltipProps } from '@/vc-component/tooltip/Tooltip.vue';
 import type { BuildInPlacements } from '@/vc-component/trigger';
 import clsx from 'clsx';
-import { cloneVNode, computed, getCurrentInstance, h, toRefs, useAttrs, useTemplateRef, type CSSProperties } from 'vue';
+import {
+  cloneVNode,
+  computed,
+  getCurrentInstance,
+  h,
+  toRefs,
+  useAttrs,
+  useTemplateRef,
+  type CSSProperties,
+  type VNode,
+} from 'vue';
 import type { PresetColorType } from '../_util/colors';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import type { AdjustOverflow, PlacementsConfig } from '../_util/placements';
@@ -99,9 +109,9 @@ const {
   getTooltipContainer,
   color,
   afterOpenChange,
-  arrow: tooltipArrow,
+  arrow: tooltipArrow = undefined,
   destroyOnHidden,
-  title,
+  title: customTitle,
   builtinPlacements,
   autoAdjustOverflow = true,
   motion,
@@ -113,17 +123,17 @@ const {
   styles,
   classNames: tooltipClassNames,
   onOpenChange,
-  overlay,
+  overlay: cutsomOverlay,
   ...restProps
 } = defineProps<TooltipProps>();
 
 const slots = defineSlots<{
-  default: () => VueNode[];
-  overlay: () => VueNode[];
-  title: () => VueNode[];
+  default: () => VNode[];
+  overlay: () => VNode[];
+  title: () => VNode[];
 }>();
-const titleSlot = computed(() => slots.title?.() || title);
-const overlaySlot = computed(() => slots.overlay?.() || overlay);
+const title = computed(() => slots.title || customTitle);
+const overlay = computed(() => slots.overlay || cutsomOverlay);
 
 const vm = getCurrentInstance();
 
@@ -166,7 +176,7 @@ defineExpose({
 // ============================== Open ==============================
 const open = defineModel('open', { default: false });
 
-const noTitle = computed(() => !isVueNode(titleSlot.value) && !isVueNode(overlaySlot.value) && titleSlot.value !== 0);
+const noTitle = computed(() => !isVueNode(title.value) && !isVueNode(overlay.value) && title.value !== 0);
 
 const onInternalOpenChange = (vis: boolean) => {
   open.value = noTitle.value ? false : vis;
@@ -239,12 +249,6 @@ const children = () => {
   return isValidElement(result) && !isFragment(result) && result.length === 1 ? result[0] : <span>{slots?.default?.()}</span>;
 };
 
-const targetChild = (props) => {
-  const result = children();
-  result.props = { ...props, ...result.props };
-  return result;
-};
-
 const childCls = computed(() => {
   const dom = children();
   return !dom?.props?.class || typeof dom?.props?.class === 'string'
@@ -293,14 +297,11 @@ const childCls = computed(() => {
       }"
       :destroy-on-hidden="destroyOnHidden"
     >
-      <template #default="props">
-        <component v-if="tempOpen" :is="cloneVNode(targetChild(props), { class: childCls })" />
-        <Render v-else :content="targetChild(props)" />
-      </template>
+      <component :is="cloneVNode(children(), { class: tempOpen ? childCls : {} })" />
       <template #overlay>
         <ContextIsolator space>
           <slot name="overlay">
-            <Render :content="titleSlot" />
+            <Render :content="title" />
           </slot>
         </ContextIsolator>
       </template>

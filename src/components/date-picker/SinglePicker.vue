@@ -119,10 +119,6 @@ defineExpose({
   },
 });
 
-const additionalProps = {
-  showToday: true,
-};
-
 const rootPrefixCls = computed(() => getPrefixCls.value());
 
 // ==================== Legacy =====================
@@ -148,7 +144,7 @@ const [mergedAllowClear, removeIcon] = useIcons(
 const mergedComponents = useComponents(computed(() => components)) as typeof components;
 
 // ===================== Size =====================
-const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize ?? ctx));
+const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
 
 // ===================== Disabled =====================
 const disabled = useDisabledContextInject();
@@ -176,7 +172,7 @@ const [zIndex] = useZIndex(
   <ContextIsolator space>
     <RCPicker
       ref="innerRef"
-      v-bind="{ ...additionalProps, ...restProps }"
+      v-bind="restProps"
       v-model:value="value"
       v-model:picker-value="pickerValue"
       v-model:open="open"

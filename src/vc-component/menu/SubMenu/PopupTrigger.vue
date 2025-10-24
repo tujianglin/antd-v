@@ -119,8 +119,6 @@ onBeforeUnmount(() => {
     <template #popup>
       <Render :content="popup" />
     </template>
-    <template #default="props">
-      <slot v-bind="props"></slot>
-    </template>
+    <slot></slot>
   </Trigger>
 </template>

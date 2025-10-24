@@ -1,7 +1,8 @@
 <script lang="tsx" setup>
-import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
-import { ref } from 'vue';
-import SingleObserver from './SingleObserver/index.vue';
+import findDOMNode from '@/vc-util/Dom/findDOMNode';
+import { getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useCollectionContextInject } from './context';
+import { observe, unobserve } from './utils/observerUtil';
 
 export interface SizeInfo {
   width: number;
@@ -22,28 +23,102 @@ defineOptions({ name: 'ResizeObserver', inheritAttrs: false, compatConfig: { MOD
 
 const props = defineProps<ResizeObserverProps>();
 
-const INTERNAL_PREFIX_KEY = 'rc-observer-key';
+const onCollectionResize = useCollectionContextInject();
 
-const mergedRef = ref();
-const changeRef = (ele) => {
-  mergedRef.value = ele?.el;
+// ============================= Size =============================
+const sizeRef = ref({
+  width: -1,
+  height: -1,
+  offsetWidth: -1,
+  offsetHeight: -1,
+});
+
+const onInternalResize = (target: HTMLElement) => {
+  const { onResize, data } = props;
+  const { width, height } = target.getBoundingClientRect();
+  const { offsetWidth, offsetHeight } = target;
+  /**
+   * Resize observer trigger when content size changed.
+   * In most case we just care about element size,
+   * let's use `boundary` instead of `contentRect` here to avoid shaking.
+   */
+  const fixedWidth = Math.floor(width);
+  const fixedHeight = Math.floor(height);
+
+  if (
+    sizeRef.value.width !== fixedWidth ||
+    sizeRef.value.height !== fixedHeight ||
+    sizeRef.value.offsetWidth !== offsetWidth ||
+    sizeRef.value.offsetHeight !== offsetHeight
+  ) {
+    const size = { width: fixedWidth, height: fixedHeight, offsetWidth, offsetHeight };
+    sizeRef.value = size;
+
+    // IE is strange, right?
+    const mergedOffsetWidth = offsetWidth === Math.round(width) ? width : offsetWidth;
+    const mergedOffsetHeight = offsetHeight === Math.round(height) ? height : offsetHeight;
+
+    const sizeInfo = {
+      ...size,
+      offsetWidth: mergedOffsetWidth,
+      offsetHeight: mergedOffsetHeight,
+    };
+
+    // Let collection know what happened
+    onCollectionResize?.(sizeInfo, target, data);
+
+    if (onResize) {
+      // defer the callback but not defer to next frame
+      Promise.resolve().then(() => {
+        onResize(sizeInfo, target);
+      });
+    }
+  }
 };
+
+const currentElement = ref();
+const vm = getCurrentInstance();
+
+const setTargetRef = (el) => {
+  currentElement.value = el;
+};
+
+const registerObserver = () => {
+  if (!currentElement.value) {
+    currentElement.value = findDOMNode(vm);
+  }
+  if (currentElement.value && !props.disabled) {
+    observe(currentElement.value, onInternalResize as any);
+  } else {
+    unobserve(currentElement.value, onInternalResize as any);
+  }
+};
+
+onMounted(() => {
+  registerObserver();
+});
+
+watch(
+  () => props.disabled,
+  async () => {
+    await nextTick();
+    registerObserver();
+  },
+  { flush: 'post' },
+);
+
+onBeforeUnmount(() => {
+  if (currentElement.value) {
+    unobserve(currentElement.value, onInternalResize as any);
+  }
+});
 
 defineExpose({
   get el() {
-    return mergedRef.value;
+    return currentElement.value;
   },
 });
 </script>
 <template>
-  <SingleObserver
-    v-for="(child, index) in flattenChildren($slots.default?.())"
-    v-bind="props"
-    :key="child?.key || `${INTERNAL_PREFIX_KEY}-${index}`"
-    :ref="index === 0 ? changeRef : undefined"
-  >
-    <template #default="{ domRef }">
-      <component :is="child" :ref="index === 0 && domRef" />
-    </template>
-  </SingleObserver>
+  <slot :ref="setTargetRef"></slot>
 </template>

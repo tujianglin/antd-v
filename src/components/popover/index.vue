@@ -6,6 +6,7 @@ import type { AbstractTooltipProps } from '../tooltip/index.vue';
 import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import KeyCode from '@/vc-util/KeyCode';
+import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { getTransitionName } from '../_util/motion';
 import Tooltip from '../tooltip';
@@ -14,8 +15,8 @@ import Overlay from './Overlay.vue';
 import useStyle from './style';
 
 export interface PopoverProps extends AbstractTooltipProps {
-  title?: any;
-  content?: any;
+  title?: VueNode;
+  content?: VueNode;
   onOpenChange?: (open: boolean, e?: MouseEvent | KeyboardEvent) => void;
 }
 
@@ -128,6 +129,7 @@ const children = computed(() => flattenChildren(slots.default?.())?.[0]);
       v-if="children"
       :is="
         cloneElement(children, {
+          ...$attrs,
           onKeydown: (e) => {
             if (isValidElement(children)) {
               children?.props?.onKeydown?.(e);

@@ -124,7 +124,7 @@ export function computeClosable(
   const contextConfig = computeClosableConfig(contextCloseCollection?.closable, contextCloseCollection?.closeIcon);
 
   const mergedFallback = {
-    closeIcon: <CloseOutlined />,
+    closeIcon: CloseOutlined,
     ...fallbackCloseCollection,
   };
 
@@ -151,7 +151,7 @@ function useClosable(
       propCloseCollection?.value,
       contextCloseCollection?.value,
       {
-        closeIcon: <CloseOutlined />,
+        closeIcon: CloseOutlined,
         ...fallbackCloseCollection?.value,
       },
       contextLocale.value.close,
