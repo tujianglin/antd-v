@@ -1,7 +1,7 @@
 // export this package's api
-import type { DrawerProps } from './Drawer.vue';
+import type { DrawerProps, Placement } from './Drawer.vue';
 import Drawer from './Drawer.vue';
 
-export type { DrawerProps };
+export type { DrawerProps, Placement };
 
 export default Drawer;

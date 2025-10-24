@@ -51,8 +51,6 @@ const {
   rootClassName,
   size,
   defaultSize = DEFAULT_SIZE,
-  height,
-  width,
   mask: drawerMask = true,
   push = defaultPushState,
   open,
@@ -71,8 +69,6 @@ const {
   maskClosable = true,
   ...rest
 } = defineProps<DrawerProps>();
-
-const { placement } = rest;
 
 const {
   getPopupContainer,
@@ -98,10 +94,6 @@ const getContainer = computed(() => {
 
 // ============================ Size ============================
 const drawerSize = computed<string | number | undefined>(() => {
-  if (typeof size === 'number') {
-    return size;
-  }
-
   if (size === 'large') {
     return 736;
   }
@@ -109,12 +101,7 @@ const drawerSize = computed<string | number | undefined>(() => {
   if (size === 'default') {
     return DEFAULT_SIZE;
   }
-
-  if (!placement || placement === 'left' || placement === 'right') {
-    return width;
-  }
-
-  return height;
+  return size;
 });
 
 // =========================== Motion ===========================

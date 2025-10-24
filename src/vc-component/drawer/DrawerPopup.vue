@@ -14,7 +14,6 @@ import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 import useDrag from './hooks/useDrag';
 import { reactiveComputed } from '@vueuse/core';
-
 export type Placement = 'left' | 'right' | 'top' | 'bottom';
 
 export interface PushConfig {
@@ -40,8 +39,6 @@ export interface DrawerPopupProps extends DrawerPanelEvents {
   id?: string;
   class?: string;
   style?: CSSProperties;
-  width?: number | string;
-  height?: number | string;
   /** Size of the drawer (width for left/right placement, height for top/bottom placement) */
   size?: number | string;
   /** Maximum size of the drawer */
@@ -104,8 +101,6 @@ const {
   id,
   style,
   motion,
-  width,
-  height,
   size,
   maxSize,
 
@@ -133,6 +128,7 @@ const {
 } = defineProps<DrawerPopupProps>();
 
 const slots = defineSlots<{ default?: () => VNode[] }>();
+
 // ================================ Refs ================================
 const panelRef = useTemplateRef('panelRef');
 const sentinelStartRef = ref<HTMLDivElement>(null);
@@ -264,9 +260,7 @@ const isHorizontal = computed(() => placement === 'left' || placement === 'right
 
 // Aggregate size logic with backward compatibility using useMemo
 const mergedSize = computed(() => {
-  const legacySize = isHorizontal.value ? width : height;
-
-  const nextMergedSize = size ?? legacySize ?? currentSize.value ?? defaultSize ?? (isHorizontal.value ? 378 : undefined);
+  const nextMergedSize = size ?? currentSize.value ?? defaultSize ?? (isHorizontal.value ? 378 : undefined);
 
   return parseWidthHeight(nextMergedSize);
 });
@@ -294,10 +288,11 @@ const wrapperStyle = computed(() => {
   }
 
   if (placement === 'left' || placement === 'right') {
-    result.width = parseWidthHeight(width);
+    result.width = `${parseWidthHeight(mergedSize.value)}px`;
   } else {
-    result.height = parseWidthHeight(height);
+    result.height = `${parseWidthHeight(mergedSize.value)}px`;
   }
+
   return result;
 });
 
@@ -307,8 +302,8 @@ const isResizable = computed(() => !!resizable);
 const resizeConfig = computed(() => (typeof resizable === 'object' && resizable) || {});
 
 const onInternalResize = (size: number) => {
-  currentSize.value = size;
   resizeConfig?.value?.onResize?.(size);
+  currentSize.value = size;
 };
 
 const { dragElementProps, isDragging } = useDrag(
@@ -376,8 +371,8 @@ const panelNode = () => (
               !isDragging.value && motionClassName,
             )}
             style={{
-              ...wrapperStyle.value,
               ...motionStyle,
+              ...wrapperStyle.value,
               ...styles?.wrapper,
             }}
             {...pickAttrs(vm.props, { data: true })}

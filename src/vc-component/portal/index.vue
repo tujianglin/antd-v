@@ -26,7 +26,7 @@ export interface PortalProps {
 
 defineOptions({ name: 'Portal', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { open, autoLock, getContainer, debug, autoDestroy = true } = defineProps<PortalProps>();
+const { open, autoLock, getContainer = undefined, debug, autoDestroy = true } = defineProps<PortalProps>();
 
 const getPortalContainer = (getContainer: GetContainer) => {
   if (getContainer === false) {
@@ -88,7 +88,7 @@ useScrollLocker(
   ),
 );
 // Render inline
-const renderInline = computed(() => mergedContainer.value === undefined || inlineMock());
+const renderInline = computed(() => mergedContainer.value === false || inlineMock());
 </script>
 <template>
   <OrderContextProvider v-if="mergedRender && canUseDom() && innerContainer !== undefined" :value="queueCreate">

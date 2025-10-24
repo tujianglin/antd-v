@@ -3,11 +3,13 @@ import warning from '@/vc-util/warning';
 import type { DrawerProps } from './Drawer.vue';
 
 export function parseWidthHeight(value?: number | string) {
-  if (typeof value === 'string' && String(Number(value)) === value) {
-    warning(false, 'Invalid value type of `width` or `height` which should be number type instead.');
-    return Number(value);
-  }
+  if (typeof value === 'string') {
+    const num = Number(value.replace(/px$/i, ''));
 
+    if (!Number.isNaN(num)) {
+      return num;
+    }
+  }
   return value;
 }
 

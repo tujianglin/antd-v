@@ -51,7 +51,7 @@ export default function useDrag(options: ReactiveComputedReturn<UseDragOptions>)
 
     isDragging.value = true;
 
-    if (isHorizontal) {
+    if (isHorizontal.value) {
       startPos.value = e.clientX;
     } else {
       startPos.value = e.clientY;
@@ -63,9 +63,8 @@ export default function useDrag(options: ReactiveComputedReturn<UseDragOptions>)
       sSize = currentSize.value;
     } else if (containerRef?.value) {
       const rect = containerRef?.value?.getBoundingClientRect();
-      sSize = isHorizontal ? rect.width : rect.height;
+      sSize = isHorizontal.value ? rect.width : rect.height;
     }
-
     startSize.value = sSize;
     onResizeStart?.value?.(sSize);
   };
@@ -81,7 +80,7 @@ export default function useDrag(options: ReactiveComputedReturn<UseDragOptions>)
       delta = -delta;
     }
 
-    let newSize = startPos.value + delta;
+    let newSize = startSize.value + delta;
 
     // Apply min/max size limits
     if (newSize < 0) {
@@ -91,8 +90,7 @@ export default function useDrag(options: ReactiveComputedReturn<UseDragOptions>)
     if (maxSize.value && newSize > maxSize.value) {
       newSize = maxSize.value;
     }
-
-    onResize?.value?.(newSize);
+    onResize.value?.(newSize);
   };
 
   const handleMouseUp = () => {
@@ -102,7 +100,7 @@ export default function useDrag(options: ReactiveComputedReturn<UseDragOptions>)
       // Get the final size after resize
       if (containerRef?.value) {
         const rect = containerRef?.value?.getBoundingClientRect();
-        const finalSize = isHorizontal ? rect.width : rect.height;
+        const finalSize = isHorizontal.value ? rect.width : rect.height;
         onResizeEnd?.value?.(finalSize);
       }
     }
@@ -124,20 +122,22 @@ export default function useDrag(options: ReactiveComputedReturn<UseDragOptions>)
     document.removeEventListener('mouseup', handleMouseUp);
   });
 
-  const dragElementClassName = clsx(
-    `${prefixCls.value}-dragger`,
-    `${prefixCls.value}-dragger-${direction.value}`,
-    {
-      [`${prefixCls.value}-dragger-dragging`]: isDragging.value,
-      [`${prefixCls.value}-dragger-horizontal`]: isHorizontal.value,
-      [`${prefixCls.value}-dragger-vertical`]: !isHorizontal.value,
-    },
-    className.value,
+  const dragElementClassName = computed(() =>
+    clsx(
+      `${prefixCls.value}-dragger`,
+      `${prefixCls.value}-dragger-${direction.value}`,
+      {
+        [`${prefixCls.value}-dragger-dragging`]: isDragging.value,
+        [`${prefixCls.value}-dragger-horizontal`]: isHorizontal.value,
+        [`${prefixCls.value}-dragger-vertical`]: !isHorizontal.value,
+      },
+      className.value,
+    ),
   );
 
   return {
     dragElementProps: computed(() => ({
-      class: dragElementClassName,
+      class: dragElementClassName.value,
       style: style.value,
       onMousedown: handleMouseDown,
     })),

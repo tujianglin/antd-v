@@ -26,7 +26,7 @@ export default defineComponent({
         <Button type="primary" onClick={showDrawer}>
           Open drawer
         </Button>
-        <Drawer title="Multi-level drawer" size={520} closable={{ placement: 'end' }} onClose={onClose} open={open.value}>
+        <Drawer title="Multi-level drawer" size={520} closable={false} onClose={onClose} open={open.value}>
           <Button type="primary" onClick={showChildrenDrawer}>
             Two-level drawer
           </Button>
