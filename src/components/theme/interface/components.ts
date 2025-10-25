@@ -62,7 +62,7 @@ import type { ComponentToken as TourComponentToken } from '../../tour/style';
 import type { ComponentToken as TransferComponentToken } from '../../transfer/style';
 import type { ComponentToken as TreeSelectComponentToken } from '../../tree-select/style';
 import type { ComponentToken as TreeComponentToken } from '../../tree/style';
-// import type { ComponentToken as TypographyComponentToken } from '../../typography/style';
+import type { ComponentToken as TypographyComponentToken } from '../../typography/style';
 import type { ComponentToken as UploadComponentToken } from '../../upload/style';
 
 export interface ComponentTokenMap {
@@ -113,7 +113,7 @@ export interface ComponentTokenMap {
   Tag?: TagComponentToken;
   Tree?: TreeComponentToken;
   TreeSelect?: TreeSelectComponentToken;
-  // Typography?: TypographyComponentToken;
+  Typography?: TypographyComponentToken;
   Timeline?: TimelineComponentToken;
   Transfer?: TransferComponentToken;
   Tabs?: TabsComponentToken;

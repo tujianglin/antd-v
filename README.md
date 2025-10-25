@@ -10,7 +10,7 @@
 
 ## Typography 排版
 
-- [ ] 完成
+- [x] 完成
 
 ## Divider 分割线
 

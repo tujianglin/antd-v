@@ -141,3 +141,5 @@ export type { WatermarkProps } from './watermark';
 // TODO: Remove in v6
 export { default as Render } from '@/vc-component/render';
 export { unstableSetRender } from './config-provider/UnstableContext';
+export { default as Typography } from './typography';
+export type { TypographyProps } from './typography';

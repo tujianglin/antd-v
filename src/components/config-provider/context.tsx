@@ -346,7 +346,7 @@ export interface ConfigComponentProps {
   collapse?: CollapseConfig;
   floatButton?: FloatButtonConfig;
   floatButtonGroup?: FloatButtonGroupConfig;
-  // typography?: ComponentStyleConfig;
+  typography?: ComponentStyleConfig;
   skeleton?: SkeletonConfig;
   spin?: SpinConfig;
   segmented?: SegmentedConfig;
