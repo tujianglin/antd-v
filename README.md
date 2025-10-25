@@ -139,7 +139,6 @@
 ## Upload 上传
 
 - [x] 完成
-- 细节未调整, v-model 需调整
 
 ## Avatar 头像
 
