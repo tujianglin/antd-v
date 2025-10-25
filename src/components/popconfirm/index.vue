@@ -45,7 +45,7 @@ const {
   icon = <ExclamationCircleFilled />,
   onOpenChange,
   styles,
-  arrow: popconfirmArrow,
+  arrow: popconfirmArrow = true,
   classNames: popconfirmClassNames,
   showCancel = true,
   autoAdjustOverflow = true,

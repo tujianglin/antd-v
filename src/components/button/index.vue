@@ -63,15 +63,19 @@ const {
   style: customStyle = {},
   autoInsertSpace = undefined,
   autofocus = undefined,
-  onClick,
   ...rest
 } = defineProps<ButtonProps>();
+
+const emits = defineEmits<{
+  click?: [e: MouseEvent];
+}>();
 
 // Slots
 const slots = defineSlots<{
   icon?: () => VNode[];
   default?: () => VNode[];
 }>();
+
 const icon = computed(() => slots.icon || customIcon);
 const children = computed(() => flattenChildren(slots.default?.()) || []);
 
@@ -205,7 +209,7 @@ const handleClick = (e) => {
     e.preventDefault();
     return;
   }
-  onClick?.(e);
+  emits?.('click', e);
 };
 
 // ========================== Size ==========================
