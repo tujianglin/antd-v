@@ -30,7 +30,6 @@ import ContextIsolator from '../_util/ContextIsolator';
 import { getTransitionName } from '../_util/motion';
 import { isFragment, isValidElement, isVueNode } from '@/vc-util/Children/util';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
-import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 
 export type { AdjustOverflow, PlacementsConfig };
@@ -77,11 +76,7 @@ interface LegacyTooltipProps
   afterOpenChange?: RcTooltipProps['afterVisibleChange'];
 }
 
-type SemanticName = 'root' | 'body';
-
 export interface AbstractTooltipProps extends LegacyTooltipProps {
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
-  classNames?: Partial<Record<SemanticName, string>>;
   style?: CSSProperties;
   class?: string;
   rootClassName?: string;
@@ -132,6 +127,9 @@ const slots = defineSlots<{
   overlay: () => VNode[];
   title: () => VNode[];
 }>();
+
+const attrs = useAttrs();
+
 const title = computed(() => slots.title || customTitle);
 const overlay = computed(() => slots.overlay || cutsomOverlay);
 
@@ -179,9 +177,11 @@ const open = defineModel('open', { default: false });
 const noTitle = computed(() => !isVueNode(title.value) && !isVueNode(overlay.value) && title.value !== 0);
 
 const onInternalOpenChange = (vis: boolean) => {
-  open.value = noTitle.value ? false : vis;
   if (!noTitle.value && onOpenChange) {
     onOpenChange(vis);
+  }
+  if (!attrs?.slider) {
+    open.value = noTitle.value ? false : vis;
   }
 };
 
@@ -199,9 +199,25 @@ const tooltipPlacements = computed<BuildInPlacements>(() => {
   );
 });
 
+const memoOverlay = computed<TooltipProps['overlay']>(() => {
+  if (title.value === 0) {
+    return title.value;
+  }
+  return overlay.value || title.value || '';
+});
+
+const memoOverlayWrapper = computed(() => {
+  // eslint-disable-next-line no-unused-expressions
+  memoOverlay.value;
+  return (
+    <ContextIsolator>
+      {typeof memoOverlay.value === 'function' ? (memoOverlay.value as any)() : memoOverlay.value}
+    </ContextIsolator>
+  );
+});
+
 const prefixCls = computed(() => getPrefixCls.value('tooltip', customizePrefixCls));
 const rootPrefixCls = computed(() => getPrefixCls.value());
-const attrs = useAttrs();
 
 const injectFromPopover = computed(() => (attrs as any)['data-popover-inject']);
 
@@ -270,12 +286,12 @@ const childCls = computed(() => {
       :styles="{
         root: {
           ...arrowContentStyle,
-          ...contextStyles.root,
+          ...contextStyles?.root,
           ...contextStyle,
           ...styles?.root,
         },
         body: {
-          ...contextStyles.body,
+          ...contextStyles?.body,
           ...styles?.body,
           ...colorInfo.overlayStyle,
         },
@@ -295,16 +311,10 @@ const childCls = computed(() => {
         ),
         motionDeadline: 1000,
       }"
+      :overlay="memoOverlayWrapper"
       :destroy-on-hidden="destroyOnHidden"
     >
       <component :is="cloneVNode(children(), { class: tempOpen ? childCls : {} })" />
-      <template #overlay>
-        <ContextIsolator space>
-          <slot name="overlay">
-            <Render :content="title" />
-          </slot>
-        </ContextIsolator>
-      </template>
     </RcTooltip>
   </ZIndexContextProvider>
 </template>

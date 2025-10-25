@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { cloneVNode, computed, getCurrentInstance, onBeforeUnmount, onMounted, toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, onBeforeUnmount, onMounted, toRefs, type CSSProperties } from 'vue';
 import type { Orientation } from '../_util/hooks/useOrientation';
 import useOrientation from '../_util/hooks/useOrientation';
 import { devUseWarning } from '../_util/warning';
@@ -15,6 +15,7 @@ import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
 import raf from '@/vc-util/raf';
 import RcSlider from '@/vc-component/slider';
+import { cloneElement } from '@/vc-util/Children/util';
 
 export type SliderMarks = RcSliderProps['marks'];
 
@@ -275,11 +276,10 @@ const handleRender = computed<RcSliderProps['handleRender']>(() => {
         },
       };
 
-      const cloneNode = cloneVNode(node, passedProps);
-
+      const cloneNode = cloneElement(node, passedProps);
       const open = (!!lockOpen.value || activeOpen.value) && mergedTipFormatter.value !== null;
       // Wrap on handle with Tooltip when is single mode or multiple with all show tooltip
-      if (!useActiveTooltipHandle.value && open) {
+      if (!useActiveTooltipHandle.value) {
         return (
           <SliderTooltip
             {...tooltip}
@@ -303,32 +303,31 @@ const handleRender = computed<RcSliderProps['handleRender']>(() => {
 
 // ========================== Active Handle ===========================
 const activeHandleRender = computed<SliderProps['activeHandleRender']>(() => {
-  return useActiveTooltipHandle.value
-    ? (handle, info) => {
-        const cloneNode = cloneVNode(handle, {
-          style: {
-            ...handle.props.style,
-            visibility: 'hidden',
-          },
-        });
+  if (!useActiveTooltipHandle.value) return undefined;
+  return (handle, info) => {
+    const cloneNode = cloneElement(handle, {
+      style: {
+        ...handle.props.style,
+        visibility: 'hidden',
+      },
+    });
 
-        return (
-          <SliderTooltip
-            {...tooltip}
-            prefixCls={getPrefixCls.value('tooltip', customizeTooltipPrefixCls?.value)}
-            title={mergedTipFormatter?.value ? mergedTipFormatter?.value?.(info.value) : ''}
-            open={mergedTipFormatter?.value !== null && activeOpen.value}
-            placement={getTooltipPlacement(tooltipPlacement?.value, mergedVertical.value)}
-            key="tooltip"
-            classNames={{ root: `${prefixCls.value}-tooltip` }}
-            getPopupContainer={getTooltipPopupContainer?.value || getPopupContainer?.value}
-            draggingDelete={info.draggingDelete}
-          >
-            {cloneNode}
-          </SliderTooltip>
-        );
-      }
-    : undefined;
+    return (
+      <SliderTooltip
+        {...tooltip}
+        prefixCls={getPrefixCls.value('tooltip', customizeTooltipPrefixCls?.value)}
+        title={mergedTipFormatter?.value ? mergedTipFormatter?.value?.(info.value) : ''}
+        open={mergedTipFormatter?.value !== null && activeOpen.value}
+        placement={getTooltipPlacement(tooltipPlacement?.value, mergedVertical.value)}
+        key="tooltip"
+        classNames={{ root: `${prefixCls.value}-tooltip` }}
+        getPopupContainer={getTooltipPopupContainer?.value || getPopupContainer?.value}
+        draggingDelete={info.draggingDelete}
+      >
+        {cloneNode}
+      </SliderTooltip>
+    );
+  };
 });
 
 // ============================== Render ==============================
