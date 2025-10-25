@@ -23,6 +23,7 @@ export default function useStatus(
   const {
     motionDeadline,
     motionLeaveImmediately,
+    disableInitialAnimation,
     onAppearPrepare,
     onEnterPrepare,
     onLeavePrepare,
@@ -39,7 +40,12 @@ export default function useStatus(
   } = toRefs(props);
 
   const motionEnter = computed(() => props.motionEnter ?? true);
-  const motionAppear = computed(() => props.motionAppear ?? true);
+  const motionAppear = computed(() => {
+    if (disableInitialAnimation?.value) {
+      return false;
+    }
+    return props.motionAppear ?? false;
+  });
   const motionLeave = computed(() => props.motionLeave ?? true);
 
   // Used for outer render usage to avoid `visible: false & status: none` to render nothing

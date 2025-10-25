@@ -35,6 +35,7 @@ watchEffect(() => {
       mask: true,
       keyboard: true,
       maskClosable: true,
+      okCancel: undefined,
     },
     config,
   );

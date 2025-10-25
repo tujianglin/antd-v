@@ -70,7 +70,6 @@ export interface ModalProps extends ModalCommonProps {
   closeIcon?: VueNode;
   modalRender?: (node: VueNode) => VueNode;
   focusTriggerAfterClose?: boolean;
-  children?: VueNode;
   mousePosition?: MousePosition;
   /**
    * @since 5.18.0

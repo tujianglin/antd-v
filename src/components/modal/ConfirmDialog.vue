@@ -90,7 +90,7 @@ const mergedZIndex = computed(() => {
 </script>
 <template>
   <Modal
-    v-bind="omit($props, ['onCancel', 'onConfirm'])"
+    v-bind="omit($props, ['onCancel'])"
     :class="classString"
     :wrap-class-name="clsx({ [`${confirmPrefixCls}-centered`]: !!centered }, wrapClassName)"
     @cancel="

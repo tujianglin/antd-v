@@ -151,7 +151,7 @@ const wrapClassNameExtended = computed(() =>
 const vm = getCurrentInstance();
 const [rawClosable, mergedCloseIcon, closeBtnIsDisabled, ariaProps] = useClosable(
   computed(() => pickClosable(vm.props)),
-  computed(() => pickClosable(modalContext?.value)),
+  computed(() => pickClosable(modalContext?.value as any)),
   computed(() => ({
     closable: true,
     closeIcon: <CloseOutlined class={`${prefixCls.value}-close-icon`} />,
@@ -159,14 +159,16 @@ const [rawClosable, mergedCloseIcon, closeBtnIsDisabled, ariaProps] = useClosabl
   })),
 );
 
-const mergedClosable = rawClosable
-  ? {
-      disabled: closeBtnIsDisabled,
-      closeIcon: mergedCloseIcon,
-      afterClose: closableAfterclose,
-      ...ariaProps,
-    }
-  : false;
+const mergedClosable = computed<any>(() =>
+  rawClosable.value
+    ? {
+        disabled: closeBtnIsDisabled.value,
+        closeIcon: mergedCloseIcon.value,
+        afterClose: closableAfterclose.value,
+        ...ariaProps.value,
+      }
+    : false,
+);
 // ============================ Refs ============================
 // Select `ant-modal-container` by `panelRef`
 const innerPanelRef = usePanelRef(computed(() => `.${prefixCls.value}-container`));

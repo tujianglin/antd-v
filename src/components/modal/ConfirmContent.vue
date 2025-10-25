@@ -83,11 +83,10 @@ const btnCtxValue = computed<ModalContextProps>(() => ({
   autoFocusButton: autoFocusButton.value,
   cancelTextLocale: cancelTextLocale.value,
   okTextLocale: okTextLocale.value,
-  mergedOkCancel: mergedLocale.value,
+  mergedOkCancel: mergedOkCancel.value,
   onClose: onClose?.value,
   ...restProps,
 }));
-const btnCtxValueMemo = computed(() => btnCtxValue.value);
 
 // ====================== Footer Origin Node ======================
 const FooterOriginNode = () => (
@@ -120,7 +119,7 @@ const bodyCls = computed(() => `${confirmPrefixCls}-body`);
         </div>
       </div>
     </div>
-    <ModalContextProvider v-if="footer === undefined || typeof footer === 'function'" :value="btnCtxValueMemo">
+    <ModalContextProvider v-if="footer === undefined || typeof footer === 'function'" :value="btnCtxValue">
       <div :class="`${confirmPrefixCls}-btns`">
         <Render
           :content="

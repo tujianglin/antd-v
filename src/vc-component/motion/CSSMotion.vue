@@ -1,11 +1,11 @@
 <script lang="tsx" setup>
-import { isValidElement } from '@/vc-util/Children/util';
+import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import findDOMNode from '@/vc-util/Dom/findDOMNode';
 import { falseToUndefined } from '@/vc-util/props';
 import { getNodeRef, supportRef } from '@/vc-util/ref';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { cloneVNode, computed, getCurrentInstance, ref, toRefs, watch, type CSSProperties, type VNode } from 'vue';
+import { computed, getCurrentInstance, ref, toRefs, watch, type CSSProperties, type VNode } from 'vue';
 import { useContextInject } from './context';
 import useStatus from './hooks/useStatus';
 import { isActive } from './hooks/useStepQueue';
@@ -50,6 +50,10 @@ export interface CSSMotionProps {
   motionLeave?: boolean;
   motionLeaveImmediately?: boolean;
   motionDeadline?: number;
+  /**
+   * Disable initial animation when component first mounts
+   */
+  disableInitialAnimation?: boolean;
   /**
    * Create element in view even the element is invisible.
    * Will patch `display: none` style on it.
@@ -130,13 +134,7 @@ const [status, statusStep, statusStyle, mergedVisible] = useStatus(
   supportMotion,
   computed(() => visible),
   getDomElement,
-  reactiveComputed(
-    () =>
-      ({
-        ...falseToUndefined(vm.props),
-        motionAppear: vm.props.motionAppear ?? false,
-      }) as any,
-  ),
+  reactiveComputed(() => falseToUndefined(vm.props)),
 );
 
 // Record whether content has rendered
@@ -159,7 +157,7 @@ defineExpose({
     return getDomElement();
   },
   inMotion() {
-    return status.value !== STATUS_NONE;
+    return status.value === STATUS_NONE;
   },
   enableMotion() {
     return supportMotion.value;
@@ -211,7 +209,7 @@ const MotionChildren = () => {
   if (isValidElement(result) && supportRef(result[0])) {
     const originNodeRef = getNodeRef(result[0]);
     if (!originNodeRef) {
-      result = cloneVNode(result, { ref: nodeRef });
+      result = cloneElement(result, { ref: nodeRef });
     }
   }
   return result;

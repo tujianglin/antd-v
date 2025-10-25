@@ -124,7 +124,10 @@ export function removeCSS(key: string, option: Options = {}) {
   const existNode = findExistNode(key, option);
   if (existNode) {
     const container = getContainer(option);
-    container.removeChild(existNode);
+    // dom 移出, 不删除数据样式
+    if (option?.mark !== 'data-css-hash') {
+      container.removeChild(existNode);
+    }
   }
 }
 

@@ -82,6 +82,7 @@ function onPrepare() {
     @enter-prepare="onPrepare"
     :force-render="forceRender"
     :motion-name="motionName"
+    :motion-appear="true"
     :remove-on-leave="destroyOnHidden"
     ref="dialogRef"
   >
