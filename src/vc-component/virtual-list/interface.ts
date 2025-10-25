@@ -1,10 +1,10 @@
 import type { VueKey, VueNode } from '@/vc-util/type';
-import type { CSSProperties, HTMLAttributes } from 'vue';
+import type { CSSProperties, HTMLAttributes, VNodeTypes } from 'vue';
 import type { InnerProps } from './Filler.vue';
 import type { ScrollBarDirectionType } from './ScrollBar.vue';
 import type { ScrollPos, ScrollTarget } from './hooks/useScrollTo';
 
-export type RenderFunc<T> = (data: { item: T; index: number; props: { style: CSSProperties; offsetX: number } }) => VueNode;
+export type RenderFunc<T> = (props: { item: T; index: number; props: { style: CSSProperties; offsetX: number } }) => VNodeTypes;
 
 export interface SharedConfig<T> {
   getKey: (item: T) => VueKey;

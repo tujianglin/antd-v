@@ -18,7 +18,7 @@ export default function useScrollDrag(
   let stopScroll, onMouseDown, onMouseUp, onMouseMove;
 
   watch(
-    () => inVirtual.value,
+    inVirtual,
     () => {
       const ele = componentRef.value;
       if (inVirtual && ele) {
@@ -39,7 +39,12 @@ export default function useScrollDrag(
           });
         };
 
-        onMouseDown = (e: MouseEvent) => {
+        const clearDragState = () => {
+          mouseDownLock = false;
+          stopScroll();
+        };
+
+        const onMouseDown = (e: MouseEvent) => {
           // Skip if element set draggable
           if ((e.target as HTMLElement).draggable || e.button !== 0) {
             return;
@@ -53,11 +58,8 @@ export default function useScrollDrag(
             mouseDownLock = true;
           }
         };
-        onMouseUp = () => {
-          mouseDownLock = false;
-          stopScroll();
-        };
-        onMouseMove = (e: MouseEvent) => {
+
+        const onMouseMove = (e: MouseEvent) => {
           if (mouseDownLock) {
             const mouseY = getPageXY(e, false);
             const { top, bottom } = ele.getBoundingClientRect();
@@ -77,8 +79,10 @@ export default function useScrollDrag(
         };
 
         ele.addEventListener('mousedown', onMouseDown);
-        ele.ownerDocument.addEventListener('mouseup', onMouseUp);
+        ele.ownerDocument.addEventListener('mouseup', clearDragState);
         ele.ownerDocument.addEventListener('mousemove', onMouseMove);
+
+        ele.ownerDocument.addEventListener('dragend', clearDragState);
       }
     },
     { immediate: true },

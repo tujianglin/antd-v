@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import {} from 'vue';
+import { computed } from 'vue';
 
 interface IndentProps {
   prefixCls: string;
@@ -13,7 +13,7 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { prefixCls, level, isStart, isEnd } = defineProps<IndentProps>();
 
-const baseClassName = `${prefixCls}-indent-unit`;
+const baseClassName = computed(() => `${prefixCls}-indent-unit`);
 </script>
 <template>
   <span aria-hidden="true" :class="`${prefixCls}-indent`">

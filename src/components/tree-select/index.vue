@@ -101,7 +101,7 @@ const {
   status: customStatus,
   treeExpandAction,
   builtinPlacements,
-  popupMatchSelectWidth,
+  popupMatchSelectWidth = undefined,
   allowClear,
   variant: customVariant,
   popupRender,

@@ -1,10 +1,7 @@
 <script lang="tsx" setup>
-import Render from '@/vc-component/render';
 import { falseToUndefined } from '@/vc-util/props';
-import type { VueNode } from '@/vc-util/type';
-import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, ref, toRefs, type CSSProperties, type VNode } from 'vue';
+import { computed, ref, type CSSProperties } from 'vue';
 import ResizeObserver from '../resize-observer';
 export type InnerProps = Pick<HTMLDivElement, 'role' | 'id'>;
 
@@ -23,50 +20,40 @@ interface FillerProps {
   innerProps?: InnerProps;
 
   rtl: boolean;
-
-  extra?: VueNode;
 }
 
-defineOptions({ name: 'Filler', inheritAttrs: false, compatConfig: { MODE: 3 } });
+defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { height, offsetY, offsetX, prefixCls, onInnerResize, innerProps, rtl, extra } = defineProps<FillerProps>();
+const { height, offsetY, offsetX, prefixCls, onInnerResize, innerProps, rtl } = defineProps<FillerProps>();
 
-const slots = defineSlots<{
-  extra?: () => VNode[];
-}>();
+const styles = computed(() => {
+  let outer: CSSProperties = {};
 
-const extraSlot = computed(() => slots.extra || extra);
+  let inner: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+  };
 
-const { outerStyle, innerStyle } = toRefs(
-  reactiveComputed(() => {
-    let outer: CSSProperties = {};
-
-    let inner: CSSProperties = {
-      display: 'flex',
-      flexDirection: 'column',
+  if (offsetY !== undefined) {
+    // Not set `width` since this will break `sticky: right`
+    outer = {
+      height: `${height}px`,
+      position: 'relative',
+      overflow: 'hidden',
     };
 
-    if (offsetY !== undefined) {
-      // Not set `width` since this will break `sticky: right`
-      outer = {
-        height: `${height}px`,
-        position: 'relative',
-        overflow: 'hidden',
-      };
-
-      inner = {
-        ...inner,
-        transform: `translateY(${offsetY}px)`,
-        [rtl ? 'marginRight' : 'marginLeft']: `${-offsetX}px`,
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        top: 0,
-      };
-    }
-    return { outerStyle: outer, innerStyle: inner };
-  }),
-);
+    inner = {
+      ...inner,
+      transform: `translateY(${offsetY}px)`,
+      [rtl ? 'marginRight' : 'marginLeft']: `${-offsetX}px`,
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+    };
+  }
+  return { outerStyle: outer, innerStyle: inner };
+});
 const domRef = ref(null);
 
 defineExpose({
@@ -76,7 +63,7 @@ defineExpose({
 });
 </script>
 <template>
-  <div :style="outerStyle">
+  <div :style="styles.outerStyle">
     <ResizeObserver
       @resize="
         ({ offsetHeight }) => {
@@ -87,7 +74,7 @@ defineExpose({
       "
     >
       <div
-        :style="innerStyle"
+        :style="styles.innerStyle"
         :class="
           clsx({
             [`${prefixCls}-holder-inner`]: prefixCls,
@@ -97,7 +84,7 @@ defineExpose({
         v-bind="{ ...innerProps, ...falseToUndefined($attrs) }"
       >
         <slot></slot>
-        <Render :content="extraSlot" />
+        <slot name="extra"></slot>
       </div>
     </ResizeObserver>
   </div>

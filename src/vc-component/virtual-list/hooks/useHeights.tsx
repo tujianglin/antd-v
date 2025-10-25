@@ -28,8 +28,16 @@ export default function useHeights<T>(
         if (element && element.offsetParent) {
           const { offsetHeight } = element;
           if (heights.get(key) !== offsetHeight) {
-            updatedMark.value = Symbol('update');
-            heights.set(key, element.offsetHeight);
+            const style = window.getComputedStyle(element);
+            const marginTop = parseFloat(style.marginTop) || 0;
+            const marginBottom = parseFloat(style.marginBottom) || 0;
+
+            const fullHeight = element.offsetHeight + marginTop + marginBottom;
+
+            if (heights.get(key) !== fullHeight) {
+              updatedMark.value = Symbol('update');
+              heights.set(key, fullHeight);
+            }
           }
         }
       });
