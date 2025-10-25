@@ -28,8 +28,7 @@ import type { ComponentToken as ImageComponentToken } from '../../image/style';
 import type { ComponentToken as InputNumberComponentToken } from '../../input-number/style';
 import type { ComponentToken as InputComponentToken } from '../../input/style';
 import type { ComponentToken as LayoutComponentToken } from '../../layout/style';
-// import type { ComponentToken as ListComponentToken } from '../../list/style';
-// import type { ComponentToken as MasonryComponentToken } from '../../masonry/style';
+import type { ComponentToken as MasonryComponentToken } from '../../masonry/style';
 import type { ComponentToken as MentionsComponentToken } from '../../mentions/style';
 import type { ComponentToken as MenuComponentToken } from '../../menu/style';
 import type { ComponentToken as MessageComponentToken } from '../../message/style';
@@ -89,7 +88,7 @@ export interface ComponentTokenMap {
   FloatButton?: FloatButtonComponentToken;
   // Form?: FormComponentToken;
   Grid?: GridComponentToken;
-  // Masonry?: MasonryComponentToken;
+  Masonry?: MasonryComponentToken;
   Image?: ImageComponentToken;
   Input?: InputComponentToken;
   InputNumber?: InputNumberComponentToken;

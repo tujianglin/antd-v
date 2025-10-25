@@ -13,7 +13,6 @@ import type { ShowWaveEffect } from '../_util/wave/interface';
 import type { AlertProps } from '../alert';
 import type { AnchorProps } from '../anchor';
 import type { BadgeProps } from '../badge';
-// import type { RibbonProps } from '../badge/Ribbon';
 import type { BreadcrumbProps } from '../breadcrumb';
 import type { CalendarProps } from '../calendar';
 import type { CascaderProps } from '../cascader';
@@ -34,7 +33,7 @@ import type { InputProps, SearchProps, TextAreaProps } from '../input';
 import type { InputNumberProps } from '../input-number';
 import type { OTPProps } from '../input/OTP/interface';
 import type { Locale } from '../locale';
-// import type { MasonryProps } from '../masonry';
+import type { MasonryProps } from '../masonry';
 import type { MentionsProps } from '../mentions';
 import type { MenuProps } from '../menu';
 import type { ArgsProps as MessageProps } from '../message';
@@ -173,7 +172,7 @@ export type CollapseConfig = ComponentStyleConfig & Pick<CollapseProps, 'expandI
 
 export type CheckboxConfig = ComponentStyleConfig & Pick<CheckboxProps, 'classNames' | 'styles'>;
 
-// export type MasonryConfig = ComponentStyleConfig & Pick<MasonryProps, 'classNames' | 'styles'>;
+export type MasonryConfig = ComponentStyleConfig & Pick<MasonryProps, 'classNames' | 'styles'>;
 
 export type MenuConfig = ComponentStyleConfig & Pick<MenuProps, 'expandIcon' | 'classNames' | 'styles'>;
 
@@ -360,7 +359,7 @@ export interface ConfigComponentProps {
   result?: ResultConfig;
   slider?: SliderConfig;
   breadcrumb?: BreadcrumbConfig;
-  // masonry?: MasonryConfig;
+  masonry?: MasonryConfig;
   menu?: MenuConfig;
   checkbox?: CheckboxConfig;
   descriptions?: DescriptionsConfig;

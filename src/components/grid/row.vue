@@ -75,7 +75,10 @@ const prefixCls = computed(() => getPrefixCls?.value('row', props.prefixCls));
 
 const [hashId, cssVarCls] = useRowStyle(prefixCls);
 
-const gutters = computed(() => useGutter(props.gutter, screens.value));
+const gutters = useGutter(
+  computed(() => props.gutter),
+  screens,
+);
 const classes = computed(() => {
   return clsx(
     prefixCls.value,
@@ -95,13 +98,13 @@ const classes = computed(() => {
 const { rowStyle, rowContext } = reactiveComputed((): { rowStyle: CSSProperties; rowContext: RowContextState } => {
   const rowStyle: CSSProperties = {};
 
-  const horizontalGutter = gutters.value[0] !== null && gutters.value[0] > 0 ? gutters.value[0] / -2 : undefined;
+  const horizontalGutter = gutters?.[0].value !== null && gutters?.[0].value > 0 ? gutters?.[0].value / -2 : undefined;
   if (horizontalGutter) {
     rowStyle.marginInline = horizontalGutter;
   }
-  const [gutterH, gutterV] = gutters.value;
-  rowStyle.rowGap = gutterV;
-  const rowContext: RowContextState = { gutter: [gutterH, gutterV] as [number, number], wrap: props.wrap };
+  const [gutterH, gutterV] = gutters;
+  rowStyle.rowGap = gutterV.value;
+  const rowContext: RowContextState = { gutter: [gutterH.value, gutterV.value] as [number, number], wrap: props.wrap };
   return { rowStyle, rowContext };
 });
 </script>
