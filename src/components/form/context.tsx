@@ -155,24 +155,30 @@ export type NoFormStyleProps = {
   override?: boolean;
 };
 
-export const NoFormStyle = ({ status, override }, { slots }) => {
-  const formItemInputContext = useFormItemInputContextInject();
+export const NoFormStyle = defineComponent({
+  inheritAttrs: false,
+  props: ['status', 'override'],
+  setup(props, { slots }) {
+    const formItemInputContext = useFormItemInputContextInject();
 
-  const newFormItemInputContext = computed(() => {
-    const newContext = { ...formItemInputContext };
-    if (override) {
-      delete newContext.isFormItemInput;
-    }
-    if (status) {
-      delete newContext.status;
-      delete newContext.hasFeedback;
-      delete newContext.feedbackIcon;
-    }
-    return newContext;
-  });
+    const newFormItemInputContext = computed(() => {
+      const newContext = { ...formItemInputContext };
+      if (props.override) {
+        delete newContext.isFormItemInput;
+      }
+      if (props.status) {
+        delete newContext.status;
+        delete newContext.hasFeedback;
+        delete newContext.feedbackIcon;
+      }
+      return newContext;
+    });
 
-  return <FormItemInputContextProvider value={newFormItemInputContext.value}>{slots?.default?.()}</FormItemInputContextProvider>;
-};
+    return () => (
+      <FormItemInputContextProvider value={newFormItemInputContext.value}>{slots?.default?.()}</FormItemInputContextProvider>
+    );
+  },
+});
 
 const VariantContext: InjectionKey<Ref<Variant | undefined>> = Symbol('VariantContext');
 

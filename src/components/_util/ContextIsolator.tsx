@@ -1,4 +1,5 @@
 import { defineComponent } from 'vue';
+import { NoFormStyle } from '../form/context';
 import { NoCompactStyle } from '../space/context';
 
 const ContextIsolator = defineComponent({
@@ -9,7 +10,11 @@ const ContextIsolator = defineComponent({
   setup(props, { slots }) {
     return () => {
       if (props.form) {
-        return <NoCompactStyle>{slots.default?.()}</NoCompactStyle>;
+        return (
+          <NoFormStyle override status>
+            {slots.default?.()}
+          </NoFormStyle>
+        );
       }
       if (props.space) {
         return <NoCompactStyle>{slots.default?.()}</NoCompactStyle>;
