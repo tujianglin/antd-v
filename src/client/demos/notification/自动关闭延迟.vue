@@ -1,20 +1,22 @@
 <script lang="tsx">
 import { Button, notification } from '@/components';
+
 import { defineComponent } from 'vue';
 export default defineComponent({
   setup() {
+    const [api, ContextHolder] = notification.useNotification();
+
     const openNotification = () => {
-      notification.open({
+      api.open({
         title: 'Notification Title',
         description:
-          'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
-        onClick: () => {
-          console.log('Notification Clicked!');
-        },
+          'I will never close automatically. This is a purposely very very long description that has many many characters and words.',
+        duration: 0,
       });
     };
     return () => (
       <>
+        <ContextHolder></ContextHolder>
         <Button type="primary" onClick={openNotification}>
           Open the notification box
         </Button>

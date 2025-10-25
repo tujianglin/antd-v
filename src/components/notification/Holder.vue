@@ -36,7 +36,7 @@ const {
   maxCount,
   rtl,
   onAllRemoved,
-  stack,
+  stack = true,
   duration,
   pauseOnHover = true,
   showProgress,

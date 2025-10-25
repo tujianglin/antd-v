@@ -1,20 +1,23 @@
 <script lang="tsx">
 import { Button, notification } from '@/components';
+import { SmileOutlined } from '@ant-design/icons-vue';
+
 import { defineComponent } from 'vue';
 export default defineComponent({
   setup() {
+    const [api, ContextHolder] = notification.useNotification();
+
     const openNotification = () => {
-      notification.open({
+      api.open({
         title: 'Notification Title',
         description:
           'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
-        onClick: () => {
-          console.log('Notification Clicked!');
-        },
+        icon: <SmileOutlined style={{ color: '#108ee9' }} />,
       });
     };
     return () => (
       <>
+        <ContextHolder></ContextHolder>
         <Button type="primary" onClick={openNotification}>
           Open the notification box
         </Button>

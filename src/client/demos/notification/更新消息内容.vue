@@ -1,20 +1,29 @@
 <script lang="tsx">
 import { Button, notification } from '@/components';
+const key = 'updatable';
 import { defineComponent } from 'vue';
 export default defineComponent({
   setup() {
+    const [api, ContextHolder] = notification.useNotification();
+
     const openNotification = () => {
-      notification.open({
+      api.open({
+        key,
         title: 'Notification Title',
-        description:
-          'This is the content of the notification. This is the content of the notification. This is the content of the notification.',
-        onClick: () => {
-          console.log('Notification Clicked!');
-        },
+        description: 'description.',
       });
+
+      setTimeout(() => {
+        api.open({
+          key,
+          title: 'New Title',
+          description: 'New description.',
+        });
+      }, 1000);
     };
     return () => (
       <>
+        <ContextHolder></ContextHolder>
         <Button type="primary" onClick={openNotification}>
           Open the notification box
         </Button>
