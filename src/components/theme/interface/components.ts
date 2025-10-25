@@ -49,7 +49,7 @@ import type { ComponentToken as SkeletonComponentToken } from '../../skeleton/st
 import type { ComponentToken as SliderComponentToken } from '../../slider/style';
 import type { ComponentToken as SpaceComponentToken } from '../../space/style';
 import type { ComponentToken as SpinComponentToken } from '../../spin/style';
-// import type { ComponentToken as SplitterComponentToken } from '../../splitter/style';
+import type { ComponentToken as SplitterComponentToken } from '../../splitter/style';
 import type { ComponentToken as StatisticComponentToken } from '../../statistic/style';
 import type { ComponentToken as StepsComponentToken } from '../../steps/style';
 import type { ComponentToken as SwitchComponentToken } from '../../switch/style';
@@ -109,7 +109,7 @@ export interface ComponentTokenMap {
   Spin?: SpinComponentToken;
   Statistic?: StatisticComponentToken;
   Switch?: SwitchComponentToken;
-  // Splitter?: SplitterComponentToken;
+  Splitter?: SplitterComponentToken;
   Tag?: TagComponentToken;
   Tree?: TreeComponentToken;
   TreeSelect?: TreeSelectComponentToken;

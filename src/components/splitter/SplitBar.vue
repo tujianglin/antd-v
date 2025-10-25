@@ -3,12 +3,17 @@ import { DownOutlined, LeftOutlined, RightOutlined, UpOutlined } from '@ant-desi
 import { computed, ref, watch } from 'vue';
 import clsx from 'clsx';
 
+export type ShowCollapsibleIconMode = boolean | 'auto';
+
 export interface SplitBarProps {
   index: number;
   active: boolean;
+  prefixCls: string;
   resizable: boolean;
   startCollapsible: boolean;
   endCollapsible: boolean;
+  showStartCollapsibleIcon: ShowCollapsibleIconMode;
+  showEndCollapsibleIcon: ShowCollapsibleIconMode;
   onOffsetStart: (index: number) => void;
   onOffsetUpdate: (index: number, offsetX: number, offsetY: number, lazyEnd?: boolean) => void;
   onOffsetEnd: (lazyEnd?: boolean) => void;
@@ -19,18 +24,18 @@ export interface SplitBarProps {
   ariaMax: number;
   lazy?: boolean;
   containerSize: number;
-  size?: number | string;
 }
 
 defineOptions({ name: 'SplitBar', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
+  prefixCls,
   vertical,
   index,
   active,
-  ariaNow = 0,
-  ariaMin = 0,
-  ariaMax = 0,
+  ariaNow,
+  ariaMin,
+  ariaMax,
   resizable,
   startCollapsible,
   endCollapsible,
@@ -40,184 +45,202 @@ const {
   onCollapse,
   lazy,
   containerSize,
-  size = 8,
+  showStartCollapsibleIcon,
+  showEndCollapsibleIcon,
 } = defineProps<Partial<SplitBarProps>>();
 
+function getValidNumber(num?: number): number {
+  return typeof num === 'number' && !Number.isNaN(num) && Number.isFinite(num) ? Math.round(num) : 0;
+}
+
+const splitBarPrefixCls = computed(() => `${prefixCls}-bar`);
+
+// ======================== Resize ========================
 const startPos = ref<[x: number, y: number] | null>(null);
 const constrainedOffset = ref(0);
+
 const constrainedOffsetX = computed(() => (vertical ? 0 : constrainedOffset.value));
 const constrainedOffsetY = computed(() => (vertical ? constrainedOffset.value : 0));
-const StartIcon = vertical ? <UpOutlined></UpOutlined> : <LeftOutlined></LeftOutlined>;
-const EndIcon = vertical ? <DownOutlined></DownOutlined> : <RightOutlined></RightOutlined>;
-watch(
-  startPos,
-  (val) => {
-    if (val) {
-      window.addEventListener('touchmove', handleTouchMove, { passive: false });
-      window.addEventListener('touchend', handleTouchEnd);
-      window.addEventListener('mousemove', onMouseMove);
-      window.addEventListener('mouseup', onMouseUp);
-    } else {
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mouseup', onMouseUp);
-    }
-  },
-  { deep: true },
-);
 
-function handleTouchMove(e: TouchEvent) {
-  if (e.touches.length === 1) {
-    const touch = e.touches[0];
-    const offsetX = touch.pageX - startPos.value[0];
-    const offsetY = touch.pageY - startPos.value[1];
-    if (lazy) {
-      handleLazyMove(offsetX, offsetY);
-    } else {
-      onOffsetUpdate(index, offsetX, offsetY);
-    }
-  }
-}
-
-function handleTouchEnd() {
-  if (lazy) {
-    handleLazyEnd();
-  } else {
-    onOffsetEnd();
-  }
-  startPos.value = null;
-}
-
-function onMouseMove(e: MouseEvent) {
-  const { pageX, pageY } = e;
-  const offsetX = pageX - startPos.value[0];
-  const offsetY = pageY - startPos.value[1];
-  if (lazy) {
-    handleLazyMove(offsetX, offsetY);
-  } else {
-    onOffsetUpdate(index, offsetX, offsetY);
-  }
-}
-
-function onMouseUp() {
-  if (lazy) {
-    handleLazyEnd();
-  } else {
-    onOffsetEnd();
-  }
-  startPos.value = null;
-}
-
-function handleLazyEnd() {
-  onOffsetUpdate(index, constrainedOffsetX.value, constrainedOffsetY.value, true);
-  constrainedOffset.value = 0;
-  onOffsetEnd(true);
-}
-
-// 更新的约束计算
-const getConstrainedOffset = (rawOffset: number) => {
-  const currentPos = (containerSize * ariaNow) / 100;
-  const newPos = currentPos + rawOffset;
-
-  // 计算可用空间
-  const minAllowed = Math.max(0, (containerSize * ariaMin) / 100);
-  const maxAllowed = Math.min(containerSize, (containerSize * ariaMax) / 100);
-
-  // 在边界内约束新位置
-  const clampedPos = Math.max(minAllowed, Math.min(maxAllowed, newPos));
-  return clampedPos - currentPos;
-};
-
-function handleLazyMove(offsetX: number, offsetY: number) {
-  const constrainedOffsetValue = getConstrainedOffset(vertical ? offsetY : offsetX);
-  constrainedOffset.value = constrainedOffsetValue;
-}
-function onMouseDown(e: MouseEvent) {
+const onMousedown = (e: MouseEvent) => {
   if (resizable && e.currentTarget) {
     startPos.value = [e.pageX, e.pageY];
     onOffsetStart(index);
   }
-}
+};
 
-function onTouchStart(e: TouchEvent) {
+const onTouchstart = (e: TouchEvent) => {
   if (resizable && e.touches.length === 1) {
     const touch = e.touches[0];
     startPos.value = [touch.pageX, touch.pageY];
     onOffsetStart(index);
   }
-}
+};
 
-function getValidNumber(num: number | undefined): number {
-  return typeof num === 'number' && !Number.isNaN(num) ? Math.round(num) : 0;
-}
+// Updated constraint calculation
+const getConstrainedOffset = (rawOffset: number) => {
+  const currentPos = (containerSize * ariaNow) / 100;
+  const newPos = currentPos + rawOffset;
+
+  // Calculate available space
+  const minAllowed = Math.max(0, (containerSize * ariaMin) / 100);
+  const maxAllowed = Math.min(containerSize, (containerSize * ariaMax) / 100);
+
+  // Constrain new position within bounds
+  const clampedPos = Math.max(minAllowed, Math.min(maxAllowed, newPos));
+  return clampedPos - currentPos;
+};
+
+const handleLazyMove = (offsetX: number, offsetY: number) => {
+  const constrainedOffsetValue = getConstrainedOffset(vertical ? offsetY : offsetX);
+  constrainedOffset.value = constrainedOffsetValue;
+};
+
+const handleLazyEnd = () => {
+  onOffsetUpdate(index, constrainedOffsetX.value, constrainedOffsetY.value, true);
+  constrainedOffset.value = 0;
+  onOffsetEnd(true);
+};
+
+const getVisibilityClass = (mode: ShowCollapsibleIconMode): string => {
+  switch (mode) {
+    case true:
+      return `${splitBarPrefixCls.value}-collapse-bar-always-visible`;
+    case false:
+      return `${splitBarPrefixCls.value}-collapse-bar-always-hidden`;
+    case 'auto':
+      return `${splitBarPrefixCls.value}-collapse-bar-hover-only`;
+  }
+};
+
+watch(
+  [startPos, () => index, () => lazy],
+  (_, _1, clearUp) => {
+    if (!startPos.value) return;
+
+    const onMouseMove = (e: MouseEvent) => {
+      const { pageX, pageY } = e;
+      const offsetX = pageX - startPos.value[0];
+      const offsetY = pageY - startPos.value[1];
+      if (lazy) {
+        handleLazyMove(offsetX, offsetY);
+      } else {
+        onOffsetUpdate(index, offsetX, offsetY);
+      }
+    };
+
+    const onMouseUp = () => {
+      if (lazy) {
+        handleLazyEnd();
+      } else {
+        onOffsetEnd();
+      }
+      startPos.value = null;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        const offsetX = touch.pageX - startPos.value[0];
+        const offsetY = touch.pageY - startPos.value[1];
+        if (lazy) {
+          handleLazyMove(offsetX, offsetY);
+        } else {
+          onOffsetUpdate(index, offsetX, offsetY);
+        }
+      }
+    };
+
+    const handleTouchEnd = () => {
+      if (lazy) {
+        handleLazyEnd();
+      } else {
+        onOffsetEnd();
+      }
+      startPos.value = null;
+    };
+
+    const eventHandlerMap: Partial<Record<keyof WindowEventMap, EventListener>> = {
+      mousemove: onMouseMove as EventListener,
+      mouseup: onMouseUp,
+      touchmove: handleTouchMove as EventListener,
+      touchend: handleTouchEnd,
+    };
+
+    for (const [event, handler] of Object.entries(eventHandlerMap)) {
+      window.addEventListener(event, handler, { passive: false });
+    }
+
+    clearUp(() => {
+      for (const [event, handler] of Object.entries(eventHandlerMap)) {
+        window.removeEventListener(event, handler);
+      }
+    });
+  },
+  { deep: true },
+);
+
+const transformStyle = computed(() => ({
+  [`--${splitBarPrefixCls.value}-preview-offset`]: `${constrainedOffset.value}px`,
+}));
+
+// ======================== Render ========================
+const StartIcon = (props) => (vertical ? <UpOutlined {...props}></UpOutlined> : <LeftOutlined {...props}></LeftOutlined>);
+const EndIcon = (props) => (vertical ? <DownOutlined {...props}></DownOutlined> : <RightOutlined {...props}></RightOutlined>);
 </script>
 <template>
   <div
-    :class="clsx('group relative box-border flex-none select-none')"
+    :class="clsx(splitBarPrefixCls)"
     :aria-valuenow="getValidNumber(ariaNow)"
     :aria-valuemin="getValidNumber(ariaMin)"
     :aria-valuemax="getValidNumber(ariaMax)"
-    :style="vertical ? { height: `${size}px` } : { width: `${size}px` }"
   >
     <div
       v-if="lazy"
       :class="
-        clsx('pointer-none bg-sidebar-ring absolute z-1 hidden opacity-20 transition-none', {
-          'h-full transform-[translateX(calc(var(--offset)))]': !vertical,
-          'w-full transform-[translateY(calc(var(--offset)))]': vertical,
-          '!block': active,
-        })
+        clsx(
+          clsx(`${splitBarPrefixCls}-preview`, {
+            [`${splitBarPrefixCls}-preview-active`]: !!constrainedOffset,
+          }),
+        )
       "
-      :style="{ '--offset': `${constrainedOffset}px`, ...(vertical ? { height: `${size}px` } : { width: `${size}px` }) }"
+      :style="transformStyle"
     ></div>
     <div
       :class="
-        clsx(
-          'absolute top-[50%] left-[50%] z-1 box-border transform-[translate(-50%,-50%)] before:absolute before:top-[50%] before:left-[50%] before:transform-[translate(-50%,-50%)] before:content-around before:bg-transparent',
-          {
-            'h-full cursor-col-resize before:h-full before:w-full': !vertical,
-            'w-full cursor-row-resize before:h-full before:w-[calc(100%+2px)]': vertical,
-            'cursor-default': !resizable,
-            'before:!bg-primary': active,
-          },
-        )
+        clsx(`${splitBarPrefixCls}-dragger`, {
+          [`${splitBarPrefixCls}-dragger-disabled`]: !resizable,
+          [`${splitBarPrefixCls}-dragger-active`]: active,
+        })
       "
-      :style="vertical ? { height: `${size}px` } : { width: `${size}px` }"
-      @mousedown="onMouseDown"
-      @touchstart.passive="onTouchStart"
+      @mousedown="onMousedown"
+      @touchstart.passive="onTouchstart"
     ></div>
     <div
       v-if="startCollapsible"
       :class="
         clsx(
-          'flex-center hover:bg-sidebar-ring bg-main-bg absolute z-2 box-border cursor-pointer opacity-0 group-hover:opacity-100 hover:text-white',
-          {
-            'top-[50%] left-auto h-6 w-3 transform-[translateY(-50%)]': !vertical,
-            'top-auto left-[50%] h-3 w-6 transform-[translateX(-50%)]': vertical,
-          },
+          `${splitBarPrefixCls}-collapse-bar`,
+          `${splitBarPrefixCls}-collapse-bar-start`,
+          getVisibilityClass(showStartCollapsibleIcon),
         )
       "
-      :style="vertical ? { bottom: `${+size + 2}px` } : { right: `${+size + 2}px` }"
       @click="() => onCollapse(index, 'start')"
     >
-      <StartIcon />
+      <StartIcon :class="clsx(`${splitBarPrefixCls}-collapse-icon`, `${splitBarPrefixCls}-collapse-start`)" />
     </div>
     <div
       v-if="endCollapsible"
       :class="
         clsx(
-          'flex-center hover:bg-sidebar-ring bg-main-bg absolute z-2 box-border cursor-pointer opacity-0 group-hover:opacity-100 hover:text-white',
-          {
-            'top-[50%] right-auto h-6 w-3 transform-[translateY(-50%)]': !vertical,
-            'bottom-auto left-[50%] h-3 w-6 transform-[translateX(-50%)]': vertical,
-          },
+          `${splitBarPrefixCls}-collapse-bar`,
+          `${splitBarPrefixCls}-collapse-bar-end`,
+          getVisibilityClass(showEndCollapsibleIcon),
         )
       "
-      :style="vertical ? { top: `${+size + 2}px` } : { left: `${+size + 2}px` }"
       @click="() => onCollapse(index, 'end')"
     >
-      <EndIcon />
+      <EndIcon :class="clsx(`${splitBarPrefixCls}-collapse-icon`, `${splitBarPrefixCls}-collapse-end`)" />
     </div>
   </div>
 </template>

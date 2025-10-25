@@ -53,7 +53,6 @@ import type { SkeletonProps } from '../skeleton';
 import type { SliderProps } from '../slider';
 import type { SpaceProps } from '../space';
 import type { SpinProps } from '../spin';
-// import type { SplitterProps } from '../splitter';
 import type { StatisticProps } from '../statistic';
 import type { StepsProps } from '../steps';
 import type { SwitchProps } from '../switch';
@@ -331,7 +330,7 @@ export interface ConfigComponentProps {
   inputNumber?: InputNumberConfig;
   pagination?: PaginationConfig;
   space?: SpaceConfig;
-  // splitter?: ComponentStyleConfig & Pick<SplitterProps, 'classNames' | 'styles'>;
+  splitter?: ComponentStyleConfig;
   // form?: FormConfig;
   select?: SelectConfig;
   alert?: AlertConfig;

@@ -5,14 +5,29 @@ import type { InternalPanelProps } from './interface';
 
 defineOptions({ name: 'SplitterPanel', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { size, style = {} } = defineProps<InternalPanelProps>();
+const { prefixCls, class: className, size, style = {} } = defineProps<InternalPanelProps>();
+
+const panelClassName = computed(() =>
+  clsx(
+    `${prefixCls}-panel`,
+    {
+      [`${prefixCls}-panel-hidden`]: size === 0,
+    },
+    className,
+  ),
+);
 
 const hasSize = computed(() => size !== undefined);
 </script>
 <template>
   <div
-    :class="clsx('box-border overflow-auto [scrollbar-width:thin]', { hidden: size === 0 }, $attrs?.class)"
-    :style="{ ...style, flexBasis: hasSize ? `${size}px` : 'auto', flexGrow: hasSize ? 0 : 1 }"
+    :class="panelClassName"
+    :style="{
+      ...style,
+      // Use auto when start from ssr
+      flexBasis: hasSize ? `${size}px` : 'auto',
+      flexGrow: hasSize ? 0 : 1,
+    }"
   >
     <slot></slot>
   </div>

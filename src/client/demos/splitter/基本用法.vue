@@ -9,19 +9,12 @@ export default defineComponent({
       </Flex>
     );
     return () => (
-      <Splitter style={{ height: '300px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
-        <Splitter.Panel collapsible>
-          <Desc text="Left" />
+      <Splitter style={{ height: '200px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
+        <Splitter.Panel defaultSize="40%" min="20%" max="70%">
+          <Desc text="First" />
         </Splitter.Panel>
         <Splitter.Panel>
-          <Splitter orientation="vertical">
-            <Splitter.Panel>
-              <Desc text="Top" />
-            </Splitter.Panel>
-            <Splitter.Panel>
-              <Desc text="Bottom" />
-            </Splitter.Panel>
-          </Splitter>
+          <Desc text="Second" />
         </Splitter.Panel>
       </Splitter>
     );
