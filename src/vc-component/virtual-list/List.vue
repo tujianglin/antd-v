@@ -1,7 +1,7 @@
 <script lang="tsx" setup generic="T">
 import { falseToUndefined } from '@/vc-util/props';
 import clsx from 'clsx';
-import { computed, effect, nextTick, onBeforeUnmount, ref, shallowRef, toRaw, watch, watchEffect, type CSSProperties } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, shallowRef, toRaw, watch, watchEffect, type CSSProperties } from 'vue';
 import ResizeObserver, { type ResizeObserverProps } from '../resize-observer';
 import Filler from './Filler.vue';
 import useChildren from './hooks/useChildren';
@@ -579,10 +579,6 @@ const containerProps = computed(() => {
     };
   }
   return {};
-});
-
-effect(() => {
-  console.log(containerRef.value, componentRef.value);
 });
 </script>
 <template>

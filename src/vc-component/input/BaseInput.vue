@@ -1,10 +1,11 @@
 <script lang="tsx" setup>
-import { cloneVNode, computed, getCurrentInstance, ref, useSlots } from 'vue';
+import { computed, getCurrentInstance, ref, useSlots } from 'vue';
 import type { BaseInputProps, ValueType } from './interface';
 import { hasAddon, hasPrefixSuffix } from './utils/commonUtils';
 import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
+import { cloneElement } from '@/vc-util/Children/util';
 
 export interface HolderRef {
   /** Provider holder ref. Will return `null` if not wrap anything */
@@ -62,7 +63,7 @@ defineExpose({
 
 const Content = computed<any>(() => {
   const children = flattenChildren(slots.default?.())[0];
-  let element = cloneVNode(children, {
+  let element = cloneElement(children, {
     class: clsx(!hasAffix.value && classNames?.variant),
   });
 

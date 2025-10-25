@@ -150,7 +150,7 @@ const [variant, enableVariantCls] = useVariant(
   computed(() => customVariant),
 );
 
-const suffixNode = () => hasFeedback?.value && <Render content={feedbackIcon?.value}></Render>;
+const suffixNode = computed(() => hasFeedback?.value && <Render content={feedbackIcon?.value}></Render>);
 
 const mergedClassName = computed(() =>
   clsx(

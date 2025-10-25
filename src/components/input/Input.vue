@@ -103,7 +103,7 @@ const [mergedClassNames, mergedStyles] = useMergeSemantic<InputClassNamesType, I
 const { status: contextStatus, hasFeedback, feedbackIcon } = toRefs(useFormItemInputContextInject());
 const mergedStatus = computed(() => getMergedStatus(contextStatus?.value, customStatus));
 
-const suffixNode = () => {
+const suffixNode = computed(() => {
   if (hasFeedback?.value || suffixSlot?.value) {
     return (
       <>
@@ -113,7 +113,7 @@ const suffixNode = () => {
     );
   }
   return suffixSlot.value && <Render content={suffixSlot.value}></Render>;
-};
+});
 
 const mergedAllowClear = computed(() => getAllowClear((contextAllowClear?.value as any) ?? allowClear));
 

@@ -65,7 +65,6 @@ export interface ButtonProps extends BaseButtonProps, /** @vue-ignore */ MergedH
   htmlType?: ButtonHTMLType;
   autoInsertSpace?: boolean;
   autofocus?: boolean | undefined;
-  onClick?: ButtonHTMLAttributes['onClick'];
 }
 
 export type ColorVariantPairType = [color?: ButtonColorType, variant?: ButtonVariantType];
