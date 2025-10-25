@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, ref, toRefs, useSlots, watch, type CSSProperties } from 'vue';
+import { computed, effect, ref, toRefs, useSlots, watch, type CSSProperties } from 'vue';
 import { useComponentConfig } from '../config-provider/context';
 import Indicator from './Indicator/index.vue';
 import useStyle from './style/index';
@@ -90,6 +90,10 @@ const mergedPercent = usePercent(
   spinning,
   computed(() => percent),
 );
+
+effect(() => {
+  console.log(mergedPercent.value, spinning.value, percent);
+});
 
 watch([() => delay, () => customSpinning], (_, _1, clear) => {
   if (customSpinning) {

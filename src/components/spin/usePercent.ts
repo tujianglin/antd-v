@@ -20,15 +20,17 @@ export default function usePercent(spinning: Ref<boolean>, percent?: Ref<number 
         mockPercent.value = 0;
 
         mockIntervalRef.value = setInterval(() => {
-          const restPTG = 100 - mockPercent.value;
+          const prev = mockPercent.value;
+          const restPTG = 100 - prev;
 
           for (let i = 0; i < STEP_BUCKETS.length; i += 1) {
             const [limit, stepPtg] = STEP_BUCKETS[i];
 
-            if (mockPercent.value <= limit) {
-              return (mockPercent.value = mockPercent.value + restPTG * stepPtg);
+            if (prev <= limit) {
+              return (mockPercent.value = prev + restPTG * stepPtg);
             }
           }
+          mockPercent.value = prev;
         }, AUTO_INTERVAL);
       }
     },

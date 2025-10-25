@@ -23,7 +23,7 @@ const dotClassName = computed(() => `${prefixCls}-dot`);
     v-if="indicator && isValidElement(indicator)"
     :is="
       cloneElement(indicator, (currentProps) => ({
-        className: clsx(currentProps.className, dotClassName, className),
+        class: clsx(currentProps.className, dotClassName, className),
         style: { ...currentProps.style, ...style },
         percent,
       }))

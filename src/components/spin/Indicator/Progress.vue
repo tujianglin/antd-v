@@ -1,16 +1,10 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { computed, ref, watch, type CSSProperties } from 'vue';
+import { computed, defineComponent, ref, watch, type CSSProperties } from 'vue';
 
 export interface ProgressProps {
   prefixCls: string;
   percent: number;
-}
-
-interface CircleProps {
-  dotClassName?: string;
-  style?: CSSProperties;
-  hasCircleCls?: boolean;
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -22,21 +16,29 @@ const borderWidth = viewSize / 5;
 const radius = viewSize / 2 - borderWidth / 2;
 const circumference = radius * 2 * Math.PI;
 const position = 50;
-const CustomCircle = (props: CircleProps) => {
-  const { dotClassName, style, hasCircleCls } = props;
-  return (
-    <circle
-      class={clsx(`${dotClassName}-circle`, {
-        [`${dotClassName}-circle-bg`]: hasCircleCls,
-      })}
-      r={radius}
-      cx={position}
-      cy={position}
-      stroke-width={borderWidth}
-      style={style}
-    />
-  );
-};
+// ✅ 定义成响应式组件
+const CustomCircle = defineComponent({
+  name: 'CustomCircle',
+  props: {
+    dotClassName: String,
+    style: Object as () => CSSProperties,
+    hasCircleCls: Boolean,
+  },
+  setup(props) {
+    return () => (
+      <circle
+        class={clsx(`${props.dotClassName}-circle`, {
+          [`${props.dotClassName}-circle-bg`]: props.hasCircleCls,
+        })}
+        r={radius}
+        cx={position}
+        cy={position}
+        stroke-width={borderWidth}
+        style={props.style}
+      />
+    );
+  },
+});
 
 const dotClassName = computed(() => `${prefixCls}-dot`);
 const holderClassName = computed(() => `${dotClassName.value}-holder`);
