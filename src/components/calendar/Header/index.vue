@@ -14,27 +14,27 @@ export interface SharedProps {
   prefixCls: string;
   value: DateType;
   validRange?: [DateType, DateType];
-  generateConfig: GenerateConfig<DateType>;
+  generateConfig: GenerateConfig;
   locale: Locale;
   fullscreen: boolean;
   divRef: Ref<HTMLDivElement>;
   onChange: (year: DateType) => void;
 }
 
-export interface CalendarHeaderProps<DateType> {
+export interface CalendarHeaderProps {
   class?: string;
   style?: CSSProperties;
   prefixCls: string;
   value: DateType;
   validRange?: [DateType, DateType];
-  generateConfig: GenerateConfig<DateType>;
+  generateConfig: GenerateConfig;
   locale: Locale;
   mode: CalendarMode;
   fullscreen: boolean;
   onChange: (date: DateType, source: SelectInfo['source']) => void;
   onModeChange: (mode: CalendarMode) => void;
 }
-const { prefixCls, fullscreen, mode, onChange, onModeChange, class: className, style } = defineProps<CalendarHeaderProps<any>>();
+const { prefixCls, fullscreen, mode, onChange, onModeChange, class: className, style } = defineProps<CalendarHeaderProps>();
 const divRef = ref<HTMLDivElement>(null!);
 
 const formItemInputContext = useFormItemInputContextInject();

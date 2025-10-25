@@ -98,9 +98,9 @@ function fillLocale(
 /**
  * Fill locale format as start up
  */
-export default function useLocale<DateType extends object>(
+export default function useLocale(
   locale: Ref<Locale>,
-  showProps: Ref<Pick<SharedTimeProps<DateType>, 'showHour' | 'showMinute' | 'showSecond' | 'showMillisecond' | 'use12Hours'>>,
+  showProps: Ref<Pick<SharedTimeProps, 'showHour' | 'showMinute' | 'showSecond' | 'showMillisecond' | 'use12Hours'>>,
 ) {
   return computed(() => {
     const { showHour, showMinute, showSecond, showMillisecond, use12Hours } = showProps?.value || {};

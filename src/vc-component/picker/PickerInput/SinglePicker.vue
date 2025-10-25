@@ -195,7 +195,7 @@ function pickerParam<T>(values: T | T[]) {
   return multiple.value ? values : values[0];
 }
 
-const toggleDates = useToggleDates<DateType>(generateConfig, locale, internalPicker);
+const toggleDates = useToggleDates(generateConfig, locale, internalPicker);
 
 // ======================= Semantic =======================
 const [mergedClassNames, mergedStyles] = useSemantic(propClassNames, propStyles);

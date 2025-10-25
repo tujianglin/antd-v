@@ -104,7 +104,7 @@ export default function useInputProps<DateType extends object = any>(
   });
 
   // ======================= Validate =======================
-  const validateFormat = (text: string) => {
+  const validateFormat = (text: string): any => {
     for (let i = 0; i < format?.value?.length; i += 1) {
       const singleFormat = format?.value?.[i];
 

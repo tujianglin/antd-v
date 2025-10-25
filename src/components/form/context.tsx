@@ -132,7 +132,7 @@ export interface FormItemStatusContextProps {
 
 const FormItemInputContext: InjectionKey<Reactive<FormItemStatusContextProps>> = Symbol('FormItemInputContext');
 
-export const useFormItemInputContextInject = () => {
+export const useFormItemInputContextInject = (): Reactive<FormItemStatusContextProps> => {
   return inject(FormItemInputContext, reactive<FormItemStatusContextProps>({}));
 };
 

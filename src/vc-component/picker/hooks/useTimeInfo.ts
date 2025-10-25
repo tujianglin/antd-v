@@ -1,3 +1,4 @@
+import type { DateType } from '@/vc-util/type';
 import warning from '@/vc-util/warning';
 import { reactiveComputed } from '@vueuse/core';
 import { computed, toRefs, type Ref } from 'vue';
@@ -36,11 +37,7 @@ function generateUnits(start: number, end: number, step = 1, hideDisabledOptions
 /**
  * Parse time props to get util info
  */
-export default function useTimeInfo<DateType extends object = any>(
-  generateConfig: Ref<GenerateConfig<DateType>>,
-  props: Ref<SharedTimeProps<DateType>>,
-  date?: Ref<DateType>,
-) {
+export default function useTimeInfo(generateConfig: Ref<GenerateConfig>, props: Ref<SharedTimeProps>, date?: Ref<DateType>) {
   const use12Hours = computed(() => props?.value?.use12Hours);
   const hourStep = computed(() => props?.value?.hourStep || 1);
   const minuteStep = computed(() => props?.value?.minuteStep || 1);

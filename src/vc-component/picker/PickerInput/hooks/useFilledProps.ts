@@ -125,7 +125,7 @@ export default function useFilledProps<
   const { timeProps, localeTimeProps, showTimeFormat, propFormat } = toRefs(reactiveComputed(() => getTimeProps(props)));
 
   // ======================= Locales ========================
-  const mergedLocale = useLocale(locale, localeTimeProps);
+  const mergedLocale = useLocale(locale, localeTimeProps as any);
 
   const mergedShowTime = computed(() => {
     return fillShowTimeConfig(internalPicker.value, showTimeFormat.value, propFormat.value, timeProps.value, mergedLocale.value);

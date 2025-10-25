@@ -8,7 +8,7 @@ import { PanelContextProvider, useInfo } from '../context';
 import PanelHeader from '../PanelHeader.vue';
 import TimePanelBody from './TimePanelBody/index.vue';
 
-export type TimePanelProps<DateType extends object> = SharedPanelProps<DateType>;
+export type TimePanelProps = SharedPanelProps;
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -20,7 +20,7 @@ const {
 
   // Format
   showTime,
-} = defineProps<TimePanelProps<DateType>>();
+} = defineProps<TimePanelProps>();
 
 const format = computed(() => showTime?.format);
 

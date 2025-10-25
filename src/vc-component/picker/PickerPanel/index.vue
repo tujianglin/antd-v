@@ -209,7 +209,7 @@ const { timeProps, localeTimeProps, showTimeFormat, propFormat } = toRefs(reacti
 // ========================= Locale =========================
 const filledLocale = useLocale(
   computed(() => locale),
-  localeTimeProps,
+  localeTimeProps as any,
 );
 
 // ========================= Picker =========================

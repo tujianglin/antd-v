@@ -59,9 +59,9 @@ const getCellText = (date) => {
 const getCellClassName = (date) => {
   return {
     [`${prefixCls}-cell-in-view`]:
-      isSameDecade(generateConfig, date, startYearDate) ||
-      isSameDecade(generateConfig, date, endYearDate) ||
-      isInRange(generateConfig, startYearDate, endYearDate, date),
+      isSameDecade(generateConfig, date, startYearDate.value) ||
+      isSameDecade(generateConfig, date, endYearDate.value) ||
+      isInRange(generateConfig, startYearDate.value, endYearDate.value, date),
   };
 };
 

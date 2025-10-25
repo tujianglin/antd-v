@@ -1,3 +1,4 @@
+import type { DateType } from '@/vc-util/type';
 import type { GenerateConfig } from '../generate';
 import type { CustomFormat, InternalMode, Locale, NullableDateType } from '../interface';
 
@@ -21,11 +22,7 @@ function nullableCompare<T>(value1: T, value2: T, oriCompareFn: () => boolean): 
   return oriCompareFn();
 }
 
-export function isSameDecade<DateType>(
-  generateConfig: GenerateConfig<DateType>,
-  decade1: NullableDateType<DateType>,
-  decade2: NullableDateType<DateType>,
-) {
+export function isSameDecade(generateConfig: GenerateConfig, decade1: NullableDateType, decade2: NullableDateType) {
   return nullableCompare(decade1, decade2, () => {
     const num1 = Math.floor(generateConfig.getYear(decade1!) / 10);
     const num2 = Math.floor(generateConfig.getYear(decade2!) / 10);
@@ -33,24 +30,16 @@ export function isSameDecade<DateType>(
   });
 }
 
-export function isSameYear<DateType>(
-  generateConfig: GenerateConfig<DateType>,
-  year1: NullableDateType<DateType>,
-  year2: NullableDateType<DateType>,
-) {
+export function isSameYear(generateConfig: GenerateConfig, year1: NullableDateType, year2: NullableDateType) {
   return nullableCompare(year1, year2, () => generateConfig.getYear(year1!) === generateConfig.getYear(year2!));
 }
 
-export function getQuarter<DateType>(generateConfig: GenerateConfig<DateType>, date: DateType) {
+export function getQuarter(generateConfig: GenerateConfig, date: DateType) {
   const quota = Math.floor(generateConfig.getMonth(date) / 3);
   return quota + 1;
 }
 
-export function isSameQuarter<DateType>(
-  generateConfig: GenerateConfig<DateType>,
-  quarter1: NullableDateType<DateType>,
-  quarter2: NullableDateType<DateType>,
-) {
+export function isSameQuarter(generateConfig: GenerateConfig, quarter1: NullableDateType, quarter2: NullableDateType) {
   return nullableCompare(
     quarter1,
     quarter2,
@@ -60,11 +49,7 @@ export function isSameQuarter<DateType>(
   );
 }
 
-export function isSameMonth<DateType>(
-  generateConfig: GenerateConfig<DateType>,
-  month1: NullableDateType<DateType>,
-  month2: NullableDateType<DateType>,
-) {
+export function isSameMonth(generateConfig: GenerateConfig, month1: NullableDateType, month2: NullableDateType) {
   return nullableCompare(
     month1,
     month2,
@@ -72,11 +57,7 @@ export function isSameMonth<DateType>(
   );
 }
 
-export function isSameDate<DateType>(
-  generateConfig: GenerateConfig<DateType>,
-  date1: NullableDateType<DateType>,
-  date2: NullableDateType<DateType>,
-) {
+export function isSameDate(generateConfig: GenerateConfig, date1: NullableDateType, date2: NullableDateType) {
   return nullableCompare(
     date1,
     date2,
@@ -87,11 +68,7 @@ export function isSameDate<DateType>(
   );
 }
 
-export function isSameTime<DateType>(
-  generateConfig: GenerateConfig<DateType>,
-  time1: NullableDateType<DateType>,
-  time2: NullableDateType<DateType>,
-) {
+export function isSameTime(generateConfig: GenerateConfig, time1: NullableDateType, time2: NullableDateType) {
   return nullableCompare(
     time1,
     time2,
@@ -105,11 +82,7 @@ export function isSameTime<DateType>(
 /**
  * Check if the Date is all the same of timestamp
  */
-export function isSameTimestamp<DateType>(
-  generateConfig: GenerateConfig<DateType>,
-  time1: NullableDateType<DateType>,
-  time2: NullableDateType<DateType>,
-) {
+export function isSameTimestamp(generateConfig: GenerateConfig, time1: NullableDateType, time2: NullableDateType) {
   return nullableCompare(
     time1,
     time2,
@@ -120,12 +93,7 @@ export function isSameTimestamp<DateType>(
   );
 }
 
-export function isSameWeek<DateType>(
-  generateConfig: GenerateConfig<DateType>,
-  locale: string,
-  date1: NullableDateType<DateType>,
-  date2: NullableDateType<DateType>,
-) {
+export function isSameWeek(generateConfig: GenerateConfig, locale: string, date1: NullableDateType, date2: NullableDateType) {
   return nullableCompare(date1, date2, () => {
     const weekStartDate1 = generateConfig.locale.getWeekFirstDate(locale, date1);
     const weekStartDate2 = generateConfig.locale.getWeekFirstDate(locale, date2);
@@ -137,11 +105,11 @@ export function isSameWeek<DateType>(
   });
 }
 
-export function isSame<DateType = any>(
-  generateConfig: GenerateConfig<DateType>,
+export function isSame(
+  generateConfig: GenerateConfig,
   locale: Locale,
-  source: NullableDateType<DateType>,
-  target: NullableDateType<DateType>,
+  source: NullableDateType,
+  target: NullableDateType,
   type: InternalMode,
 ) {
   switch (type) {
@@ -172,11 +140,11 @@ export function isSame<DateType = any>(
 }
 
 /** Between in date but not equal of date */
-export function isInRange<DateType>(
-  generateConfig: GenerateConfig<DateType>,
-  startDate: NullableDateType<DateType>,
-  endDate: NullableDateType<DateType>,
-  current: NullableDateType<DateType>,
+export function isInRange(
+  generateConfig: GenerateConfig,
+  startDate: NullableDateType,
+  endDate: NullableDateType,
+  current: NullableDateType,
 ) {
   if (!startDate || !endDate || !current) {
     return false;
@@ -185,11 +153,11 @@ export function isInRange<DateType>(
   return generateConfig.isAfter(current, startDate) && generateConfig.isAfter(endDate, current);
 }
 
-export function isSameOrAfter<DateType>(
-  generateConfig: GenerateConfig<DateType>,
+export function isSameOrAfter(
+  generateConfig: GenerateConfig,
   locale: Locale,
-  date1: NullableDateType<DateType>,
-  date2: NullableDateType<DateType>,
+  date1: NullableDateType,
+  date2: NullableDateType,
   type: InternalMode,
 ) {
   if (isSame(generateConfig, locale, date1, date2, type)) {
@@ -199,7 +167,7 @@ export function isSameOrAfter<DateType>(
   return generateConfig.isAfter(date1, date2);
 }
 
-export function getWeekStartDate<DateType>(locale: string, generateConfig: GenerateConfig<DateType>, value: DateType) {
+export function getWeekStartDate(locale: string, generateConfig: GenerateConfig, value: DateType) {
   const weekFirstDay = generateConfig.locale.getWeekFirstDay(locale);
   const monthStartDate = generateConfig.setDate(value, 1);
   const startDateWeekDay = generateConfig.getWeekDay(monthStartDate);
@@ -213,16 +181,16 @@ export function getWeekStartDate<DateType>(locale: string, generateConfig: Gener
   return alignStartDate;
 }
 
-export function formatValue<DateType>(
+export function formatValue(
   value: DateType,
   {
     generateConfig,
     locale,
     format,
   }: {
-    generateConfig: GenerateConfig<DateType>;
+    generateConfig: GenerateConfig;
     locale: Locale;
-    format: string | CustomFormat<DateType>;
+    format: string | CustomFormat;
   },
 ) {
   if (!value) {
@@ -235,7 +203,7 @@ export function formatValue<DateType>(
 /**
  * Fill the time info into Date if provided.
  */
-export function fillTime<DateType>(generateConfig: GenerateConfig<DateType>, date: DateType, time?: DateType) {
+export function fillTime(generateConfig: GenerateConfig, date: DateType, time?: DateType) {
   let tmpDate = date;
 
   const getFn = ['getHour', 'getMinute', 'getSecond', 'getMillisecond'] as const;

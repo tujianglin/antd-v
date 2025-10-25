@@ -36,18 +36,14 @@ const EMPTY_VALUE: any[] = [];
 
 type TriggerCalendarChange = (calendarValues: DateType[]) => void;
 
-function useUtil<MergedValueType extends object[]>(
-  generateConfig: Ref<GenerateConfig>,
-  locale: Ref<Locale>,
-  formatList: Ref<FormatType[]>,
-) {
-  const getDateTexts = (dates: MergedValueType) => {
+function useUtil(generateConfig: Ref<GenerateConfig>, locale: Ref<Locale>, formatList: Ref<FormatType[]>) {
+  const getDateTexts = (dates: DateType[]) => {
     return dates.map((date) =>
       formatValue(date, { generateConfig: generateConfig.value as any, locale: locale.value, format: formatList.value[0] }),
-    ) as any as ReplaceListType<Required<MergedValueType>, string>;
+    ) as any as ReplaceListType<Required<DateType[]>, string>;
   };
 
-  const isSameDates = (source: MergedValueType, target: MergedValueType) => {
+  const isSameDates = (source: DateType[], target: DateType[]) => {
     const maxLen = Math.max(source.length, target.length);
     let diffIndex = -1;
 
@@ -75,7 +71,7 @@ function orderDates(dates: DateType[], generateConfig: GenerateConfig) {
  * Used for internal value management.
  * It should always use `mergedValue` in render logic
  */
-function useCalendarValue<MergedValueType extends object[]>(mergedValue: Ref<MergedValueType>) {
+function useCalendarValue(mergedValue: Ref<DateType[]>) {
   const [calendarValue, setCalendarValue] = useSyncState(mergedValue);
 
   /** Sync calendarValue & submitValue back with value */
@@ -123,7 +119,7 @@ export function useInnerValue(
   const [calendarValue, setCalendarValue] = useCalendarValue(mergedValue);
 
   // ============================ Change ============================
-  const [getDateTexts, isSameDates] = useUtil<DateType[]>(generateConfig, locale, formatList);
+  const [getDateTexts, isSameDates] = useUtil(generateConfig, locale, formatList);
 
   const triggerCalendarChange: TriggerCalendarChange = (nextCalendarValues: DateType[]) => {
     let clone = [...nextCalendarValues] as DateType[];
@@ -193,7 +189,7 @@ export default function useRangeValue(
   const orderOnChange = computed(() => (disabled?.value?.some((d) => d) ? false : order.value));
 
   // ============================= Util =============================
-  const [getDateTexts, isSameDates] = useUtil<DateType[]>(generateConfig, locale, formatList);
+  const [getDateTexts, isSameDates] = useUtil(generateConfig, locale, formatList);
 
   // ============================ Values ============================
   // Used for trigger `onChange` event.
