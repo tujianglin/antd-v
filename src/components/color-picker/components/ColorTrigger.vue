@@ -92,7 +92,7 @@ const desc = computed(() => {
         [`${colorTriggerPrefixCls}-disabled`]: disabled,
       })
     "
-    v-bind="pickAttrs(rest)"
+    v-bind="{ ...pickAttrs(rest), ...$attrs }"
   >
     <ColorClear v-if="color.cleared" :prefix-cls="prefixCls" />
     <ColorBlock v-else :prefix-cls="prefixCls" :color="color.toCssString()" />

@@ -4,7 +4,6 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
-
 const externals = ['vue'];
 
 export default defineConfig(({ command }) => {

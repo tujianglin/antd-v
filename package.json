@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && vue-tsc --project ./tsconfig.build.json --emitDeclarationOnly && tsc-alias -p tsconfig.build.json",
+    "build": "node build.mjs && vue-tsc --project ./tsconfig.build.json --emitDeclarationOnly && tsc-alias -p tsconfig.build.json",
     "preview": "vite preview",
     "preinstall": "npx only-allow pnpm"
   },
@@ -14,7 +14,8 @@
       "import": "./dist/index.js",
       "require": "./dist/index.umd.js"
     },
-    "./style.css": "./dist/index.css"
+    "./style.css": "./dist/index.css",
+    "./locales/*": "./dist/components/locale/*.js"
   },
   "main": "./dist/index.umd.js",
   "module": "./dist/index.js",

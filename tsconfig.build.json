@@ -12,8 +12,8 @@
     "module": "es2015",
     "types": ["@types/node"],
     "esModuleInterop": true,
+    "outDir": "dist",
     "allowSyntheticDefaultImports": true,
-    "outDir": "dist/types",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
