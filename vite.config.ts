@@ -4,7 +4,20 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
-const externals = ['vue'];
+
+// 列出所有 dayjs 插件
+const dayjsPlugins = [
+  'advancedFormat',
+  'customParseFormat',
+  'localeData',
+  'timezone',
+  'utc',
+  'weekday',
+  'weekOfYear',
+  'weekYear',
+];
+
+const externals = ['vue', 'dayjs', ...dayjsPlugins.map((p) => `dayjs/plugin/${p}`)];
 
 export default defineConfig(({ command }) => {
   const isBuild = command === 'build';
@@ -16,6 +29,11 @@ export default defineConfig(({ command }) => {
         output: {
           globals: {
             vue: 'Vue',
+            dayjs: 'dayjs',
+            ...dayjsPlugins.reduce((acc: any, p) => {
+              acc[`dayjs/plugin/${p}`] = `dayjs_${p}`;
+              return acc;
+            }, {}),
           },
         },
       },
