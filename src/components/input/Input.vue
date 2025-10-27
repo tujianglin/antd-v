@@ -25,8 +25,6 @@ const {
   status: customStatus,
   size: customSize,
   disabled: customDisabled,
-  onBlur,
-  onFocus,
   suffix,
   allowClear = undefined,
   addonAfter,
@@ -35,11 +33,17 @@ const {
   style,
   styles,
   rootClassName,
-  onChange,
   classNames,
   variant: customVariant,
   ...rest
 } = defineProps<InputProps>();
+
+const emits = defineEmits<{
+  blur: [FocusEvent];
+  focus: [FocusEvent];
+  change: [any];
+}>();
+
 const slots = defineSlots<{
   addonBefore?: () => VNode[];
   addonAfter?: () => VNode[];
@@ -122,15 +126,15 @@ const [variant, enableVariantCls] = useVariant(
   computed(() => customVariant),
 );
 function handleChange(e) {
-  onChange?.(e);
+  emits('change', e);
 }
 
 function handleBlur(e: FocusEvent) {
-  onBlur?.(e);
+  emits('blur', e);
 }
 
 function handleFocus(e: FocusEvent) {
-  onFocus?.(e);
+  emits('focus', e);
 }
 
 function changeRef(el) {
@@ -195,7 +199,7 @@ defineExpose({} as ComponentInstance<typeof RcInput>);
         hashId,
       ),
     }"
-    @change="handleChange"
+    @input="handleChange"
     @blur="handleBlur"
     @focus="handleFocus"
     :addon-before="

@@ -576,7 +576,7 @@ const SelectorNode = () => {
           return (
             <>
               {customizeRawInputElement.value ? (
-                cloneVNode(customizeRawInputElement.value, { ref: customizeRawInputRef, ...props })
+                cloneVNode(customizeRawInputElement.value, { ...props, ref: customizeRawInputRef })
               ) : (
                 <Selector
                   {...omit({ ...vm.props, ...props }, ['onSearch'])}

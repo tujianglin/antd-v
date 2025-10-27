@@ -141,10 +141,10 @@ const onClick = ({ target }) => {
     const isIE = (document.body.style as any).msTouchAction !== undefined;
     if (isIE) {
       setTimeout(() => {
-        inputRef.value.focus();
+        inputRef.value?.focus?.();
       });
     } else {
-      inputRef.value.focus();
+      inputRef.value?.focus?.();
     }
   }
 };

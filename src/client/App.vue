@@ -1,36 +1,51 @@
 <script setup lang="tsx">
-import { Button, Flex, Splitter, Switch, Typography } from '@/components';
+import { AutoComplete, Input } from '@/components';
 import { ref } from 'vue';
 
-const Desc = (props: { text?: string | number }) => (
-  <Flex justify="center" align="center" style={{ height: '100%' }}>
-    <Typography.Title type="secondary" level={5} style={{ whiteSpace: 'nowrap' }}>
-      {props.text}
-    </Typography.Title>
-  </Flex>
-);
+const getRandomInt = (max: number, min = 0) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-const sizes = ref<(number | string)[]>(['50%', '50%']);
-const enabled = ref(true);
+const searchResult = (query: string) =>
+  Array.from({ length: getRandomInt(5) })
+    .join('.')
+    .split('.')
+    .map((_, idx) => {
+      const category = `${query}${idx}`;
+      return {
+        value: category,
+        label: () => (
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span>
+              Found {query} on{' '}
+              <a href={`https://s.taobao.com/search?q=${query}`} target="_blank" rel="noopener noreferrer">
+                {category}
+              </a>
+            </span>
+            <span>{getRandomInt(200, 100)} results</span>
+          </div>
+        ),
+      };
+    });
 
-const setSizes = (newSizes: (number | string)[]) => {
-  sizes.value = newSizes;
+const options = ref<any[]>([]);
+
+const handleSearch = (value: string) => {
+  options.value = value ? searchResult(value) : [];
+  console.log(options.value);
+};
+
+const onSelect = (value: string) => {
+  console.log('onSelect', value);
 };
 </script>
 
 <template>
-  <Flex vertical gap="middle">
-    <Splitter @resize="setSizes" style="height: 200px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1)">
-      <Splitter.Panel :size="sizes[0]" :resizable="enabled">
-        <Desc text="First" />
-      </Splitter.Panel>
-      <Splitter.Panel :size="sizes[1]">
-        <Desc text="Second" />
-      </Splitter.Panel>
-    </Splitter>
-    <Flex gap="middle" justify="space-between">
-      <Switch v-model:checked="enabled" checked-children="Enabled" un-checked-children="Disabled" />
-      <Button @click="setSizes(['50%', '50%'])">Reset</Button>
-    </Flex>
-  </Flex>
+  <AutoComplete
+    :popup-match-select-width="252"
+    :style="{ width: '300px' }"
+    :options="options"
+    @select="onSelect"
+    :show-search="{ onSearch: handleSearch }"
+  >
+    <Input.Search size="large" placeholder="input here" :enter-button="true" />
+  </AutoComplete>
 </template>

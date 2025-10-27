@@ -353,7 +353,7 @@ const ListNode = () => {
         // https://github.com/ant-design/ant-design/issues/26717
         let optionTitle = isTitleType(content) ? content.toString() : undefined;
         if (isValidNode(content)) {
-          optionTitle = content[0].children;
+          optionTitle = content?.[0]?.children;
         }
         if (title) {
           optionTitle = title;

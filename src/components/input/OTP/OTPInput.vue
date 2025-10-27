@@ -9,16 +9,18 @@ import type { InputProps } from '../interface';
 
 export interface OTPInputProps extends Omit<InputProps, 'onChange'> {
   index: number;
-  onChange: (index: number, value: string) => void;
-  /** Tell parent to do active offset */
-  onActiveChange: (nextIndex: number) => void;
-
   mask?: boolean | string;
 }
 
 defineOptions({ name: 'OTPInput', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { class: className, onChange, onActiveChange, index, mask, ...restProps } = defineProps<OTPInputProps>();
+const { class: className, index, mask, ...restProps } = defineProps<OTPInputProps>();
+
+const emits = defineEmits<{
+  change: [number, string];
+  activeChange: [number];
+}>();
+
 const attrs = useAttrs();
 
 const value = defineModel<ValueType>('value');
@@ -29,7 +31,7 @@ const maskValue = computed(() => (typeof mask === 'string' ? mask : value.value)
 
 const inputRef = ref<InputRef>(null);
 function onInternalChange(e) {
-  onChange(index, e.target.value);
+  emits('change', index, e.target.value);
 }
 
 function syncSelection() {
@@ -45,13 +47,13 @@ function syncSelection() {
 function onInternalKeyDown(event) {
   const { key, ctrlKey, metaKey } = event;
   if (key === 'ArrowLeft') {
-    onActiveChange(index - 1);
+    emits('activeChange', index - 1);
   } else if (key === 'ArrowRight') {
-    onActiveChange(index + 1);
+    emits('activeChange', index + 1);
   } else if (key === 'z' && (ctrlKey || metaKey)) {
     event.preventDefault();
   } else if (key === 'Backspace' && !value.value) {
-    onActiveChange(index - 1);
+    emits('activeChange', index - 1);
   }
 
   syncSelection();

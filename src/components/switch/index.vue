@@ -31,6 +31,8 @@ export interface SwitchProps {
   title?: string;
   tabindex?: number;
   id?: string;
+  checkedValue?: boolean | string | number;
+  unCheckedValue?: boolean | string | number;
   classNames?: Partial<Record<SemanticName, string>>;
   styles?: Partial<Record<SemanticName, CSSProperties>>;
 }
@@ -48,10 +50,23 @@ const {
   onChange,
   styles,
   classNames: switchClassNames,
+  checkedValue = undefined,
+  unCheckedValue = undefined,
   ...restProps
 } = defineProps<SwitchProps>();
 
-const checked = defineModel('checked', { default: false });
+const checked = defineModel('checked', {
+  default: false,
+  get(val) {
+    if (val === checkedValue) return true;
+    if (val === unCheckedValue) return false;
+    return Boolean(val);
+  },
+  set(value: boolean) {
+    if (!checkedValue && !unCheckedValue) return value;
+    return value ? checkedValue : unCheckedValue;
+  },
+});
 
 const {
   getPrefixCls,

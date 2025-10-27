@@ -42,10 +42,13 @@ const {
   styles,
   variant: customVariant,
   showCount,
-  onMousedown,
-  onResize,
   ...rest
 } = defineProps<TextAreaProps>();
+
+const emits = defineEmits<{
+  mousedown: [MouseEvent];
+  resize: [{ width: number; height: number }];
+}>();
 
 const value = defineModel<string>('value');
 
@@ -114,7 +117,7 @@ const resizeDirty = ref(false);
 
 function onInternalMouseDown(e: MouseEvent) {
   isMouseDown.value = true;
-  onMousedown?.(e);
+  emits('mousedown', e);
 
   const onMouseUp = () => {
     isMouseDown.value = false;
@@ -125,7 +128,7 @@ function onInternalMouseDown(e: MouseEvent) {
 }
 
 const onInternalResize: VcTextAreaProps['onResize'] = (size) => {
-  onResize?.(size);
+  emits('resize', size);
 
   // Change to dirty since this maybe from the `resize: both` style
   if (isMouseDown.value && typeof getComputedStyle === 'function') {

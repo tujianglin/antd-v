@@ -18,13 +18,6 @@ type SemanticName = 'root' | 'input' | 'prefix' | 'suffix' | 'count';
 
 export interface SearchProps extends InputProps {
   inputPrefixCls?: string;
-  onSearch?: (
-    value: string,
-    event?: MouseEvent | KeyboardEvent,
-    info?: {
-      source?: 'clear' | 'input';
-    },
-  ) => void;
   enterButton?: VueNode | boolean;
   loading?: boolean;
   onPressEnter?: (e: KeyboardEvent) => void;
@@ -48,16 +41,19 @@ const {
   addonAfter,
   loading,
   disabled,
-  onSearch: customOnSearch,
-  onChange: customOnChange,
-  onCompositionstart,
-  onCompositionend,
   variant,
   onPressEnter: customOnPressEnter,
   classNames,
   styles,
   ...restProps
 } = defineProps<SearchProps>();
+
+const emits = defineEmits<{
+  search: [string, MouseEvent | KeyboardEvent, { source?: 'clear' | 'input' }];
+  change: [any];
+  compositionstart: [CompositionEvent];
+  compositionend: [CompositionEvent];
+}>();
 
 const slots = defineSlots<{ suffix?: () => VNode[]; addonAfter?: () => VNode[]; enterButton?: () => VNode[] }>();
 
@@ -94,12 +90,12 @@ const inputRef = useTemplateRef('inputRef');
 const composedRef = ref(false);
 
 function onChange(e: Event) {
-  if (e?.target && e.type === 'click' && customOnSearch) {
-    customOnSearch((e.target as HTMLInputElement).value, e as MouseEvent, {
+  if (e?.target && e.type === 'click') {
+    emits('search', (e.target as HTMLInputElement).value, e as MouseEvent, {
       source: 'clear',
     });
   }
-  customOnChange?.(e);
+  emits('change', e);
 }
 
 function onMouseDown(e: MouseEvent) {
@@ -109,11 +105,9 @@ function onMouseDown(e: MouseEvent) {
 }
 
 function handleSearch(e: MouseEvent | KeyboardEvent) {
-  if (customOnSearch) {
-    customOnSearch(inputRef.value.input.value, e, {
-      source: 'input',
-    });
-  }
+  emits('search', inputRef.value.input.value, e, {
+    source: 'input',
+  });
 }
 
 function handlePressEnter(e: KeyboardEvent) {
@@ -175,7 +169,6 @@ const button = computed(() => {
   if (addonAfterSlot.value) {
     button = [button, cloneVNode(<Render content={addonAfterSlot.value}></Render>, { key: 'addonAfter' })];
   }
-  console.log(enterButton, searchIcon.value);
   return button;
 });
 
@@ -194,12 +187,12 @@ const mergedClassName = computed(() => {
 
 const handleOnCompositionStart = (e: CompositionEvent) => {
   composedRef.value = true;
-  onCompositionstart?.(e);
+  emits('compositionstart', e);
 };
 
 const handleOnCompositionEnd = (e: CompositionEvent) => {
   composedRef.value = false;
-  onCompositionend?.(e);
+  emits('compositionend', e);
 };
 </script>
 <template>

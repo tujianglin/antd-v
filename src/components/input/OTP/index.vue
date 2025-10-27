@@ -19,7 +19,6 @@ const {
   prefixCls: customizePrefixCls,
   length = 6,
   size: customSize,
-  onChange,
   formatter,
   separator,
   variant,
@@ -27,7 +26,6 @@ const {
   autofocus,
   mask,
   type,
-  onInput,
   inputmode,
   classNames,
   styles,
@@ -35,6 +33,11 @@ const {
   style,
   ...restProps
 } = defineProps<OTPProps>();
+
+const emits = defineEmits<{
+  change: [string];
+  input: [string[]];
+}>();
 
 const value = defineModel<string>('value');
 
@@ -89,17 +92,14 @@ watch(
 
 const triggerValueCellsChange = useEvent((nextValueCells: string[]) => {
   valueCells.value = nextValueCells;
-  if (onInput) {
-    onInput(nextValueCells);
-  }
+  emits('input', nextValueCells);
   // Trigger if all cells are filled
   if (
-    onChange &&
     nextValueCells.length === length &&
     nextValueCells.every((c) => c) &&
     nextValueCells.some((c, index) => valueCells[index] !== c)
   ) {
-    onChange(nextValueCells.join(''));
+    emits('change', nextValueCells.join(''));
   }
 });
 
