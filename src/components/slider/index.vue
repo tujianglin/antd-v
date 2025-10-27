@@ -1,8 +1,7 @@
 <script lang="tsx" setup>
-import { computed, getCurrentInstance, onBeforeUnmount, onMounted, toRefs, type CSSProperties } from 'vue';
+import { computed, onBeforeUnmount, onMounted, toRefs, type CSSProperties } from 'vue';
 import type { Orientation } from '../_util/hooks/useOrientation';
 import useOrientation from '../_util/hooks/useOrientation';
-import { devUseWarning } from '../_util/warning';
 import { useComponentConfig } from '../config-provider/context';
 import SliderTooltip from './SliderTooltip.vue';
 import useStyle from './style';
@@ -197,24 +196,6 @@ const rootClassNames = computed(() =>
   ),
 );
 
-const vm = getCurrentInstance();
-
-// ============================= Warning ==============================
-// Warning for deprecated usage
-if (process.env.NODE_ENV !== 'production') {
-  const warning = devUseWarning('Slider');
-
-  [
-    ['tooltipPrefixCls', 'prefixCls'],
-    ['getTooltipPopupContainer', 'getPopupContainer'],
-    ['tipFormatter', 'formatter'],
-    ['tooltipPlacement', 'placement'],
-    ['tooltipVisible', 'open'],
-  ].forEach(([deprecatedName, newName]) => {
-    warning.deprecated(!(deprecatedName in vm.props), deprecatedName, `tooltip.${newName}`);
-  });
-}
-
 // ============================== Handle ==============================
 
 const onMouseUp = () => {
@@ -279,7 +260,7 @@ const handleRender = computed<RcSliderProps['handleRender']>(() => {
       const cloneNode = cloneElement(node, passedProps);
       const open = (!!lockOpen.value || activeOpen.value) && mergedTipFormatter.value !== null;
       // Wrap on handle with Tooltip when is single mode or multiple with all show tooltip
-      if (!useActiveTooltipHandle.value) {
+      if (!useActiveTooltipHandle.value && open) {
         return (
           <SliderTooltip
             {...tooltip}
