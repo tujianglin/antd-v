@@ -55,14 +55,14 @@ const {
   ...restProps
 } = defineProps<SwitchProps>();
 
-const checked = defineModel('checked', {
+const checked = defineModel<number | string | boolean>('value', {
   default: false,
   get(val) {
     if (val === checkedValue) return true;
     if (val === unCheckedValue) return false;
     return Boolean(val);
   },
-  set(value: boolean) {
+  set(value) {
     if (!checkedValue && !unCheckedValue) return value;
     return value ? checkedValue : unCheckedValue;
   },

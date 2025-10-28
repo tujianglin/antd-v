@@ -181,6 +181,7 @@ const mergedClassName = computed(() =>
     @blur="onBlur"
     :options="mergedOptions"
     :suffix="suffixNode"
+    :disabled="mergedDisabled"
     :styles="{
       textarea: { ...contextStyles.textarea, ...styles?.textarea },
       popup: { ...contextStyles.popup, ...styles?.popup },

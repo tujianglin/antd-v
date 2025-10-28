@@ -112,7 +112,11 @@ const gapStyle = computed((): CSSProperties => {
 });
 </script>
 <template>
-  <div :class="rootClassNames" :style="{ ...gapStyle, ...mergedStyles?.root, ...contextStyle, ...style }" v-bind="restProps">
+  <div
+    :class="rootClassNames"
+    :style="{ ...gapStyle, ...mergedStyles?.root, ...contextStyle, ...style }"
+    v-bind="{ ...restProps, ...$attrs }"
+  >
     <SpaceContextProvider :value="{ latestIndex: $slots.default?.()?.length - 1 }">
       <Item
         v-for="(child, index) in $slots.default?.()"

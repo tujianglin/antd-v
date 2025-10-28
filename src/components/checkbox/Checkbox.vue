@@ -2,7 +2,7 @@
 import VcCheckbox from '@/vc-component/checkbox/index.vue';
 import clsx from 'clsx';
 import { isEmpty } from 'lodash-es';
-import { computed, onBeforeUnmount, onMounted, toRefs, useSlots, useTemplateRef, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, toRefs, useTemplateRef, watch, type VNode } from 'vue';
 import { Wave } from '../_util/wave';
 import { TARGET_CLS } from '../_util/wave/interface';
 import { useComponentConfig } from '../config-provider/context';
@@ -29,7 +29,11 @@ const {
   styles,
   ...restProps
 } = defineProps<CheckboxProps>();
-const slots = useSlots();
+const slots = defineSlots<{
+  default: () => VNode[];
+}>();
+
+const checked = defineModel('checked', { default: false });
 
 const {
   getPrefixCls,
@@ -44,8 +48,7 @@ const checkboxGroup = useCheckboxGroupContextInject();
 const contextDisabled = useDisabledContextInject();
 const mergedDisabled = computed(() => (checkboxGroup?.disabled || disabled) ?? contextDisabled.value);
 
-const value = defineModel('value');
-
+const prevValue = ref(restProps.value);
 const checkboxRef = useTemplateRef('checkboxRef');
 
 onMounted(() => {
@@ -53,12 +56,12 @@ onMounted(() => {
 });
 
 watch(
-  () => value.value,
-  (val) => {
+  () => restProps.value,
+  () => {
     if (skipGroup) {
       return;
     }
-    checkboxGroup?.cancelValue?.(val);
+    checkboxGroup?.cancelValue?.(prevValue.value);
     checkboxGroup?.registerValue?.(restProps.value);
   },
   { immediate: true, deep: true },
@@ -83,18 +86,18 @@ const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
 const checkboxProps = computed(() => {
-  const result: CheckboxProps = {};
+  const result: CheckboxProps & { checked?: boolean } = {};
   if (!isEmpty(checkboxGroup) && !skipGroup) {
     result.onChange = (...args) => {
       if (restProps.onChange) {
         restProps.onChange(...args);
       }
       if (checkboxGroup.toggleOption) {
-        checkboxGroup.toggleOption({ label: slots.default, value: value.value });
+        checkboxGroup.toggleOption({ label: slots.default, value: restProps.value });
       }
     };
     result.name = checkboxGroup.name;
-    result.checked = checkboxGroup.value?.includes(value.value);
+    result.checked = checkboxGroup.value?.includes(restProps.value);
   }
   return { ...restProps, ...result };
 });
@@ -104,7 +107,7 @@ const classString = computed(() => {
     `${prefixCls.value}-wrapper`,
     {
       [`${prefixCls.value}-rtl`]: direction.value === 'rtl',
-      [`${prefixCls.value}-wrapper-checked`]: checkboxProps.value.checked,
+      [`${prefixCls.value}-wrapper-checked`]: checked.value,
       [`${prefixCls.value}-wrapper-disabled`]: mergedDisabled.value,
     },
     contextClassName?.value,
@@ -145,6 +148,7 @@ const [onLabelClick, onInputClick] = useBubbleLock(checkboxProps.value.onClick);
       @click="onLabelClick"
     >
       <VcCheckbox
+        v-if="!isEmpty(checkboxGroup) && !skipGroup"
         v-bind="{ ...checkboxProps as any, ...$attrs }"
         @click="onInputClick"
         :prefix-cls="prefixCls"
@@ -153,6 +157,18 @@ const [onLabelClick, onInputClick] = useBubbleLock(checkboxProps.value.onClick);
         :disabled="mergedDisabled"
         ref="checkboxRef"
       />
+      <VcCheckbox
+        v-else
+        v-bind="{ ...checkboxProps as any, ...$attrs }"
+        v-model:checked="checked"
+        @click="onInputClick"
+        :prefix-cls="prefixCls"
+        :class="checkboxClass"
+        :style="{ ...contextStyles.icon, ...styles?.icon }"
+        :disabled="mergedDisabled"
+        ref="checkboxRef"
+      />
+
       <span
         v-if="$slots.default"
         :class="clsx(`${prefixCls}-label`, contextClassNames.label, checkboxClassNames?.label)"

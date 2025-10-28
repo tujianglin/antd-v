@@ -4,7 +4,7 @@ import KeyCode from '@/vc-util/KeyCode';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { computed, type CSSProperties, type HTMLAttributes } from 'vue';
-export type SwitchChangeEventHandler = (checked: boolean, event: MouseEvent | KeyboardEvent) => void;
+export type SwitchChangeEventHandler = (checked: boolean | string | number, event: MouseEvent | KeyboardEvent) => void;
 export type SwitchClickEventHandler = SwitchChangeEventHandler;
 
 interface SwitchProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'onChange' | 'onClick'> {
@@ -40,7 +40,7 @@ const {
   ...restProps
 } = defineProps<SwitchProps>();
 
-const innerChecked = defineModel<boolean>('checked', { default: false });
+const innerChecked = defineModel<boolean | string | number>('checked', { default: false });
 
 function triggerChange(newChecked: boolean, event: MouseEvent | KeyboardEvent) {
   let mergedChecked = innerChecked.value;
@@ -80,7 +80,7 @@ const switchClassName = computed(() => {
     v-bind="{ ...restProps, ...$attrs }"
     type="button"
     role="switch"
-    :aria-checked="innerChecked"
+    :aria-checked="!!innerChecked"
     :disabled="disabled"
     :class="switchClassName"
     @keydown="onInternalKeyDown"

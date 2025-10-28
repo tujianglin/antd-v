@@ -1,5 +1,5 @@
+import InternalCheckbox from './Checkbox.vue';
 import Group from './Group.vue';
-import InternalCheckbox from './index.vue';
 
 // export type { CheckboxGroupProps, CheckboxOptionType } from './Group';
 export type { CheckboxRef } from '../../vc-component/checkbox/index.vue';

@@ -23,6 +23,7 @@ const {
   rootClassName,
   style,
   tooltips,
+  allowClear = true,
   character = <StarFilled />,
   disabled: customDisabled,
   ...rest
@@ -74,6 +75,7 @@ const mergedDisabled = computed(() => customDisabled ?? disabled.value);
     ref="domRef"
     v-bind="rest"
     v-model:value="value"
+    :allow-clear="allowClear"
     :character="character"
     :character-render="characterRender"
     :disabled="mergedDisabled"

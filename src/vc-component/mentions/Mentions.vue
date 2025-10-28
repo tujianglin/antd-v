@@ -5,7 +5,7 @@ import type { TextAreaProps } from '@/vc-component/textarea';
 import { useTemplateRef, type CSSProperties } from 'vue';
 import InternalMentions from './InternalMentions.vue';
 import type { OptionProps } from './Option';
-import { filterOption as defaultFilterOption, validateSearch as defaultValidateSearch } from './util';
+import { validateSearch as defaultValidateSearch } from './util';
 
 type BaseTextareaAttrs = Omit<TextAreaProps, 'prefix' | 'onChange' | 'onSelect' | 'showCount' | 'classNames'>;
 
@@ -28,7 +28,7 @@ export interface MentionsProps extends BaseTextareaAttrs {
   prefix?: string | string[];
   prefixCls?: string;
   silent?: boolean;
-  filterOption?: false | typeof defaultFilterOption;
+  filterOption?: any;
   validateSearch?: typeof defaultValidateSearch;
   onChange?: (text: string) => void;
   onSelect?: (option: OptionProps, prefix: string) => void;

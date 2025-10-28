@@ -1,6 +1,5 @@
 <script lang="tsx" setup>
 import { Input, Space } from '@/components';
-import type { SearchProps } from '@/components/input';
 import { AudioOutlined } from '@ant-design/icons-vue';
 
 const { Search } = Input;
@@ -14,7 +13,7 @@ const suffix = (
   />
 );
 
-const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
+const onSearch = (value, _e, info) => console.log(info?.source, value);
 </script>
 <template>
   <Space vertical>

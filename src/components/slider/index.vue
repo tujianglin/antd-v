@@ -15,6 +15,7 @@ import clsx from 'clsx';
 import raf from '@/vc-util/raf';
 import RcSlider from '@/vc-component/slider';
 import { cloneElement } from '@/vc-util/Children/util';
+import type { RangeConfig } from '@/vc-component/slider/Slider.vue';
 
 export type SliderMarks = RcSliderProps['marks'];
 
@@ -79,12 +80,10 @@ export interface SliderBaseProps {
 }
 
 export interface SliderSingleProps extends SliderBaseProps {
-  range?: boolean | SliderRange;
+  range?: boolean | RangeConfig;
   onChange?: (value: number | number[]) => void;
   onChangeComplete?: (value: number | number[]) => void;
 }
-
-type SliderRange = Exclude<RcSliderProps['range'], boolean>;
 
 export type Opens = { [index: number]: boolean };
 

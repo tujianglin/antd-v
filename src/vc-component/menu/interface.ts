@@ -88,7 +88,7 @@ export interface RenderIconInfo {
   disabled?: boolean;
 }
 
-export type RenderIconType = any | ((props: RenderIconInfo) => any);
+export type RenderIconType = any;
 
 export interface MenuInfo {
   key: string;

@@ -5,7 +5,6 @@ export interface AbstractCheckboxProps<T> {
   prefixCls?: string;
   class?: string;
   rootClassName?: string;
-  checked?: boolean;
   style?: CSSProperties;
   disabled?: boolean;
   title?: string;

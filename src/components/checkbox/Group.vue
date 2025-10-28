@@ -6,8 +6,8 @@ import { omit } from 'lodash-es';
 import { computed, ref, toRefs, useTemplateRef, type CSSProperties } from 'vue';
 import { useConfigContextInject } from '../config-provider';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
+import Checkbox from './Checkbox.vue';
 import { CheckboxGroupContextProvider, type CheckboxGroupContext } from './GroupContext';
-import Checkbox from './index.vue';
 import type { CheckboxChangeEvent } from './interface';
 import useStyle from './style';
 

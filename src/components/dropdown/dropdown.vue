@@ -290,11 +290,7 @@ const RenderNode = () => {
       overlayStyle={{ ...mergedRootStyles.value, zIndex: zIndex.value }}
       autoDestroy={destroyOnHidden}
     >
-      {{
-        default: (props) => {
-          return <PopupTrigger {...props}> </PopupTrigger>;
-        },
-      }}
+      {{ default: PopupTrigger }}
     </RcDropdown>
   );
 
