@@ -92,7 +92,7 @@ export interface SelectProps<ValueType = any, OptionType extends BaseOptionType 
 
   // >>> Field Names
   fieldNames?: FieldNames;
-  showSearch?: SearchConfig<OptionType>;
+  showSearch?: boolean | SearchConfig<OptionType>;
 
   // >>> Select
   onSelect?: SelectHandler<ArrayElementType<ValueType>, OptionType>;

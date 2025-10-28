@@ -1,10 +1,11 @@
 {
   "name": "antd-v",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node build.mjs && vue-tsc --project ./tsconfig.build.json --emitDeclarationOnly && tsc-alias -p tsconfig.build.json",
+    "build": "node build.mjs",
+    "build1": "node build.mjs && vue-tsc --project ./tsconfig.build.json --emitDeclarationOnly && tsc-alias -p tsconfig.build.json",
     "preview": "vite preview",
     "preinstall": "npx only-allow pnpm"
   },

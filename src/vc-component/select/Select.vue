@@ -63,9 +63,14 @@ const {
 
 const open = defineModel('open', { default: false });
 
-const { filterOption, searchValue, optionFilterProp, filterSort, onSearch } = toRefs(reactiveComputed(() => showSearch || {}));
-
-const autoClearSearchValue = computed(() => showSearch.autoClearSearchValue ?? true);
+const {
+  filterOption,
+  searchValue,
+  autoClearSearchValue = ref(true),
+  optionFilterProp = ref('value'),
+  filterSort,
+  onSearch,
+} = toRefs(reactiveComputed(() => (typeof showSearch === 'boolean' && showSearch === true ? {} : showSearch || {})));
 
 const mergedId = useId();
 const multiple = computed(() => isMultiple(mode));
@@ -245,7 +250,7 @@ const filledSearchOptions = computed(() => {
   if (
     mode !== 'tags' ||
     !mergedSearchValue.value ||
-    filteredOptions.value.some((item) => item[optionFilterProp?.value || 'value'] === mergedSearchValue.value)
+    filteredOptions.value.some((item) => item[optionFilterProp?.value] === mergedSearchValue.value)
   ) {
     return filteredOptions.value;
   }
@@ -487,7 +492,7 @@ const OMIT_DOM_PROPS = ['inputValue'];
       @display-values-change="onDisplayValuesChange"
       :max-count="maxCount"
       :direction="direction"
-      :show-search="!isEmpty(showSearch) || multiple"
+      :show-search="(typeof showSearch === 'boolean' && showSearch === true) || !isEmpty(showSearch) || multiple"
       :search-value="mergedSearchValue"
       @search="onInternalSearch"
       :auto-clear-search-value="!!autoClearSearchValue"

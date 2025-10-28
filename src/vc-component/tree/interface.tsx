@@ -30,7 +30,7 @@ export interface TreeNodeProps<TreeDataType extends BasicDataNode = DataNode> {
   loaded?: boolean;
   loading?: boolean;
   halfChecked?: boolean;
-  title?: any | ((data: TreeDataType) => any);
+  title?: any;
   dragOver?: boolean;
   dragOverGapTop?: boolean;
   dragOverGapBottom?: boolean;

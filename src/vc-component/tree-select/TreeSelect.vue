@@ -600,7 +600,7 @@ defineExpose({
         :display-values="cachedDisplayValues"
         @display-values-change="onDisplayValuesChange"
         :auto-clear-search-value="autoClearSearchValue"
-        :show-search="!isEmpty(showSearch)"
+        :show-search="(typeof showSearch === 'boolean' && showSearch === true) || !isEmpty(showSearch)"
         :search-value="mergedSearchValue"
         @search="onInternalSearch"
         :-option-list="OptionList"

@@ -102,7 +102,7 @@ export interface TreeProps<TreeDataType extends BasicDataNode = DataNode> {
   expandAction?: ExpandAction;
   disabled?: boolean;
   multiple?: boolean;
-  checkable?: boolean | any;
+  checkable?: any;
   checkStrictly?: boolean;
   draggable?: DraggableFn | boolean | DraggableConfig;
   defaultExpandParent?: boolean;
