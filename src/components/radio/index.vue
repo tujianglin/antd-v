@@ -49,7 +49,7 @@ const [hashId, cssVarCls] = useStyle(radioPrefixCls, rootCls);
 const disabled = useDisabledContextInject();
 
 const radioProps = computed(() => {
-  const result: RadioProps = {};
+  const result: RadioProps & { checked?: boolean } = {};
   if (!isEmpty(groupContext)) {
     result.name = groupContext.name;
     result.onChange = onChange;
