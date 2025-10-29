@@ -1,7 +1,6 @@
 <script lang="tsx" setup>
 import type { CSSMotionProps } from '@/vc-component/motion';
 import isEqual from '@/vc-util/isEqual';
-import warning from '@/vc-util/warning';
 import { reactiveComputed } from '@vueuse/core';
 import {
   computed,
@@ -15,6 +14,7 @@ import {
   watch,
   type CSSProperties,
   type HTMLAttributes,
+  type VNode,
 } from 'vue';
 import type { SemanticName } from './SubMenu/index.vue';
 import { getFocusableElements, refreshElements, useAccessibility } from './hooks/useAccessibility';
@@ -51,7 +51,7 @@ export interface MenuProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'onCl
   rootClassName?: string;
   classNames?: Partial<Record<SemanticName, string>>;
   styles?: Partial<Record<SemanticName, CSSProperties>>;
-  items: ItemType[];
+  items?: ItemType[];
 
   disabled?: boolean;
   /** @private Disable auto overflow. Pls note the prop name may refactor since we do not final decided. */
@@ -150,10 +150,7 @@ export interface MenuProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'onCl
   onScroll?: (e) => void;
 }
 
-interface LegacyMenuProps extends MenuProps {
-  openTransitionName?: string;
-  openAnimation?: string;
-}
+interface LegacyMenuProps extends MenuProps {}
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -218,10 +215,6 @@ const {
   onOpenChange,
   onKeydown,
 
-  // Deprecated
-  openAnimation,
-  openTransitionName,
-
   // Internal
   _internalRenderMenuItem,
   _internalRenderSubMenuItem,
@@ -231,11 +224,16 @@ const {
   popupRender,
   ...restProps
 } = defineProps<LegacyMenuProps>();
+
+const slots = defineSlots<{
+  default: () => VNode[];
+}>();
+
 const EMPTY_LIST: string[] = [];
 
-const childList = computed(() => parseItems(items, EMPTY_LIST, _internalComponents, prefixCls));
+const childList = computed(() => parseItems(slots.default?.(), items, EMPTY_LIST, _internalComponents, prefixCls));
 
-const measureChildList = computed(() => parseItems(items, EMPTY_LIST, {}, prefixCls));
+const measureChildList = computed(() => parseItems(slots.default?.(), items, EMPTY_LIST, {}, prefixCls));
 
 const mounted = ref(false);
 
@@ -244,14 +242,6 @@ const containerRef = ref<HTMLUListElement>();
 const uuid = useUUID(computed(() => id));
 
 const isRtl = computed(() => direction === 'rtl');
-
-// ========================= Warn =========================
-if (process.env.NODE_ENV !== 'production') {
-  warning(
-    !openAnimation && !openTransitionName,
-    '`openAnimation` and `openTransitionName` is removed. Please use `motion` or `defaultMotion` instead.',
-  );
-}
 
 // ========================= Open =========================
 const mergedOpenKeys = defineModel('openKeys', {

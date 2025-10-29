@@ -37,5 +37,7 @@ defineExpose({
     v-model:selected-keys="selectedKeys"
     v-model:open-keys="openKeys"
     @click="handleClick"
-  />
+  >
+    <slot></slot>
+  </InternalMenu>
 </template>

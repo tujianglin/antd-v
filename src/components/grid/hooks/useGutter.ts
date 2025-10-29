@@ -5,11 +5,8 @@ import type { RowProps } from '../row.vue';
 
 export type Gap = number | undefined;
 
-export default function useGutter(
-  gutter: Ref<RowProps['gutter']>,
-  screens: Ref<ScreenMap | null>,
-): [ComputedRef<Gap>, ComputedRef<Gap>] {
-  const gaps = computed(() => {
+export default function useGutter(gutter: Ref<RowProps['gutter']>, screens: Ref<ScreenMap | null>): ComputedRef<[Gap, Gap]> {
+  return computed(() => {
     const results: [number | undefined, number | undefined] = [undefined, undefined];
     const normalizedGutter = Array.isArray(gutter.value) ? gutter.value : [gutter.value, undefined];
 
@@ -38,5 +35,4 @@ export default function useGutter(
     });
     return results;
   });
-  return [computed(() => gaps.value?.[0]), computed(() => gaps.value?.[1])] as const;
 }

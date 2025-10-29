@@ -227,7 +227,9 @@ const changeRef = (el) => {
         :_internal-components="MENU_COMPONENTS"
         v-model:selected-keys="selectedKeys"
         v-model:open-keys="openKeys"
-      />
+      >
+        <slot></slot>
+      </RcMenu>
     </MenuContextProvider>
   </OverrideContextProvider>
 </template>

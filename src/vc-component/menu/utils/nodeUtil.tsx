@@ -1,3 +1,4 @@
+import type { VNode } from 'vue';
 import Divider from '../Divider.vue';
 import type { Components, ItemType } from '../interface';
 import MenuItem from '../MenuItem/MenuItem.vue';
@@ -49,7 +50,15 @@ function convertItemsToNodes(list: ItemType[], components: Required<Components>,
     .filter((opt) => opt);
 }
 
-export function parseItems(items: ItemType[] | undefined, keyPath: string[], components: Components, prefixCls?: string) {
+export function parseItems(
+  children: VNode[],
+  items: ItemType[] | undefined,
+  keyPath: string[],
+  components: Components,
+  prefixCls?: string,
+) {
+  let childNodes = children;
+
   const mergedComponents: Required<Components> = {
     divider: Divider,
     item: MenuItem,
@@ -58,6 +67,9 @@ export function parseItems(items: ItemType[] | undefined, keyPath: string[], com
     ...components,
   };
 
-  const childNodes = convertItemsToNodes(items, mergedComponents, prefixCls);
+  if (items) {
+    childNodes = convertItemsToNodes(items, mergedComponents, prefixCls);
+  }
+
   return parseChildren(childNodes, keyPath);
 }

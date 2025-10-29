@@ -123,8 +123,8 @@ const gutters = useGutter(
   computed(() => gutter),
   screens,
 );
-const horizontalGutter = computed(() => gutters[0].value || 0);
-const verticalGutter = computed(() => gutters[1].value || horizontalGutter.value);
+const horizontalGutter = computed(() => gutters.value?.[0] || 0);
+const verticalGutter = computed(() => gutters.value?.[1] || horizontalGutter.value);
 
 // ====================== Layout ======================
 const columnCount = computed<number>(() => {
