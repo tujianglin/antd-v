@@ -11,7 +11,7 @@ export default (
   options: Ref<DefaultOptionType[]>,
   fieldNames: Ref<FieldNames>,
   searchValue?: Ref<string>,
-  filterOption?: Ref<SelectProps['showSearch']['filterOption']>,
+  filterOption?: Ref<Exclude<SelectProps['showSearch'], boolean>['filterOption']>,
   optionFilterProp?: Ref<string>,
 ) =>
   computed(() => {

@@ -6,12 +6,12 @@ import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import useControlledState from '@/vc-util/hooks/useControlledState';
 import type { VueNode } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
-import { computed, getCurrentInstance, ref, toRefs, useId, type CSSProperties } from 'vue';
+import { isEmpty } from 'lodash-es';
+import { computed, ref, toRefs, useId, type CSSProperties } from 'vue';
 import { CascaderContextProvider } from './context';
 import useDisplayValues from './hooks/useDisplayValues';
 import useMissingValues from './hooks/useMissingValues';
 import useOptions from './hooks/useOptions';
-import useSearchConfig from './hooks/useSearchConfig';
 import useSearchOptions from './hooks/useSearchOptions';
 import useSelect from './hooks/useSelect';
 import useValues from './hooks/useValues';
@@ -62,7 +62,9 @@ interface BaseCascaderProps<
   checkable?: boolean | any;
   showCheckedStrategy?: ShowCheckedStrategy;
 
+  // Search
   showSearch?: boolean | SearchConfig<OptionType>;
+  onSearch?: (value: string) => void;
 
   // Trigger
   expandTrigger?: 'hover' | 'click';
@@ -218,17 +220,18 @@ const [mergedOptions, getPathKeyEntities, getValueByKeyPath] = useOptions(
   computed(() => options),
 );
 
-const vm = getCurrentInstance();
-
 // =========================== Search ===========================
-const { mergedShowSearch, searchConfig } = toRefs(
-  useSearchConfig(
-    computed(() => showSearch),
-    vm.props,
-  ),
-);
-const { searchValue, onSearch } = toRefs(searchConfig.value);
-const autoClearSearchValue = computed(() => searchConfig.value.autoClearSearchValue || true);
+const {
+  searchValue,
+  autoClearSearchValue = ref(true),
+  matchInputWidth = ref(true),
+  onSearch,
+  filter,
+  render,
+  sort,
+  limit = ref(50),
+} = toRefs(reactiveComputed(() => (typeof showSearch === 'boolean' && showSearch === true ? {} : showSearch || {})));
+
 const [internalSearchValue, setSearchValue] = useControlledState('', searchValue);
 const mergedSearchValue = computed(() => internalSearchValue.value || '');
 
@@ -244,7 +247,12 @@ const searchOptions = useSearchOptions(
   mergedOptions,
   mergedFieldNames,
   computed(() => popupPrefixCls || prefixCls),
-  reactiveComputed(() => searchConfig.value),
+  reactiveComputed(() => ({
+    filter: filter?.value,
+    sort: sort?.value,
+    limit: limit?.value,
+    render: render?.value,
+  })),
   computed(() => changeOnSelect || multiple.value),
 );
 
@@ -348,7 +356,7 @@ const cascaderContext = computed(() => ({
 const emptyOptions = computed(() => !(mergedSearchValue.value ? searchOptions.value : mergedOptions.value).length);
 
 const popupStyle = computed<CSSProperties>(() => {
-  return (mergedSearchValue.value && searchConfig.value.matchInputWidth) ||
+  return (mergedSearchValue.value && matchInputWidth?.value) ||
     // Empty keep the width
     emptyOptions.value
     ? {}
@@ -386,7 +394,7 @@ const domRef = ref();
       :mode="multiple ? 'multiple' : undefined"
       :search-value="mergedSearchValue"
       @search="onInternalSearch"
-      :show-search="mergedShowSearch"
+      :show-search="(typeof showSearch === 'boolean' && showSearch === true) || !isEmpty(showSearch)"
       :-option-list="OptionList"
       :empty-options="emptyOptions"
       :open="open"
