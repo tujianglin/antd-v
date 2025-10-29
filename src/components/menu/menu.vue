@@ -6,7 +6,7 @@ import InternalMenu from './InternalMenu.vue';
 
 defineOptions({ name: 'Menu', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { onClick, ...resetProps } = defineProps<MenuProps>();
+const { onClick, inlineCollapsed = undefined, ...resetProps } = defineProps<MenuProps>();
 
 const selectedKeys = defineModel<any[]>('selectedKeys');
 const openKeys = defineModel('openKeys', { default: [] });
@@ -36,6 +36,7 @@ defineExpose({
     v-bind="{ ...resetProps, ...context }"
     v-model:selected-keys="selectedKeys"
     v-model:open-keys="openKeys"
+    :inline-collapsed="inlineCollapsed"
     @click="handleClick"
   >
     <slot></slot>

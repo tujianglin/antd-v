@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, toRefs } from 'vue';
+import { computed, toRefs, type VNode } from 'vue';
 import { SubMenu as RcSubMenu, useFullPath } from '@/vc-component/menu';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import type { SubMenuType } from './interface';
@@ -16,7 +16,14 @@ export interface SubMenuProps extends Omit<SubMenuType, 'ref' | 'key' | 'childre
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { popupClassName, icon, title, theme: customTheme } = defineProps<SubMenuProps>();
+const { popupClassName, icon, title: customTitle, theme: customTheme } = defineProps<SubMenuProps>();
+
+const slots = defineSlots<{
+  title: () => VNode[];
+}>();
+
+const title = computed(() => slots.title?.() || customTitle);
+
 const context = useMenuContextInject();
 const { prefixCls, inlineCollapsed, theme: contextTheme, classNames, styles } = toRefs(context);
 
@@ -27,17 +34,17 @@ const titleNode = () => {
 
   if (!icon) {
     result =
-      inlineCollapsed.value && !parentPath.value.length && title && typeof title === 'string' ? (
-        <div class={`${prefixCls.value}-inline-collapsed-noicon`}>{title.charAt(0)}</div>
+      inlineCollapsed.value && !parentPath.value.length && title.value && typeof title.value === 'string' ? (
+        <div class={`${prefixCls.value}-inline-collapsed-noicon`}>{title.value.charAt(0)}</div>
       ) : (
         <span class={`${prefixCls.value}-title-content`}>
-          <Render content={title}></Render>
+          <Render content={title.value}></Render>
         </span>
       );
   } else {
     // inline-collapsed.md demo 依赖 span 来隐藏文字,有 icon 属性，则内部包裹一个 span
     // ref: https://github.com/ant-design/ant-design/pull/23456
-    const titleIsSpan = isValidElement(title) && (title as any).type === 'span';
+    const titleIsSpan = isValidElement(title.value) && (title.value as any).type === 'span';
     result = (
       <>
         {cloneElement(icon, (oriProps) => ({
@@ -45,10 +52,10 @@ const titleNode = () => {
           style: { ...oriProps.style, ...styles.value.itemIcon },
         }))}
         {titleIsSpan ? (
-          <Render content={title}></Render>
+          <Render content={title.value}></Render>
         ) : (
           <span class={`${prefixCls.value}-title-content`}>
-            <Render content={title}></Render>
+            <Render content={title.value}></Render>
           </span>
         )}
       </>

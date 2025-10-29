@@ -1,8 +1,7 @@
 <script lang="tsx" setup>
-import { computed, getCurrentInstance, toRefs, useSlots } from 'vue';
+import { computed, getCurrentInstance, toRefs, type VNode } from 'vue';
 import type { MenuItemProps as RcMenuItemProps } from '@/vc-component/menu';
 import { Item } from '@/vc-component/menu';
-import { toArray } from '@/vc-util/Children/toArray';
 import Tooltip, { type TooltipProps } from '../tooltip';
 import { useMenuContextInject } from './MenuContext';
 import type { VueNode } from '@/vc-util/type';
@@ -36,8 +35,15 @@ type GenericComponent = Omit<MenuItemComponent, ''> &
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { class: className, icon, title, danger, extra } = defineProps<GenericComponent>();
-const slots = useSlots();
+const { class: className, icon, title: customTitle, danger, extra } = defineProps<GenericComponent>();
+
+const slots = defineSlots<{
+  default: () => VNode[];
+  title: () => VNode[];
+}>();
+
+const title = computed(() => slots.title?.() || customTitle);
+const children = computed(() => slots.default?.() || []);
 
 const {
   prefixCls,
@@ -49,8 +55,7 @@ const {
   classNames,
 } = toRefs(useMenuContextInject());
 const renderItemChildren = (inlineCollapsed: boolean) => {
-  const children = slots.default?.();
-  const label = (children as VueNode[])?.[0];
+  const label = (children.value as VueNode[])?.[0];
   const wrapNode = (
     <span
       class={clsx(
@@ -62,13 +67,13 @@ const renderItemChildren = (inlineCollapsed: boolean) => {
       )}
       style={firstLevel.value ? styles?.value?.itemContent : styles?.value?.subMenu?.itemContent}
     >
-      {slots?.default?.()}
+      {children.value}
     </span>
   );
   // inline-collapsed.md demo 依赖 span 来隐藏文字,有 icon 属性，则内部包裹一个 span
   // ref: https://github.com/ant-design/ant-design/pull/23456
-  if (!icon || (isValidElement(children) && children[0].type === 'span')) {
-    if (children && inlineCollapsed && firstLevel && typeof label === 'string') {
+  if (!icon || (isValidElement(children.value) && children.value[0].type === 'span')) {
+    if (children.value && inlineCollapsed && firstLevel.value && typeof label === 'string') {
       return <div class={`${prefixCls.value}-inline-collapsed-noicon`}>{label.charAt(0)}</div>;
     }
   }
@@ -89,7 +94,7 @@ const tooltipProps = computed(() => {
 const vm = getCurrentInstance();
 
 const ReturnNode = () => {
-  const childrenLength = toArray(slots.default?.()).length;
+  const childrenLength = children.value?.length;
 
   return (
     <Item
@@ -103,7 +108,7 @@ const ReturnNode = () => {
         className,
       )}
       style={firstLevel.value ? styles.value.item : styles.value.subMenu.item}
-      title={typeof title === 'string' ? title : undefined}
+      title={typeof title.value === 'string' ? title.value : undefined}
     >
       {cloneElement(icon, (oriProps) => ({
         class: clsx(
@@ -134,9 +139,7 @@ const ReturnNode = () => {
       </template>
       <template v-else-if="title === false"></template>
       <template v-else>
-        <slot name="title">
-          <Render :content="title" />
-        </slot>
+        <Render :content="title" />
       </template>
     </template>
     <ReturnNode />

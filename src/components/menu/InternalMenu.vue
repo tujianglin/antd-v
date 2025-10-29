@@ -71,7 +71,7 @@ const {
   theme = 'light',
   expandIcon,
   _internalDisableMenuItemTitleTooltip,
-  inlineCollapsed,
+  inlineCollapsed = undefined,
   siderCollapsed,
   rootClassName,
   mode,
@@ -175,20 +175,19 @@ const mergedExpandIcon = computed<MenuProps['expandIcon']>(() => {
 });
 
 // ======================== Context ==========================
-const contextValue = computed(
-  () =>
-    ({
-      prefixCls: prefixCls.value,
-      inlineCollapsed: mergedInlineCollapsed.value || false,
-      direction: direction?.value,
-      firstLevel: true,
-      theme,
-      mode: mergedMode.value,
-      disableMenuItemTitleTooltip: _internalDisableMenuItemTitleTooltip,
-      classNames: mergedClassNames?.value,
-      styles: mergedStyles?.value,
-    }) as MenuContextProps,
-);
+const contextValue = computed(() => {
+  return {
+    prefixCls: prefixCls.value,
+    inlineCollapsed: mergedInlineCollapsed.value || false,
+    direction: direction?.value,
+    firstLevel: true,
+    theme,
+    mode: mergedMode.value,
+    disableMenuItemTitleTooltip: _internalDisableMenuItemTitleTooltip,
+    classNames: mergedClassNames?.value,
+    styles: mergedStyles?.value,
+  } as MenuContextProps;
+});
 
 const vm = getCurrentInstance();
 const changeRef = (el) => {
