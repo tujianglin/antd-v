@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import { reactiveComputed } from '@vueuse/core';
-import { computed, ref, toRefs, watch, watchEffect } from 'vue';
+import { computed, onMounted, onUpdated, ref, toRefs, useTemplateRef, watch } from 'vue';
 import { useQRCode } from './hooks/useQRCode';
 import type { ImageSettings, QRPropsCanvas } from './interface';
 import {
@@ -31,12 +31,8 @@ const {
   ...otherProps
 } = defineProps<QRPropsCanvas>();
 const imgSrc = computed(() => imageSettings?.src);
-const _canvas = ref<HTMLCanvasElement>(null);
+const _canvas = useTemplateRef('_canvas');
 const _image = ref<HTMLImageElement>(null);
-
-const setCanvasRef = (node) => {
-  _canvas.value = node;
-};
 
 const isImageLoaded = ref(false);
 
@@ -56,7 +52,7 @@ const { margin, cells, numCells, calculatedImageSettings } = toRefs(
   ),
 );
 
-watchEffect(() => {
+function draw() {
   if (_canvas.value) {
     const canvas = _canvas.value;
 
@@ -103,7 +99,6 @@ watchEffect(() => {
     if (calculatedImageSettings.value) {
       ctx.globalAlpha = calculatedImageSettings.value.opacity;
     }
-
     if (haveImageToRender) {
       ctx.drawImage(
         image,
@@ -114,6 +109,14 @@ watchEffect(() => {
       );
     }
   }
+}
+
+onMounted(() => {
+  draw();
+});
+
+onUpdated(() => {
+  draw();
 });
 
 watch(
@@ -133,7 +136,7 @@ const canvasStyle = computed(() => {
 });
 </script>
 <template>
-  <canvas :style="canvasStyle" :height="size" :width="size" :ref="setCanvasRef" role="img" v-bind="otherProps"></canvas>
+  <canvas :style="canvasStyle" :height="size" :width="size" ref="_canvas" role="img" v-bind="otherProps"></canvas>
   <img
     v-if="imgSrc !== null"
     :src="imgSrc"

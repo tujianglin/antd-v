@@ -117,6 +117,7 @@ const [zIndex, contextZIndex] = useZIndex(
 <template>
   <ZIndexContextProvider :value="contextZIndex">
     <RCTour
+      v-if="open"
       v-bind="restProps"
       v-model:current="current"
       v-model:open="open"

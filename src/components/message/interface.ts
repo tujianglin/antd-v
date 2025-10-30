@@ -43,7 +43,7 @@ export interface ArgsProps {
   icon?: VueNode;
   key?: string | number;
   style?: CSSProperties;
-  className?: string;
+  class?: string;
   classNames?: Partial<Record<SemanticName, string>>;
   styles?: Partial<Record<SemanticName, CSSProperties>>;
   /**

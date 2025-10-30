@@ -43,7 +43,18 @@ export function useInternalMessage(messageConfig?: HolderProps): readonly [React
 
       const noticePrefixCls = `${prefixCls}-notice`;
 
-      const { content, icon, type, key, className, style, onClose, classNames: configClassNames, styles, ...restConfig } = config;
+      const {
+        content,
+        icon,
+        type,
+        key,
+        class: className,
+        style,
+        onClose,
+        classNames: configClassNames,
+        styles,
+        ...restConfig
+      } = config;
 
       let mergedKey: VueKey = key!;
       if (mergedKey === undefined || mergedKey === null) {

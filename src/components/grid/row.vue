@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { computed, effect, ref, toRefs, watch, type CSSProperties, type Ref } from 'vue';
+import { computed, ref, toRefs, watch, type CSSProperties, type Ref } from 'vue';
 import { responsiveArray, type Breakpoint, type ScreenMap } from '../_util/responsiveObserver';
 import { useConfigContextInject } from '../config-provider';
 import useBreakpoint from './hooks/useBreakpoint';
@@ -63,7 +63,6 @@ function useMergedPropByScreen(oriProp: Ref<RowProps['align'] | RowProps['justif
       }
       const curVal = oriProp?.value[breakpoint];
       if (curVal !== undefined) {
-        console.log(prop.value);
         prop.value = curVal;
         return;
       }
@@ -93,10 +92,6 @@ const mergedJustify = useMergedPropByScreen(
   computed(() => justify),
   screens,
 );
-
-effect(() => {
-  console.log(justify, mergedJustify.value);
-});
 
 const prefixCls = computed(() => getPrefixCls?.value('row', customizePrefixCls));
 

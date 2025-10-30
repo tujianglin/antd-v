@@ -5,6 +5,7 @@ import {
   ref,
   resolveDynamicComponent,
   toRefs,
+  useAttrs,
   useSlots,
   type CSSProperties,
   type HTMLAttributes,
@@ -201,12 +202,13 @@ const Child = () => {
     <>{slots?.default?.()}</>
   );
 };
-
+const attrs = useAttrs();
 const TagNode = () => {
   const TagWrapper = resolveDynamicComponent(href ? 'a' : 'span') as any;
   return (
     <TagWrapper
       {...(omit(domProps.value, ['onClick']) as any)}
+      {...attrs}
       class={tagClassName.value}
       style={tagStyle.value}
       href={mergedDisabled.value ? undefined : href}

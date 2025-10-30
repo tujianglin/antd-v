@@ -107,7 +107,7 @@ const handleChange = (checked: boolean, option: CheckableTagOption) => {
   let newValue: CheckableTagValue | CheckableTagValue[] | null = null;
 
   if (multiple) {
-    const valueList = (mergedValue || []) as CheckableTagValue[];
+    const valueList = (mergedValue.value || []) as CheckableTagValue[];
     newValue = checked ? [...valueList, option.value] : valueList.filter((item) => item !== option.value);
   } else {
     newValue = checked ? option.value : null;
