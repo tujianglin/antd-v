@@ -47,6 +47,7 @@ const {
   align,
   placement = 'bottomLeft',
   placements = Placements,
+  builtinPlacements,
   getPopupContainer,
   showAction,
   hideAction,
@@ -118,8 +119,8 @@ const triggerHideAction = computed(() => {
 </script>
 <template>
   <Trigger
-    :builtin-placements="placements"
     v-bind="otherProps"
+    :builtin-placements="builtinPlacements || placements"
     :prefix-cls="prefixCls"
     ref="triggerRef"
     :popup-class-name="
