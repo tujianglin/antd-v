@@ -1,7 +1,8 @@
 <script lang="tsx" setup>
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, toRefs, type CSSProperties } from 'vue';
+import { computed, toRefs, type CSSProperties, type VNode } from 'vue';
 import { isPresetSize, isValidGapNumber } from '../_util/gapSize';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import useOrientation from '../_util/hooks/useOrientation';
@@ -28,6 +29,10 @@ const {
   styles,
   ...restProps
 } = defineProps<SpaceProps>();
+
+const slots = defineSlots<{
+  default: () => VNode[];
+}>();
 
 const {
   getPrefixCls,
@@ -110,6 +115,8 @@ const gapStyle = computed((): CSSProperties => {
   }
   return gapStyle;
 });
+
+const children = computed(() => flattenChildren(slots.default?.()));
 </script>
 <template>
   <div
@@ -117,9 +124,9 @@ const gapStyle = computed((): CSSProperties => {
     :style="{ ...gapStyle, ...mergedStyles?.root, ...contextStyle, ...style }"
     v-bind="{ ...restProps, ...$attrs }"
   >
-    <SpaceContextProvider :value="{ latestIndex: $slots.default?.()?.length - 1 }">
+    <SpaceContextProvider :value="{ latestIndex: children?.length - 1 }">
       <Item
-        v-for="(child, index) in $slots.default?.()"
+        v-for="(child, index) in children"
         :key="index"
         :prefix="prefixCls"
         :class-names="mergedClassNames"

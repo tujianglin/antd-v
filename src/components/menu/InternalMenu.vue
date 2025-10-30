@@ -84,7 +84,7 @@ const {
 } = defineProps<InternalMenuProps>();
 
 const selectedKeys = defineModel<any[]>('selectedKeys');
-const openKeys = defineModel('openKeys', { default: [] });
+const openKeys = defineModel('openKeys', { default: undefined });
 
 function isEmptyIcon(icon?: VueNode | boolean) {
   return icon === null || icon === false;

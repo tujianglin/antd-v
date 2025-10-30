@@ -9,7 +9,7 @@ defineOptions({ name: 'Menu', inheritAttrs: false, compatConfig: { MODE: 3 } });
 const { onClick, inlineCollapsed = undefined, ...resetProps } = defineProps<MenuProps>();
 
 const selectedKeys = defineModel<any[]>('selectedKeys');
-const openKeys = defineModel('openKeys', { default: [] });
+const openKeys = defineModel('openKeys', { default: undefined });
 
 const menuRef = useTemplateRef<HTMLDivElement>('menuRef');
 const context = useSiderContextInject();

@@ -54,7 +54,7 @@ const {
   size: customizeSize,
   locale: customLocale,
   responsive,
-  showSizeChanger = true,
+  showSizeChanger,
   pageSizeOptions,
   styles,
   classNames: paginationClassNames,

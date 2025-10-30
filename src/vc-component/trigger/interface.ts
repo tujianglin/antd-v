@@ -106,7 +106,7 @@ export type BuildInPlacements = Record<string, AlignType>;
 
 export type StretchType = string;
 
-export type ActionType = 'hover' | 'focus' | 'click' | 'contextMenu';
+export type ActionType = 'hover' | 'focus' | 'click' | 'contextmenu';
 
 export type AnimationType = string;
 

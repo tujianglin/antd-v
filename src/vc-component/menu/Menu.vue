@@ -64,6 +64,8 @@ export interface MenuProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'onCl
   mode?: MenuMode;
   inlineCollapsed?: boolean;
 
+  defaultOpenKeys?: string[];
+
   // Active control
   activeKey?: string;
   defaultActiveFirst?: boolean;
@@ -170,6 +172,7 @@ const {
   // Mode
   mode = 'vertical',
   inlineCollapsed,
+  defaultOpenKeys,
 
   // Disabled
   disabled,
@@ -247,7 +250,7 @@ const isRtl = computed(() => direction === 'rtl');
 const mergedOpenKeys = defineModel('openKeys', {
   default: undefined,
   get: (val) => {
-    return val || EMPTY_LIST;
+    return val || defaultOpenKeys || EMPTY_LIST;
   },
 });
 
@@ -345,15 +348,17 @@ const registerPathContext = computed(() => ({ registerPath, unregisterPath }));
 
 const pathUserContext = computed(() => ({ isSubPathKey }));
 
-watch(
-  [lastVisibleIndex, allVisible],
-  () => {
-    refreshOverflowKeys(
-      allVisible.value ? EMPTY_LIST : childList.value.slice(lastVisibleIndex.value + 1).map((child) => child.key as string),
-    );
-  },
-  { immediate: true },
-);
+onMounted(() => {
+  watch(
+    [lastVisibleIndex, allVisible],
+    () => {
+      refreshOverflowKeys(
+        allVisible.value ? EMPTY_LIST : childList.value.slice(lastVisibleIndex.value + 1).map((child) => child.key as string),
+      );
+    },
+    { immediate: true },
+  );
+});
 
 // ======================== Active ========================
 const [mergedActiveKey, setMergedActiveKey] = useControlledState(

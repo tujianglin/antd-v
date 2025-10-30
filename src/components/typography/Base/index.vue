@@ -24,6 +24,7 @@ import { toArray } from '@/vc-util/Children/toArray';
 import { EditOutlined } from '@ant-design/icons-vue';
 import ResizeObserver from '@/vc-component/resize-observer';
 import clsx from 'clsx';
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 
 export type BaseType = 'secondary' | 'success' | 'warning' | 'danger';
 
@@ -144,6 +145,7 @@ const [editing, setEditing] = useControlledState(
   false,
   computed(() => editConfig.value?.editing),
 );
+
 const triggerType = computed(() => editConfig.value.triggerType || ['icon']);
 
 const triggerEdit = (edit: boolean) => {
@@ -426,7 +428,10 @@ const renderWrapper = (props, node, canEllipsis) => {
 <template>
   <Editable
     v-if="editing"
-    :value="editConfig.text ?? (typeof children === 'string' ? children : '')"
+    :value="
+      editConfig.text ??
+      (typeof (flattenChildren(children[0])?.[0] as any)?.children === 'string' ? (flattenChildren(children[0])?.[0] as any)?.children : '')
+    "
     @save="onEditChange"
     @cancel="onEditCancel"
     :prefix-cls="prefixCls"
@@ -460,7 +465,7 @@ const renderWrapper = (props, node, canEllipsis) => {
         @click="(e) => (triggerType.includes('text') ? onEditClick(e) : undefined)"
         :aria-label="topAriaLabel?.toString()"
         :title="title"
-        v-bind="textProps"
+        v-bind="{ ...textProps, ...$attrs }"
       >
         <Ellipsis
           :enable-measure="mergedEnableEllipsis && !cssEllipsis"

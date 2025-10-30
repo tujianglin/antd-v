@@ -463,7 +463,7 @@ const [showActions, hideActions] = useAction(
 );
 
 const clickToShow = computed(() => showActions.value.has('click'));
-const clickToHide = computed(() => hideActions.value.has('click') || hideActions.value.has('contextMenu'));
+const clickToHide = computed(() => hideActions.value.has('click') || hideActions.value.has('contextmenu'));
 
 const triggerAlign = () => {
   if (!inMotion.value) {
@@ -728,11 +728,11 @@ watch(
 
 // ==================== Action: ContextMenu =====================
 watch(
-  () => hideActions.value.has('contextMenu'),
+  () => showActions.value.has('contextmenu'),
   (val) => {
     if (val) {
       cloneProps.value.onContextmenu = (event, ...args: any[]) => {
-        if (openRef.value && hideActions.value.has('contextMenu')) {
+        if (openRef.value && hideActions.value.has('contextmenu')) {
           triggerOpen(false);
         } else {
           setMousePosByEvent(event);

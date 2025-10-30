@@ -41,7 +41,7 @@ export interface DropdownProps {
   menu?: MenuProps & { activeKey?: RcMenuProps['activeKey'] };
   autofocus?: boolean;
   arrow?: boolean | DropdownArrowOptions;
-  trigger?: ('click' | 'hover' | 'contextMenu')[];
+  trigger?: ('click' | 'hover' | 'contextmenu')[];
   popupRender?: (originNode: VueNode) => VueNode;
   onOpenChange?: (open: boolean, info: { source: 'trigger' | 'menu' }) => void;
   disabled?: boolean;
@@ -87,6 +87,7 @@ const {
 
 const slots = defineSlots<{
   default?: () => VNode[];
+  overlay?: () => VNode[];
 }>();
 
 const _Placements = ['topLeft', 'topCenter', 'topRight', 'bottomLeft', 'bottomCenter', 'bottomRight', 'top', 'bottom'] as const;
@@ -171,7 +172,7 @@ const PopupTrigger = (props) => {
   });
 };
 const triggerActions = computed(() => (disabled ? [] : trigger));
-const alignPoint = computed(() => !!triggerActions.value?.includes('contextMenu'));
+const alignPoint = computed(() => !!triggerActions.value?.includes('contextmenu'));
 
 // =========================== Open ============================
 const mergedOpen = defineModel('open', { default: false });
@@ -212,6 +213,9 @@ const renderOverlay = () => {
   const menuClassNames = omit(mergedClassNames.value, ['root']);
   const menuStyles = omit(mergedStyles.value, ['root']);
   let overlayNode: VueNode;
+  if (slots.overlay) {
+    overlayNode = slots.overlay?.();
+  }
   if (menu?.items) {
     overlayNode = (
       <Menu

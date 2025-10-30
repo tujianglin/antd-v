@@ -110,7 +110,7 @@ const getOpenClassName = computed(() => {
 
 const triggerHideAction = computed(() => {
   let result = hideAction;
-  if (!result && trigger.indexOf('contextMenu') !== -1) {
+  if (!result && trigger.indexOf('contextmenu') !== -1) {
     result = ['click'];
   }
   return result;
@@ -118,8 +118,8 @@ const triggerHideAction = computed(() => {
 </script>
 <template>
   <Trigger
-    v-bind="otherProps"
     :builtin-placements="placements"
+    v-bind="otherProps"
     :prefix-cls="prefixCls"
     ref="triggerRef"
     :popup-class-name="
