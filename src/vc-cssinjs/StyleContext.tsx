@@ -94,13 +94,14 @@ const getCache = () => {
   const instance = getCurrentInstance();
   let cache: CacheEntity;
   if (instance && instance.appContext) {
-    const globalCache = instance.appContext?.config?.globalProperties?.__ANTDV_CSSINJS_CACHE__;
+    // 使用不同的全局属性名，避免与 ant-design-vue 冲突
+    const globalCache = instance.appContext?.config?.globalProperties?.__ANTD_V_CSSINJS_CACHE__;
     if (globalCache) {
       cache = globalCache;
     } else {
       cache = createCache();
       if (instance.appContext.config.globalProperties) {
-        instance.appContext.config.globalProperties.__ANTDV_CSSINJS_CACHE__ = cache;
+        instance.appContext.config.globalProperties.__ANTD_V_CSSINJS_CACHE__ = cache;
       }
     }
   } else {
@@ -109,7 +110,7 @@ const getCache = () => {
   return cache;
 };
 
-const StyleContext: InjectionKey<Reactive<Partial<StyleContextProps>>> = Symbol('StyleContext');
+const StyleContext: InjectionKey<Reactive<Partial<StyleContextProps>>> = Symbol('CustomAntdVStyleContext');
 
 export type UseStyleProviderProps = Partial<StyleContextProps> | Ref<Partial<StyleContextProps>>;
 
@@ -124,7 +125,15 @@ const defaultStyleContext: StyleContextProps = {
 
 export const useStyleContextInject = () => {
   const cache = getCache();
-  return inject(StyleContext, reactive({ ...defaultStyleContext, cache }));
+  const injectedContext = inject(StyleContext, reactive({ ...defaultStyleContext, cache }));
+
+  // 确保 cache 对象有正确的方法，避免与 ant-design-vue 的 cssinjs 冲突
+  if (injectedContext.cache && typeof injectedContext.cache.opUpdate !== 'function') {
+    // 如果获取到的 cache 对象不正确（可能来自 ant-design-vue），使用我们自己的 cache
+    injectedContext.cache = cache;
+  }
+
+  return injectedContext;
 };
 
 export const useStyleContextProvider = (props: Reactive<StyleContextProps>) => {
