@@ -57,6 +57,7 @@ const {
   cancelButtonProps,
   width = 416,
   style = {},
+  okCancel = undefined,
   ...resetProps
 } = defineProps<ConfirmDialogProps>();
 
@@ -91,6 +92,7 @@ const mergedZIndex = computed(() => {
 <template>
   <Modal
     v-bind="omit($props, ['onCancel'])"
+    :ok-cancel="okCancel"
     :class="classString"
     :wrap-class-name="clsx({ [`${confirmPrefixCls}-centered`]: !!centered }, wrapClassName)"
     @cancel="
@@ -112,6 +114,7 @@ const mergedZIndex = computed(() => {
   >
     <ConfirmContent
       v-bind="$props"
+      :ok-cancel="okCancel"
       :confirm-prefix-cls="confirmPrefixCls"
       :ok-button-props="{ ...contextOkButtonProps, ...okButtonProps }"
       :cancel-button-props="{ ...contextCancelButtonProps, ...cancelButtonProps }"

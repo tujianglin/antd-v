@@ -1,14 +1,14 @@
-<script lang="tsx" setup>
+<script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, shallowRef, useTemplateRef } from 'vue';
-import Button from '../button';
+import Button, { type ButtonProps } from '../button';
 import { convertLegacyProps } from '../button/buttonHelpers';
-import type { ButtonProps, LegacyButtonType } from '../button/interface';
+import type { LegacyButtonType } from '../button/interface';
 
 export interface ActionButtonProps {
   type?: LegacyButtonType;
   actionFn?: (...args: any[]) => any | PromiseLike<any>;
   close?: (...args: any[]) => void;
-  autoFocus?: boolean;
+  autofocus?: boolean;
   prefixCls: string;
   buttonProps?: ButtonProps;
   emitEvent?: boolean;
@@ -22,7 +22,7 @@ export interface ActionButtonProps {
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { type, prefixCls, buttonProps, close, autoFocus, emitEvent, isSilent, quitOnNullishReturnValue, actionFn } =
+const { type, prefixCls, buttonProps, close, autofocus, emitEvent, isSilent, quitOnNullishReturnValue, actionFn } =
   defineProps<ActionButtonProps>();
 
 const isThenable = <T,>(thing?: PromiseLike<T>): thing is PromiseLike<T> => {
@@ -40,7 +40,7 @@ const onInternalClose = (...args: any[]) => {
 let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
 onMounted(() => {
-  if (autoFocus) {
+  if (autofocus) {
     timeoutId = setTimeout(() => {
       buttonRef.value?.focus({ preventScroll: true });
     });
@@ -54,9 +54,8 @@ onBeforeUnmount(() => {
 });
 
 const handlePromiseOnOk = (returnValueOfOnOk?: PromiseLike<any>) => {
-  if (!isThenable(returnValueOfOnOk)) {
-    return;
-  }
+  if (!isThenable(returnValueOfOnOk)) return;
+
   loading.value = true;
   returnValueOfOnOk.then(
     (...args: any[]) => {
@@ -65,21 +64,15 @@ const handlePromiseOnOk = (returnValueOfOnOk?: PromiseLike<any>) => {
       clickedRef.value = false;
     },
     (e: Error) => {
-      // See: https://github.com/ant-design/ant-design/issues/6183
       loading.value = false;
       clickedRef.value = false;
-
-      // Do not throw if is `await` mode
-      if (isSilent?.()) {
-        return;
-      }
-
+      if (isSilent?.()) return;
       return Promise.reject(e);
     },
   );
 };
 
-const onClick = async (e: MouseEvent) => {
+const onClick = (e: MouseEvent) => {
   if (clickedRef.value) return;
   clickedRef.value = true;
 
@@ -88,42 +81,30 @@ const onClick = async (e: MouseEvent) => {
     return;
   }
 
-  loading.value = true;
-  let returnValueOfOnOk: any;
+  let returnValueOfOnOk: PromiseLike<any> | undefined;
 
-  try {
-    // 执行 actionFn
-    if (emitEvent) {
-      returnValueOfOnOk = await actionFn(e);
-    } else if (actionFn.length) {
-      returnValueOfOnOk = await actionFn(close);
-    } else {
-      returnValueOfOnOk = await actionFn();
-    }
-
-    // ✅ 即使没有返回 Promise，也等待函数执行完毕再决定是否关闭
+  if (emitEvent) {
+    returnValueOfOnOk = actionFn(e);
     if (quitOnNullishReturnValue && !isThenable(returnValueOfOnOk)) {
-      onInternalClose(e);
-      loading.value = false;
       clickedRef.value = false;
+      onInternalClose(e);
       return;
     }
-
-    // ✅ 如果返回的是 Promise，则等待它完成
-    await handlePromiseOnOk(returnValueOfOnOk);
-
-    // ✅ 如果不是 Promise，但执行完了，也关闭
+  } else if (actionFn.length) {
+    returnValueOfOnOk = actionFn(close);
+    clickedRef.value = false;
+  } else {
+    returnValueOfOnOk = actionFn();
     if (!isThenable(returnValueOfOnOk)) {
       onInternalClose();
+      return;
     }
-  } catch (err) {
-    console.error(err);
-  } finally {
-    loading.value = false;
-    clickedRef.value = false;
   }
+
+  handlePromiseOnOk(returnValueOfOnOk);
 };
 </script>
+
 <template>
   <Button
     ref="buttonRef"

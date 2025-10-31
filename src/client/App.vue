@@ -1,51 +1,89 @@
-<script setup lang="tsx">
-import { AutoComplete, Input } from '@/components';
-import { ref } from 'vue';
+<script lang="tsx">
+import { defineComponent } from 'vue';
+import { ExclamationCircleFilled } from '@ant-design/icons-vue';
+import { Button, Modal, Space } from '@/components';
+export default defineComponent({
+  setup() {
+    const { confirm } = Modal;
 
-const getRandomInt = (max: number, min = 0) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const showConfirm = () => {
+      confirm({
+        title: 'Do you want to delete these items?',
+        icon: <ExclamationCircleFilled />,
+        content: 'Some descriptions',
+        onOk() {
+          console.log('OK');
+        },
+        onCancel() {
+          console.log('Cancel');
+        },
+      });
+    };
 
-const searchResult = (query: string) =>
-  Array.from({ length: getRandomInt(5) })
-    .join('.')
-    .split('.')
-    .map((_, idx) => {
-      const category = `${query}${idx}`;
-      return {
-        value: category,
-        label: () => (
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span>
-              Found {query} on{' '}
-              <a href={`https://s.taobao.com/search?q=${query}`} target="_blank" rel="noopener noreferrer">
-                {category}
-              </a>
-            </span>
-            <span>{getRandomInt(200, 100)} results</span>
-          </div>
-        ),
-      };
-    });
+    const showPromiseConfirm = () => {
+      confirm({
+        title: 'Do you want to delete these items?',
+        icon: <ExclamationCircleFilled />,
+        content: 'When clicked the OK button, this dialog will be closed after 1 second',
+        onOk() {
+          return new Promise((resolve, reject) => {
+            setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
+          }).catch(() => console.log('Oops errors!'));
+        },
+        onCancel() {},
+      });
+    };
 
-const options = ref<any[]>([]);
+    const showDeleteConfirm = () => {
+      confirm({
+        title: 'Are you sure delete this task?',
+        icon: <ExclamationCircleFilled />,
+        content: 'Some descriptions',
+        okText: 'Yes',
+        okType: 'danger',
+        cancelText: 'No',
+        onOk() {
+          console.log('OK');
+        },
+        onCancel() {
+          console.log('Cancel');
+        },
+      });
+    };
 
-const handleSearch = (value: string) => {
-  options.value = value ? searchResult(value) : [];
-  console.log(options.value);
-};
+    const showPropsConfirm = () => {
+      confirm({
+        title: 'Are you sure delete this task?',
+        icon: <ExclamationCircleFilled />,
+        content: 'Some descriptions',
+        okText: 'Yes',
+        okType: 'danger',
+        okButtonProps: {
+          disabled: true,
+        },
+        cancelText: 'No',
+        onOk() {
+          console.log('OK');
+        },
+        onCancel() {
+          console.log('Cancel');
+        },
+      });
+    };
 
-const onSelect = (value: string) => {
-  console.log('onSelect', value);
-};
+    return () => (
+      <Space wrap>
+        <Button onClick={showConfirm}>Confirm</Button>
+        <Button onClick={showPromiseConfirm}>With promise</Button>
+        <Button onClick={showDeleteConfirm} type="dashed">
+          Delete
+        </Button>
+        <Button onClick={showPropsConfirm} type="dashed">
+          With extra props
+        </Button>
+      </Space>
+    );
+  },
+});
 </script>
-
-<template>
-  <AutoComplete
-    :popup-match-select-width="252"
-    :style="{ width: '300px' }"
-    :options="options"
-    @select="onSelect"
-    :show-search="{ onSearch: handleSearch }"
-  >
-    <Input.Search size="large" placeholder="input here" :enter-button="true" />
-  </AutoComplete>
-</template>
+<style lang="less" scoped></style>

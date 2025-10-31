@@ -157,7 +157,12 @@ const ItemNode = () => {
         stack={stack}
       />
     );
-    return <Render content={renderNotifications ? renderNotifications(list, { prefixCls, key: placement }) : list}></Render>;
+    return (
+      <Render
+        key={placement}
+        content={renderNotifications ? renderNotifications(list, { prefixCls, key: placement }) : list}
+      ></Render>
+    );
   });
 };
 </script>

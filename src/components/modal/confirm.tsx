@@ -28,8 +28,8 @@ const ConfirmDialogWrapper = defineComponent({
   inheritAttrs: false,
   props: ['config'],
   setup(props) {
-    const p = computed(() =>
-      assign(
+    const p = computed(() => {
+      return assign(
         {
           focusTriggerAfterClose: true,
           mask: true,
@@ -37,8 +37,8 @@ const ConfirmDialogWrapper = defineComponent({
           maskClosable: true,
         },
         props.config,
-      ),
-    );
+      );
+    });
 
     const {
       prefixCls: customizePrefixCls,
@@ -74,7 +74,7 @@ export default function confirm(config: ModalFuncProps) {
   const container = document.createDocumentFragment();
   document.body.appendChild(container);
 
-  const reactiveConfig = shallowReactive({ ...config, open: true });
+  const reactiveConfig = shallowReactive({ ...config, close, open: true });
   let confirmDialogInstance: VNode | null = null;
 
   function destroy(...args: any[]) {
