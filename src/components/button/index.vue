@@ -50,7 +50,7 @@ const {
   danger = undefined,
   shape: customizeShape,
   size: customizeSize,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   class: className,
   rootClassName,
   icon: customIcon,

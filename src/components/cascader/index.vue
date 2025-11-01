@@ -102,7 +102,7 @@ defineOptions({ name: 'Cascader', inheritAttrs: false, compatConfig: { MODE: 3 }
 const {
   prefixCls: customizePrefixCls,
   size: customizeSize,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   class: className,
   rootClassName,
   multiple,
@@ -279,6 +279,7 @@ const mergedShowSearch = computed(() => {
 const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize ?? ctx));
 
 // ===================== Disabled =====================
+// eslint-disable-next-line vue/no-dupe-keys
 const disabled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 

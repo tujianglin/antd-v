@@ -28,7 +28,7 @@ export interface PasswordProps extends InputProps {
 defineOptions({ name: 'InputPassword', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const {
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   action = 'click',
   visibilityToggle = true,
   iconRender: customIconRender,

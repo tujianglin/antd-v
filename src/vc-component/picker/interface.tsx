@@ -481,7 +481,7 @@ export interface SelectorProps extends SharedHTMLAttrs {
   preserveInvalidOnBlur?: boolean;
 
   // Open
-  open: boolean;
+  open: boolean | undefined;
   /** Trigger when need open by selector */
   onOpenChange: OnOpenChange;
 

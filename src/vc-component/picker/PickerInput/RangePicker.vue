@@ -128,7 +128,7 @@ const updateProps = () => {
 
 const innerValue = defineModel<any>('value');
 const innerPickerValue = defineModel<any>('pickerValue');
-const open = defineModel<boolean>('open');
+const open = defineModel<boolean | undefined>('open');
 
 // ========================= Prop =========================
 const [filledProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate] = useFilledProps(

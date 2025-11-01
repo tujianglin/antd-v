@@ -33,7 +33,7 @@ const {
   eventKey,
   warnKey,
 
-  disabled,
+  disabled = undefined,
   internalPopupClose,
 
   // Icons
@@ -92,7 +92,7 @@ const { isSubPathKey } = usePathUserContextInject();
 const connectedPath = useFullPath();
 
 const subMenuPrefixCls = computed(() => `${prefixCls?.value}-submenu`);
-const mergedDisabled = computed(() => contextDisabled?.value || disabled);
+const mergedDisabled = computed(() => disabled ?? contextDisabled?.value);
 const elementRef = ref<HTMLDivElement>();
 const popupRef = ref<HTMLUListElement>();
 

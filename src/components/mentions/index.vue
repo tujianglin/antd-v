@@ -57,7 +57,7 @@ const {
   prefixCls: customizePrefixCls,
   class: className,
   rootClassName,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   loading,
   filterOption,
   notFoundContent,

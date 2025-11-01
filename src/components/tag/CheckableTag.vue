@@ -36,11 +36,12 @@ const {
   icon,
   onChange,
   onClick,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   ...restProps
 } = defineProps<CheckableTagProps>();
 const { getPrefixCls, tag } = toRefs(useConfigContextInject());
 
+// eslint-disable-next-line vue/no-dupe-keys
 const disabled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? disabled?.value);
 

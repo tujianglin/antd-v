@@ -6,7 +6,7 @@ import { defaultPrefixCls } from '../config-provider';
 // ================== Collapse Motion ==================
 const getCollapsedHeight: MotionEventHandler = () => ({ height: 0, opacity: 0 });
 const getRealHeight: MotionEventHandler = (node) => {
-  const { scrollHeight } = node;
+  const { scrollHeight } = node || {};
   return { height: `${scrollHeight}px`, opacity: 1 };
 };
 const getCurrentHeight: MotionEventHandler = (node) => ({ height: node ? `${node.offsetHeight}px` : 0 });

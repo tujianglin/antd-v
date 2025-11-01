@@ -163,7 +163,7 @@ const {
   checkable = false,
   selectable = true,
   draggable,
-  disabled,
+  disabled = undefined,
   motion: customMotion,
   style,
   rootClassName,

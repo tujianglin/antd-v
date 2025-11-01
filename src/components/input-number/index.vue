@@ -24,7 +24,7 @@ defineOptions({ name: 'InputNumber', inheritAttrs: false, compatConfig: { MODE: 
 const {
   rootClassName,
   size: customizeSize,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   prefixCls: customizePrefixCls,
   addonBefore: customAddonBefore,
   addonAfter: customAddonAfter,

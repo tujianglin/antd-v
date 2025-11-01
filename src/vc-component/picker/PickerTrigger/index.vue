@@ -24,7 +24,7 @@ export type PickerTriggerProps = {
   direction?: 'ltr' | 'rtl';
 
   // Visible
-  visible: boolean;
+  visible: boolean | undefined;
   onClose: () => void;
 };
 

@@ -1,17 +1,19 @@
 <script lang="tsx" setup>
+import Render from '@/vc-component/render';
 import clsx from 'clsx';
-import { computed, ref, toRefs, useTemplateRef, type CSSProperties } from 'vue';
+import { computed, h, ref, toRefs, useTemplateRef, type CSSProperties } from 'vue';
 import { triggerFocus, type InputFocusOptions } from '../../vc-component/input/utils/commonUtils';
 import type { TextAreaProps as VcTextAreaProps } from '../../vc-component/textarea';
 import VcTextArea from '../../vc-component/textarea';
 import getAllowClear from '../_util/getAllowClear';
 import useMergeSemantic from '../_util/hooks/useMergeSemantic';
-import type { InputStatus } from '../_util/statusUtils';
+import { getMergedStatus, getStatusClassNames, type InputStatus } from '../_util/statusUtils';
 import { useComponentConfig, type Variant } from '../config-provider/context';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useSize from '../config-provider/hooks/useSize';
 import type { SizeType } from '../config-provider/SizeContext';
+import { useFormItemInputContextInject } from '../form/context';
 import useVariant from '../form/hooks/useVariants';
 import { useCompactItemContext } from '../space/CompactContext';
 import { useSharedStyle } from './style';
@@ -33,7 +35,8 @@ defineOptions({ name: 'InputTextArea', inheritAttrs: false, compatConfig: { MODE
 const {
   prefixCls: customizePrefixCls,
   size: customizeSize,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
+  status: customStatus,
   allowClear,
   classNames,
   rootClassName,
@@ -68,6 +71,8 @@ const disabled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 
 // ==================== Status ====================
+const { status: contextStatus, hasFeedback, feedbackIcon } = toRefs(useFormItemInputContextInject());
+const mergedStatus = computed(() => getMergedStatus(contextStatus?.value, customStatus));
 
 const [mergedClassNames, mergedStyles] = useMergeSemantic(
   computed(() => [contextClassNames.value, classNames]),
@@ -173,9 +178,12 @@ const onInternalResize: VcTextAreaProps['onResize'] = (size) => {
         mergedClassNames.textarea,
         isMouseDown && `${prefixCls}-mouse-active`,
       ),
-      variant: clsx({
-        [`${prefixCls}-${variant}`]: enableVariantCls,
-      }),
+      variant: clsx(
+        {
+          [`${prefixCls}-${variant}`]: enableVariantCls,
+        },
+        getStatusClassNames(prefixCls, mergedStatus),
+      ),
       affixWrapper: clsx(
         `${prefixCls}-textarea-affix-wrapper`,
         {
@@ -188,6 +196,7 @@ const onInternalResize: VcTextAreaProps['onResize'] = (size) => {
       ),
     }"
     :prefix-cls="prefixCls"
+    :suffix="hasFeedback && h('span', { class: `${prefixCls}-textarea-suffix` }, () => h(Render, { content: feedbackIcon }))"
     :show-count="showCount"
     @resize="onInternalResize"
     @mousedown="onInternalMouseDown"

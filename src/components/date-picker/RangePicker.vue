@@ -36,7 +36,7 @@ const {
   styles,
   placement,
   size: customizeSize,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   placeholder,
   status: customStatus,
   variant: customVariant,
@@ -77,7 +77,7 @@ const value = defineModel<DateType[]>('value', {
 });
 
 const pickerValue = defineModel<DateType[]>('pickerValue');
-const open = defineModel<boolean>('open', { default: undefined });
+const open = defineModel<boolean | undefined>('open', { default: undefined });
 
 const pickerType = computed(() => (picker === TIME ? 'timePicker' : 'datePicker'));
 

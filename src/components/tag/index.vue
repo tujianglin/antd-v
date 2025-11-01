@@ -59,7 +59,7 @@ const {
   icon,
   color: _,
   onClose,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   href,
   target,
   styles,
@@ -88,6 +88,7 @@ const [mergedVariant, mergedColor, isPreset, isStatus, customTagStyle] = useColo
 const isInternalColor = computed(() => isPreset.value || isStatus.value);
 
 // ===================== Disabled =====================
+// eslint-disable-next-line vue/no-dupe-keys
 const disabled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 

@@ -42,7 +42,7 @@ defineOptions({ name: 'Switch', inheritAttrs: false, compatConfig: { MODE: 3 } }
 const {
   prefixCls: customizePrefixCls,
   size: customizeSize,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   loading,
   class: className,
   rootClassName,
@@ -78,6 +78,7 @@ const {
 } = toRefs(useComponentConfig('switch'));
 
 // ===================== Disabled =====================
+// eslint-disable-next-line vue/no-dupe-keys
 const disabled = useDisabledContextInject();
 const mergedDisabled = computed(() => (customDisabled ?? disabled.value) || loading);
 

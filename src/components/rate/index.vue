@@ -25,7 +25,7 @@ const {
   tooltips,
   allowClear = true,
   character = <StarFilled />,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   ...rest
 } = defineProps<RateProps>();
 

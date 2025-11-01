@@ -5,7 +5,7 @@ import { type CSSProperties, type HTMLAttributes } from 'vue';
 
 export type MaskProps = {
   prefixCls: string;
-  visible: boolean;
+  visible: boolean | undefined;
   motionName?: string;
   style?: CSSProperties;
   maskProps?: HTMLAttributes;

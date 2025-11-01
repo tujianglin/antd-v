@@ -28,7 +28,7 @@ const {
   allowClear = false,
   presets,
   trigger = 'click',
-  disabled,
+  disabled = undefined,
   placement = 'bottomLeft',
   arrow = true,
   panelRender,

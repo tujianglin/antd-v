@@ -1,4 +1,4 @@
-import { computed, defineComponent, inject, ref, type InjectionKey, type Ref } from 'vue';
+import { computed, defineComponent, inject, provide, ref, type InjectionKey, type Ref } from 'vue';
 
 export const DisabledContext: InjectionKey<Ref<boolean>> = Symbol('DisabledContext');
 
@@ -7,7 +7,7 @@ export const useDisabledContextInject = () => {
 };
 
 export const useDisabledContextProvider = (props: Ref<boolean>) => {
-  return inject(DisabledContext, props);
+  provide(DisabledContext, props);
 };
 
 export const DisabledContextProvider = defineComponent({

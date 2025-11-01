@@ -24,7 +24,7 @@ const {
   prefixCls: customizePrefixCls,
   status: customStatus,
   size: customSize,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   suffix,
   allowClear = undefined,
   addonAfter,

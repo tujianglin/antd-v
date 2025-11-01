@@ -23,6 +23,7 @@ const {
   title,
   classNames: radioClassNames,
   styles,
+  disabled: customDisabled = undefined,
   ...restProps
 } = defineProps<RadioProps>();
 
@@ -54,9 +55,9 @@ const radioProps = computed(() => {
     result.name = groupContext.name;
     result.onChange = onChange;
     result.checked = value.value === groupContext.value;
-    result.disabled = restProps.disabled ?? groupContext.disabled;
+    result.disabled = customDisabled ?? groupContext.disabled;
   }
-  result.disabled = restProps.disabled ?? disabled.value;
+  result.disabled = customDisabled ?? disabled.value;
   return { ...restProps, ...result } as any;
 });
 

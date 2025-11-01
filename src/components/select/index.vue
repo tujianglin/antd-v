@@ -96,7 +96,7 @@ const {
   placement,
   listItemHeight: customListItemHeight,
   size: customizeSize,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   notFoundContent,
   status: customStatus,
   builtinPlacements,

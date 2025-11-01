@@ -95,7 +95,7 @@ const {
   class: className,
   rootClassName,
   style,
-  disabled,
+  disabled = undefined,
   // Deprecated Props
   tooltip = {},
   onChangeComplete,

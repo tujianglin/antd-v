@@ -25,7 +25,7 @@ const {
 
   eventKey,
   warnKey,
-  disabled,
+  disabled = undefined,
   itemIcon,
 
   // Aria
@@ -69,7 +69,7 @@ const { _internalRenderMenuItem } = usePrivateContextInject();
 const itemCls = computed(() => `${prefixCls?.value}-item`);
 
 const legacyMenuItemRef = ref<any>();
-const mergedDisabled = computed(() => contextDisabled?.value || disabled);
+const mergedDisabled = computed(() => disabled ?? contextDisabled?.value);
 
 const connectedKeys = useFullPath(computed(() => eventKey));
 

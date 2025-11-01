@@ -136,7 +136,7 @@ const {
   selectAllLabels = [],
   locale = {},
   titles,
-  disabled,
+  disabled = undefined,
   showSearch = false,
 
   showSelectAll = true,

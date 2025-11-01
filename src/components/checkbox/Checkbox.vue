@@ -24,7 +24,7 @@ const {
   onMouseenter,
   onMouseleave,
   skipGroup = false,
-  disabled,
+  disabled = undefined,
   classNames: checkboxClassNames,
   styles,
   ...restProps

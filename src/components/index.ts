@@ -55,6 +55,8 @@ export { default as Flex } from './flex';
 export type { FlexProps } from './flex/interface';
 export { default as FloatButton } from './float-button';
 export type { FloatButtonGroupProps, FloatButtonProps, FloatButtonRef } from './float-button';
+export { default as Form } from './form';
+export type { FormInstance, FormItemProps, FormListFieldData, FormListOperation, FormListProps, FormProps } from './form';
 export { default as Grid } from './grid';
 export { default as Image } from './image';
 export type { ImageProps } from './image';

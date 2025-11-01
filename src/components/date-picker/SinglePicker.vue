@@ -35,7 +35,7 @@ const {
   size: customizeSize,
   placement,
   placeholder,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   status: customStatus,
   variant: customVariant,
   onCalendarChange,
@@ -83,7 +83,7 @@ const value = defineModel<DateType | DateType[] | null>('value', {
   },
 });
 const pickerValue = defineModel<DateType | DateType[]>('pickerValue');
-const open = defineModel<boolean>('open', { default: undefined });
+const open = defineModel<boolean | undefined>('open', { default: undefined });
 
 const [mergedClassNames, mergedStyles] = useMergedPickerSemantic(
   computed(() => pickerType),

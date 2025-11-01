@@ -81,7 +81,7 @@ defineOptions({ name: 'TreeSelect', inheritAttrs: false, compatConfig: { MODE: 3
 const {
   prefixCls: customizePrefixCls,
   size: customizeSize,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   style,
   class: className,
   rootClassName,
@@ -240,8 +240,9 @@ const memoizedPlacement = computed<Placement>(() => {
 const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize?.value ?? ctx));
 
 // ===================== Disabled =====================
+// eslint-disable-next-line vue/no-dupe-keys
 const disabled = useDisabledContextInject();
-const mergedDisabled = customDisabled ?? disabled;
+const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 
 const mergedClassName = computed(() =>
   clsx(

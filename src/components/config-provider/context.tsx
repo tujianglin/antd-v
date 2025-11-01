@@ -27,7 +27,7 @@ import type { DropdownProps } from '../dropdown';
 import type { EmptyProps } from '../empty';
 import type { FlexProps } from '../flex/interface';
 import type { FloatButtonGroupProps } from '../float-button/interface';
-// import type { FormProps } from '../form/Form';
+import type { FormProps } from '../form/Form.vue';
 import type { ImageProps } from '../image';
 import type { InputProps, SearchProps, TextAreaProps } from '../input';
 import type { InputNumberProps } from '../input-number';
@@ -236,8 +236,8 @@ export type FlexConfig = ComponentStyleConfig & Pick<FlexProps, 'vertical'>;
 
 export type TransferConfig = ComponentStyleConfig & Pick<TransferProps, 'selectionsIcon' | 'classNames' | 'styles'>;
 
-// export type FormConfig = ComponentStyleConfig &
-//   Pick<FormProps, 'requiredMark' | 'colon' | 'scrollToFirstError' | 'validateMessages' | 'variant' | 'classNames' | 'styles'>;
+export type FormConfig = ComponentStyleConfig &
+  Pick<FormProps, 'requiredMark' | 'colon' | 'scrollToFirstError' | 'validateMessages' | 'variant' | 'classNames' | 'styles'>;
 
 export type FloatButtonConfig = {
   backTopIcon?: any;
@@ -330,7 +330,7 @@ export interface ConfigComponentProps {
   pagination?: PaginationConfig;
   space?: SpaceConfig;
   splitter?: ComponentStyleConfig;
-  // form?: FormConfig;
+  form?: FormConfig;
   select?: SelectConfig;
   alert?: AlertConfig;
   affix?: ComponentStyleConfig;

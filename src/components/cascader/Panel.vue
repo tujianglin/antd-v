@@ -42,7 +42,7 @@ const {
   notFoundContent,
   direction,
   expandIcon,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
 } = defineProps<CascaderPanelAutoProps<OptionType, ValueField>>();
 
 const value = defineModel<SingleValueType[]>('value');

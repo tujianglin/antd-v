@@ -44,7 +44,7 @@ const {
   onChange,
   onDrop,
   previewFile,
-  disabled: customDisabled,
+  disabled: customDisabled = undefined,
   locale: propLocale,
   iconRender,
   isImageUrl,

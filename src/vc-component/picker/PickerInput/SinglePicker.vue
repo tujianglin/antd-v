@@ -102,7 +102,7 @@ const props = withDefaults(defineProps<PickerProps>(), {
 
 const innerValue = defineModel<DateType | DateType[] | null>('value');
 const innerPickerValue = defineModel<DateType | DateType[]>('pickerValue');
-const open = defineModel<boolean>('open', { default: undefined });
+const open = defineModel<boolean | undefined>('open', { default: undefined });
 
 // ========================= Prop =========================
 const [filledProps, internalPicker, complexPicker, formatList, maskFormat, isInvalidateDate] = useFilledProps(

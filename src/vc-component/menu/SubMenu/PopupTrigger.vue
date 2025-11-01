@@ -13,7 +13,7 @@ import { getMotion } from '../utils/motionUtil';
 export interface PopupTriggerProps {
   prefixCls: string;
   mode: MenuMode;
-  visible: boolean;
+  visible: boolean | undefined;
   popup: any;
   popupStyle?: CSSProperties;
   popupClassName?: string;
