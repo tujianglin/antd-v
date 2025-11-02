@@ -331,7 +331,7 @@ const ListNode = () => {
       ) : (
         <TitleNode></TitleNode>
       )}
-      {!overflowDisabled?.value && (
+      {!overflowDisabled?.value && mode.value === 'inline' && (
         <InlineSubMenuList id={popupId.value} open={open.value} keyPath={connectedPath.value}>
           {slots?.default?.()}
         </InlineSubMenuList>

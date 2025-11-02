@@ -174,7 +174,7 @@ defineExpose({
 // ============================== Open ==============================
 const open = defineModel('open', { default: false });
 
-const noTitle = computed(() => !isVueNode(title.value) && !isVueNode(overlay.value) && title.value !== 0);
+const noTitle = computed(() => (!isVueNode(title.value) && !isVueNode(overlay.value) && title.value !== 0) || !title.value);
 
 const onInternalOpenChange = (vis: boolean) => {
   if (!noTitle.value && onOpenChange) {

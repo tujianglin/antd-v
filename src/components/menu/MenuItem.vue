@@ -9,12 +9,11 @@ import { omit } from 'lodash-es';
 import clsx from 'clsx';
 import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import { useSiderContextInject } from '../layout/context';
-import Render from '@/vc-component/render';
 
 export interface MenuItemProps extends Omit<RcMenuItemProps, 'title'> {
   icon?: VueNode;
   danger?: boolean;
-  title?: boolean | VueNode;
+  title?: VueNode;
 }
 
 type MenuItemComponent = MenuItemProps;
@@ -82,8 +81,19 @@ const renderItemChildren = (inlineCollapsed: boolean) => {
 
 const { siderCollapsed } = toRefs(useSiderContextInject());
 
+const tooltipTitle = computed(() => {
+  let result = title.value;
+
+  if (typeof title.value === 'undefined') {
+    result = firstLevel.value ? children.value : '';
+  } else if ((title.value as any) === false) {
+    result = '';
+  }
+  return result;
+});
+
 const tooltipProps = computed(() => {
-  const result: TooltipProps & { open?: boolean } = {};
+  const result: TooltipProps & { open?: boolean } = { title: tooltipTitle.value };
   if (!siderCollapsed?.value && !isInlineCollapsed.value) {
     result.title = null;
     result.open = false;
@@ -133,15 +143,6 @@ const ReturnNode = () => {
     :placement="direction === 'rtl' ? 'left' : 'right'"
     :class-names="{ root: `${prefixCls}-inline-collapsed-tooltip` }"
   >
-    <template #title>
-      <template v-if="typeof title === 'undefined'">
-        <template v-if="firstLevel"><slot></slot></template>
-      </template>
-      <template v-else-if="title === false"></template>
-      <template v-else>
-        <Render :content="title" />
-      </template>
-    </template>
     <ReturnNode />
   </Tooltip>
   <ReturnNode v-else />

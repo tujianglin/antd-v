@@ -10,7 +10,6 @@ import {
   ref,
   toRaw,
   toRefs,
-  useAttrs,
   watch,
   type CSSProperties,
   type HTMLAttributes,
@@ -517,7 +516,7 @@ const privateContext = computed(() => ({
 // ======================== Render ========================
 
 // >>>>> Children
-const wrappedChildList = () => {
+const wrappedChildList = computed(() => {
   return internalMode.value !== 'horizontal' || disabledOverflow
     ? childList.value
     : // Need wrap for overflow dropdown that do not response for open
@@ -536,63 +535,24 @@ const wrappedChildList = () => {
           </MenuContextProvider>
         );
       });
-};
+});
 
-const attrs = useAttrs();
-// >>>>> Container
-const Container = () => {
+function renderRawRest(omitItems) {
+  const len = omitItems.length;
+
+  const originOmitItems = len ? childList.value.slice(-len) : null;
   return (
-    <Overflow
-      id={id}
-      ref={composeRef((el) => (containerRef.value = el?.el))}
-      prefixCls={`${prefixCls}-overflow`}
-      component="ul"
-      class={clsx(
-        prefixCls,
-        `${prefixCls}-root`,
-        `${prefixCls}-${internalMode.value}`,
-        className,
-        {
-          [`${prefixCls}-inline-collapsed`]: internalInlineCollapsed.value,
-          [`${prefixCls}-rtl`]: isRtl.value,
-        },
-        rootClassName,
-      )}
-      dir={direction}
-      style={style}
-      role="menu"
-      tabindex={tabindex}
-      data={wrappedChildList()}
-      renderRawItem={(node) => node}
-      renderRawRest={(omitItems) => {
-        // We use origin list since wrapped list use context to prevent open
-        const len = omitItems.length;
-
-        const originOmitItems = len ? childList.value.slice(-len) : null;
-        return (
-          <SubMenu
-            eventKey={OVERFLOW_KEY}
-            title={overflowedIndicator}
-            disabled={allVisible.value}
-            internalPopupClose={len === 0}
-            popupClassName={overflowedIndicatorPopupClassName}
-          >
-            {originOmitItems}
-          </SubMenu>
-        );
-      }}
-      maxCount={internalMode.value !== 'horizontal' || disabledOverflow ? Overflow.INVALIDATE : Overflow.RESPONSIVE}
-      ssr="full"
-      data-menu-list
-      onVisibleChange={(newLastIndex) => {
-        lastVisibleIndex.value = newLastIndex;
-      }}
-      onKeydown={onInternalKeyDown}
-      {...restProps}
-      {...attrs}
-    />
+    <SubMenu
+      eventKey={OVERFLOW_KEY}
+      title={overflowedIndicator}
+      disabled={allVisible.value}
+      internalPopupClose={len === 0}
+      popupClassName={overflowedIndicatorPopupClassName}
+    >
+      {originOmitItems}
+    </SubMenu>
   );
-};
+}
 </script>
 <template>
   <PrivateContextProvider :value="privateContext">
@@ -628,11 +588,46 @@ const Container = () => {
         }"
       >
         <PathUserContextProvider :value="pathUserContext">
-          <Container />
+          <Overflow
+            :id="id"
+            :ref="composeRef((el) => (containerRef = el?.el))"
+            :prefix-cls="`${prefixCls}-overflow`"
+            component="ul"
+            :class="
+              clsx(
+                prefixCls,
+                `${prefixCls}-root`,
+                `${prefixCls}-${internalMode}`,
+                className,
+                {
+                  [`${prefixCls}-inline-collapsed`]: internalInlineCollapsed,
+                  [`${prefixCls}-rtl`]: isRtl,
+                },
+                rootClassName,
+              )
+            "
+            :dir="direction"
+            :style="style"
+            role="menu"
+            :tabindex="tabindex"
+            :data="wrappedChildList"
+            :render-raw-item="(node) => node"
+            :render-raw-rest="renderRawRest"
+            :max-count="internalMode !== 'horizontal' || disabledOverflow ? Overflow.INVALIDATE : Overflow.RESPONSIVE"
+            ssr="full"
+            data-menu-list
+            @visible-change="
+              (newLastIndex) => {
+                lastVisibleIndex = newLastIndex;
+              }
+            "
+            @keydown="onInternalKeyDown"
+            v-bind="{ ...restProps, ...$attrs }"
+          />
         </PathUserContextProvider>
         <div :style="{ display: 'none' }" aria-hidden>
           <PathRegisterContextProvider :value="registerPathContext">
-            <Render :content="measureChildList" />
+            <component :is="() => measureChildList" />
           </PathRegisterContextProvider>
         </div>
       </MenuContextProvider>
