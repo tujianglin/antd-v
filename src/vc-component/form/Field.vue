@@ -1,17 +1,6 @@
 <!-- eslint-disable vue/one-component-per-file -->
 <script lang="tsx">
-import {
-  defineComponent,
-  ref,
-  computed,
-  onMounted,
-  onBeforeUnmount,
-  cloneVNode,
-  Fragment,
-  unref,
-  type PropType,
-  type VNode,
-} from 'vue';
+import { defineComponent, ref, computed, onMounted, onBeforeUnmount, Fragment, unref, type PropType, type VNode } from 'vue';
 import { isEqual } from 'lodash-es';
 import warning from '@/vc-util/warning';
 import { HOOK_MARK, useFieldContextInject } from './FieldContext';
@@ -191,10 +180,10 @@ const Field = defineComponent({
       forceUpdate.value++;
     };
 
-    // const refresh = () => {
-    //   if (!mounted.value) return;
-    //   resetCount.value++;
-    // };
+    const refresh = () => {
+      if (!mounted.value) return;
+      resetCount.value++;
+    };
 
     // ================================== Helper Functions ==================================
     // These must be defined before triggerMetaEvent
@@ -272,6 +261,7 @@ const Field = defineComponent({
         validatePromise = null;
         errors = EMPTY_ERRORS;
         warnings = EMPTY_WARNINGS;
+        refresh();
         triggerMetaEvent();
         reRender();
       }
@@ -358,7 +348,6 @@ const Field = defineComponent({
               return exactMatch || partialMatch || directEqual;
             });
           });
-
           if (hasMatch) {
             reRender();
             return;
@@ -529,6 +518,7 @@ const Field = defineComponent({
       };
 
       // Add trigger
+
       control[trigger] = (...args: EventArgs) => {
         touched = true;
         dirty = true;
@@ -548,14 +538,11 @@ const Field = defineComponent({
         if (normalize) {
           newValue = normalize(newValue, value, getFieldsValue(true));
         }
-
-        if (newValue !== value) {
-          dispatch({
-            type: 'updateValue',
-            namePath,
-            value: newValue,
-          });
-        }
+        dispatch({
+          type: 'updateValue',
+          namePath,
+          value: newValue,
+        });
         if (originTriggerFunc) {
           originTriggerFunc(...args);
         }
@@ -684,10 +671,8 @@ const Field = defineComponent({
       if (props.isList) {
         return <Fragment key={resetCount.value}>{child}</Fragment>;
       }
-
       // Clone child with controlled props
-      const controlled = getControlled(child.props || {});
-      return <Fragment key={resetCount.value}>{cloneVNode(child, controlled, true)}</Fragment>;
+      return <Fragment key={resetCount.value}>{child}</Fragment>;
     };
   },
 });

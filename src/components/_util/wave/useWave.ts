@@ -23,7 +23,7 @@ const useWave = (
     const targetNode = node.querySelector<HTMLElement>(`.${TARGET_CLS}`) || node;
     const { showEffect } = wave?.value || {};
     (showEffect || showWaveEffect)(targetNode, {
-      className: className.value,
+      class: className.value,
       token: token.value,
       component,
       event,

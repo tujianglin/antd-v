@@ -1,5 +1,5 @@
+import { merge } from '@/vc-util/utils/set';
 import warning from '@/vc-util/warning';
-import { merge } from 'lodash-es';
 import { ref } from 'vue';
 import type { BatchTask } from './BatchUpdate.vue';
 import { HOOK_MARK } from './FieldContext';

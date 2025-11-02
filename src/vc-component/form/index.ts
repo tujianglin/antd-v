@@ -1,10 +1,10 @@
 import Field from './Field.vue';
-import { useFieldContextInject } from './FieldContext.tsx';
+import { useFieldContextInject } from './FieldContext';
 import InternalForm, { type FormProps } from './Form.vue';
-import { FormProvider } from './FormContext.tsx';
+import { FormProvider } from './FormContext';
 import type { FormInstance, FormRef } from './interface';
 import List from './List.vue';
-import { useListContextInject } from './ListContext.tsx';
+import { useListContextInject } from './ListContext';
 import useForm from './useForm';
 import useWatch from './useWatch';
 

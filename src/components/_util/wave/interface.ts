@@ -7,7 +7,7 @@ export const TARGET_CLS = `${defaultPrefixCls}-wave-target`;
 export type ShowWaveEffect = (
   element: HTMLElement,
   info: {
-    className: string;
+    class: string;
     token: GlobalToken;
     component?: WaveComponent;
     event: MouseEvent;

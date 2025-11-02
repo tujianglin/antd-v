@@ -1,11 +1,21 @@
 <script lang="tsx" setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, type FormHTMLAttributes, type VNode } from 'vue';
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+  type CSSProperties,
+  type FormHTMLAttributes,
+  type VNode,
+} from 'vue';
 import type { BatchTask, BatchUpdateRef } from './BatchUpdate.vue';
 import BatchUpdate from './BatchUpdate.vue';
-import { FieldContextProvider, HOOK_MARK } from './FieldContext.tsx';
-import { useFormContextInject } from './FormContext.tsx';
+import { FieldContextProvider, HOOK_MARK } from './FieldContext';
+import { useFormContextInject } from './FormContext';
 import type { Callbacks, FieldData, FormInstance, InternalFormInstance, Store, ValidateMessages } from './interface';
-import { ListContextProvider } from './ListContext.tsx';
+import { ListContextProvider } from './ListContext';
 import useForm from './useForm';
 import { isSimilar } from './utils/valueUtil';
 
@@ -14,6 +24,8 @@ type BaseFormProps = Omit<FormHTMLAttributes, 'onSubmit' | 'children'>;
 type RenderProps = (props: { values: Store; form: FormInstance }) => VNode;
 
 export interface FormProps<Values = any> extends /** @vue-ignore */ BaseFormProps {
+  class?: string;
+  style?: CSSProperties;
   initialValues?: Store;
   form?: FormInstance<Values>;
   component?: any;
@@ -229,6 +241,7 @@ const ChildrenNode = () => {
   <component
     v-else
     :is="DomCompoennt"
+    v-bind="{ ...restProps, ...$attrs }"
     ref="nativeElementRef"
     @submit="
       (event) => {

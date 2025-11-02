@@ -18,7 +18,7 @@ const prefixCls = computed(() => getPrefixCls.value('wave'));
 const hashId = useStyle(prefixCls);
 
 const showWave = useWave(
-  computed(() => clsx(prefixCls.value, hashId)),
+  computed(() => clsx(prefixCls.value, hashId.value)),
   props.component,
   computed(() => props.colorSource),
 );

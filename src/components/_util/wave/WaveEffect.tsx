@@ -16,7 +16,7 @@ function validateNum(value: number) {
 const WaveEffect = defineComponent({
   inheritAttrs: false,
   props: {
-    className: String,
+    class: String,
     target: {
       type: Object as PropType<HTMLElement>,
     },
@@ -152,14 +152,16 @@ const WaveEffect = defineComponent({
           }}
         >
           {{
-            default: ({ class: motionClassName, ref: motionRef }) => (
-              <div
-                ref={composeRef((e) => (divRef.value = e), motionRef)}
-                class={clsx(props.className, motionClassName)}
-                style={waveStyle}
-                onTransitionend={onTransitionend}
-              />
-            ),
+            default: ({ class: motionClassName, ref: motionRef }) => {
+              return (
+                <div
+                  ref={composeRef((e) => (divRef.value = e), motionRef)}
+                  class={clsx(props.class, motionClassName)}
+                  style={waveStyle}
+                  onTransitionend={onTransitionend}
+                />
+              );
+            },
           }}
         </CSSMotion>
       );

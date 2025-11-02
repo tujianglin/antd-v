@@ -168,7 +168,7 @@ const entityStyle: CSSProperties = {
   >
     <div ref="sentinelStartRef" :tabindex="0" :style="entityStyle">
       <MemoChildren :should-update="visible || forceRender">
-        <Render :content="modalRender ? modalRender(content) : content" />
+        <component :is="modalRender ? modalRender(content) : content" />
       </MemoChildren>
     </div>
     <div :tabindex="0" ref="sentinelEndRef" :style="sentinelStyle"></div>

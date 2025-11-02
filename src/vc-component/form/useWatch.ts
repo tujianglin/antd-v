@@ -1,6 +1,6 @@
 import warning from '@/vc-util/warning';
 import { computed, onMounted, ref, unref, watch, type Ref } from 'vue';
-import { HOOK_MARK, useFieldContextInject } from './FieldContext.tsx';
+import { HOOK_MARK, useFieldContextInject } from './FieldContext';
 import type { FormInstance, InternalFormInstance, NamePath, Store, WatchOptions } from './interface';
 import { isFormInstance } from './utils/typeUtil';
 import { getNamePath, getValue } from './utils/valueUtil';

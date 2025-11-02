@@ -56,13 +56,6 @@ export default defineConfig(({ command }) => {
     server: {
       host: true,
       port: 1814,
-      proxy: {
-        '/api': {
-          target: 'http://192.168.40.222:8080',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-        },
-      },
     },
   };
 });
