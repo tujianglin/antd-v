@@ -2,13 +2,12 @@
 import { reactiveComputed } from '@vueuse/core';
 import { computed, onMounted, onUpdated, ref, toRefs, useTemplateRef, watch } from 'vue';
 import { useQRCode } from './hooks/useQRCode';
-import type { ImageSettings, QRPropsCanvas } from './interface';
+import type { QRPropsCanvas } from './interface';
 import {
   DEFAULT_BACKGROUND_COLOR,
   DEFAULT_FRONT_COLOR,
   DEFAULT_LEVEL,
   DEFAULT_MINVERSION,
-  DEFAULT_NEED_MARGIN,
   DEFAULT_SIZE,
   excavateModules,
   generatePath,
@@ -23,11 +22,11 @@ const {
   level = DEFAULT_LEVEL,
   bgColor = DEFAULT_BACKGROUND_COLOR,
   fgColor = DEFAULT_FRONT_COLOR,
-  includeMargin = DEFAULT_NEED_MARGIN,
   minVersion = DEFAULT_MINVERSION,
   marginSize,
   style,
-  imageSettings = {} as ImageSettings,
+  imageSettings,
+  boostLevel,
   ...otherProps
 } = defineProps<QRPropsCanvas>();
 const imgSrc = computed(() => imageSettings?.src);
@@ -38,17 +37,15 @@ const isImageLoaded = ref(false);
 
 const { margin, cells, numCells, calculatedImageSettings } = toRefs(
   useQRCode(
-    reactiveComputed(() => {
-      return {
-        value,
-        level,
-        minVersion,
-        includeMargin,
-        marginSize,
-        imageSettings,
-        size,
-      };
-    }),
+    reactiveComputed(() => ({
+      value,
+      level,
+      minVersion,
+      marginSize,
+      imageSettings,
+      size,
+      boostLevel,
+    })),
   ),
 );
 

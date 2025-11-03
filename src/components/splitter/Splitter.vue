@@ -25,6 +25,7 @@ const {
   onResize,
   onResizeEnd,
   lazy,
+  ...restProps
 } = defineProps<SplitterProps>();
 
 const slots = defineSlots<{
@@ -99,6 +100,8 @@ const onInternalCollapse = (index: number, type: 'start' | 'end') => {
   const nextSizes = onCollapse(index, type);
   onResize?.(nextSizes);
   onResizeEnd?.(nextSizes);
+  const collapsed = nextSizes.map((size) => Math.abs(size) < Number.EPSILON);
+  restProps.onCollapse?.(collapsed, nextSizes);
 };
 
 // ======================== Styles ========================

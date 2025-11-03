@@ -33,6 +33,7 @@ const {
   prefixCls: customizePrefixCls,
   bgColor = 'transparent',
   statusRender,
+  boostLevel,
   classNames: qrcodeClassNames,
   styles,
   ...rest
@@ -81,6 +82,7 @@ const qrCodeProps = computed(() => ({
   fgColor: color.value,
   style: { width: style?.width, height: style?.height },
   imageSettings: icon ? imageSettings?.value : undefined,
+  boostLevel,
   ...a11yProps?.value,
 }));
 

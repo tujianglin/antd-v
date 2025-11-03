@@ -3,7 +3,6 @@ import { computed, ref, toRefs } from 'vue';
 import {
   DEFAULT_BACKGROUND_COLOR,
   DEFAULT_FRONT_COLOR,
-  DEFAULT_NEED_MARGIN,
   DEFAULT_LEVEL,
   DEFAULT_MINVERSION,
   DEFAULT_SIZE,
@@ -23,11 +22,11 @@ const {
   level = DEFAULT_LEVEL,
   bgColor = DEFAULT_BACKGROUND_COLOR,
   fgColor = DEFAULT_FRONT_COLOR,
-  includeMargin = DEFAULT_NEED_MARGIN,
   minVersion = DEFAULT_MINVERSION,
   title,
   marginSize,
   imageSettings,
+  boostLevel,
   ...otherProps
 } = defineProps<QRPropsSVG>();
 
@@ -37,10 +36,10 @@ const { margin, cells, numCells, calculatedImageSettings } = toRefs(
       value,
       level,
       minVersion,
-      includeMargin,
       marginSize,
       imageSettings,
       size,
+      boostLevel,
     })),
   ),
 );

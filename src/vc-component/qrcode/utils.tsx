@@ -133,19 +133,6 @@ export const getImageSettings = (
 };
 
 /**
- * Get margin size
- * @param needMargin Whether need margin
- * @param marginSize Custom margin size
- * @returns
- */
-export const getMarginSize = (needMargin: boolean, marginSize?: number) => {
-  if (marginSize != null) {
-    return Math.max(Math.floor(marginSize), 0);
-  }
-  return needMargin ? SPEC_MARGIN_SIZE : DEFAULT_MARGIN_SIZE;
-};
-
-/**
  * Check if Path2D is supported
  */
 export const isSupportPath2d = (() => {

@@ -62,6 +62,13 @@ export type QRProps = {
    */
   value: string;
   /**
+   * If enabled, the Error Correction Level of the result may be higher than
+   * the specified Error Correction Level option if it can be done without
+   * increasing the version.
+   * @defaultValue true
+   */
+  boostLevel?: boolean;
+  /**
    * The size, in pixels, to render the QR Code.
    * @defaultValue 128
    */
@@ -88,13 +95,6 @@ export type QRProps = {
    * The style to apply to the QR Code.
    */
   style?: CSSProperties;
-  /**
-   * Whether or not a margin of 4 modules should be rendered as a part of the
-   * QR Code.
-   * @deprecated Use `marginSize` instead.
-   * @defaultValue false
-   */
-  includeMargin?: boolean;
   /**
    * The number of _modules_ to use for margin. The QR Code specification
    * requires `4`, however you can specify any number. Values will be turned to
