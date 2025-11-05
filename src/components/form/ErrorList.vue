@@ -129,6 +129,7 @@ const helpProps = computed(() => {
         <CSSMotionList
           :keys="filledKeyFullKeyList"
           v-bind="initCollapseMotion(prefixCls)"
+          motion-appear
           :motion-name="`${prefixCls}-show-help-item`"
           :component="false"
         >
