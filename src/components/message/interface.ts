@@ -1,7 +1,14 @@
 import type { VueKey, VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks';
 
 export type NoticeType = 'info' | 'success' | 'error' | 'warning' | 'loading';
+
+export type SemanticName = 'root' | 'icon' | 'content';
+
+export type ArgsClassNamesType = SemanticClassNamesType<ArgsProps, SemanticName>;
+
+export type ArgsStylesType = SemanticStylesType<ArgsProps, SemanticName>;
 
 export interface ConfigOptions {
   top?: string | number;
@@ -16,8 +23,9 @@ export interface ConfigOptions {
    * @descEN keep the timer running or not on hover
    */
   pauseOnHover?: boolean;
+  classNames?: ArgsClassNamesType;
+  styles?: ArgsStylesType;
 }
-export type SemanticName = 'root' | 'icon' | 'content';
 
 export interface ArgsProps {
   /**
@@ -44,8 +52,8 @@ export interface ArgsProps {
   key?: string | number;
   style?: CSSProperties;
   class?: string;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: ArgsClassNamesType;
+  styles?: ArgsStylesType;
   /**
    * @descCN 消息通知点击时的回调函数
    * @descEN Callback function when message notification is clicked

@@ -1,10 +1,10 @@
 <script lang="tsx" setup>
 import type { VueNode } from '@/vc-util/type';
-import { computed, toRefs, type CSSProperties, type VNode } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties, type VNode } from 'vue';
 import DefaultEmptyImg from './empty';
 import SimpleEmptyImg from './simple';
 import { useComponentConfig } from '../config-provider/context';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import useStyle from './style';
 import { useLocale } from '../locale';
 import clsx from 'clsx';
@@ -14,7 +14,10 @@ export interface TransferLocale {
   description: string;
 }
 
-export type SemanticName = 'root' | 'image' | 'description' | 'footer';
+export type EmptySemanticName = 'root' | 'image' | 'description' | 'footer';
+
+export type EmptyClassNamesType = SemanticClassNamesType<EmptyProps, EmptySemanticName>;
+export type EmptyStylesType = SemanticStylesType<EmptyProps, EmptySemanticName>;
 export interface EmptyProps {
   prefixCls?: string;
   class?: string;
@@ -22,8 +25,8 @@ export interface EmptyProps {
   style?: CSSProperties;
   image?: VueNode;
   description?: boolean | VueNode;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: EmptyClassNamesType;
+  styles?: EmptyStylesType;
 }
 
 defineOptions({ name: 'Empty', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -61,9 +64,11 @@ const {
   image: contextImage,
 } = toRefs(useComponentConfig('empty'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+const [mergedClassNames, mergedStyles] = useMergeSemantic<EmptyClassNamesType, EmptyStylesType, EmptyProps>(
   computed(() => [contextClassNames?.value, emptyClassNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({ props: vm.props })),
 );
 
 const prefixCls = computed(() => getPrefixCls.value('empty', customizePrefixCls));

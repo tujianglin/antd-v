@@ -3,17 +3,17 @@ import type { DrawerProps as RcDrawerProps } from '@/vc-component/drawer';
 import RcDrawer from '@/vc-component/drawer';
 import type { CSSMotionProps } from '@/vc-component/motion';
 import clsx from 'clsx';
-import { computed, toRefs } from 'vue';
+import { computed, getCurrentInstance, toRefs } from 'vue';
 import ContextIsolator from '../_util/ContextIsolator';
+import { useMergeSemantic } from '../_util/hooks';
 import type { MaskType } from '../_util/hooks/useMergedMask';
 import useMergedMask from '../_util/hooks/useMergedMask';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import { getTransitionName } from '../_util/motion';
 import { ZIndexContextProvider } from '../_util/zindexContext';
 import { useComponentConfig } from '../config-provider/context';
 import { usePanelRef } from '../watermark/context';
-import type { DrawerClassNames, DrawerPanelProps, DrawerStyles } from './DrawerPanel.vue';
+import type { DrawerClassNamesType, DrawerPanelProps, DrawerStylesType } from './DrawerPanel.vue';
 import DrawerPanel from './DrawerPanel.vue';
 import useStyle from './style';
 import { DEFAULT_SIZE, defaultPushState, type sizeType } from './util';
@@ -30,14 +30,12 @@ export interface DrawerResizableConfig {
 
 // Drawer diff props: 'open' | 'motion' | 'maskMotion' | 'wrapperClassName'
 export interface DrawerProps
-  extends Omit<RcDrawerProps, 'maskStyle' | 'destroyOnClose' | 'mask' | 'resizable'>,
+  extends Omit<RcDrawerProps, 'maskStyle' | 'destroyOnClose' | 'mask' | 'resizable' | 'classNames' | 'styles'>,
     Omit<DrawerPanelProps, 'prefixCls'> {
   size?: sizeType | number;
   resizable?: DrawerResizableConfig;
   open?: boolean;
   afterOpenChange?: (open: boolean) => void;
-  classNames?: DrawerClassNames;
-  styles?: DrawerStyles;
   /**
    * @since 5.25.0
    */
@@ -142,9 +140,20 @@ const [mergedMask, maskBlurClassName] = useMergedMask(
   prefixCls,
 );
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<DrawerClassNamesType, DrawerStylesType, DrawerProps>(
   computed(() => [contextClassNames?.value, rest.classNames]),
   computed(() => [contextStyles?.value, rest.styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      zIndex: zIndex.value,
+      mask: mergedMask.value,
+      defaultSize,
+      push,
+    },
+  })),
 );
 
 const drawerClassName = computed(() =>

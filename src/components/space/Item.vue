@@ -3,6 +3,7 @@ import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { toRefs, type CSSProperties } from 'vue';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks';
 import { useSpaceContextInject } from './context';
 
 export interface ItemProps {
@@ -11,8 +12,8 @@ export interface ItemProps {
   index: number;
   separator?: VueNode;
   style?: CSSProperties;
-  classNames: Partial<Record<'separator', string>>;
-  styles: Partial<Record<'separator', CSSProperties>>;
+  classNames: SemanticClassNames<'separator'>;
+  styles: SemanticStyles<'separator'>;
 }
 
 defineOptions({ inheritAttrs: false });

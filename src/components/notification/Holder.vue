@@ -1,10 +1,16 @@
 <script lang="tsx" setup>
 import { useNotification as useRcNotification } from '@/vc-component/notification';
 import clsx from 'clsx';
-import { computed, defineComponent, toRefs, type CSSProperties } from 'vue';
+import { computed, defineComponent, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
 import { useComponentConfig, useConfigContextInject } from '../config-provider/context';
 import { useToken } from '../theme/internal';
-import type { NotificationConfig, NotificationPlacement } from './interface';
+import type {
+  NotificationClassNamesType,
+  NotificationConfig,
+  NotificationPlacement,
+  NotificationSemantic,
+  NotificationStylesType,
+} from './interface';
 import { getCloseIcon, getMotion, getPlacementStyle } from './util';
 import type { NotificationAPI, NotificationConfig as RcNotificationConfig } from '@/vc-component/notification';
 import { NotificationContextProvider } from '@/vc-component/notification/NotificationProvider';
@@ -12,11 +18,14 @@ import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useStyle from './style';
 import type { NotificationConfig as CPNotificationConfig } from '../config-provider/context';
 import { reactiveComputed } from '@vueuse/core';
+import { useMergeSemantic, type SemanticClassNames, type SemanticStyles } from '../_util/hooks';
 
 export interface HolderRef {
   prefixCls: string;
   notification?: CPNotificationConfig;
   api?: NotificationAPI;
+  classNames: SemanticClassNames<NotificationSemantic>;
+  styles: SemanticStyles<NotificationSemantic>;
 }
 
 // ==============================================================================
@@ -40,6 +49,8 @@ const {
   duration,
   pauseOnHover = true,
   showProgress,
+  classNames,
+  styles,
 } = defineProps<HolderProps>();
 
 const Wrapper = defineComponent({
@@ -105,6 +116,16 @@ const [api, Holder] = useRcNotification(
   })),
 );
 
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<NotificationClassNamesType, NotificationStylesType, HolderProps>(
+  computed(() => [notification?.value?.classNames, classNames]),
+  computed(() => [notification?.value?.styles, styles]),
+  computed(() => ({
+    props: vm.props,
+  })),
+);
+
 // ================================ Ref ================================
 defineExpose({
   get api() {
@@ -115,6 +136,12 @@ defineExpose({
   },
   get notification() {
     return notification?.value;
+  },
+  get classNames() {
+    return mergedClassNames.value;
+  },
+  get styles() {
+    return mergedStyles.value;
   },
 });
 </script>

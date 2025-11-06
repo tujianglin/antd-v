@@ -13,6 +13,7 @@ import clsx from 'clsx';
 export interface RateProps extends RcRateProps {
   rootClassName?: string;
   tooltips?: (TooltipProps | string)[];
+  size?: 'small' | 'middle' | 'large';
 }
 
 defineOptions({ name: 'Rate', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -26,6 +27,7 @@ const {
   allowClear = true,
   character = <StarFilled />,
   disabled: customDisabled = undefined,
+  size = 'middle',
   ...rest
 } = defineProps<RateProps>();
 
@@ -79,7 +81,7 @@ const mergedDisabled = computed(() => customDisabled ?? disabled.value);
     :character="character"
     :character-render="characterRender"
     :disabled="mergedDisabled"
-    :class="clsx(className, rootClassName, hashId, cssVarCls, contextClassName)"
+    :class="clsx(`${ratePrefixCls}-${size}`, className, rootClassName, hashId, cssVarCls, contextClassName)"
     :style="mergedStyle"
     :prefix-cls="ratePrefixCls"
     :direction="direction"

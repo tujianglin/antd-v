@@ -1,6 +1,6 @@
 {
   "name": "antd-v",
-  "version": "0.1.4",
+  "version": "6.0.0-alpha.4",
   "type": "module",
   "scripts": {
     "dev": "vite",

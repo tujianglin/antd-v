@@ -3,6 +3,7 @@ import RcCheckbox from '@/vc-component/checkbox/index.vue';
 import clsx from 'clsx';
 import { isEmpty } from 'lodash-es';
 import { computed, getCurrentInstance, toRefs } from 'vue';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { Wave } from '../_util/wave';
 import { TARGET_CLS } from '../_util/wave/interface';
 import useBubbleLock from '../checkbox/useBubbleLock';
@@ -21,7 +22,7 @@ const {
   rootClassName,
   style,
   title,
-  classNames: radioClassNames,
+  classNames,
   styles,
   disabled: customDisabled = undefined,
   ...restProps
@@ -61,6 +62,23 @@ const radioProps = computed(() => {
   return { ...restProps, ...result } as any;
 });
 
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<
+  SemanticClassNamesType<RadioProps, 'root' | 'icon' | 'label'>,
+  SemanticStylesType<RadioProps, 'root' | 'icon' | 'label'>,
+  RadioProps
+>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      ...radioProps.value,
+    },
+  })),
+);
+
 const wrapperClassString = computed(() => {
   return clsx(
     `${prefixCls.value}-wrapper`,
@@ -73,8 +91,7 @@ const wrapperClassString = computed(() => {
     contextClassName?.value,
     className,
     rootClassName,
-    contextClassNames.value?.root,
-    radioClassNames?.root,
+    mergedClassNames?.value?.root,
     hashId.value,
     cssVarCls.value,
     rootCls.value,
@@ -87,7 +104,6 @@ function onChange(e: RadioChangeEvent) {
 }
 const [onLabelClick, onInputClick] = useBubbleLock(radioProps.value.onClick);
 
-const vm = getCurrentInstance();
 function changeRef(el) {
   vm.exposed = el || {};
   vm.exposeProxy = el || {};
@@ -97,7 +113,7 @@ function changeRef(el) {
   <Wave component="Radio" :disabled="radioProps.disabled">
     <label
       :class="wrapperClassString"
-      :style="{ ...contextStyles.root, ...styles?.root, ...contextStyle, ...style }"
+      :style="{ ...mergedStyles.root, ...contextStyle, ...style }"
       @mouseenter="restProps.onMouseenter"
       @mouseleave="restProps.onMouseleave"
       :title="title"
@@ -106,21 +122,17 @@ function changeRef(el) {
       <RcCheckbox
         v-bind="{ ...radioProps, ...$attrs }"
         :class="
-          clsx(radioClassNames?.icon, contextClassNames.icon, {
+          clsx(mergedClassNames?.icon, {
             [TARGET_CLS]: !isButtonType,
           })
         "
-        :style="{ ...contextStyles.icon, ...styles?.icon }"
+        :style="mergedStyles.icon"
         type="radio"
         :prefix-cls="prefixCls"
         :ref="changeRef"
         @click="onInputClick"
       />
-      <span
-        v-if="$slots.default"
-        :class="clsx(`${prefixCls}-label`, contextClassNames.label, radioClassNames?.label)"
-        :style="{ ...contextStyles.label, ...styles?.label }"
-      >
+      <span v-if="$slots.default" :class="clsx(`${prefixCls}-label`, mergedClassNames?.label)" :style="mergedStyles.label">
         <slot></slot>
       </span>
     </label>

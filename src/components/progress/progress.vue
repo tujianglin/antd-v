@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import { computed, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
 import { FastColor } from '@ant-design/fast-color';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { useComponentConfig } from '../config-provider/context';
 import useStyle from './style';
 import { getSize, getSuccessPercent, validProgress } from './utils';
@@ -16,6 +16,10 @@ import Line from './Line.vue';
 import Circle from './Circle.vue';
 
 export type SemanticName = 'root' | 'body' | 'rail' | 'track' | 'indicator';
+
+export type ProgressClassNamesType = SemanticClassNamesType<ProgressProps, SemanticName>;
+
+export type ProgressStylesType = SemanticStylesType<ProgressProps, SemanticName>;
 
 export type ProgressSize = 'default' | 'small';
 export type StringGradients = Record<string, string>;
@@ -40,8 +44,8 @@ export interface ProgressProps extends ProgressAriaProps {
   prefixCls?: string;
   class?: string;
   rootClassName?: string;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: ProgressClassNamesType;
+  styles?: ProgressStylesType;
 
   type?: ProgressType;
   percent?: number;
@@ -126,9 +130,19 @@ const prefixCls = computed(() => getPrefixCls.value('progress', customizePrefixC
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
 // ======================== Styles ========================
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const [mergedClassNames, mergedStyles] = useMergeSemantic<ProgressClassNamesType, ProgressStylesType, ProgressProps>(
   computed(() => [contextClassNames?.value, classNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      percent,
+      type,
+      size,
+      showInfo,
+      percentPosition,
+    },
+  })),
 );
 
 // ========================= Info =========================

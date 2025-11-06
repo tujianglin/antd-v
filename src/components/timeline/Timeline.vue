@@ -2,13 +2,14 @@
 import { UnstableContextProvider } from '@/vc-component/steps/UnstableContext';
 import type { VueKey, VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { computed, toRefs, type CSSProperties, type VNode } from 'vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { computed, getCurrentInstance, toRefs, type CSSProperties, type VNode } from 'vue';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import type { LiteralUnion } from '../_util/type';
 import { useComponentConfig } from '../config-provider/context';
 import type { StepsProps } from '../steps';
 import Steps from '../steps';
 import { InternalContextProvider } from '../steps/context';
+import type { StepsSemanticName } from '../steps/index.vue';
 import useStyle from './style';
 import useItems from './useItems';
 
@@ -40,13 +41,16 @@ export interface TimelineItemType {
   icon?: VueNode;
 }
 
+export type TimelineClassNamesType = SemanticClassNamesType<TimelineProps, StepsSemanticName>;
+export type TimelineStylesType = SemanticStylesType<TimelineProps, StepsSemanticName>;
+
 export interface TimelineProps {
   // Style
   prefixCls?: string;
   class?: string;
   style?: CSSProperties;
-  classNames?: StepsProps['classNames'];
-  styles?: StepsProps['styles'];
+  classNames?: TimelineClassNamesType;
+  styles?: TimelineStylesType;
   rootClassName?: string;
 
   // Design
@@ -120,11 +124,6 @@ const stepsClassNames = computed(() => ({
   itemHeader: `${prefixCls.value}-item-header`,
 }));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [stepsClassNames.value, contextClassNames?.value, classNames]),
-  computed(() => [contextStyles?.value, styles]),
-);
-
 // ===================== Mode =======================
 const mergedMode = computed(() => {
   // Deprecated
@@ -175,6 +174,20 @@ const stepStyle = computed<CSSProperties>(() => {
   }
   return result;
 });
+const vm = getCurrentInstance();
+const [mergedClassNames, mergedStyles] = useMergeSemantic<TimelineClassNamesType, TimelineStylesType, TimelineProps>(
+  computed(() => [stepsClassNames.value, contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      variant,
+      mode: mergedMode.value,
+      orientation,
+      items: mergedItems.value,
+    },
+  })),
+);
 </script>
 <template>
   <InternalContextProvider :value="stepInternalContext">

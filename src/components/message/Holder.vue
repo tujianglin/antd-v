@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
 import { useNotification as useRcNotification } from '@/vc-component/notification';
 import clsx from 'clsx';
-import { computed, defineComponent, toRefs } from 'vue';
+import { computed, defineComponent, getCurrentInstance, toRefs } from 'vue';
 import { useComponentConfig, useConfigContextInject } from '../config-provider/context';
-import type { ConfigOptions } from './interface';
+import type { ArgsClassNamesType, ArgsStylesType, ConfigOptions, SemanticName } from './interface';
 import { getMotion } from './util';
 import type { NotificationAPI, NotificationConfig as RcNotificationConfig } from '@/vc-component/notification';
 import { NotificationContextProvider } from '@/vc-component/notification/NotificationProvider';
@@ -11,11 +11,14 @@ import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useStyle from './style';
 import type { MessageConfig } from '../config-provider/context';
 import { reactiveComputed } from '@vueuse/core';
+import { useMergeSemantic, type SemanticClassNames, type SemanticStyles } from '../_util/hooks';
 
 export interface HolderRef {
   prefixCls: string;
   message?: MessageConfig;
   api?: NotificationAPI;
+  classNames?: SemanticClassNames<SemanticName>;
+  styles?: SemanticStyles<SemanticName>;
 }
 
 // ==============================================================================
@@ -37,6 +40,8 @@ const {
   transitionName,
   onAllRemoved,
   pauseOnHover = true,
+  classNames,
+  styles,
 } = defineProps<HolderProps>();
 
 const Wrapper = defineComponent({
@@ -76,6 +81,16 @@ const getClassName = () => clsx({ [`${prefixCls.value}-rtl`]: rtl ?? direction?.
 // ============================== Motion ===============================
 const getNotificationMotion = () => getMotion(prefixCls.value, transitionName);
 
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<ArgsClassNamesType, ArgsStylesType, HolderProps>(
+  computed(() => [classNames, message?.value?.classNames]),
+  computed(() => [styles, message?.value?.styles]),
+  computed(() => ({
+    props: vm.props,
+  })),
+);
+
 // ============================== Origin ===============================
 const [api, Holder] = useRcNotification(
   reactiveComputed(() => ({
@@ -105,6 +120,12 @@ defineExpose({
   },
   get message() {
     return message?.value;
+  },
+  get classNames() {
+    return mergedClassNames.value;
+  },
+  get styles() {
+    return mergedStyles.value;
   },
 });
 </script>

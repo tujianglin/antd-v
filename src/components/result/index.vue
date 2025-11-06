@@ -1,19 +1,23 @@
 <script lang="tsx" setup>
 import { CheckCircleFilled, CloseCircleFilled, ExclamationCircleFilled, WarningFilled } from '@ant-design/icons-vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { useComponentConfig } from '../config-provider/context';
 import noFound from './noFound.vue';
 import serverError from './serverError.vue';
 import useStyle from './style';
 import unauthorized from './unauthorized.vue';
 import type { VueNode } from '@/vc-util/type';
-import { computed, defineComponent, toRefs, type Component, type CSSProperties, type VNode } from 'vue';
+import { computed, defineComponent, getCurrentInstance, toRefs, type Component, type CSSProperties, type VNode } from 'vue';
 import Render from '@/vc-component/render';
 import clsx from 'clsx';
 
 export type ExceptionStatusType = 403 | 404 | 500 | '403' | '404' | '500';
 export type ResultStatusType = ExceptionStatusType | keyof typeof IconMap;
 type SemanticName = 'root' | 'title' | 'subTitle' | 'body' | 'extra' | 'icon';
+
+export type ResultClassNamesType = SemanticClassNamesType<ResultProps, SemanticName>;
+
+export type ResultStylesType = SemanticStylesType<ResultProps, SemanticName>;
 
 export interface ResultProps {
   icon?: VueNode;
@@ -25,8 +29,8 @@ export interface ResultProps {
   class?: string;
   rootClassName?: string;
   style?: CSSProperties;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: ResultClassNamesType;
+  styles?: ResultStylesType;
 }
 
 export interface ResultType extends ResultProps {
@@ -134,9 +138,17 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('result'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<ResultClassNamesType, ResultStylesType, ResultProps>(
   computed(() => [contextClassNames?.value, resultClassNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      status,
+    },
+  })),
 );
 
 const prefixCls = computed(() => getPrefixCls.value('result', customizePrefixCls));

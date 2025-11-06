@@ -3,7 +3,7 @@ import { computed, getCurrentInstance, toRefs, type ComponentInstance, type CSSP
 import RcDropdown from '@/vc-component/dropdown';
 import type { MenuProps as RcMenuProps } from '@/vc-component/menu';
 import type { AlignType } from '@/vc-component/trigger';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import type { AdjustOverflow } from '../_util/placements';
 import getPlacements from '../_util/placements';
@@ -33,11 +33,14 @@ export type DropdownArrowOptions = {
 
 type SemanticName = 'root' | 'item' | 'itemTitle' | 'itemIcon' | 'itemContent';
 
+export type DropdownClassNamesType = SemanticClassNamesType<DropdownProps, SemanticName>;
+export type DropdownStylesType = SemanticStylesType<DropdownProps, SemanticName>;
+
 type MenuProps = Partial<ComponentInstance<typeof Menu>['$props']>;
 
 export interface DropdownProps {
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: DropdownClassNamesType;
+  styles?: DropdownStylesType;
   menu?: MenuProps & { activeKey?: RcMenuProps['activeKey'] };
   autofocus?: boolean;
   arrow?: boolean | DropdownArrowOptions;
@@ -102,9 +105,19 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('dropdown'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<DropdownClassNamesType, DropdownStylesType, DropdownProps>(
   computed(() => [contextClassNames?.value, dropdownClassNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      mouseEnterDelay,
+      mouseLeaveDelay,
+      autoAdjustOverflow,
+    },
+  })),
 );
 
 const mergedRootStyles = computed(() => ({
@@ -271,7 +284,6 @@ const [zIndex, contextZIndex] = useZIndex(
   computed(() => mergedRootStyles.value.zIndex as number),
 );
 
-const vm = getCurrentInstance();
 // ============================ Render ============================
 const RenderNode = () => {
   let renderNode = (

@@ -9,9 +9,9 @@ import type {
   RenderResult,
   RenderResultObject,
   SelectAllLabel,
+  SemanticName,
   TransferDirection,
   TransferLocale,
-  TransferProps,
   TransferSearchOption,
 } from './index.vue';
 import { OmitProps, type PaginationType, type TransferKey } from './interface';
@@ -24,6 +24,7 @@ import { omit } from 'lodash-es';
 import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { DownOutlined } from '@ant-design/icons-vue';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks';
 
 export interface RenderedItem {
   renderedText: string;
@@ -36,8 +37,8 @@ type RenderListFunction = (props: TransferListBodyProps) => VueNode;
 export interface TransferListProps extends TransferLocale {
   prefixCls: string;
   style?: CSSProperties;
-  classNames: NonNullable<TransferProps['classNames']>;
-  styles: NonNullable<TransferProps['styles']>;
+  classNames: SemanticClassNames<SemanticName>;
+  styles: SemanticStyles<SemanticName>;
 
   titleText?: VueNode;
   dataSource?: KeyWiseTransferItem[];

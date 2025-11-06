@@ -2,14 +2,15 @@
 import VcCheckbox from '@/vc-component/checkbox/index.vue';
 import clsx from 'clsx';
 import { isEmpty } from 'lodash-es';
-import { computed, onBeforeUnmount, onMounted, ref, toRefs, useTemplateRef, watch, type VNode } from 'vue';
+import { computed, getCurrentInstance, onBeforeUnmount, onMounted, ref, toRefs, useTemplateRef, watch, type VNode } from 'vue';
+import { useMergeSemantic } from '../_util/hooks';
 import { Wave } from '../_util/wave';
 import { TARGET_CLS } from '../_util/wave/interface';
 import { useComponentConfig } from '../config-provider/context';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import { useCheckboxGroupContextInject } from './GroupContext';
-import type { CheckboxProps } from './interface';
+import type { CheckboxClassNamesType, CheckboxProps, CheckboxStylesType } from './interface';
 import useStyle from './style';
 import useBubbleLock from './useBubbleLock';
 
@@ -25,7 +26,7 @@ const {
   onMouseleave,
   skipGroup = false,
   disabled = undefined,
-  classNames: checkboxClassNames,
+  classNames,
   styles,
   ...restProps
 } = defineProps<CheckboxProps>();
@@ -47,6 +48,20 @@ const {
 const checkboxGroup = useCheckboxGroupContextInject();
 const contextDisabled = useDisabledContextInject();
 const mergedDisabled = computed(() => (checkboxGroup?.disabled || disabled) ?? contextDisabled.value);
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<CheckboxClassNamesType, CheckboxStylesType, CheckboxProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      indeterminate,
+      disabled: mergedDisabled.value,
+    },
+  })),
+);
 
 const prevValue = ref(restProps.value);
 const checkboxRef = useTemplateRef('checkboxRef');
@@ -112,8 +127,7 @@ const classString = computed(() => {
     },
     contextClassName?.value,
     className,
-    contextClassNames.value.root,
-    checkboxClassNames?.root,
+    mergedClassNames.value?.root,
     rootClassName,
     cssVarCls.value,
     rootCls.value,
@@ -121,13 +135,7 @@ const classString = computed(() => {
   );
 });
 const checkboxClass = computed(() => {
-  return clsx(
-    checkboxClassNames?.icon,
-    contextClassNames.value.icon,
-    { [`${prefixCls.value}-indeterminate`]: indeterminate },
-    TARGET_CLS,
-    hashId.value,
-  );
+  return clsx(mergedClassNames?.value?.icon, { [`${prefixCls.value}-indeterminate`]: indeterminate }, TARGET_CLS, hashId.value);
 });
 
 // ============================ Event Lock ============================
@@ -138,8 +146,7 @@ const [onLabelClick, onInputClick] = useBubbleLock(checkboxProps.value.onClick);
     <label
       :className="classString"
       :style="{
-        ...contextStyles.root,
-        ...styles?.root,
+        ...mergedStyles.root,
         ...contextStyle,
         ...style,
       }"
@@ -153,7 +160,7 @@ const [onLabelClick, onInputClick] = useBubbleLock(checkboxProps.value.onClick);
         @click="onInputClick"
         :prefix-cls="prefixCls"
         :class="checkboxClass"
-        :style="{ ...contextStyles.icon, ...styles?.icon }"
+        :style="mergedStyles.icon"
         :disabled="mergedDisabled"
         ref="checkboxRef"
       />
@@ -164,16 +171,12 @@ const [onLabelClick, onInputClick] = useBubbleLock(checkboxProps.value.onClick);
         @click="onInputClick"
         :prefix-cls="prefixCls"
         :class="checkboxClass"
-        :style="{ ...contextStyles.icon, ...styles?.icon }"
+        :style="mergedStyles.icon"
         :disabled="mergedDisabled"
         ref="checkboxRef"
       />
 
-      <span
-        v-if="$slots.default"
-        :class="clsx(`${prefixCls}-label`, contextClassNames.label, checkboxClassNames?.label)"
-        :style="{ ...contextStyles.label, ...styles?.label }"
-      >
+      <span v-if="$slots.default" :class="clsx(`${prefixCls}-label`, mergedClassNames?.label)" :style="mergedStyles.label">
         <slot></slot>
       </span>
     </label>

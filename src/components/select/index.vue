@@ -1,9 +1,15 @@
 <script lang="tsx" setup>
-import { computed, toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, toRefs } from 'vue';
 import type { BaseSelectRef, SelectProps as RcSelectProps } from '@/vc-component/select';
 import RcSelect from '@/vc-component/select';
 import type { OptionProps } from '@/vc-component/select/Option.vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import {
+  useMergeSemantic,
+  type SemanticClassNames,
+  type SemanticClassNamesType,
+  type SemanticStyles,
+  type SemanticStylesType,
+} from '../_util/hooks';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import type { SelectCommonPlacement } from '../_util/motion';
 import { getTransitionName } from '../_util/motion';
@@ -55,16 +61,20 @@ export interface InternalSelectProps<ValueType = any, OptionType extends BaseOpt
    * @default "outlined"
    */
   variant?: Variant;
-  styles?: Partial<Record<SemanticName, CSSProperties>> & {
-    popup?: Partial<Record<PopupSemantic, CSSProperties>>;
-  };
-  classNames?: Partial<Record<SemanticName, string>> & {
-    popup?: Partial<Record<PopupSemantic, string>>;
-  };
+  classNames?: SemanticClassNames<SemanticName> & { popup?: SemanticClassNames<PopupSemantic> };
+  styles?: SemanticStyles<SemanticName> & { popup?: SemanticStyles<PopupSemantic> };
 }
 
 type SemanticName = 'root' | 'prefix' | 'suffix';
 type PopupSemantic = 'root' | 'listItem' | 'list';
+
+export type SelectClassNamesType = SemanticClassNamesType<
+  SelectProps,
+  SemanticName,
+  { popup?: SemanticClassNames<PopupSemantic> }
+>;
+
+export type SelectStylesType = SemanticStylesType<SelectProps, SemanticName, { popup?: SemanticStyles<PopupSemantic> }>;
 
 export interface SelectProps<ValueType = any, OptionType extends BaseOptionType | DefaultOptionType = DefaultOptionType>
   extends Omit<
@@ -75,12 +85,8 @@ export interface SelectProps<ValueType = any, OptionType extends BaseOptionType 
   mode?: 'multiple' | 'tags';
   status?: InputStatus;
   popupMatchSelectWidth?: boolean | number;
-  styles?: Partial<Record<SemanticName, CSSProperties>> & {
-    popup?: Partial<Record<PopupSemantic, CSSProperties>>;
-  };
-  classNames?: Partial<Record<SemanticName, string>> & {
-    popup?: Partial<Record<PopupSemantic, string>>;
-  };
+  styles?: SelectStylesType;
+  classNames?: SelectClassNamesType;
   onOpenChange?: (visible: boolean) => void;
 }
 
@@ -213,9 +219,26 @@ const mergedAllowClear = computed(() => (allowClear === true ? { clearIcon: clea
 
 const selectProps = computed(() => omit(rest, ['suffixIcon', 'itemIcon' as any]));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
+
+// ===================== Disabled =====================
+const disabled = useDisabledContextInject();
+const mergedDisabled = computed(() => customDisabled ?? disabled.value);
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<SelectClassNamesType, SelectStylesType, SelectProps>(
   computed(() => [contextClassNames?.value, classNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      variant: variant.value,
+      status: mergedStatus.value,
+      disabled: mergedDisabled.value,
+      size: mergedSize.value,
+    } as SelectProps,
+  })),
   computed(() => ({
     popup: {
       _default: 'root',
@@ -237,12 +260,6 @@ const mergedPopupClassName = computed(() =>
   ),
 );
 
-const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
-
-// ===================== Disabled =====================
-const disabled = useDisabledContextInject();
-const mergedDisabled = computed(() => customDisabled ?? disabled.value);
-
 const mergedClassName = computed(() =>
   clsx(
     {
@@ -256,8 +273,7 @@ const mergedClassName = computed(() =>
     compactItemClassnames?.value,
     contextClassName?.value,
     className,
-    contextClassNames?.value?.root,
-    classNames?.root,
+    mergedClassNames?.value?.root,
     rootClassName,
     cssVarCls.value,
     rootCls.value,
@@ -288,7 +304,7 @@ const [zIndex] = useZIndex(
     :virtual="virtual || customizeVirtual"
     v-model:value="value"
     v-model:open="open"
-    :style="{ ...contextStyles.root, ...styles?.root, ...contextStyle, ...style }"
+    :style="{ ...mergedStyles.root, ...contextStyle, ...style }"
     :popup-match-select-width="mergedPopupMatchSelectWidth"
     :transition-name="getTransitionName(rootPrefixCls, 'slide-up', transitionName)"
     :builtin-placements="mergedBuiltinPlacements(builtinPlacements, popupOverflow)"

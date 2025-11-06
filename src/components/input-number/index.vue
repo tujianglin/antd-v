@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
 import { computed, getCurrentInstance, h, toRefs, type ComponentInstance, type VNode } from 'vue';
 import { useComponentConfig } from '../config-provider/context';
-import type { InputNumberProps } from './interface';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import type { InputNumberClassNamesType, InputNumberProps, InputNumberStylesType } from './interface';
+import { useMergeSemantic } from '../_util/hooks';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useStyle from './style';
 import { useCompactItemContext } from '../space/CompactContext';
@@ -66,11 +66,6 @@ const {
   classNames: contextClassNames,
 } = toRefs(useComponentConfig('inputNumber'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [contextClassNames.value, classNames]),
-  computed(() => [contextStyles.value, styles]),
-);
-
 const prefixCls = computed(() => getPrefixCls.value('input-number', customizePrefixCls));
 
 // Style
@@ -78,6 +73,30 @@ const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
 const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
+
+const { hasFeedback, status: contextStatus, isFormItemInput, feedbackIcon } = toRefs(useFormItemInputContextInject());
+const mergedStatus = computed(() => getMergedStatus(contextStatus?.value, customStatus));
+
+const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
+
+// ===================== Disabled =====================
+const disabled = useDisabledContextInject();
+const mergedDisabled = computed(() => customDisabled ?? disabled.value);
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<InputNumberClassNamesType, InputNumberStylesType, InputNumberProps>(
+  computed(() => [contextClassNames.value, classNames]),
+  computed(() => [contextStyles.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      size: mergedSize.value,
+      disabled: mergedDisabled.value,
+    },
+  })),
+);
+
 const controlsTemp = computed(() => (typeof controls === 'boolean' ? controls : undefined));
 
 const { upIcon, downIcon } = toRefs(
@@ -102,15 +121,6 @@ const { upIcon, downIcon } = toRefs(
   }),
 );
 
-const { hasFeedback, status: contextStatus, isFormItemInput, feedbackIcon } = toRefs(useFormItemInputContextInject());
-const mergedStatus = computed(() => getMergedStatus(contextStatus?.value, customStatus));
-
-const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
-
-// ===================== Disabled =====================
-const disabled = useDisabledContextInject();
-const mergedDisabled = computed(() => customDisabled ?? disabled.value);
-
 const [variant, enableVariantCls] = useVariant(
   'inputNumber',
   computed(() => customVariant),
@@ -132,7 +142,6 @@ const inputNumberClass = computed(() => {
 });
 const wrapperClassName = `${prefixCls.value}-group`;
 
-const vm = getCurrentInstance();
 function changeRef(el) {
   vm.exposed = el || {};
   vm.exposeProxy = el || {};

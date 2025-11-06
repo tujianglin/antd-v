@@ -9,10 +9,16 @@ import type { AbstractTooltipProps } from '../tooltip/index.vue';
 import type { ButtonProps } from '../button';
 import type { LegacyButtonType } from '../button/interface';
 import { ExclamationCircleFilled } from '@ant-design/icons-vue';
-import { computed, toRefs } from 'vue';
+import { computed, getCurrentInstance, toRefs } from 'vue';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
 import Overlay from './Overlay.vue';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
+import type { PopoverSemanticName } from '../popover/index.vue';
+
+export type PopconfirmClassNamesType = SemanticClassNamesType<PopconfirmProps, PopoverSemanticName>;
+
+export type PopconfirmStylesType = SemanticStylesType<PopconfirmProps, PopoverSemanticName>;
 
 export interface PopconfirmProps extends AbstractTooltipProps {
   title: VueNode;
@@ -29,6 +35,8 @@ export interface PopconfirmProps extends AbstractTooltipProps {
   icon?: VueNode;
   onOpenChange?: (open: boolean, e?: MouseEvent | KeyboardEvent) => void;
   onPopupClick?: (e: MouseEvent) => void;
+  classNames?: PopconfirmClassNamesType;
+  styles?: PopconfirmStylesType;
 }
 
 export interface PopconfirmState {
@@ -46,7 +54,7 @@ const {
   onOpenChange,
   styles,
   arrow: popconfirmArrow = true,
-  classNames: popconfirmClassNames,
+  classNames,
   showCancel = true,
   autoAdjustOverflow = true,
   ...restProps
@@ -93,10 +101,24 @@ const onInternalOpenChange: PopoverProps['onOpenChange'] = (value, e) => {
 };
 
 const prefixCls = computed(() => getPrefixCls.value('popconfirm', customizePrefixCls));
-const rootClassNames = computed(() =>
-  clsx(prefixCls.value, contextClassName?.value, contextClassNames?.value?.root, popconfirmClassNames?.root),
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<PopconfirmClassNamesType, PopconfirmStylesType, PopconfirmProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      placement,
+      trigger,
+      styles,
+      classNames,
+    } as PopconfirmProps,
+  })),
 );
-const bodyClassNames = computed(() => clsx(contextClassNames?.value?.body, popconfirmClassNames?.body));
+
+const rootClassNames = computed(() => clsx(prefixCls.value, contextClassName?.value, mergedClassNames?.value?.root));
 
 useStyle(prefixCls);
 </script>
@@ -108,24 +130,18 @@ useStyle(prefixCls);
     :placement="placement"
     @open-change="onInternalOpenChange"
     :open="open"
-    :class-names="{ root: rootClassNames, body: bodyClassNames }"
+    :class-names="{ root: rootClassNames, container: mergedClassNames.container, arrow: mergedClassNames.arrow }"
     :styles="{
-      root: {
-        ...contextStyles.root,
-        ...contextStyle,
-        ...styles?.root,
-      },
-      body: {
-        ...contextStyles.body,
-        ...styles?.body,
-      },
+      root: { ...contextStyle, ...mergedStyles.root },
+      container: mergedStyles.container,
+      arrow: mergedStyles.arrow,
     }"
     :data-popover-inject="true"
     :auto-adjust-overflow="autoAdjustOverflow"
   >
     <template #content>
       <Overlay
-        v-bind="omit($props)"
+        v-bind="$props"
         :ok-type="okType"
         :icon="icon"
         :show-cancel="showCancel"
@@ -133,6 +149,8 @@ useStyle(prefixCls);
         :close="close"
         :on-confirm="onConfirm"
         :on-cancel="onCancel"
+        :class-names="mergedClassNames"
+        :styles="mergedStyles"
       />
     </template>
     <slot></slot>

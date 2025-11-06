@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import { computed, getCurrentInstance, h, toRefs, type ComponentInstance, type VNode } from 'vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic } from '../_util/hooks';
 import { useComponentConfig } from '../config-provider/context';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
@@ -99,7 +99,6 @@ const mergedProps = computed(() => {
 const [mergedClassNames, mergedStyles] = useMergeSemantic<InputClassNamesType, InputStylesType, InputProps>(
   computed(() => [contextClassNames.value, classNames]),
   computed(() => [contextStyles.value, styles]),
-  undefined,
   computed(() => ({ props: mergedProps.value })),
 );
 

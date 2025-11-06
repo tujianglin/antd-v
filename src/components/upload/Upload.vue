@@ -5,7 +5,15 @@ import RcUpload from '@/vc-component/upload';
 import { useComponentConfig } from '../config-provider/context';
 import { useLocale } from '../locale';
 import defaultLocale from '../locale/en_US';
-import type { RcFile, ShowUploadListInterface, UploadChangeParam, UploadFile, UploadProps } from './interface';
+import type {
+  RcFile,
+  ShowUploadListInterface,
+  UploadChangeParam,
+  UploadClassNamesType,
+  UploadFile,
+  UploadProps,
+  UploadStylesType,
+} from './interface';
 import useStyle from './style';
 import UploadList from './UploadList/index.vue';
 import { file2Obj, getFileItem, removeFileItem, updateFileList } from './utils';
@@ -16,6 +24,7 @@ import { reactiveComputed } from '@vueuse/core';
 import type { VueNode } from '@/vc-util/type';
 import Render from '@/vc-component/render';
 import clsx from 'clsx';
+import { useMergeSemantic } from '../_util/hooks';
 
 export type { UploadProps };
 
@@ -63,7 +72,7 @@ const {
   supportServerRender = true,
   rootClassName,
   styles,
-  classNames: uploadClassNames,
+  classNames,
   // eslint-disable-next-line unused-imports/no-unused-vars, no-unused-vars
   openFileDialogOnClick = true,
   ...resetProps
@@ -344,6 +353,23 @@ const prefixCls = computed(() => getPrefixCls.value('upload', customizePrefixCls
 
 const vm = getCurrentInstance();
 
+const [mergedClassNames, mergedStyles] = useMergeSemantic<UploadClassNamesType, UploadStylesType, UploadProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      listType,
+      showUploadList,
+      type,
+      multiple,
+      hasControlInside,
+      supportServerRender,
+      disabled: mergedDisabled.value,
+    },
+  })),
+);
+
 const rcUploadProps = computed(() => {
   const result = {
     onBatchStart,
@@ -397,14 +423,8 @@ const renderUploadList = (button?: VueNode, buttonVisible?: boolean) => {
   }
   return (
     <UploadList
-      classNames={{
-        list: clsx(contextClassNames?.value?.list, uploadClassNames?.list),
-        item: clsx(contextClassNames?.value?.item, uploadClassNames?.item),
-      }}
-      styles={{
-        list: { ...contextStyles?.value?.list, ...styles?.list },
-        item: { ...contextStyles?.value?.item, ...styles?.item },
-      }}
+      classNames={mergedClassNames.value}
+      styles={mergedStyles.value}
       prefixCls={prefixCls.value}
       listType={listType}
       items={mergedFileList.value}
@@ -439,8 +459,7 @@ const mergedRootCls = computed(() =>
     hashId.value,
     cssVarCls.value,
     contextClassName?.value,
-    contextClassNames?.value?.root,
-    uploadClassNames?.root,
+    mergedClassNames?.value?.root,
     {
       [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
       [`${prefixCls.value}-picture-card-wrapper`]: listType === 'picture-card',
@@ -448,7 +467,7 @@ const mergedRootCls = computed(() =>
     },
   ),
 );
-const mergedRootStyle = computed(() => ({ ...contextStyles?.value?.root, ...styles?.root }));
+const mergedRootStyle = computed(() => ({ ...mergedStyles?.value?.root }));
 
 const mergedStyle = computed(() => ({ ...contextStyle?.value, ...style }));
 

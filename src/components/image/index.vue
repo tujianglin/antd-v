@@ -4,9 +4,15 @@ import RcImage from '@/vc-component/image';
 import type { VueNode } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, toRefs } from 'vue';
+import { computed, getCurrentInstance, toRefs } from 'vue';
+import {
+  useMergeSemantic,
+  type SemanticClassNames,
+  type SemanticClassNamesType,
+  type SemanticStyles,
+  type SemanticStylesType,
+} from '../_util/hooks';
 import type { MaskType } from '../_util/hooks/useMergedMask';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
 import { useComponentConfig } from '../config-provider/context';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useMergedPreviewConfig from './hooks/useMergedPreviewConfig';
@@ -23,8 +29,22 @@ export type PreviewConfig = OriginPreviewConfig &
     mask?: MaskType | VueNode;
   };
 
-export interface ImageProps extends Omit<RcImageProps, 'preview'> {
+export type ImageSemanticName = 'root' | 'image' | 'cover';
+
+export type PopupSemantic = 'root' | 'mask' | 'body' | 'footer' | 'actions';
+
+export type ImageClassNamesType = SemanticClassNamesType<
+  ImageProps,
+  ImageSemanticName,
+  { popup?: SemanticClassNames<PopupSemantic> }
+>;
+
+export type ImageStylesType = SemanticStylesType<ImageProps, ImageSemanticName, { popup?: SemanticStyles<PopupSemantic> }>;
+
+export interface ImageProps extends Omit<RcImageProps, 'preview' | 'classNames' | 'styles'> {
   preview?: boolean | PreviewConfig;
+  classNames?: ImageClassNamesType;
+  styles?: ImageStylesType;
 }
 
 const {
@@ -34,7 +54,7 @@ const {
   rootClassName,
   style,
   styles,
-  classNames: imageClassNames,
+  classNames,
   fallback,
   ...otherProps
 } = defineProps<ImageProps>();
@@ -94,14 +114,21 @@ const mergedPopupClassNames = computed(() => ({
 }));
 const internalClassNames = computed(() => [
   contextClassNames?.value,
-  imageClassNames,
+  classNames,
   mergedLegacyClassNames?.value,
   { popup: mergedPopupClassNames?.value },
 ]);
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+const [mergedClassNames, mergedStyles] = useMergeSemantic<ImageClassNamesType, ImageStylesType, ImageProps>(
   internalClassNames,
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      preview: mergedPreviewConfig.value,
+    },
+  })),
   computed(() => ({
     popup: { _default: 'root' },
   })),

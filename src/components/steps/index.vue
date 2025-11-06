@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import RcSteps from '@/vc-component/steps';
 import type { StepsProps as RcStepsProps } from '@/vc-component/steps/Steps.vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { TARGET_CLS } from '../_util/wave/interface';
 import { useComponentConfig } from '../config-provider/context';
 import useSize from '../config-provider/hooks/useSize';
@@ -11,7 +11,7 @@ import PanelArrow from './PanelArrow.vue';
 import ProgressIcon from './ProgressIcon.vue';
 import useStyle from './style';
 import type { VueNode } from '@/vc-util/type';
-import { computed, toRefs, type CSSProperties, type VNode } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties, type VNode } from 'vue';
 import { useInternalContextInject } from './context';
 import { isEmpty } from 'lodash-es';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons-vue';
@@ -25,6 +25,22 @@ export type IconRenderType = (props: {
   iconNode: VueNode;
   info: Pick<RcIconRenderTypeInfo, 'index' | 'active' | 'item' | 'components'>;
 }) => VueNode;
+
+export type StepsSemanticName =
+  | 'root'
+  | 'item'
+  | 'itemWrapper'
+  | 'itemIcon'
+  | 'itemSection'
+  | 'itemHeader'
+  | 'itemTitle'
+  | 'itemSubtitle'
+  | 'itemContent'
+  | 'itemRail';
+
+export type StepsClassNamesType = SemanticClassNamesType<StepsProps, StepsSemanticName>;
+
+export type StepsStylesType = SemanticStylesType<StepsProps, StepsSemanticName>;
 
 interface StepItem {
   class?: string;
@@ -57,8 +73,8 @@ export interface StepsProps {
   class?: string;
   style?: CSSProperties;
   rootClassName?: string;
-  classNames?: RcStepsProps['classNames'];
-  styles?: RcStepsProps['styles'];
+  classNames?: StepsClassNamesType;
+  styles?: StepsStylesType;
   variant?: 'filled' | 'outlined';
   size?: 'default' | 'small';
 
@@ -144,7 +160,7 @@ const {
 const contextClassNames = computed(() => (isEmpty(internalContent) ? ctxClassNames.value : {}));
 const contextStyles = computed(() => (isEmpty(internalContent) ? ctxStyles.value : {}));
 const components = computed(() => {
-  let result: StepsProps['classNames'];
+  let result: RcStepsProps['classNames'];
   if (!isEmpty(internalContent)) {
     result = {
       root: internalContent.rootComponent,
@@ -164,12 +180,6 @@ const mergedSize = useSize(computed(() => size));
 
 // ============================= Item =============================
 const mergedItems = computed(() => (items || []).filter(Boolean) as RcStepsProps['items']);
-
-// ============================ Styles ============================
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [waveEffectClassNames, contextClassNames?.value, classNames]),
-  computed(() => [contextStyles?.value, styles]),
-);
 
 // ============================ Layout ============================
 const point = useBreakpoint(responsive);
@@ -210,6 +220,28 @@ const mergedTitlePlacement = computed<StepsProps['titlePlacement']>(() => {
 
 // ========================== Percentage ==========================
 const mergedPercent = computed(() => (isInline.value ? undefined : percent));
+
+// ============================ Styles ============================
+
+const vm = getCurrentInstance();
+const [mergedClassNames, mergedStyles] = useMergeSemantic<StepsClassNamesType, StepsStylesType, StepsProps>(
+  computed(() => [waveEffectClassNames, contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      variant,
+      size: mergedSize.value,
+      type: mergedType.value,
+      orientation: mergedOrientation.value,
+      titlePlacement: mergedTitlePlacement.value,
+      current,
+      percent: mergedPercent.value,
+      responsive,
+      offset,
+    },
+  })),
+);
 
 // ============================= Icon =============================
 const internalIconRender: RcStepsProps['iconRender'] = (_, info) => {

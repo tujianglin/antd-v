@@ -1,6 +1,7 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { computed, toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { useComponentConfig } from '../config-provider/context';
 import type { AvatarProps } from './Avatar.vue';
 import Element from './Element.vue';
@@ -14,6 +15,10 @@ import Title from './Title.vue';
 type SkeletonAvatarProps = Omit<AvatarProps, 'active'>;
 
 export type SemanticName = 'root' | 'header' | 'section' | 'avatar' | 'title' | 'paragraph';
+
+export type SkeletonClassNamesType = SemanticClassNamesType<SkeletonProps, SemanticName>;
+
+export type SkeletonStylesType = SemanticStylesType<SkeletonProps, SemanticName>;
 
 export interface SkeletonProps {
   active?: boolean;
@@ -37,7 +42,7 @@ const {
   loading = true,
   class: className,
   rootClassName,
-  classNames: skeletonClassNames,
+  classNames,
   style,
   styles,
   avatar = false,
@@ -103,6 +108,20 @@ const {
 } = toRefs(useComponentConfig('skeleton'));
 const prefixCls = computed(() => getPrefixCls.value('skeleton', customizePrefixCls));
 const [hashId, cssVarCls] = useStyle(prefixCls);
+
+const vm = getCurrentInstance();
+const [mergedClassNames, mergedStyles] = useMergeSemantic<SkeletonClassNamesType, SkeletonStylesType, SkeletonProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      avatar,
+      title,
+      paragraph,
+    },
+  })),
+);
 </script>
 <template>
   <div
@@ -116,8 +135,7 @@ const [hashId, cssVarCls] = useStyle(prefixCls);
           [`${prefixCls}-rtl`]: direction === 'rtl',
           [`${prefixCls}-round`]: round,
         },
-        contextClassNames.root,
-        skeletonClassNames?.root,
+        mergedClassNames?.root,
         contextClassName,
         className,
         rootClassName,
@@ -127,36 +145,32 @@ const [hashId, cssVarCls] = useStyle(prefixCls);
     "
     :style="{ ...contextStyles.root, ...contextStyle, ...styles?.root, ...style }"
   >
-    <div
-      v-if="!!avatar"
-      :class="clsx(contextClassNames.header, skeletonClassNames?.header, `${prefixCls}-header`)"
-      :style="{ ...contextStyles.header, ...styles?.header }"
-    >
+    <div v-if="!!avatar" :class="clsx(mergedClassNames?.header, `${prefixCls}-header`)" :style="mergedStyles?.header">
       <Element
-        :class="clsx(contextClassNames.avatar, skeletonClassNames?.avatar)"
+        :class="clsx(mergedClassNames?.avatar)"
         :prefix-cls="`${prefixCls}-avatar`"
         v-bind="{ ...getAvatarBasicProps(!!title, !!paragraph), ...getComponentProps(avatar) }"
-        :style="{ ...contextStyles.avatar, ...styles?.avatar }"
+        :style="mergedStyles?.avatar"
       />
     </div>
     <div
       v-if="!!title || !!paragraph"
-      :class="clsx(contextClassNames.section, skeletonClassNames?.section, `${prefixCls}-section`)"
-      :style="{ ...contextStyles.section, ...styles?.section }"
+      :class="clsx(mergedClassNames?.section, `${prefixCls}-section`)"
+      :style="mergedStyles?.section"
     >
       <Title
         v-if="!!title"
-        :class="clsx(contextClassNames.title, skeletonClassNames?.title)"
+        :class="clsx(mergedClassNames?.title)"
         :prefix-cls="`${prefixCls}-title`"
         v-bind="{ ...getTitleBasicProps(!!avatar, !!paragraph), ...getComponentProps(title) }"
-        :style="{ ...contextStyles.title, ...styles?.title }"
+        :style="mergedStyles?.title"
       />
       <Paragraph
         v-if="!!paragraph"
-        :class="clsx(contextClassNames.paragraph, skeletonClassNames?.paragraph)"
+        :class="clsx(mergedClassNames?.paragraph)"
         :prefix-cls="`${prefixCls}-paragraph`"
         v-bind="{ ...getParagraphBasicProps(!!avatar, !!title), ...getComponentProps(paragraph) }"
-        :style="{ ...contextStyles.paragraph, ...styles?.title }"
+        :style="mergedStyles.paragraph"
       />
     </div>
   </div>

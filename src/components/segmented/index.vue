@@ -6,7 +6,7 @@ import type {
   SegmentedRawOption,
 } from '@/vc-component/segmented/index.vue';
 import RcSegmented from '@/vc-component/segmented/index.vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import type { Orientation } from '../_util/hooks/useOrientation';
 import useOrientation from '../_util/hooks/useOrientation';
 import { useComponentConfig } from '../config-provider/context';
@@ -15,7 +15,7 @@ import type { SizeType } from '../config-provider/SizeContext';
 import useStyle from './style';
 import type { VueNode } from '@/vc-util/type';
 import type { TooltipProps } from '../tooltip';
-import { computed, toRefs, useId, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, toRefs, useId } from 'vue';
 import clsx from 'clsx';
 import Render from '@/vc-component/render';
 import Tooltip from '../tooltip';
@@ -41,9 +41,11 @@ export type SegmentedLabeledOption<ValueType = RcSegmentedValue> =
   | SegmentedLabeledOptionWithoutIcon<ValueType>;
 
 export type SegmentedOptions<T = SegmentedRawOption> = (T | SegmentedLabeledOption<T>)[];
+export type SegmentedClassNamesType = SemanticClassNamesType<SegmentedProps, SemanticName>;
+export type SegmentedStylesType = SemanticStylesType<SegmentedProps, SemanticName>;
 
 export interface SegmentedProps<ValueType = RcSegmentedValue>
-  extends Omit<RCSegmentedProps<ValueType>, 'size' | 'options' | 'itemRender'> {
+  extends Omit<RCSegmentedProps<ValueType>, 'size' | 'options' | 'itemRender' | 'styles' | 'classNames'> {
   rootClassName?: string;
   options?: SegmentedOptions<ValueType>;
   /** Option to fit width to its parent's width */
@@ -52,8 +54,8 @@ export interface SegmentedProps<ValueType = RcSegmentedValue>
   size?: SizeType;
   vertical?: boolean;
   orientation?: Orientation;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: SegmentedClassNamesType;
+  styles?: SegmentedStylesType;
   shape?: 'default' | 'round';
 }
 
@@ -92,9 +94,19 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('segmented'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<SegmentedClassNamesType, SegmentedStylesType, SegmentedProps>(
   computed(() => [contextClassNames?.value, segmentedClassNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      options,
+      size: customSize,
+      shape,
+    },
+  })),
 );
 
 const prefixCls = computed(() => getPrefixCls.value('segmented', customizePrefixCls));

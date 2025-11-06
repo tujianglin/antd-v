@@ -1,5 +1,5 @@
 <script lang="tsx" setup generic="RecordType extends KeyWiseTransferItem">
-import { computed, type CSSProperties } from 'vue';
+import { computed } from 'vue';
 import type { KeyWiseTransferItem, SemanticName } from './index.vue';
 import Checkbox from '../checkbox';
 import { useLocale } from '../locale';
@@ -8,11 +8,12 @@ import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import Render from '@/vc-component/render';
 import { DeleteOutlined } from '@ant-design/icons-vue';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks';
 
 type ListItemProps<RecordType> = {
   prefixCls: string;
-  classNames: Partial<Record<SemanticName, string>>;
-  styles: Partial<Record<SemanticName, CSSProperties>>;
+  classNames: SemanticClassNames<SemanticName>;
+  styles: SemanticStyles<SemanticName>;
 
   renderedText?: string | number;
   renderedEl: VueNode;

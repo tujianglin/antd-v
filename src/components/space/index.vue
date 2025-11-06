@@ -2,14 +2,14 @@
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, toRefs, type CSSProperties, type VNode } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties, type VNode } from 'vue';
 import { isPresetSize, isValidGapNumber } from '../_util/gapSize';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic } from '../_util/hooks';
 import useOrientation from '../_util/hooks/useOrientation';
 import { useComponentConfig } from '../config-provider/context';
 import Item from './Item.vue';
 import { SpaceContextProvider } from './context';
-import type { SpaceProps } from './interface';
+import type { SpaceClassNamesType, SpaceProps, SpaceStylesType } from './interface';
 import useStyle from './style';
 
 defineOptions({ name: 'Space', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -73,9 +73,19 @@ const prefixCls = computed(() => getPrefixCls.value('space', customizePrefixCls)
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<SpaceClassNamesType, SpaceStylesType, SpaceProps>(
   computed(() => [contextClassNames.value, spaceClassNames]),
   computed(() => [contextStyles.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      size: size.value,
+      orientation: mergedOrientation.value,
+      align: mergedAlign.value,
+    } as SpaceProps,
+  })),
 );
 
 const rootClassNames = computed(() => {

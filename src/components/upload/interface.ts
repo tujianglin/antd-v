@@ -5,6 +5,7 @@ import type {
 } from '@/vc-component/upload/interface';
 import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties, ImgHTMLAttributes } from 'vue';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks';
 import type { ProgressAriaProps, ProgressProps } from '../progress';
 
 export interface RcFile extends OriRcFile {
@@ -86,6 +87,9 @@ type PreviewFileHandler = (file: File | Blob) => PromiseLike<string>;
 type BeforeUploadValueType = boolean | string | Blob | File;
 
 export type SemanticName = 'root' | 'list' | 'item';
+
+export type UploadClassNamesType<T = any> = SemanticClassNamesType<UploadProps<T>, SemanticName>;
+export type UploadStylesType<T = any> = SemanticStylesType<UploadProps<T>, SemanticName>;
 export interface UploadProps<T = any> extends Pick<RcUploadProps, 'hasControlInside' | 'pastable'> {
   type?: UploadType;
   name?: string;
@@ -102,8 +106,8 @@ export interface UploadProps<T = any> extends Pick<RcUploadProps, 'hasControlIns
   onDrop?: (event: DragEvent) => void;
   listType?: UploadListType;
   class?: string;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: UploadClassNamesType;
+  styles?: UploadStylesType;
   rootClassName?: string;
   onPreview?: (file: UploadFile<T>) => void;
   onDownload?: (file: UploadFile<T>) => void;

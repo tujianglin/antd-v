@@ -1,6 +1,7 @@
 import type { QRProps } from '@/vc-component/qrcode';
 import type { VueNode } from '@/vc-util/type';
 import type { CanvasHTMLAttributes, CSSProperties, HTMLAttributes, SVGAttributes } from 'vue';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks';
 import type { Locale } from '../locale';
 
 type ImageSettings = QRProps['imageSettings'];
@@ -19,7 +20,10 @@ export type StatusRenderInfo = {
   onRefresh?: () => void;
 };
 
-type SemanticName = 'root' | 'cover';
+export type QRCodeSemanticName = 'root' | 'cover';
+
+export type QRCodeClassNamesType = SemanticClassNamesType<QRCodeProps, QRCodeSemanticName>;
+export type QRCodeStylesType = SemanticStylesType<QRCodeProps, QRCodeSemanticName>;
 
 export interface QRCodeProps extends Omit<QRProps, 'fgColor'>, /** @vue-ignore */ HTMLAttributes {
   color?: string;
@@ -35,6 +39,6 @@ export interface QRCodeProps extends Omit<QRProps, 'fgColor'>, /** @vue-ignore *
   status?: QRStatus;
   onRefresh?: () => void;
   statusRender?: (info: StatusRenderInfo) => VueNode;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: QRCodeClassNamesType;
+  styles?: QRCodeStylesType;
 }

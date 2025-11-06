@@ -13,12 +13,20 @@ import useStyle from './style';
 import BorderedStyle from './style/bordered';
 import useShowSizeChanger from './useShowSizeChanger';
 import type { VueNode } from '@/vc-util/type';
-import { computed, toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
 import clsx from 'clsx';
 import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons-vue';
 import { omit } from 'lodash-es';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 
 export type SemanticName = 'root' | 'item';
+
+export type PaginationSemanticName = SemanticName;
+
+export type PaginationClassNamesType = SemanticClassNamesType<PaginationProps, PaginationSemanticName>;
+
+export type PaginationStylesType = SemanticStylesType<PaginationProps, PaginationSemanticName>;
+
 export interface PaginationProps
   extends Omit<RcPaginationProps, 'showSizeChanger' | 'pageSizeOptions' | 'classNames' | 'styles'> {
   showQuickJumper?: boolean | { goButton?: VueNode };
@@ -30,8 +38,8 @@ export interface PaginationProps
   showSizeChanger?: boolean | SelectProps;
   /** `string` type will be removed in next major version. */
   pageSizeOptions?: (string | number)[];
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: PaginationClassNamesType;
+  styles?: PaginationStylesType;
 }
 
 export type PaginationPosition = 'top' | 'bottom' | 'both';
@@ -57,7 +65,7 @@ const {
   showSizeChanger,
   pageSizeOptions,
   styles,
-  classNames: paginationClassNames,
+  classNames,
   onChange,
   showPrevNextJumpers = true,
   ...restProps
@@ -89,6 +97,19 @@ const [hashId, cssVarCls] = useStyle(prefixCls);
 const mergedSize = useSize(computed(() => customizeSize));
 
 const isSmall = computed(() => mergedSize.value === 'small' || !!(xs.value && !mergedSize.value && responsive));
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<PaginationClassNamesType, PaginationStylesType, PaginationProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      size: mergedSize.value,
+    },
+  })),
+);
 
 // ============================= Locale =============================
 const [contextLocale] = useLocale('Pagination', enUS);
@@ -197,16 +218,14 @@ const extendedClassName = computed(() =>
     contextClassName?.value,
     className,
     rootClassName,
-    contextClassNames?.value?.root,
-    paginationClassNames?.root,
+    mergedClassNames?.value?.root,
     hashId.value,
     cssVarCls.value,
   ),
 );
 
 const mergedStyle = computed<CSSProperties>(() => ({
-  ...contextStyles?.value?.root,
-  ...styles?.root,
+  ...mergedStyles?.value?.root,
   ...contextStyle?.value,
   ...style,
 }));
@@ -218,10 +237,8 @@ const mergedStyle = computed<CSSProperties>(() => ({
     v-model:page-size="pageSize"
     v-model:current="current"
     :show-prev-next-jumpers="showPrevNextJumpers"
-    :styles="{ item: { ...contextStyles?.item, ...styles?.item } }"
-    :class-names="{
-      item: clsx(contextClassNames?.item, paginationClassNames?.item),
-    }"
+    :styles="mergedStyles"
+    :class-names="mergedClassNames"
     :style="mergedStyle"
     :prefix-cls="prefixCls"
     :select-prefix-cls="selectPrefixCls"

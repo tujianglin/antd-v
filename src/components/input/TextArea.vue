@@ -1,12 +1,12 @@
 <script lang="tsx" setup>
 import Render from '@/vc-component/render';
 import clsx from 'clsx';
-import { computed, h, ref, toRefs, useTemplateRef, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, h, ref, toRefs, useTemplateRef } from 'vue';
 import { triggerFocus, type InputFocusOptions } from '../../vc-component/input/utils/commonUtils';
 import type { TextAreaProps as VcTextAreaProps } from '../../vc-component/textarea';
 import VcTextArea from '../../vc-component/textarea';
 import getAllowClear from '../_util/getAllowClear';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { getMergedStatus, getStatusClassNames, type InputStatus } from '../_util/statusUtils';
 import { useComponentConfig, type Variant } from '../config-provider/context';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
@@ -21,13 +21,17 @@ import useStyle from './style/textarea';
 
 type SemanticName = 'root' | 'textarea' | 'count';
 
-export interface TextAreaProps extends Omit<VcTextAreaProps, 'suffix'> {
+export type TextAreaClassNamesType = SemanticClassNamesType<TextAreaProps, SemanticName>;
+
+export type TextAreaStylesType = SemanticStylesType<TextAreaProps, SemanticName>;
+
+export interface TextAreaProps extends Omit<VcTextAreaProps, 'suffix' | 'classNames' | 'styles'> {
   size?: SizeType;
   status?: InputStatus;
   rootClassName?: string;
   variant?: Variant;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: TextAreaClassNamesType;
+  styles?: TextAreaStylesType;
 }
 
 defineOptions({ name: 'InputTextArea', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -74,9 +78,11 @@ const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 const { status: contextStatus, hasFeedback, feedbackIcon } = toRefs(useFormItemInputContextInject());
 const mergedStatus = computed(() => getMergedStatus(contextStatus?.value, customStatus));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+const [mergedClassNames, mergedStyles] = useMergeSemantic<TextAreaClassNamesType, TextAreaStylesType, TextAreaProps>(
   computed(() => [contextClassNames.value, classNames]),
   computed(() => [contextStyles.value, styles]),
+  computed(() => ({ props: vm.props })),
 );
 // ===================== Ref ======================
 const innerRef = useTemplateRef('innerRef');

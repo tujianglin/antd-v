@@ -1,13 +1,13 @@
 <script lang="tsx" setup>
 import type { BasePickerPanelProps as RcBasePickerPanelProps } from '@/vc-component/picker';
 import type { CellRenderInfo } from '@/vc-component/picker/interface';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { useComponentConfig } from '../config-provider/context';
 import { useLocale } from '../locale';
 import enUS from './locale/en_US';
 import useStyle from './style';
 import type { VueNode } from '@/vc-util/type';
-import { computed, toRaw, toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, toRaw, toRefs, type CSSProperties } from 'vue';
 import { reactiveComputed } from '@vueuse/core';
 import type { GenerateConfig } from '@/vc-component/picker/generate';
 import useControlledState from '@/vc-util/hooks/useControlledState';
@@ -30,13 +30,17 @@ export interface SelectInfo {
 export type DateType = any;
 
 type SemanticName = 'root' | 'header' | 'body' | 'content' | 'item';
+
+export type CalendarClassNamesType = SemanticClassNamesType<CalendarProps, SemanticName>;
+export type CalendarStylesType = SemanticStylesType<CalendarProps, SemanticName>;
+
 export interface CalendarProps {
   prefixCls?: string;
   class?: string;
   rootClassName?: string;
   style?: CSSProperties;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: CalendarClassNamesType;
+  styles?: CalendarStylesType;
   locale?: typeof enUS;
   validRange?: [DateType, DateType];
   disabledDate?: (date: DateType) => boolean;
@@ -105,9 +109,19 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('calendar'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+// =========== Merged Props for Semantic ===========
+const vm = getCurrentInstance();
+const mergedProps = computed<CalendarProps>(() => ({
+  ...vm.props,
+  mode,
+  fullscreen,
+  showWeek,
+}));
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<CalendarClassNamesType, CalendarStylesType, CalendarProps>(
   computed(() => [contextClassNames?.value, calendarClassNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({ props: mergedProps.value })),
 );
 
 const { rootCls, headerCls, panelClassNames, rootStyle, headerStyle, panelStyles } = toRefs(

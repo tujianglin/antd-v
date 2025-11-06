@@ -1,10 +1,10 @@
 <script lang="tsx" setup>
-import { computed, ref, toRefs, type CSSProperties } from 'vue';
+import { computed, ref, toRefs } from 'vue';
 import type { ButtonProps } from '../button';
 import Button from '../button';
 import { useLocale } from '../locale';
 import defaultLocale from '../locale/en_US';
-import type { SemanticName, TourStepProps } from './interface';
+import type { TourProps, TourStepProps } from './interface';
 import { reactiveComputed } from '@vueuse/core';
 import pickAttrs from '@/vc-util/pickAttrs';
 import { CloseOutlined } from '@ant-design/icons-vue';
@@ -19,8 +19,8 @@ interface TourPanelProps {
   current: number;
   type: TourStepProps['type'];
   indicatorsRender?: TourStepProps['indicatorsRender'];
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: TourProps['classNames'];
+  styles?: TourProps['styles'];
   actionsRender?: TourStepProps['actionsRender'];
 }
 

@@ -13,8 +13,8 @@ import clsx from 'clsx';
 import Render from '@/vc-component/render';
 import InternalBreadcrumbItem from './InternalBreadcrumbItem.vue';
 import pickAttrs from '@/vc-util/pickAttrs';
-import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks';
+import { useMergeSemantic } from '../_util/hooks';
 
 export interface BreadcrumbItemType extends /** @vue-ignore */ AriaAttributes {
   key?: VueKey;
@@ -121,7 +121,6 @@ const mergedProps = computed(() => {
 const [mergedClassNames, mergedStyles] = useMergeSemantic(
   computed(() => [contextClassNames?.value, breadcrumbClassNames]),
   computed(() => [contextStyles?.value, styles]),
-  undefined,
   computed(() => ({
     props: mergedProps.value,
   })),

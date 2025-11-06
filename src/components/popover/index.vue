@@ -1,23 +1,32 @@
 <script lang="tsx" setup>
-import { computed, toRefs, type VNode } from 'vue';
+import { computed, getCurrentInstance, toRefs, type VNode } from 'vue';
 import { useComponentConfig } from '../config-provider/context';
-import type { AbstractTooltipProps } from '../tooltip/index.vue';
+import type { AbstractTooltipProps, SemanticName as TooltipSemanticName } from '../tooltip/index.vue';
 // CSSINJS
 import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import KeyCode from '@/vc-util/KeyCode';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { getTransitionName } from '../_util/motion';
 import Tooltip from '../tooltip';
 import useMergedArrow from '../tooltip/hook/useMergedArrow';
 import Overlay from './Overlay.vue';
 import useStyle from './style';
 
+export type PopoverSemanticName = TooltipSemanticName | 'title' | 'content';
+
+export type PopoverClassNamesType = SemanticClassNamesType<PopoverProps, PopoverSemanticName>;
+
+export type PopoverStylesType = SemanticStylesType<PopoverProps, PopoverSemanticName>;
+
 export interface PopoverProps extends AbstractTooltipProps {
   title?: VueNode;
   content?: VueNode;
   onOpenChange?: (open: boolean, e?: MouseEvent | KeyboardEvent) => void;
+  classNames?: PopoverClassNamesType;
+  styles?: PopoverStylesType;
 }
 
 defineOptions({ name: 'Popover', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -32,7 +41,7 @@ const {
   mouseLeaveDelay = 0.1,
   onOpenChange,
   styles,
-  classNames: popoverClassNames,
+  classNames,
   motion,
   arrow: popoverArrow = undefined,
   autoAdjustOverflow = true,
@@ -65,10 +74,27 @@ const mergedArrow = useMergedArrow(
   contextArrow,
 );
 
-const rootClassNames = computed(() =>
-  clsx(hashId.value, cssVarCls.value, contextClassName?.value, contextClassNames?.value?.root, popoverClassNames?.root),
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<PopoverClassNamesType, PopoverStylesType, PopoverProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      placement,
+      trigger,
+      mouseEnterDelay,
+      mouseLeaveDelay,
+      styles,
+      classNames,
+    },
+  })),
 );
-const bodyClassNames = computed(() => clsx(contextClassNames?.value?.body, popoverClassNames?.body));
+
+const rootClassNames = computed(() =>
+  clsx(hashId.value, cssVarCls.value, contextClassName?.value, mergedClassNames?.value?.root),
+);
 
 const open = defineModel('open', { default: false });
 
@@ -99,17 +125,11 @@ const children = computed(() => flattenChildren(slots.default?.())?.[0]);
     :mouse-enter-delay="mouseEnterDelay"
     :mouse-leave-delay="mouseLeaveDelay"
     :prefix-cls="prefixCls"
-    :class-names="{ root: rootClassNames, body: bodyClassNames }"
+    :class-names="{ root: rootClassNames, container: mergedClassNames.container, arrow: mergedClassNames.arrow }"
     :styles="{
-      root: {
-        ...contextStyles.root,
-        ...contextStyle,
-        ...styles?.root,
-      },
-      body: {
-        ...contextStyles.body,
-        ...styles?.body,
-      },
+      root: { ...mergedStyles.root, ...contextStyle },
+      container: mergedStyles.container,
+      arrow: mergedStyles.arrow,
     }"
     :open="open"
     @open-change="onInternalOpenChange"

@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, ref, toRefs, useSlots, watch, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, ref, toRefs, useSlots, watch, type CSSProperties } from 'vue';
 import { useComponentConfig } from '../config-provider/context';
 import Indicator from './Indicator/index.vue';
 import useStyle from './style/index';
@@ -8,9 +8,18 @@ import type { VueNode } from '@/vc-util/type';
 import { debounce } from 'throttle-debounce';
 import clsx from 'clsx';
 import Render from '@/vc-component/render';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 
 export type SpinIndicator = VueNode;
-type SemanticName = 'root' | 'wrapper' | 'mask' | 'indicator';
+type SemanticName = 'root' | 'wrapper' | 'mask' | 'indicator' | 'tip';
+export type SpinClassNamesType = SemanticClassNamesType<SpinProps, SemanticName>;
+export type SpinStylesType = SemanticStylesType<
+  SpinProps,
+  SemanticName,
+  {
+    wrapper?: CSSProperties;
+  }
+>;
 export interface SpinProps {
   /** Customize prefix class name */
   prefixCls?: string;
@@ -35,8 +44,8 @@ export interface SpinProps {
   /** Display a backdrop with the `Spin` component */
   fullscreen?: boolean;
   percent?: number | 'auto';
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: SpinClassNamesType;
+  styles?: SpinStylesType;
 }
 
 export type SpinType = SpinProps & {
@@ -58,7 +67,7 @@ const {
   fullscreen = false,
   indicator,
   percent,
-  classNames: spinClassNames,
+  classNames,
   styles,
   ...restProps
 } = defineProps<SpinProps>();
@@ -110,6 +119,23 @@ const slots = useSlots();
 
 const isNestedPattern = computed<boolean>(() => slots.default && !fullscreen);
 
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<SpinClassNamesType, SpinStylesType, SpinProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      size,
+      spinning: spinning.value,
+      tip,
+      fullscreen,
+      percent: mergedPercent.value,
+    } as SpinProps,
+  })),
+);
+
 const spinClassName = computed(() => {
   return clsx(
     prefixCls.value,
@@ -123,8 +149,7 @@ const spinClassName = computed(() => {
     },
     className,
     !fullscreen && rootClassName,
-    !fullscreen && spinClassNames?.root,
-    !fullscreen && contextClassNames.value.root,
+    !fullscreen && mergedClassNames.value.root,
     hashId.value,
     cssVarCls.value,
   );
@@ -138,21 +163,19 @@ const containerClassName = computed(() => {
 
 const mergedIndicator = computed(() => indicator ?? contextIndicator);
 
-const rootStyle = computed<CSSProperties>(() => ({ ...contextStyles.value.root, ...styles?.root }));
-const wrapStyle = computed<CSSProperties>(() => ({ ...contextStyles.value.wrapper, ...styles?.wrapper }));
 const mergedStyle = computed<CSSProperties>(() => ({ ...contextStyle?.value, ...style }));
 
 const SpinElement = () => (
   <div
     {...restProps}
-    style={fullscreen ? mergedStyle.value : { ...rootStyle.value, ...mergedStyle.value }}
+    style={fullscreen ? mergedStyle.value : { ...mergedStyles.value?.root, ...mergedStyle.value }}
     class={spinClassName.value}
     aria-live="polite"
     aria-busy={spinning.value}
   >
     <Indicator
-      class={clsx(spinClassNames?.indicator, contextClassNames?.value?.indicator)}
-      style={{ ...contextStyles?.value?.indicator, ...styles?.indicator }}
+      class={mergedClassNames.value?.indicator}
+      style={mergedStyles?.value?.indicator}
       prefixCls={prefixCls.value}
       indicator={mergedIndicator.value}
       percent={mergedPercent.value}
@@ -170,7 +193,7 @@ const SpinElement = () => (
     v-if="isNestedPattern"
     v-bind="restProps"
     :class="clsx(`${prefixCls}-nested-loading`, wrapperClassName, hashId, cssVarCls)"
-    :style="wrapStyle"
+    :style="mergedStyles.wrapper"
   >
     <div v-if="spinning" key="loading">
       <SpinElement />
@@ -190,11 +213,10 @@ const SpinElement = () => (
           rootClassName,
           hashId,
           cssVarCls,
-          spinClassNames?.mask,
-          contextClassNames.mask,
+          mergedClassNames?.mask,
         )
       "
-      :style="{ ...contextStyles.mask, ...styles?.mask }"
+      :style="mergedStyles?.mask"
     >
       <SpinElement />
     </div>

@@ -3,8 +3,13 @@ import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 import { CheckCircleFilled, CloseCircleFilled, ExclamationCircleFilled, InfoCircleFilled } from '@ant-design/icons-vue';
 import clsx from 'clsx';
-import type { CSSProperties } from 'vue';
-import type { IconType, SemanticName } from './interface';
+import type { SemanticClassNames, SemanticClassNamesType, SemanticStyles, SemanticStylesType } from '../_util/hooks';
+import type { IconType, NotificationSemantic } from './interface';
+import type { PurePanelProps } from './PurePanel.vue';
+
+export type PurePanelClassNamesType = SemanticClassNamesType<PurePanelProps, NotificationSemantic>;
+
+export type PurePanelStylesType = SemanticStylesType<PurePanelProps, NotificationSemantic>;
 
 export interface PureContentProps {
   prefixCls: string;
@@ -14,8 +19,8 @@ export interface PureContentProps {
   actions?: VueNode;
   type?: IconType;
   role?: 'alert' | 'status';
-  classNames: Required<Record<SemanticName, string>>;
-  styles: Required<Record<SemanticName, CSSProperties>>;
+  classNames: SemanticClassNames<NotificationSemantic>;
+  styles: SemanticStyles<NotificationSemantic>;
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });

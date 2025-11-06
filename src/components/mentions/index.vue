@@ -14,12 +14,13 @@ import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useVariant from '../form/hooks/useVariants';
 import Spin from '../spin';
 import useStyle from './style';
-import { computed, ref, toRefs, useTemplateRef, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, ref, toRefs, useTemplateRef } from 'vue';
 import { useFormItemInputContextInject } from '../form/context';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import DefaultRenderEmpty from '../config-provider/defaultRenderEmpty.vue';
 import clsx from 'clsx';
 import Render from '@/vc-component/render';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 
 export type { DataDrivenOptionProps as MentionsOptionProps } from '@/vc-component/mentions/Mentions.vue';
 
@@ -32,6 +33,9 @@ export interface OptionProps {
 
 type SemanticName = 'root' | 'textarea' | 'popup';
 
+export type MentionsClassNamesType = SemanticClassNamesType<MentionProps, SemanticName>;
+export type MentionsStylesType = SemanticStylesType<MentionProps, SemanticName>;
+
 export interface MentionProps extends Omit<RcMentionsProps, 'suffix' | 'classNames' | 'styles'> {
   rootClassName?: string;
   loading?: boolean;
@@ -43,8 +47,8 @@ export interface MentionProps extends Omit<RcMentionsProps, 'suffix' | 'classNam
    * @default "outlined"
    */
   variant?: Variant;
-  classNames?: RcMentionsProps['classNames'] & Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: MentionsClassNamesType;
+  styles?: MentionsStylesType;
 }
 
 export interface MentionsProps extends MentionProps {}
@@ -67,7 +71,7 @@ const {
   popupClassName,
   style,
   variant: customVariant,
-  classNames: mentionsClassNames,
+  classNames,
   styles,
   ...restProps
 } = defineProps<MentionsProps>();
@@ -100,6 +104,26 @@ const mergedStatus = computed(() => getMergedStatus(contextStatus?.value, custom
 // ===================== Disabled =====================
 const contextDisabled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? contextDisabled?.value);
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<MentionsClassNamesType, MentionsStylesType, MentionProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(
+    () =>
+      ({
+        props: {
+          ...vm.props,
+          disabled: mergedDisabled.value,
+          status: mergedStatus.value,
+          loading,
+          options,
+          variant: customVariant,
+        },
+      }) as any,
+  ),
+);
 
 const onFocus = (e) => {
   if (restProps.onFocus) {
@@ -153,15 +177,7 @@ const [variant, enableVariantCls] = useVariant(
 const suffixNode = computed(() => hasFeedback?.value && <Render content={feedbackIcon?.value}></Render>);
 
 const mergedClassName = computed(() =>
-  clsx(
-    contextClassName?.value,
-    className,
-    rootClassName,
-    cssVarCls.value,
-    rootCls.value,
-    contextClassNames?.value?.root,
-    mentionsClassNames?.root,
-  ),
+  clsx(contextClassName?.value, className, rootClassName, cssVarCls.value, rootCls.value, mergedClassNames?.value?.root),
 );
 </script>
 <template>
@@ -175,7 +191,7 @@ const mergedClassName = computed(() =>
     :class="mergedClassName"
     :allow-clear="mergedAllowClear"
     :direction="direction"
-    :style="{ ...contextStyles.root, ...styles?.root, ...contextStyle, ...style }"
+    :style="{ ...mergedStyles.root, ...contextStyle, ...style }"
     :filter-option="mentionsfilterOption"
     @focus="onFocus"
     @blur="onBlur"
@@ -183,12 +199,12 @@ const mergedClassName = computed(() =>
     :suffix="suffixNode"
     :disabled="mergedDisabled"
     :styles="{
-      textarea: { ...contextStyles.textarea, ...styles?.textarea },
-      popup: { ...contextStyles.popup, ...styles?.popup },
+      textarea: mergedStyles.textarea,
+      popup: mergedStyles.popup,
     }"
     :class-names="{
-      textarea: clsx(mentionsClassNames?.textarea, contextClassNames.textarea),
-      popup: clsx(mentionsClassNames?.popup, contextClassNames.popup, popupClassName, rootClassName, hashId, cssVarCls, rootCls),
+      textarea: clsx(mergedClassNames.textarea),
+      popup: clsx(mergedClassNames.popup, popupClassName, rootClassName, hashId, cssVarCls, rootCls),
       mentions: clsx(
         {
           [`${prefixCls}-disabled`]: mergedDisabled,

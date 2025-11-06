@@ -3,18 +3,19 @@ import type { ProgressProps as RcProgressProps } from '@/vc-component/progress';
 import { Circle as RCCircle } from '@/vc-component/progress';
 import { useComponentConfig } from '../config-provider/context';
 import Tooltip from '../tooltip';
-import type { GapPosition, ProgressGradient, ProgressProps } from './progress.vue';
+import type { GapPosition, ProgressGradient, ProgressProps, SemanticName } from './progress.vue';
 import { getPercentage, getSize, getStrokeColor } from './utils';
 import { computed, getCurrentInstance, toRefs, type VNode } from 'vue';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks';
 
 export interface CircleProps extends ProgressProps {
   prefixCls: string;
   progressStatus: string;
   strokeColor?: string | ProgressGradient;
-  classNames: Required<ProgressProps>['classNames'];
-  styles: Required<ProgressProps>['styles'];
+  classNames: SemanticClassNames<SemanticName>;
+  styles: SemanticStyles<SemanticName>;
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });

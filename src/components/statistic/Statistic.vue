@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, ref, toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, ref, toRefs, type CSSProperties } from 'vue';
 import { useComponentConfig } from '../config-provider/context';
 import StatisticNumber from './Number.vue';
 import useStyle from './style';
@@ -9,8 +9,11 @@ import clsx from 'clsx';
 import pickAttrs from '@/vc-util/pickAttrs';
 import Render from '@/vc-component/render';
 import Skeleton from '../skeleton';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 
 export type SemanticName = 'root' | 'content' | 'title' | 'header' | 'prefix' | 'suffix';
+export type StatisticClassNamesType = SemanticClassNamesType<StatisticProps, SemanticName>;
+export type StatisticStylesType = SemanticStylesType<StatisticProps, SemanticName>;
 export interface StatisticRef {
   nativeElement: HTMLDivElement;
 }
@@ -18,8 +21,8 @@ export interface StatisticRef {
 export interface StatisticProps extends FormatConfig {
   prefixCls?: string;
   class?: string;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: StatisticClassNamesType;
+  styles?: StatisticStylesType;
   rootClassName?: string;
   style?: CSSProperties;
   value?: valueType;
@@ -55,7 +58,7 @@ const {
   onMouseenter,
   onMouseleave,
   styles,
-  classNames: statisticClassNames,
+  classNames,
   ...rest
 } = defineProps<StatisticProps>();
 
@@ -71,6 +74,22 @@ const {
 const prefixCls = computed(() => getPrefixCls.value('statistic', customizePrefixCls));
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<StatisticClassNamesType, StatisticStylesType, StatisticProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      decimalSeparator,
+      groupSeparator,
+      loading,
+      value,
+    },
+  })),
+);
 
 const ValueNode = () => (
   <StatisticNumber
@@ -92,32 +111,21 @@ const rootClassNames = computed(() =>
     contextClassName?.value,
     className,
     rootClassName,
-    contextClassNames?.value?.root,
-    statisticClassNames?.root,
+    mergedClassNames?.value?.root,
     hashId.value,
     cssVarCls.value,
   ),
 );
 
-const headerClassNames = computed(() =>
-  clsx(`${prefixCls.value}-header`, contextClassNames?.value?.header, statisticClassNames?.header),
-);
+const headerClassNames = computed(() => clsx(`${prefixCls.value}-header`, mergedClassNames?.value?.header));
 
-const titleClassNames = computed(() =>
-  clsx(`${prefixCls.value}-title`, contextClassNames?.value?.title, statisticClassNames?.title),
-);
+const titleClassNames = computed(() => clsx(`${prefixCls.value}-title`, mergedClassNames?.value?.title));
 
-const contentClassNames = computed(() =>
-  clsx(`${prefixCls.value}-content`, contextClassNames?.value?.content, statisticClassNames?.content),
-);
+const contentClassNames = computed(() => clsx(`${prefixCls.value}-content`, mergedClassNames?.value?.content));
 
-const prefixClassNames = computed(() =>
-  clsx(`${prefixCls.value}-content-prefix`, contextClassNames?.value?.prefix, statisticClassNames?.prefix),
-);
+const prefixClassNames = computed(() => clsx(`${prefixCls.value}-content-prefix`, mergedClassNames?.value?.prefix));
 
-const suffixClassNames = computed(() =>
-  clsx(`${prefixCls.value}-content-suffix`, contextClassNames?.value?.suffix, statisticClassNames?.suffix),
-);
+const suffixClassNames = computed(() => clsx(`${prefixCls.value}-content-suffix`, mergedClassNames?.value?.suffix));
 const internalRef = ref<HTMLDivElement>(null);
 
 defineExpose({
@@ -132,24 +140,24 @@ const restProps = computed(() => pickAttrs(rest, { aria: true, data: true }));
   <div
     v-bind="restProps"
     :class="rootClassNames"
-    :style="{ ...contextStyles.root, ...styles?.root, ...contextStyle, ...style }"
+    :style="{ ...mergedStyles.root, ...contextStyle, ...style }"
     ref="internalRef"
     @mouseenter="onMouseenter"
     @mouseleave="onMouseleave"
   >
-    <div v-if="title" :class="headerClassNames" :style="{ ...contextStyles.header, ...styles?.header }">
-      <div :class="titleClassNames" :style="{ ...contextStyles.title, ...styles?.title }">
+    <div v-if="title" :class="headerClassNames" :style="mergedStyles?.header">
+      <div :class="titleClassNames" :style="mergedStyles?.title">
         <Render :content="title" />
       </div>
     </div>
     <Skeleton :paragraph="false" :loading="loading" :class="`${prefixCls}-skeleton`">
-      <div :class="contentClassNames" :style="{ ...contextStyles.content, ...styles?.content }">
-        <span v-if="prefix" :class="prefixClassNames" :style="{ ...contextStyles.prefix, ...styles?.prefix }">
+      <div :class="contentClassNames" :style="mergedStyles?.content">
+        <span v-if="prefix" :class="prefixClassNames" :style="mergedStyles?.prefix">
           <Render :content="prefix" />
         </span>
         <Render v-if="valueRender" :content="valueRender(ValueNode)" />
         <ValueNode v-else />
-        <span v-if="suffix" :class="suffixClassNames" :style="{ ...contextStyles.suffix, ...styles?.suffix }">
+        <span v-if="suffix" :class="suffixClassNames" :style="mergedStyles?.suffix">
           <Render :content="suffix" />
         </span>
       </div>

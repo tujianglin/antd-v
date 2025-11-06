@@ -2,9 +2,11 @@
 import Render from '@/vc-component/render';
 import { Popup } from '@/vc-component/tooltip';
 import clsx from 'clsx';
-import { computed, toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
+import { useMergeSemantic } from '../_util/hooks';
 import { useConfigContextInject } from '../config-provider';
-import type { TooltipProps } from './index.vue';
+import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
+import type { TooltipClassNamesType, TooltipProps, TooltipStylesType } from './index.vue';
 import useStyle from './style';
 import { parseColor } from './util';
 
@@ -13,26 +15,52 @@ export type PurePanelProps = TooltipProps;
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { prefixCls: customizePrefixCls, class: className, placement = 'top', title, color } = defineProps<PurePanelProps>();
+const {
+  prefixCls: customizePrefixCls,
+  class: className,
+  placement = 'top',
+  title,
+  color,
+  classNames,
+  styles,
+} = defineProps<PurePanelProps>();
 
 const { getPrefixCls } = toRefs(useConfigContextInject());
 
 const prefixCls = computed(() => getPrefixCls.value('tooltip', customizePrefixCls));
-const [hashId, cssVarCls] = useStyle(prefixCls);
+
+const rootCls = useCSSVarCls(prefixCls);
+
+const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
 // Color
 const colorInfo = computed(() => parseColor(prefixCls.value, color));
 
 const arrowContentStyle = computed(() => colorInfo.value.arrowStyle);
 
-const formattedOverlayInnerStyle = computed<CSSProperties>(() => {
-  return {
-    ...colorInfo?.value?.overlayStyle,
+const innerStyles = computed(() => {
+  const mergedStyle: CSSProperties = {
+    ...colorInfo.value?.overlayStyle,
   };
+  return { container: mergedStyle };
 });
 
-const cls = computed(() => {
-  return clsx(
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<TooltipClassNamesType, TooltipStylesType, TooltipProps>(
+  computed(() => [classNames]),
+  computed(() => [innerStyles.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      placement,
+    },
+  })),
+);
+
+const rootClassName = computed(() =>
+  clsx(
+    rootCls.value,
     hashId.value,
     cssVarCls.value,
     prefixCls.value,
@@ -40,13 +68,13 @@ const cls = computed(() => {
     `${prefixCls.value}-placement-${placement}`,
     className,
     colorInfo?.value?.className,
-  );
-});
+  ),
+);
 </script>
 <template>
-  <div :class="cls" :style="arrowContentStyle">
+  <div :class="rootClassName" :style="arrowContentStyle">
     <div :class="`${prefixCls}-arrow`"></div>
-    <Popup v-bind="$props" :class="hashId" :prefix-cls="prefixCls" :overlay-inner-style="formattedOverlayInnerStyle">
+    <Popup v-bind="$props" :class="hashId" :prefix-cls="prefixCls" :class-names="mergedClassNames" :styles="mergedStyles">
       <Render :content="title" />
     </Popup>
   </div>

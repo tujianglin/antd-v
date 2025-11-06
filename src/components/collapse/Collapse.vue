@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
 import type { CollapseProps as RcCollapseProps } from '@/vc-component/collapse';
 import RcCollapse from '@/vc-component/collapse';
 import type { CSSMotionProps } from '@/vc-component/motion';
@@ -14,10 +14,14 @@ import { RightOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
 import { cloneElement } from '@/vc-util/Children/util';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 
 export type ExpandIconPlacement = 'start' | 'end';
 
-export type SemanticName = 'root' | 'header' | 'title' | 'body' | 'icon';
+export type CollapseSemanticName = 'root' | 'header' | 'title' | 'body' | 'icon';
+
+export type CollapseClassNamesType = SemanticClassNamesType<CollapseProps, CollapseSemanticName>;
+export type CollapseStylesType = SemanticStylesType<CollapseProps, CollapseSemanticName>;
 
 export interface CollapseProps extends Pick<RcCollapseProps, 'items'> {
   /** 手风琴效果 */
@@ -37,8 +41,8 @@ export interface CollapseProps extends Pick<RcCollapseProps, 'items'> {
   ghost?: boolean;
   size?: SizeType;
   collapsible?: CollapsibleType;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: CollapseClassNamesType;
+  styles?: CollapseStylesType;
 }
 
 interface PanelProps {
@@ -50,8 +54,8 @@ interface PanelProps {
   forceRender?: boolean;
   extra?: VueNode;
   collapsible?: CollapsibleType;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: CollapseClassNamesType;
+  styles?: CollapseStylesType;
 }
 
 defineOptions({ name: 'Collapse', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -67,7 +71,7 @@ const {
   expandIconPlacement,
   destroyOnHidden,
   expandIcon,
-  classNames: collapseClassNames,
+  classNames,
   styles,
 } = defineProps<CollapseProps>();
 
@@ -89,6 +93,22 @@ const rootPrefixCls = computed(() => getPrefixCls.value());
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
 const mergedExpandIcon = computed(() => expandIcon ?? contextExpandIcon?.value);
+const mergedPlacement = computed(() => expandIconPlacement ?? 'start');
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<CollapseClassNamesType, CollapseStylesType, CollapseProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      size: mergedSize.value,
+      bordered,
+      expandIconPlacement: mergedPlacement.value,
+    },
+  })),
+);
 
 const renderExpandIcon = (panelProps: PanelProps = {}) => {
   const icon =
@@ -101,16 +121,9 @@ const renderExpandIcon = (panelProps: PanelProps = {}) => {
       />
     );
   return cloneElement(icon, () => ({
-    class: clsx(
-      (icon as any)?.props?.class,
-      contextClassNames?.value?.icon,
-      collapseClassNames?.icon,
-      `${prefixCls.value}-arrow`,
-    ),
-    style: { ...contextStyles?.value?.icon, ...styles?.icon },
+    class: clsx((icon as any)?.props?.class, `${prefixCls.value}-arrow`),
   }));
 };
-const mergedPlacement = computed(() => expandIconPlacement ?? 'start');
 
 const collapseClassName = computed(() =>
   clsx(
@@ -126,8 +139,7 @@ const collapseClassName = computed(() =>
     rootClassName,
     hashId.value,
     cssVarCls.value,
-    contextClassNames?.value?.root,
-    collapseClassNames?.root,
+    mergedClassNames?.value?.root,
   ),
 );
 
@@ -145,19 +157,9 @@ const openMotion = computed<CSSMotionProps>(() => ({
     :expand-icon="renderExpandIcon"
     :prefix-cls="prefixCls"
     :class="collapseClassName"
-    :style="{ ...contextStyles.root, ...contextStyle, ...styles?.root, ...style }"
-    :class-names="{
-      header: clsx(contextClassNames.header, collapseClassNames?.header),
-      title: clsx(contextClassNames.title, collapseClassNames?.title),
-      body: clsx(contextClassNames.body, collapseClassNames?.body),
-      icon: clsx(contextClassNames.icon, collapseClassNames?.icon),
-    }"
-    :styles="{
-      header: { ...contextStyles.header, ...styles?.header },
-      title: { ...contextStyles.title, ...styles?.title },
-      body: { ...contextStyles.body, ...styles?.body },
-      icon: { ...contextStyles.icon, ...styles?.icon },
-    }"
+    :style="{ ...mergedStyles.root, ...contextStyle, ...style }"
+    :class-names="mergedClassNames"
+    :styles="mergedStyles"
     :destroy-on-hidden="destroyOnHidden"
   />
 </template>

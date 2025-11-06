@@ -1,17 +1,24 @@
 <script lang="tsx" setup>
 import { DownOutlined, LeftOutlined, RightOutlined, UpOutlined } from '@ant-design/icons-vue';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, toRefs, watch, type CSSProperties } from 'vue';
 import clsx from 'clsx';
+import type { SplitterProps, SplitterSemanticDraggerClassNames } from './interface';
+import Render from '@/vc-component/render';
+import { reactiveComputed } from '@vueuse/core';
 
 export type ShowCollapsibleIconMode = boolean | 'auto';
 
 export interface SplitBarProps {
   index: number;
   active: boolean;
+  draggerStyle?: CSSProperties;
+  draggerClassName?: SplitterSemanticDraggerClassNames;
   prefixCls: string;
   resizable: boolean;
   startCollapsible: boolean;
   endCollapsible: boolean;
+  draggerIcon?: SplitterProps['draggerIcon'];
+  collapsibleIcon?: SplitterProps['collapsibleIcon'];
   showStartCollapsibleIcon: ShowCollapsibleIconMode;
   showEndCollapsibleIcon: ShowCollapsibleIconMode;
   onOffsetStart: (index: number) => void;
@@ -37,6 +44,10 @@ const {
   ariaMin,
   ariaMax,
   resizable,
+  draggerIcon,
+  draggerStyle,
+  draggerClassName,
+  collapsibleIcon,
   startCollapsible,
   endCollapsible,
   onOffsetStart,
@@ -185,12 +196,29 @@ const transformStyle = computed(() => ({
 }));
 
 // ======================== Render ========================
-const StartIcon = (props) => (vertical ? <UpOutlined {...props}></UpOutlined> : <LeftOutlined {...props}></LeftOutlined>);
-const EndIcon = (props) => (vertical ? <DownOutlined {...props}></DownOutlined> : <RightOutlined {...props}></RightOutlined>);
+const { startIcon, endIcon, startCustomize, endCustomize } = toRefs(
+  reactiveComputed(() => {
+    let startIcon = null;
+    let endIcon = null;
+    const startCustomize = collapsibleIcon?.start !== undefined;
+    const endCustomize = collapsibleIcon?.end !== undefined;
+
+    if (vertical) {
+      startIcon = startCustomize ? collapsibleIcon.start : <UpOutlined />;
+      endIcon = endCustomize ? collapsibleIcon.end : <DownOutlined />;
+    } else {
+      startIcon = startCustomize ? collapsibleIcon.start : <LeftOutlined />;
+      endIcon = endCustomize ? collapsibleIcon.end : <RightOutlined />;
+    }
+
+    return { startIcon, endIcon, startCustomize, endCustomize };
+  }),
+);
 </script>
 <template>
   <div
     :class="clsx(splitBarPrefixCls)"
+    role="separator"
     :aria-valuenow="getValidNumber(ariaNow)"
     :aria-valuemin="getValidNumber(ariaMin)"
     :aria-valuemax="getValidNumber(ariaMax)"
@@ -207,27 +235,43 @@ const EndIcon = (props) => (vertical ? <DownOutlined {...props}></DownOutlined> 
       :style="transformStyle"
     ></div>
     <div
+      :style="draggerStyle"
       :class="
-        clsx(`${splitBarPrefixCls}-dragger`, {
-          [`${splitBarPrefixCls}-dragger-disabled`]: !resizable,
-          [`${splitBarPrefixCls}-dragger-active`]: active,
-        })
+        clsx(
+          `${splitBarPrefixCls}-dragger`,
+          {
+            [`${splitBarPrefixCls}-dragger-disabled`]: !resizable,
+            [`${splitBarPrefixCls}-dragger-active`]: active,
+            [`${splitBarPrefixCls}-dragger-customize`]: draggerIcon !== undefined,
+          },
+          draggerClassName?.default,
+          active && draggerClassName?.active,
+        )
       "
       @mousedown="onMousedown"
       @touchstart.passive="onTouchstart"
-    ></div>
+    >
+      <div v-if="draggerIcon !== undefined" :class="clsx(`${splitBarPrefixCls}-dragger-icon`)">
+        <Render :content="draggerIcon" />
+      </div>
+    </div>
     <div
       v-if="startCollapsible"
       :class="
         clsx(
           `${splitBarPrefixCls}-collapse-bar`,
           `${splitBarPrefixCls}-collapse-bar-start`,
+          {
+            [`${splitBarPrefixCls}-collapse-bar-customize`]: startCustomize,
+          },
           getVisibilityClass(showStartCollapsibleIcon),
         )
       "
       @click="() => onCollapse(index, 'start')"
     >
-      <StartIcon :class="clsx(`${splitBarPrefixCls}-collapse-icon`, `${splitBarPrefixCls}-collapse-start`)" />
+      <span :class="clsx(`${splitBarPrefixCls}-collapse-icon`, `${splitBarPrefixCls}-collapse-start`)">
+        <component :is="startIcon" />
+      </span>
     </div>
     <div
       v-if="endCollapsible"
@@ -235,12 +279,17 @@ const EndIcon = (props) => (vertical ? <DownOutlined {...props}></DownOutlined> 
         clsx(
           `${splitBarPrefixCls}-collapse-bar`,
           `${splitBarPrefixCls}-collapse-bar-end`,
+          {
+            [`${splitBarPrefixCls}-collapse-bar-customize`]: endCustomize,
+          },
           getVisibilityClass(showEndCollapsibleIcon),
         )
       "
       @click="() => onCollapse(index, 'end')"
     >
-      <EndIcon :class="clsx(`${splitBarPrefixCls}-collapse-icon`, `${splitBarPrefixCls}-collapse-end`)" />
+      <span :class="clsx(`${splitBarPrefixCls}-collapse-icon`, `${splitBarPrefixCls}-collapse-end`)">
+        <component :is="endIcon" />
+      </span>
     </div>
   </div>
 </template>

@@ -13,7 +13,7 @@ import {
   watchEffect,
   type VNode,
 } from 'vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic } from '../_util/hooks';
 import { Wave } from '../_util/wave';
 import { useConfigContextInject } from '../config-provider';
 import { useComponentConfig } from '../config-provider/context';
@@ -243,7 +243,6 @@ const mergedProps = computed<BaseButtonProps>(() => {
 const [mergedClassNames, mergedStyles] = useMergeSemantic<ButtonClassNamesType, ButtonStylesType, BaseButtonProps>(
   computed(() => [_skipSemantic ? undefined : contextClassNames.value, buttonClassNames]),
   computed(() => [_skipSemantic ? undefined : contextStyles.value, styles]),
-  undefined,
   computed(() => ({
     props: mergedProps.value,
   })),

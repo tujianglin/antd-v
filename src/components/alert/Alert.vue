@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, createVNode, ref, toRefs, type AriaAttributes, type CSSProperties, type VNode } from 'vue';
+import { computed, createVNode, getCurrentInstance, ref, toRefs, type AriaAttributes, type CSSProperties, type VNode } from 'vue';
 import {
   CheckCircleFilled,
   CloseCircleFilled,
@@ -18,12 +18,17 @@ import { keysToCamelCaseShallow } from '@/vc-util/props';
 import type { VueNode } from '@/vc-util/type';
 import { replaceElement } from '@/vc-util/Children/util';
 import { propsToCamelCase } from '../_util/type';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 
 export interface AlertRef {
   nativeElement: HTMLDivElement;
 }
 
-type SemanticName = 'root' | 'icon' | 'section' | 'title' | 'description' | 'actions';
+export type AlertSemanticName = 'root' | 'icon' | 'section' | 'title' | 'description' | 'actions';
+
+export type AlertClassNamesType = SemanticClassNamesType<AlertProps, AlertSemanticName>;
+export type AlertStylesType = SemanticStylesType<AlertProps, AlertSemanticName>;
+
 export interface AlertProps {
   /** Type of Alert styles, options:`success`, `info`, `warning`, `error` */
   type?: 'success' | 'info' | 'warning' | 'error';
@@ -44,8 +49,8 @@ export interface AlertProps {
   style?: CSSProperties;
   prefixCls?: string;
   class?: string;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: AlertClassNamesType;
+  styles?: AlertStylesType;
   rootClassName?: string;
   banner?: boolean;
   icon?: VueNode;
@@ -94,7 +99,7 @@ const {
   action,
   id,
   styles,
-  classNames: alertClassNames,
+  classNames,
   ...otherProps
 } = defineProps<AlertProps>();
 
@@ -191,6 +196,24 @@ const isClosable = computed<boolean>(() => {
 // banner mode defaults to Icon
 const isShowIcon = computed(() => (banner && showIcon === undefined ? true : showIcon));
 
+const vm = getCurrentInstance();
+// =========== Merged Props for Semantic ==========
+const mergedProps = computed<AlertProps>(() => ({
+  ...vm.props,
+  prefixCls: prefixCls.value,
+  type: type.value,
+  showIcon: isShowIcon.value,
+  closable: isClosable.value,
+}));
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<AlertClassNamesType, AlertStylesType, AlertProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: mergedProps.value,
+  })),
+);
+
 const alertCls = computed(() => {
   return clsx(
     prefixCls.value,
@@ -204,8 +227,7 @@ const alertCls = computed(() => {
     contextClassName?.value,
     className,
     rootClassName,
-    contextClassNames.value.root,
-    alertClassNames?.root,
+    mergedClassNames.value.root,
     cssVarCls.value,
     hashId.value,
   );
@@ -252,9 +274,8 @@ const mergedAriaProps = computed(() => {
         :data-show="!closed"
         :class="clsx(alertCls, motionClassName)"
         :style="{
-          ...contextStyles.root,
+          ...mergedStyles.root,
           ...contextStyle,
-          ...styles?.root,
           ...style,
           ...motionStyle,
         }"
@@ -266,36 +287,33 @@ const mergedAriaProps = computed(() => {
       >
         <IconNode
           v-if="isShowIcon"
-          :class="clsx(`${prefixCls}-icon`, alertClassNames?.icon, contextClassNames.icon)"
-          :style="{ ...contextStyles.icon, ...styles?.icon }"
+          :class="clsx(`${prefixCls}-icon`, mergedClassNames.icon)"
+          :style="mergedStyles.icon"
           :description="slots.description || description"
           :icon="otherProps.icon"
           :prefix-cls="prefixCls"
           :type="type"
         />
-        <div
-          :class="clsx(`${prefixCls}-section`, alertClassNames?.section, contextClassNames.section)"
-          :style="{ ...contextStyles.section, ...styles?.section }"
-        >
+        <div :class="clsx(`${prefixCls}-section`, mergedClassNames.section)" :style="mergedStyles?.section">
           <div
             v-if="slots.title || title"
-            :class="clsx(`${prefixCls}-title`, alertClassNames?.title, contextClassNames.title)"
-            :style="{ ...contextStyles.title, ...styles?.title }"
+            :class="clsx(`${prefixCls}-title`, mergedClassNames.title)"
+            :style="mergedStyles?.title"
           >
             <Render :content="slots.title || title" />
           </div>
           <div
             v-if="slots.description || description"
-            :class="clsx(`${prefixCls}-description`, alertClassNames?.description, contextClassNames.description)"
-            :style="{ ...contextStyles.description, ...styles?.description }"
+            :class="clsx(`${prefixCls}-description`, mergedClassNames.description)"
+            :style="mergedStyles?.description"
           >
             <Render :content="slots.description || description" />
           </div>
         </div>
         <div
           v-if="slots.action || action"
-          :class="clsx(`${prefixCls}-actions`, alertClassNames?.actions, contextClassNames.actions)"
-          :style="{ ...contextStyles.actions, ...styles?.actions }"
+          :class="clsx(`${prefixCls}-actions`, mergedClassNames.actions)"
+          :style="mergedStyles?.actions"
         >
           <Render :content="slots.action || action" />
         </div>

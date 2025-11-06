@@ -1,3 +1,4 @@
+import type { SemanticClassNamesType, SemanticStylesType } from '@/components/_util/hooks';
 import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties, HTMLAttributes, InputTypeHTMLAttribute } from 'vue';
 import type { InputStatus } from '../../_util/statusUtils';
@@ -5,6 +6,9 @@ import type { Variant } from '../../config-provider/context';
 import type { SizeType } from '../../config-provider/SizeContext';
 
 type SemanticName = 'root' | 'input' | 'separator';
+
+export type OTPClassNamesType = SemanticClassNamesType<OTPProps, SemanticName>;
+export type OTPStylesType = SemanticStylesType<OTPProps, SemanticName>;
 
 export interface OTPRef {
   focus: VoidFunction;
@@ -39,8 +43,8 @@ export interface OTPProps extends /* @vue-ignore */ Omit<HTMLAttributes, 'onChan
 
   onInput?: (value: string[]) => void;
 
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: OTPClassNamesType;
+  styles?: OTPStylesType;
 }
 
 export interface SeparatorProps {

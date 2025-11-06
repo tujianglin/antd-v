@@ -2,10 +2,17 @@ import type { VueKey } from '@/vc-util/type';
 import { reactiveComputed, type ReactiveComputedReturn } from '@vueuse/core';
 import clsx from 'clsx';
 import { ref, toRefs } from 'vue';
+import { mergeClassNames, mergeStyles, resolveStyleOrClass, type SemanticClassNames, type SemanticStyles } from '../_util/hooks';
 import { computeClosable, pickClosable } from '../_util/hooks/useClosable';
 import { useConfigContextInject } from '../config-provider/context';
 import Holder, { type HolderRef } from './Holder.vue';
-import type { ArgsProps, NotificationConfig, NotificationInstance, NotificationPlacement } from './interface';
+import type {
+  ArgsProps,
+  NotificationConfig,
+  NotificationInstance,
+  NotificationPlacement,
+  NotificationSemantic,
+} from './interface';
 import PureContent, { type PureContentProps } from './PureContent.vue';
 import { getCloseIcon, getCloseIconConfig } from './util';
 
@@ -36,11 +43,11 @@ export function useInternalNotification(
         api: { open: originOpen },
         prefixCls,
         notification,
+        classNames: originClassNames,
+        styles: originStyles,
       } = holderRef.value;
       const contextClassName = notification?.class || {};
       const contextStyle = notification?.style || {};
-      const contextClassNames = notification?.classNames || {};
-      const contextStyles = notification?.styles || {};
 
       const noticePrefixCls = `${prefixCls}-notice`;
       const {
@@ -77,6 +84,17 @@ export function useInternalNotification(
           }
         : false;
 
+      const semanticClassNames = resolveStyleOrClass(configClassNames, { props: config });
+      const semanticStyles = resolveStyleOrClass(styles, { props: config });
+
+      const mergedClassNames: SemanticClassNames<NotificationSemantic> = mergeClassNames(
+        undefined,
+        originClassNames,
+        semanticClassNames,
+      );
+
+      const mergedStyles: SemanticStyles<NotificationSemantic> = mergeStyles(originStyles, semanticStyles);
+
       return originOpen({
         // use placement from props instead of hard-coding "topRight"
         placement: notificationConfig?.placement ?? DEFAULT_PLACEMENT,
@@ -90,32 +108,12 @@ export function useInternalNotification(
             description={description}
             actions={actions}
             role={role}
-            classNames={
-              {
-                icon: clsx(contextClassNames.icon, configClassNames.icon),
-                title: clsx(contextClassNames.title, configClassNames.title),
-                description: clsx(contextClassNames.description, configClassNames.description),
-                actions: clsx(contextClassNames.actions, configClassNames.actions),
-              } as PureContentProps['classNames']
-            }
-            styles={
-              {
-                icon: { ...contextStyles.icon, ...styles.icon },
-                title: { ...contextStyles.title, ...styles.title },
-                description: { ...contextStyles.description, ...styles.description },
-                actions: { ...contextStyles.actions, ...styles.actions },
-              } as PureContentProps['styles']
-            }
+            classNames={mergedClassNames as PureContentProps['classNames']}
+            styles={mergedStyles as PureContentProps['styles']}
           />
         ),
-        class: clsx(
-          type && `${noticePrefixCls}-${type}`,
-          className,
-          contextClassName,
-          configClassNames.root,
-          contextClassNames.root,
-        ),
-        style: { ...contextStyles.root, ...styles.root, ...contextStyle, ...style },
+        class: clsx(type && `${noticePrefixCls}-${type}`, className, contextClassName, mergedClassNames.root),
+        style: { ...mergedStyles.root, ...contextStyle, ...style },
         closable: mergedClosable as any,
       });
     };

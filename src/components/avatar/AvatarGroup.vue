@@ -79,16 +79,16 @@ const ChildrenShow = () => {
     const mergePopoverTrigger = max?.popover?.trigger || 'hover';
     const mergePopoverPlacement = max?.popover?.placement || 'top';
 
-    const mergeProps = {
+    const popoverProps = {
       content: childrenHidden,
       ...max?.popover,
-      classNames: { root: clsx(`${groupPrefixCls.value}-popover`, max?.popover?.classNames?.root) },
       placement: mergePopoverPlacement,
       trigger: mergePopoverTrigger,
+      rootClassName: clsx(`${groupPrefixCls.value}-popover`, max?.popover?.rootClassName),
     };
 
     childrenShow.push(
-      <Popover key="avatar-popover-key" destroyOnHidden {...mergeProps}>
+      <Popover key="avatar-popover-key" destroyOnHidden {...popoverProps}>
         <Avatar style={max?.style}>{`+${numOfChildren - max.count}`}</Avatar>
       </Popover>,
     );

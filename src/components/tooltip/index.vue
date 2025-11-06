@@ -28,9 +28,11 @@ import useStyle from './style';
 import { parseColor } from './util';
 import ContextIsolator from '../_util/ContextIsolator';
 import { getTransitionName } from '../_util/motion';
-import { isFragment, isValidElement, isVueNode } from '@/vc-util/Children/util';
+import { isFragment, isValidElement } from '@/vc-util/Children/util';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import type { VueNode } from '@/vc-util/type';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
+import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 
 export type { AdjustOverflow, PlacementsConfig };
 
@@ -70,11 +72,20 @@ export interface TooltipAlignConfig {
 // remove this after RcTooltip switch visible to open.
 interface LegacyTooltipProps
   extends Partial<
-    Omit<RcTooltipProps, 'visible' | 'defaultVisible' | 'onVisibleChange' | 'afterVisibleChange' | 'destroyTooltipOnHide'>
+    Omit<
+      RcTooltipProps,
+      'visible' | 'defaultVisible' | 'onVisibleChange' | 'afterVisibleChange' | 'destroyTooltipOnHide' | 'classNames' | 'styles'
+    >
   > {
   onOpenChange?: RcTooltipProps['onVisibleChange'];
   afterOpenChange?: RcTooltipProps['afterVisibleChange'];
 }
+
+export type SemanticName = 'root' | 'container' | 'arrow';
+
+export type TooltipClassNamesType = SemanticClassNamesType<TooltipProps, SemanticName>;
+
+export type TooltipStylesType = SemanticStylesType<TooltipProps, SemanticName>;
 
 export interface AbstractTooltipProps extends LegacyTooltipProps {
   style?: CSSProperties;
@@ -94,7 +105,12 @@ export interface AbstractTooltipProps extends LegacyTooltipProps {
   destroyOnHidden?: boolean;
 }
 
-export declare type TooltipProps = AbstractTooltipProps;
+export interface TooltipProps extends AbstractTooltipProps {
+  title?: VueNode;
+  overlay?: VueNode;
+  classNames?: TooltipClassNamesType;
+  styles?: TooltipStylesType;
+}
 
 defineOptions({ name: 'Tooltip', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -116,7 +132,7 @@ const {
   mouseLeaveDelay = 0.1,
   rootClassName,
   styles,
-  classNames: tooltipClassNames,
+  classNames,
   onOpenChange,
   overlay: cutsomOverlay,
   ...restProps
@@ -174,8 +190,7 @@ defineExpose({
 // ============================== Open ==============================
 const open = defineModel('open', { default: false });
 
-const noTitle = computed(() => (!isVueNode(title.value) && !isVueNode(overlay.value) && title.value !== 0) || !title.value);
-
+const noTitle = computed(() => !title.value && !overlay.value && title.value !== 0);
 const onInternalOpenChange = (vis: boolean) => {
   if (!noTitle.value && onOpenChange) {
     onOpenChange(vis);
@@ -216,6 +231,24 @@ const memoOverlayWrapper = computed(() => {
   );
 });
 
+const [mergedClassNames, mergedStyles] = useMergeSemantic<TooltipClassNamesType, TooltipStylesType, TooltipProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      color,
+      placement,
+      builtinPlacements,
+      openClassName,
+      arrow: tooltipArrow,
+      autoAdjustOverflow,
+      getPopupContainer,
+      destroyOnHidden,
+    },
+  })),
+);
+
 const prefixCls = computed(() => getPrefixCls.value('tooltip', customizePrefixCls));
 const rootPrefixCls = computed(() => getPrefixCls.value());
 
@@ -231,11 +264,14 @@ const tempOpen = computed(() => {
 });
 
 // Style
-const [hashId, cssVarCls] = useStyle(prefixCls, !injectFromPopover.value);
+const rootCls = useCSSVarCls(prefixCls);
+const [hashId, cssVarCls] = useStyle(prefixCls, injectFromPopover);
 
 // Color
 const colorInfo = computed(() => parseColor(prefixCls.value, color));
 const arrowContentStyle = computed(() => colorInfo.value.arrowStyle);
+
+const themeCls = computed(() => clsx(rootCls.value, hashId.value, cssVarCls.value));
 
 const rootClassNames = computed(() => {
   return clsx(
@@ -245,18 +281,20 @@ const rootClassNames = computed(() => {
     hashId.value,
     cssVarCls.value,
     contextClassName?.value,
-    contextClassNames.value.root,
-    tooltipClassNames?.root,
+    mergedClassNames.value.root,
   );
 });
-
-const bodyClassNames = computed(() => clsx(contextClassNames.value.body, tooltipClassNames?.body));
 
 // ============================ zIndex ============================
 const [zIndex, contextZIndex] = useZIndex(
   'Tooltip',
   computed(() => restProps.zIndex),
 );
+
+const containerStyle = computed<CSSProperties>(() => ({
+  ...mergedStyles?.value?.container,
+  ...colorInfo?.value?.overlayStyle,
+}));
 
 // ============================= Render =============================
 
@@ -282,19 +320,21 @@ const childCls = computed(() => {
       :mouse-enter-delay="mouseEnterDelay"
       :mouse-leave-delay="mouseLeaveDelay"
       :prefix-cls="prefixCls"
-      :class-names="{ root: rootClassNames, body: bodyClassNames }"
+      :class-names="{
+        root: rootClassNames,
+        container: mergedClassNames.container,
+        arrow: mergedClassNames.arrow,
+        uniqueContainer: clsx(themeCls, mergedClassNames.container),
+      }"
       :styles="{
         root: {
           ...arrowContentStyle,
-          ...contextStyles?.root,
+          ...mergedStyles.root,
           ...contextStyle,
-          ...styles?.root,
         },
-        body: {
-          ...contextStyles?.body,
-          ...styles?.body,
-          ...colorInfo.overlayStyle,
-        },
+        container: containerStyle,
+        uniqueContainer: containerStyle,
+        arrow: mergedStyles.arrow,
       }"
       :get-tooltip-container="getPopupContainer || getTooltipContainer || getContextPopupContainer"
       ref="tooltipRef"

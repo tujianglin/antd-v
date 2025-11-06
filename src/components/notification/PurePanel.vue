@@ -2,26 +2,30 @@
 import { Notice } from '@/vc-component/notification';
 import type { NoticeProps } from '@/vc-component/notification/Notice.vue';
 import useClosable, { pickClosable } from '../_util/hooks/useClosable';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { useComponentConfig, useConfigContextInject } from '../config-provider/context';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
-import type { SemanticName } from './interface';
 import useStyle from './style';
 import PurePanelStyle from './style/pure-panel';
 import type { VueNode } from '@/vc-util/type';
-import { computed, getCurrentInstance, h, toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, h, toRefs } from 'vue';
 import type { PureContentProps } from './PureContent.vue';
 import { CloseOutlined } from '@ant-design/icons-vue';
 import { getCloseIcon } from './util';
 import clsx from 'clsx';
 import PureContent from './PureContent.vue';
+import type { NotificationSemantic } from './interface';
+
+export type PurePanelClassNamesType = SemanticClassNamesType<PurePanelProps, NotificationSemantic>;
+
+export type PurePanelStylesType = SemanticStylesType<PurePanelProps, NotificationSemantic>;
 
 export interface PurePanelProps
   extends Omit<NoticeProps, 'prefixCls' | 'eventKey' | 'classNames' | 'styles'>,
     Omit<PureContentProps, 'prefixCls' | 'children' | 'classNames' | 'styles'> {
   prefixCls?: string;
-  classNames?: Record<SemanticName, string>;
-  styles?: Record<SemanticName, CSSProperties>;
+  classNames?: PurePanelClassNamesType;
+  styles?: PurePanelStylesType;
   closeIcon?: VueNode;
 }
 
@@ -50,9 +54,11 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('notification'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance() as unknown as { props: PurePanelProps };
+const [mergedClassNames, mergedStyles] = useMergeSemantic<PurePanelClassNamesType, PurePanelStylesType, PurePanelProps>(
   computed(() => [contextClassNames?.value, notificationClassNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({ props: vm.props })),
 );
 
 const { notification: notificationContext } = toRefs(useConfigContextInject());
@@ -62,7 +68,6 @@ const noticePrefixCls = computed(() => `${prefixCls.value}-notice`);
 
 const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
-const vm = getCurrentInstance() as unknown as { props: PurePanelProps };
 const [rawClosable, mergedCloseIcon, , ariaProps] = useClosable(
   computed(() => pickClosable(vm.props)),
   computed(() => pickClosable(notificationContext.value)),

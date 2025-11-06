@@ -1,11 +1,16 @@
 <script lang="tsx" setup>
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, toRefs, useTemplateRef, watch } from 'vue';
-import { floatButtonPrefixCls, type FloatButtonGroupProps } from './interface';
+import {
+  floatButtonPrefixCls,
+  type FloatButtonGroupClassNamesType,
+  type FloatButtonGroupProps,
+  type FloatButtonGroupStylesType,
+} from './interface';
 import { useComponentConfig } from '../config-provider/context';
 import { CloseOutlined, FileTextOutlined } from '@ant-design/icons-vue';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useStyle from './style';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic } from '../_util/hooks';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import clsx from 'clsx';
 import FloatButton from './FloatButton.vue';
@@ -123,18 +128,22 @@ onBeforeUnmount(() => {
 
 // =========== Merged Props for Semantic ==========
 const vm = getCurrentInstance();
-const mergedProps = computed(() => {
-  return {
-    ...vm.props,
-    shape,
-    type,
-    placement: mergedPlacement.value,
-  } as FloatButtonGroupProps;
-});
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const [mergedClassNames, mergedStyles] = useMergeSemantic<
+  FloatButtonGroupClassNamesType,
+  FloatButtonGroupStylesType,
+  FloatButtonGroupProps
+>(
   computed(() => [contextClassNames?.value, classNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      shape,
+      type,
+      placement: mergedPlacement.value,
+    },
+  })),
   computed(() => ({
     item: {
       _default: 'root',
@@ -143,7 +152,6 @@ const [mergedClassNames, mergedStyles] = useMergeSemantic(
       _default: 'root',
     },
   })),
-  computed(() => ({ props: mergedProps.value })),
 );
 
 // ======================== Contexts ========================

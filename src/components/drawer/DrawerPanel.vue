@@ -2,19 +2,20 @@
 import type { DrawerProps as RCDrawerProps } from '@/vc-component/drawer';
 import type { ClosableType } from '../_util/hooks/useClosable';
 import useClosable, { pickClosable } from '../_util/hooks/useClosable';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { useComponentConfig } from '../config-provider/context';
-import { computed, getCurrentInstance, toRefs, type CSSProperties, type VNode } from 'vue';
+import { computed, getCurrentInstance, toRefs, type VNode } from 'vue';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import Render from '@/vc-component/render';
 import Skeleton from '../skeleton';
+import type { DrawerProps } from './index.vue';
 
 export type SemanticName = 'root' | 'mask' | 'header' | 'title' | 'extra' | 'section' | 'body' | 'footer' | 'wrapper' | 'dragger';
 
-export type DrawerClassNames = Partial<Record<SemanticName, string>>;
+export type DrawerClassNamesType = SemanticClassNamesType<DrawerProps, SemanticName>;
 
-export type DrawerStyles = Partial<Record<SemanticName, CSSProperties>>;
+export type DrawerStylesType = SemanticStylesType<DrawerProps, SemanticName>;
 
 export interface DrawerPanelProps {
   prefixCls: string;
@@ -37,8 +38,8 @@ export interface DrawerPanelProps {
   closeIcon?: VueNode;
   onClose?: RCDrawerProps['onClose'];
 
-  classNames?: DrawerClassNames;
-  styles?: DrawerStyles;
+  classNames?: DrawerClassNamesType;
+  styles?: DrawerStylesType;
   loading?: boolean;
 }
 
@@ -62,14 +63,16 @@ const slots = defineSlots<{
 
 const footer = computed(() => slots.footer || footerRender);
 const extra = computed(() => slots.extra || extraRender);
+const vm = getCurrentInstance();
 
 const drawerContext = useComponentConfig('drawer');
 
 const { classNames: contextClassNames, styles: contextStyles } = toRefs(drawerContext);
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const [mergedClassNames, mergedStyles] = useMergeSemantic<DrawerClassNamesType, DrawerStylesType, DrawerPanelProps>(
   computed(() => [contextClassNames?.value, drawerClassNames]),
   computed(() => [contextStyles?.value, drawerStyles]),
+  computed(() => ({ props: vm.props as unknown as DrawerPanelProps })),
 );
 
 const closablePlacement = computed(() => {
@@ -95,8 +98,6 @@ const customCloseIconRender = (icon: VueNode) => (
     <Render content={icon}></Render>
   </button>
 );
-
-const vm = getCurrentInstance();
 
 const [mergedClosable, mergedCloseIcon] = useClosable(
   computed(() => pickClosable(vm.props)),

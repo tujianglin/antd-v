@@ -63,20 +63,23 @@ export default function useRowInfo<RecordType>(
   // ========================= Column =========================
   const columnsKey = computed(() => getColumnsKey(flattenColumns.value));
 
-  return reactiveComputed(() => ({
-    ...context,
-    columnsKey: columnsKey.value,
-    nestExpandable: nestExpandable.value,
-    expanded: expanded.value,
-    hasNestChildren: hasNestChildren.value,
-    record: record.value,
-    onTriggerExpand: onTriggerExpand.value,
-    rowSupportExpand: rowSupportExpand.value,
-    expandable: mergedExpandable.value,
-    rowProps: {
-      ...rowProps.value,
-      class: clsx(computeRowClassName.value, rowProps?.value?.class),
-      onClick,
-    },
-  }));
+  return reactiveComputed(
+    () =>
+      ({
+        ...context,
+        columnsKey: columnsKey.value,
+        nestExpandable: nestExpandable.value,
+        expanded: expanded.value,
+        hasNestChildren: hasNestChildren.value,
+        record: record.value,
+        onTriggerExpand: onTriggerExpand.value,
+        rowSupportExpand: rowSupportExpand.value,
+        expandable: mergedExpandable.value,
+        rowProps: {
+          ...rowProps.value,
+          class: clsx(computeRowClassName.value, rowProps?.value?.class),
+          onClick,
+        },
+      }) as any,
+  );
 }

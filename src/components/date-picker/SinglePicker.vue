@@ -84,12 +84,7 @@ const value = defineModel<DateType | DateType[] | null>('value', {
 });
 const pickerValue = defineModel<DateType | DateType[]>('pickerValue');
 const open = defineModel<boolean | undefined>('open', { default: undefined });
-
-const [mergedClassNames, mergedStyles] = useMergedPickerSemantic(
-  computed(() => pickerType),
-  computed(() => classNames),
-  computed(() => styles),
-);
+const vm = getCurrentInstance();
 
 const {
   getPrefixCls,
@@ -101,6 +96,33 @@ const {
 
 const prefixCls = computed(() => getPrefixCls.value('picker', customizePrefixCls));
 const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
+
+// ===================== Size =====================
+const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
+
+// ===================== Disabled =====================
+const disabled = useDisabledContextInject();
+const mergedDisabled = computed(() => customDisabled ?? disabled.value);
+
+// =========== Merged Props for Semantic ===========
+const mergedProps = computed(
+  () =>
+    ({
+      ...vm.props,
+      size: mergedSize.value,
+      disabled: mergedDisabled.value,
+      status: customStatus,
+      variant: customVariant,
+    }) as any,
+);
+
+const [mergedClassNames, mergedStyles] = useMergedPickerSemantic(
+  computed(() => pickerType),
+  computed(() => classNames),
+  computed(() => styles),
+  mergedProps,
+);
+
 const innerRef = useTemplateRef('innerRef');
 
 const [variant, enableVariantCls] = useVariant(
@@ -132,8 +154,6 @@ const onInternalCalendarChange: typeof onCalendarChange = (date, dateStr, info) 
   }
 };
 
-const vm = getCurrentInstance();
-
 // ===================== Icon =====================
 const [mergedAllowClear, removeIcon] = useIcons(
   computed(() => ({ ...vm.props, allowClear })),
@@ -142,13 +162,6 @@ const [mergedAllowClear, removeIcon] = useIcons(
 
 // ================== components ==================
 const mergedComponents = useComponents(computed(() => components)) as typeof components;
-
-// ===================== Size =====================
-const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
-
-// ===================== Disabled =====================
-const disabled = useDisabledContextInject();
-const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 
 // ===================== FormItemInput =====================
 const formItemContext = useFormItemInputContextInject();

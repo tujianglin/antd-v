@@ -1,6 +1,6 @@
 import type { VueNode } from '@/vc-util/type';
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, CSSProperties, HTMLAttributes } from 'vue';
-import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks';
 import type { SizeType } from '../config-provider/SizeContext';
 import { PresetColors } from '../theme/internal';
 

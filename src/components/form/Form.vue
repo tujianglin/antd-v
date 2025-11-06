@@ -2,11 +2,11 @@
 import FieldForm from '@/vc-component/form/Form.vue';
 import type { InternalNamePath, ValidateErrorEntity } from '@/vc-component/form/interface';
 import clsx from 'clsx';
-import { computed, toRefs, useTemplateRef } from 'vue';
+import { computed, getCurrentInstance, toRefs, useTemplateRef } from 'vue';
 
 import type { FormProps as RcFormProps } from '@/vc-component/form/Form.vue';
 import type { VueNode } from '@/vc-util/type';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import type { Variant } from '../config-provider';
 import { useComponentConfig } from '../config-provider/context';
 import { DisabledContextProvider, useDisabledContextInject } from '../config-provider/DisabledContext';
@@ -16,7 +16,7 @@ import type { SizeType } from '../config-provider/SizeContext';
 import { SizeContextProvider } from '../config-provider/SizeContext';
 import type { ColProps } from '../grid/col.vue';
 import type { FormContextProps } from './context';
-import { FormContextProvider, FormProvider, NoStyleItemContextProvider, VariantContextProvider } from './context';
+import { FormContextProvider, FormProvider, NoFormStyle, VariantContextProvider } from './context';
 import type { FeedbackIcons } from './FormItem';
 import type { FormInstance } from './hooks/useForm';
 import useForm from './hooks/useForm';
@@ -30,11 +30,14 @@ export type FormItemLayout = 'horizontal' | 'vertical';
 
 export type { ScrollFocusOptions };
 
-export type SemanticName = 'root' | 'label' | 'content';
+export type FormSemanticName = 'root' | 'label' | 'content';
+
+export type FormClassNamesType = SemanticClassNamesType<FormProps, FormSemanticName>;
+export type FormStylesType = SemanticStylesType<FormProps, FormSemanticName>;
 
 export interface FormProps<Values = any> extends Omit<RcFormProps<Values>, 'form'> {
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, any>>;
+  classNames?: FormClassNamesType;
+  styles?: FormStylesType;
   prefixCls?: string;
   colon?: boolean;
   name?: string;
@@ -85,7 +88,7 @@ const {
   style,
   feedbackIcons,
   variant,
-  classNames: formClassNames,
+  classNames,
   styles,
   ...restFormProps
 } = defineProps<FormProps>();
@@ -132,9 +135,20 @@ const prefixCls = computed(() => getPrefixCls.value('form', customizePrefixCls))
 const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [contextClassNames?.value, formClassNames]),
+const vm = getCurrentInstance();
+const [mergedClassNames, mergedStyles] = useMergeSemantic<FormClassNamesType, FormStylesType, FormProps>(
+  computed(() => [contextClassNames?.value, classNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      size: mergedSize.value,
+      disabled: disabled.value,
+      layout,
+      colon: mergedColon.value,
+      requiredMark: mergedRequiredMark.value,
+    },
+  })),
 );
 
 const formClassName = computed(() =>
@@ -221,7 +235,7 @@ defineExpose({
           }"
         >
           <FormContextProvider :value="formContextValue">
-            <NoStyleItemContextProvider :value="null">
+            <NoFormStyle status>
               <FieldForm
                 :id="name"
                 v-bind="{ ...restFormProps, ...$attrs }"
@@ -229,12 +243,12 @@ defineExpose({
                 @finish-failed="onInternalFinishFailed"
                 :form="wrapForm"
                 ref="nativeElementRef"
-                :style="{ ...mergedStyles, ...contextStyle, ...style }"
+                :style="{ ...mergedStyles?.root, ...contextStyle, ...style }"
                 :class="formClassName"
               >
                 <slot></slot>
               </FieldForm>
-            </NoStyleItemContextProvider>
+            </NoFormStyle>
           </FormContextProvider>
         </FormProvider>
       </SizeContextProvider>

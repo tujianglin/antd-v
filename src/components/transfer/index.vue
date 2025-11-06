@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import type { VueNode } from '@/vc-util/type';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import type { InputStatus } from '../_util/statusUtils';
 import { getMergedStatus, getStatusClassNames } from '../_util/statusUtils';
 import { groupDisabledKeysMap, groupKeysMap } from '../_util/transKeys';
@@ -13,7 +13,7 @@ import useSelection from './hooks/useSelection';
 import type { PaginationType, TransferKey } from './interface';
 import type { TransferCustomListBodyProps, TransferListProps } from './Section.vue';
 import useStyle from './style';
-import { computed, toRefs, type CSSProperties, type VNode } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties, type VNode } from 'vue';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import useMultipleSelect, { type PrevSelectedIndex } from '../_util/hooks/useMultipleSelect';
 import DefaultRenderEmpty from '../config-provider/defaultRenderEmpty.vue';
@@ -37,6 +37,9 @@ export type SemanticName =
   | 'itemContent'
   | 'footer'
   | 'actions';
+
+export type TransferClassNamesType = SemanticClassNamesType<TransferProps, SemanticName>;
+export type TransferStylesType = SemanticStylesType<TransferProps, SemanticName>;
 
 type RecordType = TransferItem;
 
@@ -94,8 +97,8 @@ export interface TransferProps<RecordType = any> {
   class?: string;
   rootClassName?: string;
   style?: CSSProperties;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: TransferClassNamesType;
+  styles?: TransferStylesType;
 
   disabled?: boolean;
   dataSource?: RecordType[];
@@ -381,9 +384,17 @@ const rightActive = computed(
 );
 
 // ====================== Styles ======================
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<TransferClassNamesType, TransferStylesType, TransferProps<RecordType>>(
   computed(() => [contextClassNames?.value, classNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      disabled: mergedDisabled.value,
+    },
+  })),
 );
 
 const cls = computed(() =>

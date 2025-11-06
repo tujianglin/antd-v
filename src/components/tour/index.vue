@@ -1,15 +1,15 @@
 <script lang="tsx" setup>
 import type { TourProps as RcTourProps } from '@/vc-component/tour';
 import RCTour from '@/vc-component/tour';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic } from '../_util/hooks';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import getPlacements from '../_util/placements';
 import { useComponentConfig } from '../config-provider/context';
 import { useToken } from '../theme/internal';
-import type { TourProps } from './interface';
+import type { TourClassNamesType, TourProps, TourStylesType } from './interface';
 import TourPanel from './panelRender.vue';
 import useStyle from './style';
-import { computed, toRefs } from 'vue';
+import { computed, getCurrentInstance, toRefs } from 'vue';
 import clsx from 'clsx';
 import { ZIndexContextProvider } from '../_util/zindexContext';
 
@@ -45,11 +45,6 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('tour'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [contextClassNames?.value, tourClassNames]),
-  computed(() => [contextStyles?.value, styles]),
-);
-
 const prefixCls = computed(() => getPrefixCls.value('tour', customizePrefixCls));
 const [hashId, cssVarCls] = useStyle(prefixCls);
 const [, token] = useToken();
@@ -62,7 +57,17 @@ const mergedSteps = computed<TourProps['steps']>(() =>
     }),
   })),
 );
-
+const vm = getCurrentInstance();
+const [mergedClassNames, mergedStyles] = useMergeSemantic<TourClassNamesType, TourStylesType, TourProps>(
+  computed(() => [contextClassNames?.value, tourClassNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      steps: mergedSteps.value,
+    },
+  })),
+);
 const builtinPlacements: TourProps['builtinPlacements'] = (config) =>
   getPlacements({
     arrowPointAtCenter: config?.arrowPointAtCenter ?? true,

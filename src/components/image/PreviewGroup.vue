@@ -1,9 +1,9 @@
 <script lang="tsx" setup>
 import RcImage from '@/vc-component/image';
 import type { PreviewGroupProps as RcPreviewGroupProps } from '@/vc-component/image/PreviewGroup.vue';
-import type { DeprecatedPreviewConfig } from './index.vue';
+import type { DeprecatedPreviewConfig, ImageClassNamesType, ImageStylesType } from './index.vue';
 import type { MaskType } from '../_util/hooks/useMergedMask';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic } from '../_util/hooks';
 import { useComponentConfig } from '../config-provider/context';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useMergedPreviewConfig from './hooks/useMergedPreviewConfig';
@@ -81,13 +81,19 @@ const internalClassNames = computed(() => [
     cover: clsx(contextPreviewMaskClassName?.value, previewMaskClassName?.value),
     popup: {
       root: clsx(contextPreviewRootClassName?.value, previewRootClassName?.value),
-      mask: clsx(!mergedMask?.value && `${prefixCls?.value}-preview-mask-hidden`, blurClassName?.value),
+      mask: clsx(
+        {
+          [`${prefixCls.value}-preview-mask-hidden`]: !mergedMask.value,
+        },
+        blurClassName.value,
+      ),
     },
   },
 ]);
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const [mergedClassNames, mergedStyles] = useMergeSemantic<ImageClassNamesType, ImageStylesType, PreviewGroupProps>(
   internalClassNames,
   computed(() => [contextStyles.value, styles]),
+  computed(() => ({ props: { ...otherProps, classNames, styles } })),
   computed(() => ({
     popup: {
       _default: 'root',

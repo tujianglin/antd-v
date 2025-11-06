@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import { defineComponent, onBeforeUnmount, onMounted, ref, render, shallowRef, type CSSProperties, type PropType } from 'vue';
 import type { WaveProps } from '.';
 import type { UnmountType } from '../../config-provider/UnstableContext';
-import useState from '../hooks/useState';
 import type { ShowWaveEffect } from './interface';
 import { getTargetWaveColor } from './util';
 
@@ -29,13 +28,13 @@ const WaveEffect = defineComponent({
   setup(props) {
     const divRef = shallowRef<HTMLDivElement>(null);
     const unmountRef = ref<UnmountType>(null);
-    const [color, setWaveColor] = useState<string | null>(null);
-    const [borderRadius, setBorderRadius] = useState<number[]>([]);
-    const [left, setLeft] = useState(0);
-    const [top, setTop] = useState(0);
-    const [width, setWidth] = useState(0);
-    const [height, setHeight] = useState(0);
-    const [enabled, setEnabled] = useState(false);
+    const color = ref<string | null>(null);
+    const borderRadius = ref<number[]>([]);
+    const left = ref(0);
+    const top = ref(0);
+    const width = ref(0);
+    const height = ref(0);
+    const enabled = ref(false);
 
     onMounted(() => {
       unmountRef.value = props?.registerUnmount?.();
@@ -46,24 +45,22 @@ const WaveEffect = defineComponent({
       const nodeStyle = getComputedStyle(target);
 
       // Get wave color from target
-      setWaveColor(getTargetWaveColor(target));
+      color.value = getTargetWaveColor(target);
 
       const isStatic = nodeStyle.position === 'static';
 
       // Rect
       const { borderLeftWidth, borderTopWidth } = nodeStyle;
-      setLeft(isStatic ? target.offsetLeft : validateNum(-parseFloat(borderLeftWidth)));
-      setTop(isStatic ? target.offsetTop : validateNum(-parseFloat(borderTopWidth)));
-      setWidth(target.offsetWidth);
-      setHeight(target.offsetHeight);
+      left.value = isStatic ? target.offsetLeft : validateNum(-parseFloat(borderLeftWidth));
+      top.value = isStatic ? target.offsetTop : validateNum(-parseFloat(borderTopWidth));
+      width.value = target.offsetWidth;
+      height.value = target.offsetHeight;
 
       // Get border radius
       const { borderTopLeftRadius, borderTopRightRadius, borderBottomLeftRadius, borderBottomRightRadius } = nodeStyle;
 
-      setBorderRadius(
-        [borderTopLeftRadius, borderTopRightRadius, borderBottomRightRadius, borderBottomLeftRadius].map((radius) =>
-          validateNum(parseFloat(radius)),
-        ),
+      borderRadius.value = [borderTopLeftRadius, borderTopRightRadius, borderBottomRightRadius, borderBottomLeftRadius].map(
+        (radius) => validateNum(parseFloat(radius)),
       );
     }
 
@@ -97,7 +94,7 @@ const WaveEffect = defineComponent({
         // since UI may change after click
         rafId = raf(() => {
           syncPos();
-          setEnabled(true);
+          enabled.value = true;
         });
 
         // Add resize observer to follow size

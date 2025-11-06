@@ -1,6 +1,12 @@
 <script lang="tsx" setup>
-import { computed, h, toRefs, useTemplateRef, type CSSProperties } from 'vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { computed, getCurrentInstance, h, toRefs, useTemplateRef } from 'vue';
+import {
+  useMergeSemantic,
+  type SemanticClassNames,
+  type SemanticClassNamesType,
+  type SemanticStyles,
+  type SemanticStylesType,
+} from '../_util/hooks';
 import { useComponentConfig, useConfigContextInject } from '../config-provider/context';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useSize from '../config-provider/hooks/useSize';
@@ -20,9 +26,17 @@ export type TabPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export type TabPlacement = 'top' | 'end' | 'bottom' | 'start';
 
-type SemanticName = 'root' | 'item' | 'indicator' | 'content' | 'header';
+export type TabsSemanticName = 'root' | 'item' | 'indicator' | 'content' | 'header';
 
 type PopupSemantic = 'root';
+
+export type TabsClassNamesType = SemanticClassNamesType<
+  TabsProps,
+  TabsSemanticName,
+  { popup?: SemanticClassNames<PopupSemantic> }
+>;
+
+export type TabsStylesType = SemanticStylesType<TabsProps, TabsSemanticName, { popup?: SemanticStyles<PopupSemantic> }>;
 
 export interface TabsRef {
   nativeElement: typeof RcTabs | null;
@@ -40,12 +54,8 @@ export interface TabsProps extends Omit<RcTabsProps, 'editable' | 'items' | 'cla
   removeIcon?: VueNode;
   tabPlacement?: TabPlacement;
   onEdit?: (e: MouseEvent | KeyboardEvent | string, action: 'add' | 'remove') => void;
-  styles?: Partial<Record<SemanticName, CSSProperties>> & {
-    popup?: Partial<Record<PopupSemantic, CSSProperties>>;
-  };
-  classNames?: Partial<Record<SemanticName, string>> & {
-    popup?: Partial<Record<PopupSemantic, string>>;
-  };
+  styles?: TabsStylesType;
+  classNames?: TabsClassNamesType;
   items?: Tab[];
 }
 
@@ -89,15 +99,6 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('tabs'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [contextClassNames?.value, classNames]),
-  computed(() => [contextStyles?.value, styles]),
-  computed(() => ({
-    popup: {
-      _default: 'root',
-    },
-  })),
-);
 const { tabs } = toRefs(useConfigContextInject());
 const prefixCls = computed(() => getPrefixCls.value('tabs', customizePrefixCls?.value));
 const rootCls = useCSSVarCls(prefixCls);
@@ -151,6 +152,26 @@ const mergedPlacement = computed<TabPosition | undefined>(() => {
       return placement;
   }
 });
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<TabsClassNamesType, TabsStylesType, TabsProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      size: size.value,
+      tabPlacement: mergedPlacement.value as TabPlacement,
+      items,
+    },
+  })),
+  computed(() => ({
+    popup: {
+      _default: 'root',
+    },
+  })),
+);
 </script>
 <template>
   <RcTabs

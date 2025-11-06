@@ -3,7 +3,7 @@ import type { CSSMotionProps } from '@/vc-component/motion';
 import type { BasicDataNode, TreeProps as RcTreeProps } from '@/vc-component/tree';
 import RcTree from '@/vc-component/tree';
 import type { DataNode } from '@/vc-component/tree/interface';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import initCollapseMotion from '../_util/motion';
 import { useComponentConfig, useConfigContextInject } from '../config-provider/context';
 import { useToken } from '../theme/internal';
@@ -110,7 +110,9 @@ interface DraggableConfig {
   nodeDraggable?: DraggableFn;
 }
 
-type SemanticName = 'root' | 'item' | 'itemIcon' | 'itemTitle';
+export type TreeSemanticName = 'root' | 'item' | 'itemIcon' | 'itemTitle';
+export type TreeClassNamesType = SemanticClassNamesType<TreeProps, TreeSemanticName>;
+export type TreeStylesType = SemanticStylesType<TreeProps, TreeSemanticName>;
 
 export interface TreeProps<T extends BasicDataNode = DataNode>
   extends Omit<
@@ -119,8 +121,8 @@ export interface TreeProps<T extends BasicDataNode = DataNode>
   > {
   showLine?: boolean | { showLeafIcon: boolean | TreeLeafIcon };
   class?: string;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: TreeClassNamesType;
+  styles?: TreeStylesType;
   /** Whether to support multiple selection */
   multiple?: boolean;
   /** Whether to automatically expand the parent node */
@@ -196,11 +198,6 @@ const {
 } = toRefs(useComponentConfig('tree'));
 const { virtual } = toRefs(useConfigContextInject());
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [contextClassNames?.value, treeClassNames]),
-  computed(() => [contextStyles?.value, styles]),
-);
-
 const prefixCls = computed(() => getPrefixCls.value('tree', customizePrefixCls));
 const rootPrefixCls = computed(() => getPrefixCls.value());
 
@@ -261,6 +258,22 @@ const draggableConfig = computed(() => {
 
   return mergedDraggable;
 });
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<TreeClassNamesType, TreeStylesType, TreeProps>(
+  computed(() => [contextClassNames?.value, treeClassNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      showIcon,
+      blockNode,
+      checkable,
+      selectable,
+      disabled: mergedDisabled.value,
+      motion: motion.value,
+    },
+  })),
+);
 
 const renderSwitcherIcon = (nodeProps: AntTreeNodeProps) => (
   <SwitcherIconCom

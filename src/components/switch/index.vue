@@ -4,7 +4,8 @@ import RcSwitch from '@/vc-component/switch/index.vue';
 import type { VueNode } from '@/vc-util/type';
 import { LoadingOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
-import { computed, toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { Wave } from '../_util/wave';
 import { useComponentConfig } from '../config-provider/context';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
@@ -12,6 +13,10 @@ import useSize from '../config-provider/hooks/useSize';
 import useStyle from './style';
 
 export type SwitchSize = 'small' | 'default';
+
+export type SwitchClassNamesType = SemanticClassNamesType<SwitchProps, SemanticName>;
+export type SwitchStylesType = SemanticStylesType<SwitchProps, SemanticName>;
+
 export type { SwitchChangeEventHandler, SwitchClickEventHandler };
 
 type SemanticName = 'root' | 'content';
@@ -33,8 +38,8 @@ export interface SwitchProps {
   id?: string;
   checkedValue?: boolean | string | number;
   unCheckedValue?: boolean | string | number;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: SwitchClassNamesType;
+  styles?: SwitchStylesType;
 }
 
 defineOptions({ name: 'Switch', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -49,7 +54,7 @@ const {
   style,
   onChange,
   styles,
-  classNames: switchClassNames,
+  classNames,
   checkedValue = undefined,
   unCheckedValue = undefined,
   ...restProps
@@ -89,6 +94,20 @@ const [hashId, cssVarCls] = useStyle(prefixCls);
 
 const mergedSize = useSize(computed(() => customizeSize));
 
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<SwitchClassNamesType, SwitchStylesType, SwitchProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      size: mergedSize.value,
+      disabled: mergedDisabled.value,
+    },
+  })),
+);
+
 const classes = computed(() =>
   clsx(
     contextClassName?.value,
@@ -99,16 +118,14 @@ const classes = computed(() =>
     },
     className,
     rootClassName,
-    switchClassNames?.root,
-    contextClassNames?.value?.root,
+    mergedClassNames?.value?.root,
     hashId.value,
     cssVarCls.value,
   ),
 );
 
 const mergedStyle = computed(() => ({
-  ...contextStyles?.value?.root,
-  ...styles?.root,
+  ...mergedStyles?.value?.root,
   ...contextStyle?.value,
   ...style,
 }));
@@ -122,10 +139,8 @@ const changeHandler: SwitchChangeEventHandler = (...args) => {
   <Wave component="Switch">
     <RcSwitch
       v-bind="restProps"
-      :class-names="{ content: clsx(contextClassNames?.content, switchClassNames?.content) }"
-      :styles="{
-        content: { ...contextStyles?.content, ...styles?.content },
-      }"
+      :class-names="{ content: mergedClassNames.content }"
+      :styles="{ content: mergedStyles.content }"
       v-model:checked="checked"
       @change="changeHandler"
       :prefix-cls="prefixCls"

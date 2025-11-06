@@ -1,5 +1,6 @@
 import type { VueKey, VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks';
 import type { ClosableType } from '../_util/hooks/useClosable';
 
 interface DivProps {
@@ -11,7 +12,11 @@ export type NotificationPlacement = (typeof NotificationPlacements)[number];
 
 export type IconType = 'success' | 'info' | 'error' | 'warning';
 
-export type SemanticName = 'root' | 'title' | 'description' | 'actions' | 'icon';
+export type NotificationSemantic = 'root' | 'title' | 'description' | 'actions' | 'icon';
+
+export type NotificationClassNamesType = SemanticClassNamesType<ArgsProps, NotificationSemantic>;
+
+export type NotificationStylesType = SemanticStylesType<ArgsProps, NotificationSemantic>;
 export interface ArgsProps {
   title: VueNode;
   description?: VueNode;
@@ -25,8 +30,8 @@ export interface ArgsProps {
   placement?: NotificationPlacement;
   style?: CSSProperties;
   class?: string;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: NotificationClassNamesType;
+  styles?: NotificationStylesType;
   readonly type?: IconType;
   onClick?: () => void;
   closeIcon?: VueNode;
@@ -79,4 +84,6 @@ export interface NotificationConfig {
   showProgress?: boolean;
   pauseOnHover?: boolean;
   closeIcon?: VueNode;
+  classNames?: NotificationClassNamesType;
+  styles?: NotificationStylesType;
 }

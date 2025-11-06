@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, onBeforeUnmount, onMounted, toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, onBeforeUnmount, onMounted, toRefs, type CSSProperties } from 'vue';
 import type { Orientation } from '../_util/hooks/useOrientation';
 import useOrientation from '../_util/hooks/useOrientation';
 import { useComponentConfig } from '../config-provider/context';
@@ -16,15 +16,17 @@ import raf from '@/vc-util/raf';
 import RcSlider from '@/vc-component/slider';
 import { cloneElement } from '@/vc-util/Children/util';
 import type { RangeConfig } from '@/vc-component/slider/Slider.vue';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 
 export type SliderMarks = RcSliderProps['marks'];
 
 export type SemanticName = 'root' | 'tracks' | 'track' | 'rail' | 'handle';
-export type SliderClassNames = Partial<Record<SemanticName, string>>;
-export type SliderStyles = Partial<Record<SemanticName, CSSProperties>>;
-export interface SliderProps extends RcSliderProps {
-  classNames?: SliderClassNames;
-  styles?: SliderStyles;
+
+export type SliderClassNamesType = SemanticClassNamesType<SliderBaseProps, SemanticName>;
+export type SliderStylesType = SemanticStylesType<SliderBaseProps, SemanticName>;
+export interface SliderProps extends Omit<RcSliderProps, 'styles' | 'classNames'> {
+  classNames?: SliderClassNamesType;
+  styles?: SliderStylesType;
 }
 
 interface HandleGeneratorInfo {
@@ -85,6 +87,14 @@ export interface SliderSingleProps extends SliderBaseProps {
   onChangeComplete?: (value: number | number[]) => void;
 }
 
+type SliderRange = Exclude<RcSliderProps['range'], boolean>;
+
+export interface SliderRangeProps extends SliderBaseProps {
+  range: true | SliderRange;
+  onChange?: (value: number[]) => void;
+  onChangeComplete?: (value: number[]) => void;
+}
+
 export type Opens = { [index: number]: boolean };
 
 defineOptions({ name: 'Slider', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -99,7 +109,7 @@ const {
   // Deprecated Props
   tooltip = {},
   onChangeComplete,
-  classNames: sliderClassNames,
+  classNames,
   styles,
   vertical,
   orientation,
@@ -131,6 +141,24 @@ const {
 } = toRefs(useComponentConfig('slider'));
 const contextDisabled = useDisabledContextInject();
 const mergedDisabled = computed(() => disabled ?? contextDisabled.value);
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<
+  SliderClassNamesType,
+  SliderStylesType,
+  SliderSingleProps | SliderRangeProps
+>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      disabled: mergedDisabled.value,
+      vertical: mergedVertical.value,
+    },
+  })),
+);
 
 // ============================= Context ==============================
 const { handleRender: contextHandleRender, direction: internalContextDirection } = toRefs(useSliderInternalContextInject());
@@ -183,8 +211,7 @@ const rootClassNames = computed(() =>
   clsx(
     className,
     contextClassName,
-    contextClassNames.value.root,
-    sliderClassNames?.root,
+    mergedClassNames.value.root,
     rootClassName,
     {
       [`${prefixCls.value}-rtl`]: isRTL?.value,
@@ -312,45 +339,18 @@ const activeHandleRender = computed<SliderProps['activeHandleRender']>(() => {
 
 // ============================== Render ==============================
 const rootStyle = computed<CSSProperties>(() => ({
-  ...contextStyles.value.root,
+  ...mergedStyles.value.root,
   ...contextStyle?.value,
-  ...styles?.root,
   ...style,
 }));
-
-const mergedTracks = computed(() => ({
-  ...contextStyles.value.tracks,
-  ...styles?.tracks,
-}));
-
-const mergedTracksClassNames = computed(() => clsx(contextClassNames.value.tracks, sliderClassNames?.tracks));
 </script>
 <template>
   <RcSlider
     v-bind="restProps"
     :included="included"
     v-model:value="value"
-    :class-names="{
-      handle: clsx(contextClassNames.handle, sliderClassNames?.handle),
-      rail: clsx(contextClassNames.rail, sliderClassNames?.rail),
-      track: clsx(contextClassNames.track, sliderClassNames?.track),
-      ...(mergedTracksClassNames ? { tracks: mergedTracksClassNames } : {}),
-    }"
-    :styles="{
-      handle: {
-        ...contextStyles.handle,
-        ...styles?.handle,
-      },
-      rail: {
-        ...contextStyles.rail,
-        ...styles?.rail,
-      },
-      track: {
-        ...contextStyles.track,
-        ...styles?.track,
-      },
-      ...(Object.keys(mergedTracks).length ? { tracks: mergedTracks } : {}),
-    }"
+    :class-names="mergedClassNames"
+    :styles="mergedStyles"
     :step="restProps.step"
     :range="range"
     :class="rootClassNames"

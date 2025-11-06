@@ -8,7 +8,7 @@ export interface CommonInputProps {
   style?: CSSProperties;
   disabled?: boolean;
   prefix?: VueNode;
-  suffix?: VueNode;
+  suffix?: VueNode | boolean;
   addonBefore?: VueNode;
   addonAfter?: VueNode;
   classNames?: {

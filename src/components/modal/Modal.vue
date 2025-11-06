@@ -1,11 +1,11 @@
 <script lang="tsx" setup>
 import useClosable, { pickClosable } from '../_util/hooks/useClosable';
 import useMergedMask from '../_util/hooks/useMergedMask';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic } from '../_util/hooks';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import { useComponentConfig, useConfigContextInject } from '../config-provider/context';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
-import type { ModalProps, MousePosition } from './interface';
+import type { ModalClassNamesType, ModalProps, ModalStylesType, MousePosition } from './interface';
 import useStyle from './style';
 import { canUseDocElement } from '../_util/styleChecker';
 import { computed, getCurrentInstance, toRefs, type VNode } from 'vue';
@@ -119,9 +119,26 @@ const [mergedMask, maskBlurClassName] = useMergedMask(
   prefixCls,
 );
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+
+// ============================ zIndex ============================
+const [zIndex, contextZIndex] = useZIndex(
+  'Modal',
+  computed(() => customizeZIndex),
+);
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<ModalClassNamesType, ModalStylesType, ModalProps>(
   computed(() => [contextClassNames?.value, modalClassNames, maskBlurClassName?.value]),
   computed(() => [contextStyles?.value, modalStyles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      width,
+      focusTriggerAfterClose,
+      mask: mergedMask.value,
+      zIndex: zIndex.value,
+    },
+  })),
 );
 
 const handleCancel = (e: MouseEvent) => {
@@ -148,7 +165,6 @@ const wrapClassNameExtended = computed(() =>
   }),
 );
 
-const vm = getCurrentInstance();
 const [rawClosable, mergedCloseIcon, closeBtnIsDisabled, ariaProps] = useClosable(
   computed(() => pickClosable(vm.props)),
   computed(() => pickClosable(modalContext?.value as any)),
@@ -175,12 +191,6 @@ const innerPanelRef = usePanelRef(computed(() => `.${prefixCls.value}-container`
 const mergedPanelRef = (el) => {
   innerPanelRef(el?.panel);
 };
-
-// ============================ zIndex ============================
-const [zIndex, contextZIndex] = useZIndex(
-  'Modal',
-  computed(() => customizeZIndex),
-);
 
 // =========================== Width ============================
 const widthProps = computed(() => {

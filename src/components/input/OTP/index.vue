@@ -2,13 +2,13 @@
 import useEvent from '@/vc-util/hooks/useEvent';
 import pickAttrs from '@/vc-util/pickAttrs';
 import clsx from 'clsx';
-import { computed, ref, toRefs, useTemplateRef, watch } from 'vue';
+import { computed, getCurrentInstance, ref, toRefs, useTemplateRef, watch } from 'vue';
 import type { InputRef } from '..';
-import useMergeSemantic from '../../_util/hooks/useMergeSemantic';
+import { useMergeSemantic } from '../../_util/hooks';
 import { useComponentConfig } from '../../config-provider/context';
 import useSize from '../../config-provider/hooks/useSize';
 import useStyle from '../style/otp';
-import type { OTPProps } from './interface';
+import type { OTPClassNamesType, OTPProps, OTPStylesType } from './interface';
 import type { OTPInputProps } from './OTPInput.vue';
 import OTPInput from './OTPInput.vue';
 import Separator from './Separator.vue';
@@ -52,9 +52,16 @@ const {
 
 const prefixCls = computed(() => getPrefixCls.value('otp', customizePrefixCls));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+const [mergedClassNames, mergedStyles] = useMergeSemantic<OTPClassNamesType, OTPStylesType, OTPProps>(
   computed(() => [contextClassNames.value, classNames]),
   computed(() => [contextStyles.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      length,
+    },
+  })),
 );
 
 const domAttrs = computed(() =>

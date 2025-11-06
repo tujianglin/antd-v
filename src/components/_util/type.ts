@@ -8,6 +8,8 @@ export type LiteralUnion<T extends string> = T | (string & {});
 
 export type AnyObject = Record<VueKey, any>;
 
+export type EmptyObject = Record<never, never>;
+
 export type HTMLTagName = keyof HTMLElementTagNameMap;
 
 export type CustomComponent =
@@ -63,3 +65,31 @@ export const toUnrefProps = (refs: Record<string, any>) => {
   }
   return unrefed;
 };
+
+export type ValidChar =
+  | 'a'
+  | 'b'
+  | 'c'
+  | 'd'
+  | 'e'
+  | 'f'
+  | 'g'
+  | 'h'
+  | 'i'
+  | 'j'
+  | 'k'
+  | 'l'
+  | 'm'
+  | 'n'
+  | 'o'
+  | 'p'
+  | 'q'
+  | 'r'
+  | 's'
+  | 't'
+  | 'u'
+  | 'v'
+  | 'w'
+  | 'x'
+  | 'y'
+  | 'z';

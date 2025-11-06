@@ -3,12 +3,12 @@ import { QRCodeCanvas, QRCodeSVG } from '@/vc-component/qrcode';
 import pickAttrs from '@/vc-util/pickAttrs';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import { computed, toRefs } from 'vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { computed, getCurrentInstance, toRefs } from 'vue';
+import { useMergeSemantic } from '../_util/hooks';
 import { useComponentConfig } from '../config-provider/context';
 import { useLocale } from '../locale';
 import { useToken } from '../theme/internal';
-import type { QRCodeProps, QRProps } from './interface';
+import type { QRCodeClassNamesType, QRCodeProps, QRCodeStylesType, QRProps } from './interface';
 import QRcodeStatus from './QrcodeStatus';
 import useStyle from './style/index';
 
@@ -33,9 +33,9 @@ const {
   prefixCls: customizePrefixCls,
   bgColor = 'transparent',
   statusRender,
-  boostLevel,
-  classNames: qrcodeClassNames,
+  classNames,
   styles,
+  boostLevel,
   ...rest
 } = defineProps<QRCodeProps>();
 
@@ -51,9 +51,21 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('qrcode'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [contextClassNames?.value, qrcodeClassNames]),
+const vm = getCurrentInstance();
+const [mergedClassNames, mergedStyles] = useMergeSemantic<QRCodeClassNamesType, QRCodeStylesType, QRCodeProps>(
+  computed(() => [contextClassNames?.value, classNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      bgColor,
+      type,
+      size,
+      status,
+      bordered,
+      errorLevel,
+    } as QRCodeProps,
+  })),
 );
 
 const prefixCls = computed(() => getPrefixCls.value('qrcode', customizePrefixCls));

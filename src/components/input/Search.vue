@@ -1,6 +1,12 @@
 <script lang="tsx" setup>
-import { cloneVNode, computed, ref, toRefs, useTemplateRef, type CSSProperties, type VNode } from 'vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { cloneVNode, computed, getCurrentInstance, ref, toRefs, useTemplateRef, type CSSProperties, type VNode } from 'vue';
+import {
+  useMergeSemantic,
+  type SemanticClassNames,
+  type SemanticClassNamesType,
+  type SemanticStyles,
+  type SemanticStylesType,
+} from '../_util/hooks';
 import { useComponentConfig } from '../config-provider/context';
 import useSize from '../config-provider/hooks/useSize';
 import { useCompactItemContext } from '../space/CompactContext';
@@ -15,6 +21,14 @@ import type { ValueType } from '@/vc-component/input/interface';
 import type { VueNode } from '@/vc-util/type';
 
 type SemanticName = 'root' | 'input' | 'prefix' | 'suffix' | 'count';
+
+export type InputSearchClassNamesType = SemanticClassNamesType<SearchProps, SemanticName> & {
+  button?: SemanticClassNames<ButtonSemanticName>;
+};
+
+export type InputSearchStylesType = SemanticStylesType<SearchProps, SemanticName> & {
+  button?: SemanticStyles<ButtonSemanticName>;
+};
 
 export interface SearchProps extends InputProps {
   inputPrefixCls?: string;
@@ -70,9 +84,16 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('inputSearch'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+const [mergedClassNames, mergedStyles] = useMergeSemantic<InputSearchClassNamesType, InputSearchStylesType, SearchProps>(
   computed(() => [contextClassNames.value, classNames]),
   computed(() => [contextStyles.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      enterButton,
+    },
+  })),
   computed(() => ({
     button: {
       _default: 'root',

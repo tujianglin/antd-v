@@ -12,7 +12,7 @@ import {
 } from 'vue';
 import type { PresetColorType, PresetStatusColorType } from '../_util/colors';
 import useClosable, { pickClosable } from '../_util/hooks/useClosable';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import type { LiteralUnion } from '../_util/type';
 import { useComponentConfig, useConfigContextInject } from '../config-provider/context';
 import useColor from './hooks/useColor';
@@ -31,7 +31,10 @@ import { Wave } from '../_util/wave';
 export type { CheckableTagProps } from './CheckableTag.vue';
 export type { CheckableTagGroupProps } from './CheckableTagGroup.vue';
 
-type SemanticName = 'root' | 'icon' | 'content';
+export type TagSemanticName = 'root' | 'icon' | 'content';
+
+export type TagClassNamesType = SemanticClassNamesType<TagProps, TagSemanticName>;
+export type TagStylesType = SemanticStylesType<TagProps, TagSemanticName>;
 export interface TagProps extends /** @vue-ignore */ HTMLAttributes {
   prefixCls?: string;
   class?: string;
@@ -45,8 +48,8 @@ export interface TagProps extends /** @vue-ignore */ HTMLAttributes {
   href?: string;
   target?: string;
   disabled?: boolean;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: TagClassNamesType;
+  styles?: TagStylesType;
 }
 
 defineOptions({ name: 'Tag', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -98,9 +101,20 @@ const visible = ref(true);
 const domProps = computed(() => omit(restProps, ['closeIcon']));
 
 // ====================== Styles ======================
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const [mergedClassNames, mergedStyles] = useMergeSemantic<TagClassNamesType, TagStylesType, TagProps>(
   computed(() => [contextClassNames?.value, classNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      color: mergedColor.value,
+      variant: mergedVariant.value,
+      disabled: mergedDisabled.value,
+      href,
+      target,
+      icon,
+    } as TagProps,
+  })),
 );
 
 const tagStyle = computed(() => {

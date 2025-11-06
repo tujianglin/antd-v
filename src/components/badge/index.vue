@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, ref, toRefs, watchEffect, type CSSProperties, type HTMLAttributes, type VNode } from 'vue';
+import { computed, getCurrentInstance, ref, toRefs, watchEffect, type CSSProperties, type HTMLAttributes, type VNode } from 'vue';
 import type { PresetStatusColorType } from '../_util/colors';
 import { isPresetColor } from '../_util/colors';
 import type { LiteralUnion } from '../_util/type';
@@ -13,10 +13,15 @@ import CSSMotion from '@/vc-component/motion';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import type { VueNode } from '@/vc-util/type';
 import { cloneElement } from '@/vc-util/Children/util';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 
 export type { ScrollNumberProps } from './ScrollNumber.vue';
 
 type SemanticName = 'root' | 'indicator';
+
+export type BadgeClassNamesType = SemanticClassNamesType<BadgeProps, SemanticName>;
+export type BadgeStylesType = SemanticStylesType<BadgeProps, SemanticName>;
+
 export interface BadgeProps extends /** @vue-ignore */ HTMLAttributes {
   /** Number to show in badge */
   count?: VueNode;
@@ -36,8 +41,8 @@ export interface BadgeProps extends /** @vue-ignore */ HTMLAttributes {
   size?: 'default' | 'small';
   offset?: [number | string, number | string];
   title?: string;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: BadgeClassNamesType;
+  styles?: BadgeStylesType;
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -77,6 +82,22 @@ const {
 const prefixCls = computed(() => getPrefixCls.value('badge', customizePrefixCls));
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<BadgeClassNamesType, BadgeStylesType, BadgeProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      overflowCount,
+      size,
+      dot,
+      showZero,
+    },
+  })),
+);
 
 // ================================ Misc ================================
 const numberedDisplayCount = computed(
@@ -170,7 +191,7 @@ const isInternalColor = computed(() => isPresetColor(color, false));
 
 // Shared styles
 const statusCls = computed(() => {
-  return clsx(classNames?.indicator, contextClassNames?.value?.indicator, {
+  return clsx(mergedClassNames.value?.indicator, {
     [`${prefixCls.value}-status-dot`]: hasStatus.value,
     [`${prefixCls.value}-status-${status}`]: !!status,
     [`${prefixCls.value}-color-${color}`]: isInternalColor.value,
@@ -197,8 +218,7 @@ const badgeClassName = computed(() =>
     className,
     rootClassName,
     contextClassName?.value,
-    contextClassNames.value.root,
-    classNames?.root,
+    mergedClassNames?.value?.root,
     hashId.value,
     cssVarCls.value,
   ),
@@ -206,8 +226,7 @@ const badgeClassName = computed(() =>
 
 const scrollNumberStyle = computed<CSSProperties>(() => {
   let result = {
-    ...styles?.indicator,
-    ...contextStyles.value.indicator,
+    ...mergedStyles?.value?.indicator,
     ...mergedStyle.value,
   };
 
@@ -224,14 +243,14 @@ const children = computed(() => flattenChildren(slots.default?.())[0]);
     v-if="!children && hasStatus && (text || hasStatusValue || !ignoreCount)"
     v-bind="{ ...restProps, ...$attrs }"
     :class="badgeClassName"
-    :style="{ ...styles?.root, ...contextStyles?.root, ...mergedStyle }"
+    :style="{ ...mergedStyles.root, ...mergedStyle }"
   >
-    <span :class="statusCls" :style="{ ...styles?.indicator, ...contextStyles.indicator, ...statusStyle }"> </span>
+    <span :class="statusCls" :style="{ ...mergedStyles.indicator, ...statusStyle }"> </span>
     <span v-if="textNode" :style="{ color: mergedStyle.color }" :class="`${prefixCls}-status-text`">
       <Render :content="textNode" />
     </span>
   </span>
-  <span v-else v-bind="{ ...restProps, ...$attrs }" :class="badgeClassName" :style="{ ...contextStyles.root, ...styles?.root }">
+  <span v-else v-bind="{ ...restProps, ...$attrs }" :class="badgeClassName" :style="mergedStyles.root">
     <slot></slot>
     <CSSMotion :visible="!isHidden" :motion-name="`${prefixCls}-zoom`" :motion-appear="false" :motion-deadline="1000">
       <template #default="{ class: motionClassName, ref: motionRef }">
@@ -241,7 +260,7 @@ const children = computed(() => flattenChildren(slots.default?.())[0]);
           :show="!isHidden"
           :motion-class-name="motionClassName"
           :class="
-            clsx(classNames?.indicator, contextClassNames.indicator, {
+            clsx(mergedClassNames.indicator, {
               [`${prefixCls}-dot`]: isDotRef,
               [`${prefixCls}-count`]: !isDotRef,
               [`${prefixCls}-count-sm`]: size === 'small',

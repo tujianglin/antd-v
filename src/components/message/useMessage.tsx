@@ -3,9 +3,10 @@ import type { VueKey } from '@/vc-util/type';
 import { reactiveComputed, type ReactiveComputedReturn } from '@vueuse/core';
 import clsx from 'clsx';
 import { ref } from 'vue';
+import { mergeClassNames, mergeStyles, resolveStyleOrClass, type SemanticClassNames, type SemanticStyles } from '../_util/hooks';
 import type { HolderRef } from './Holder.vue';
 import Holder from './Holder.vue';
-import type { ArgsProps, ConfigOptions, MessageInstance, MessageType, NoticeType, TypeOpen } from './interface';
+import type { ArgsProps, ConfigOptions, MessageInstance, MessageType, NoticeType, SemanticName, TypeOpen } from './interface';
 import PureContent from './PureContent.vue';
 import { wrapPromiseFn } from './util';
 
@@ -35,11 +36,13 @@ export function useInternalMessage(messageConfig?: HolderProps): readonly [React
         api: { open: originOpen },
         prefixCls,
         message,
+        classNames: originClassNames,
+        styles: originStyles,
       } = holderRef.value;
       const contextClassName = message?.class || {};
-      const contextClassNames = message?.classNames || {};
+      const rawContextClassNames = message?.classNames || {};
       const contextStyle = message?.style || {};
-      const contextStyles = message?.styles || {};
+      const rawContextStyles = message?.styles || {};
 
       const noticePrefixCls = `${prefixCls}-notice`;
 
@@ -61,36 +64,34 @@ export function useInternalMessage(messageConfig?: HolderProps): readonly [React
         keyIndex += 1;
         mergedKey = `antd-message-${keyIndex}`;
       }
+
+      const contextConfig: HolderProps = { ...messageConfig, ...config };
+
+      const contextClassNames = resolveStyleOrClass(rawContextClassNames, { props: contextConfig });
+      const semanticClassNames = resolveStyleOrClass(configClassNames, { props: contextConfig });
+      const contextStyles = resolveStyleOrClass(rawContextStyles, { props: contextConfig });
+      const semanticStyles = resolveStyleOrClass(styles, { props: contextConfig });
+
+      const mergedClassNames: SemanticClassNames<SemanticName> = mergeClassNames(
+        undefined,
+        contextClassNames,
+        semanticClassNames,
+        originClassNames,
+      );
+
+      const mergedStyles: SemanticStyles<SemanticName> = mergeStyles(contextStyles, semanticStyles, originStyles);
       return wrapPromiseFn((resolve) => {
         originOpen({
           ...restConfig,
           key: mergedKey,
           content: (
-            <PureContent
-              prefixCls={prefixCls}
-              type={type}
-              icon={icon}
-              classNames={{
-                icon: clsx(configClassNames?.icon, contextClassNames.icon),
-                content: clsx(configClassNames?.content, contextClassNames.content),
-              }}
-              styles={{
-                icon: { ...contextStyles.icon, ...styles?.icon },
-                content: { ...contextStyles.content, ...styles?.content },
-              }}
-            >
+            <PureContent prefixCls={prefixCls} type={type} icon={icon} classNames={mergedClassNames} styles={mergedStyles}>
               <Render content={content}></Render>
             </PureContent>
           ),
           placement: 'top',
-          class: clsx(
-            type && `${noticePrefixCls}-${type}`,
-            className,
-            contextClassName,
-            contextClassNames.root,
-            configClassNames?.root,
-          ),
-          style: { ...contextStyles.root, ...styles?.root, ...contextStyle, ...style },
+          class: clsx(type && `${noticePrefixCls}-${type}`, className, contextClassName, mergedClassNames?.root),
+          style: { ...mergedStyles.root, ...contextStyle, ...style },
           onClose: () => {
             onClose?.();
             resolve();

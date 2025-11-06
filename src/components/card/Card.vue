@@ -1,10 +1,14 @@
 <script lang="tsx" setup>
 import Render from '@/vc-component/render';
 import type { Tab, TabBarExtraContent } from '@/vc-component/tabs/interface';
+import { isValidElement } from '@/vc-util/Children/util';
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import type { VueNode } from '@/vc-util/type';
+import { computedAsync } from '@vueuse/core';
 import clsx from 'clsx';
 import { omit } from 'lodash-es';
-import { computed, toRefs, type CSSProperties, type HTMLAttributes, type VNode } from 'vue';
+import { computed, getCurrentInstance, nextTick, toRefs, type CSSProperties, type HTMLAttributes, type VNode } from 'vue';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { useComponentConfig } from '../config-provider/context';
 import useSize from '../config-provider/hooks/useSize';
 import useVariant from '../form/hooks/useVariants';
@@ -26,6 +30,9 @@ export interface CardTabListType extends Omit<Tab, 'label'> {
 
 type SemanticName = 'root' | 'header' | 'body' | 'extra' | 'title' | 'actions' | 'cover';
 
+export type CardClassNamesType = SemanticClassNamesType<CardProps, SemanticName>;
+export type CardStylesType = SemanticStylesType<CardProps, SemanticName>;
+
 export interface CardProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'title'> {
   prefixCls?: string;
   title?: VueNode;
@@ -44,13 +51,10 @@ export interface CardProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'titl
   tabBarExtraContent?: TabBarExtraContent;
   onTabChange?: (key: string) => void;
   tabProps?: TabsProps;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: CardClassNamesType;
+  styles?: CardStylesType;
   variant?: 'borderless' | 'outlined';
 }
-
-type CardClassNamesModule = keyof Exclude<CardProps['classNames'], undefined>;
-type CardStylesModule = keyof Exclude<CardProps['styles'], undefined>;
 
 defineOptions({ name: 'Card', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -71,8 +75,8 @@ const {
   tabBarExtraContent,
   hoverable,
   tabProps = {},
-  classNames: customClassNames,
-  styles: customStyles,
+  classNames,
+  styles,
   ...others
 } = defineProps<CardProps>();
 
@@ -107,17 +111,10 @@ const onTabChange = (key: string) => {
   activeTabKey.value = key;
 };
 
-const moduleClass = (moduleName: CardClassNamesModule) =>
-  clsx(contextClassNames?.value?.[moduleName], customClassNames?.[moduleName]);
-
-const moduleStyle = (moduleName: CardStylesModule): CSSProperties => ({
-  ...contextStyles?.value?.[moduleName],
-  ...customStyles?.[moduleName],
-});
-
-const isContainGrid = computed(() => {
-  const children = slots.default?.() ?? [];
-  return children.some((vnode) => vnode.type === Grid);
+const isContainGrid = computedAsync(async () => {
+  await nextTick();
+  const children = flattenChildren(slots.default?.()) ?? [];
+  return children.some((vnode) => isValidElement(vnode) && (vnode.type as any).__name === Grid.__name);
 });
 
 const prefixCls = computed(() => getPrefixCls.value('card', customizePrefixCls));
@@ -130,13 +127,29 @@ const extraProps = computed(() => ({
 }));
 
 const mergedSize = useSize(computed(() => customizeSize));
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<CardClassNamesType, CardStylesType, CardProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      size: mergedSize.value,
+      variant: variant.value as CardProps['variant'],
+      loading,
+    },
+  })),
+);
+
 const tabSize = computed(() => (!mergedSize.value || mergedSize.value === 'default' ? 'large' : mergedSize.value));
 
-const coverClasses = computed(() => clsx(`${prefixCls.value}-cover`, moduleClass('cover')));
+const coverClasses = computed(() => clsx(`${prefixCls.value}-cover`, mergedClassNames.value?.cover));
 
-const bodyClasses = computed(() => clsx(`${prefixCls.value}-body`, moduleClass('body')));
+const bodyClasses = computed(() => clsx(`${prefixCls.value}-body`, mergedClassNames.value?.body));
 
-const actionClasses = computed(() => clsx(`${prefixCls.value}-actions`, moduleClass('actions')));
+const actionClasses = computed(() => clsx(`${prefixCls.value}-actions`, mergedClassNames.value?.actions));
 
 const divProps = computed(() => omit(others, ['onTabChange']));
 
@@ -158,15 +171,13 @@ const classString = computed(() =>
     rootClassName,
     hashId.value,
     cssVarCls.value,
-    contextClassNames?.value?.root,
-    customClassNames?.root,
+    mergedClassNames.value?.root,
   ),
 );
 
 const mergedStyle = computed(() => ({
-  ...contextStyles?.value?.root,
+  ...mergedStyles?.value?.root,
   ...contextStyle,
-  ...customStyles?.root,
   ...style,
 }));
 </script>
@@ -174,14 +185,14 @@ const mergedStyle = computed(() => ({
   <div v-bind="divProps" :class="classString" :style="mergedStyle">
     <div
       v-if="title || extra || tabList"
-      :class="clsx(`${prefixCls}-head`, moduleClass('header'))"
-      :style="moduleStyle('header')"
+      :class="clsx(`${prefixCls}-head`, mergedClassNames?.header)"
+      :style="mergedStyles.header"
     >
       <div :class="`${prefixCls}-head-wrapper`">
-        <div v-if="title" :class="clsx(`${prefixCls}-head-title`, moduleClass('title'))" :style="moduleStyle('title')">
+        <div v-if="title" :class="clsx(`${prefixCls}-head-title`, mergedClassNames?.title)" :style="mergedStyles.title">
           <Render :content="title" />
         </div>
-        <div v-if="extra" :class="clsx(`${prefixCls}-extra`, moduleClass('extra'))" :style="moduleStyle('extra')">
+        <div v-if="extra" :class="clsx(`${prefixCls}-extra`, mergedClassNames?.extra)" :style="mergedStyles.extra">
           <Render :content="extra" />
         </div>
       </div>
@@ -194,20 +205,15 @@ const mergedStyle = computed(() => ({
         :items="tabList"
       />
     </div>
-    <div v-if="cover" :class="coverClasses" :style="moduleStyle('cover')">
+    <div v-if="cover" :class="coverClasses" :style="mergedStyles.cover">
       <Render :content="cover" />
     </div>
-    <div :class="bodyClasses" :style="moduleStyle('body')">
+    <div :class="bodyClasses" :style="mergedStyles.body">
       <Skeleton v-if="loading" loading active :paragraph="{ rows: 4 }" :title="false">
         <slot></slot>
       </Skeleton>
       <slot v-else></slot>
     </div>
-    <ActionNode
-      v-if="actions?.length"
-      :action-classes="actionClasses"
-      :action-style="moduleStyle('actions')"
-      :actions="actions"
-    />
+    <ActionNode v-if="actions?.length" :action-classes="actionClasses" :action-style="mergedStyles.actions" :actions="actions" />
   </div>
 </template>

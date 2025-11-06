@@ -1,11 +1,14 @@
 <script lang="tsx" setup>
-import { computed, toRefs, type CSSProperties } from 'vue';
-import { useComponentConfig } from '../config-provider/context';
+import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import Render from '@/vc-component/render';
+import { computed, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
+import { useComponentConfig } from '../config-provider/context';
 
 export type SemanticName = 'root' | 'section' | 'avatar' | 'title' | 'description';
+export type CardMetaClassNamesType = SemanticClassNamesType<CardMetaProps, SemanticName>;
+export type CardMetaStylesType = SemanticStylesType<CardMetaProps, SemanticName>;
 export interface CardMetaProps {
   prefixCls?: string;
   style?: CSSProperties;
@@ -13,8 +16,8 @@ export interface CardMetaProps {
   avatar?: VueNode;
   title?: VueNode;
   description?: VueNode;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: CardMetaClassNamesType;
+  styles?: CardMetaStylesType;
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -41,85 +44,44 @@ const {
 const prefixCls = computed(() => getPrefixCls.value('card', customizePrefixCls));
 const metaPrefixCls = computed(() => `${prefixCls.value}-meta`);
 
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<CardMetaClassNamesType, CardMetaStylesType, CardMetaProps>(
+  computed(() => [contextClassNames?.value, cardMetaClassNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({ props: vm.props })),
+);
+
 const rootClassNames = computed(() =>
-  clsx(metaPrefixCls?.value, className, contextClassName?.value, contextClassNames?.value?.root, cardMetaClassNames?.root),
+  clsx(metaPrefixCls?.value, className, contextClassName?.value, mergedClassNames.value?.root),
 );
 
 const rootStyles = computed(() => ({
-  ...contextStyles?.value?.root,
   ...contextStyle?.value,
-  ...styles?.root,
+  ...mergedStyles?.value,
   ...style,
 }));
 
-const avatarClassNames = computed(() =>
-  clsx(`${metaPrefixCls.value}-avatar`, contextClassNames?.value?.avatar, cardMetaClassNames?.avatar),
-);
+const avatarClassNames = computed(() => clsx(`${metaPrefixCls.value}-avatar`, mergedClassNames.value?.avatar));
 
-const avatarStyles = computed(() => ({
-  ...contextStyles?.value?.avatar,
-  ...styles?.avatar,
-}));
+const titleClassNames = computed(() => clsx(`${metaPrefixCls.value}-title`, mergedClassNames.value?.title));
 
-const titleClassNames = computed(() =>
-  clsx(`${metaPrefixCls.value}-title`, contextClassNames?.value?.title, cardMetaClassNames?.title),
-);
+const descriptionClassNames = computed(() => clsx(`${metaPrefixCls.value}-description`, mergedClassNames.value.description));
 
-const titleStyles = computed(() => ({
-  ...contextStyles?.value?.title,
-  ...styles?.title,
-}));
-
-const descriptionClassNames = computed(() =>
-  clsx(`${metaPrefixCls.value}-description`, contextClassNames?.value?.description, cardMetaClassNames?.description),
-);
-
-const descriptionStyles = computed(() => ({
-  ...contextStyles?.value?.description,
-  ...styles?.description,
-}));
-
-const sectionClassNames = computed(() =>
-  clsx(`${metaPrefixCls.value}-section`, contextClassNames?.value?.section, cardMetaClassNames?.section),
-);
-
-const sectionStyles = computed(() => ({
-  ...contextStyles?.value?.section,
-  ...styles?.section,
-}));
-
-const AvatarDom = () =>
-  avatar ? (
-    <div class={avatarClassNames.value} style={avatarStyles.value}>
-      <Render content={avatar}></Render>
-    </div>
-  ) : null;
-
-const TitleDom = () =>
-  title ? (
-    <div class={titleClassNames.value} style={titleStyles.value}>
-      <Render content={title}></Render>
-    </div>
-  ) : null;
-
-const DescriptionDom = () =>
-  description ? (
-    <div class={descriptionClassNames.value} style={descriptionStyles.value}>
-      <Render content={description}></Render>
-    </div>
-  ) : null;
-
-const MetaDetail = () =>
-  TitleDom() || DescriptionDom() ? (
-    <div class={sectionClassNames.value} style={sectionStyles.value}>
-      <TitleDom></TitleDom>
-      <DescriptionDom></DescriptionDom>
-    </div>
-  ) : null;
+const sectionClassNames = computed(() => clsx(`${metaPrefixCls.value}-section`, mergedClassNames.value?.section));
 </script>
 <template>
   <div v-bind="restProps" :class="rootClassNames" :style="rootStyles">
-    <AvatarDom />
-    <MetaDetail />
+    <div v-if="avatar" :class="avatarClassNames" :style="mergedStyles?.avatar">
+      <Render :content="avatar" />
+    </div>
+    <div v-if="title || description" :class="sectionClassNames" :style="mergedStyles?.section">
+      <div v-if="title" :class="titleClassNames" :style="mergedStyles?.title">
+        <Render :content="title" />
+      </div>
+      <div v-if="description" :class="descriptionClassNames" :style="mergedStyles?.description">
+        <Render :content="description" />
+      </div>
+    </div>
   </div>
 </template>

@@ -2,7 +2,8 @@
 import Render from '@/vc-component/render';
 import type { VueKey, VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { computed, toRefs, type CSSProperties, type VNode } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties, type VNode } from 'vue';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import type { Breakpoint } from '../_util/responsiveObserver';
 import { matchScreen } from '../_util/responsiveObserver';
 import { useComponentConfig } from '../config-provider/context';
@@ -28,6 +29,10 @@ export interface DescriptionsItemType extends Omit<DescriptionsItemProps, 'prefi
 
 type SemanticName = 'root' | 'header' | 'title' | 'extra' | 'label' | 'content';
 
+export type DescriptionsClassNamesType = SemanticClassNamesType<DescriptionsProps, SemanticName>;
+
+export type DescriptionsStylesType = SemanticStylesType<DescriptionsProps, SemanticName>;
+
 export interface DescriptionsProps {
   prefixCls?: string;
   class?: string;
@@ -40,8 +45,8 @@ export interface DescriptionsProps {
   column?: number | Partial<Record<Breakpoint, number>>;
   layout?: 'horizontal' | 'vertical';
   colon?: boolean;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
-  classNames?: Partial<Record<SemanticName, string>>;
+  styles?: DescriptionsStylesType;
+  classNames?: DescriptionsClassNamesType;
   items?: DescriptionsItemType[];
   id?: string;
 }
@@ -62,7 +67,7 @@ const {
   size: customizeSize,
   styles,
   items,
-  classNames: descriptionsClassNames,
+  classNames,
   ...restProps
 } = defineProps<DescriptionsProps>();
 
@@ -110,28 +115,42 @@ const rows = useRow(mergedColumn, mergedItems);
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<DescriptionsClassNamesType, DescriptionsStylesType, DescriptionsProps>(
+  computed(() => [contextClassNames, classNames]),
+  computed(() => [contextStyles, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      column: mergedColumn.value,
+      items: mergedItems.value,
+      size: mergedSize.value,
+    },
+  })),
+);
+
 // ======================== Render ========================
-const contextValue = computed(() => ({
+const memoizedValue = computed(() => ({
   styles: {
-    content: { ...contextStyles?.value?.content, ...styles?.content },
-    label: { ...contextStyles?.value?.label, ...styles?.label },
+    label: mergedStyles?.value?.label,
+    content: mergedStyles?.value?.content,
   },
   classNames: {
-    label: clsx(contextClassNames?.value?.label, descriptionsClassNames?.label),
-    content: clsx(contextClassNames?.value?.content, descriptionsClassNames?.content),
+    label: clsx(mergedClassNames.value?.label),
+    content: clsx(mergedClassNames.value?.content),
   },
 }));
 </script>
 <template>
-  <DescriptionsContextProvider :value="contextValue">
+  <DescriptionsContextProvider :value="memoizedValue">
     <div
       v-bind="restProps"
       :class="
         clsx(
           prefixCls,
           contextClassName,
-          contextClassNames.root,
-          descriptionsClassNames?.root,
+          mergedClassNames.root,
           {
             [`${prefixCls}-${mergedSize}`]: mergedSize && mergedSize !== 'default',
             [`${prefixCls}-bordered`]: !!bordered,
@@ -145,34 +164,15 @@ const contextValue = computed(() => ({
       "
       :style="{
         ...contextStyle,
-        ...contextStyles.root,
-        ...styles?.root,
+        ...mergedStyles.root,
         ...style,
       }"
     >
-      <div
-        v-if="title || extra"
-        :class="clsx(`${prefixCls}-header`, contextClassNames.header, descriptionsClassNames?.header)"
-        :style="{ ...contextStyles.header, ...styles?.header }"
-      >
-        <div
-          v-if="title"
-          :class="clsx(`${prefixCls}-title`, contextClassNames.title, descriptionsClassNames?.title)"
-          :style="{
-            ...contextStyles.title,
-            ...styles?.title,
-          }"
-        >
+      <div v-if="title || extra" :class="clsx(`${prefixCls}-header`, mergedClassNames?.header)" :style="mergedStyles.header">
+        <div v-if="title" :class="clsx(`${prefixCls}-title`, mergedClassNames?.title)" :style="mergedStyles.title">
           <Render :content="title" />
         </div>
-        <div
-          v-if="extra"
-          :class="clsx(`${prefixCls}-extra`, contextClassNames.extra, descriptionsClassNames?.extra)"
-          :style="{
-            ...contextStyles.extra,
-            ...styles?.extra,
-          }"
-        >
+        <div v-if="extra" :class="clsx(`${prefixCls}-extra`, mergedClassNames?.extra)" :style="mergedStyles.extra">
           <Render :content="extra" />
         </div>
       </div>

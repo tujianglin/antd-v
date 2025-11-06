@@ -3,8 +3,10 @@ import Render from '@/vc-component/render';
 import { isVueNode } from '@/vc-util/Children/util';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
+import { useMergeSemantic, type SemanticClassNames, type SemanticStyles } from '../_util/hooks';
 import { useDescriptionsContextInject, type SemanticName } from './DescriptionsContext';
+import type { DescriptionsClassNamesType, DescriptionsStylesType } from './index.vue';
 
 export interface CellProps {
   itemPrefixCls: string;
@@ -12,8 +14,8 @@ export interface CellProps {
   class?: string;
   component: string;
   style?: CSSProperties;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
-  classNames?: Partial<Record<SemanticName, string>>;
+  classNames?: SemanticClassNames<SemanticName>;
+  styles?: SemanticStyles<SemanticName>;
   bordered?: boolean;
   label?: VueNode;
   content?: VueNode;
@@ -35,9 +37,20 @@ const {
   colon,
   type,
   styles,
+  classNames,
 } = defineProps<CellProps>();
 
-const { classNames: descriptionsClassNames } = toRefs(useDescriptionsContextInject());
+const { classNames: contextClassNames, styles: contextStyles } = toRefs(useDescriptionsContextInject());
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<DescriptionsClassNamesType, DescriptionsStylesType, CellProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: vm.props as unknown as CellProps,
+  })),
+);
 </script>
 <template>
   <component
@@ -48,8 +61,8 @@ const { classNames: descriptionsClassNames } = toRefs(useDescriptionsContextInje
         {
           [`${itemPrefixCls}-item-label`]: type === 'label',
           [`${itemPrefixCls}-item-content`]: type === 'content',
-          [`${descriptionsClassNames?.label}`]: type === 'label',
-          [`${descriptionsClassNames?.content}`]: type === 'content',
+          [`${mergedClassNames?.label}`]: type === 'label',
+          [`${mergedClassNames?.content}`]: type === 'content',
         },
         className,
       )
@@ -57,10 +70,10 @@ const { classNames: descriptionsClassNames } = toRefs(useDescriptionsContextInje
     :style="style"
     :col-span="span"
   >
-    <span v-if="isVueNode(label)" :style="styles?.label">
+    <span v-if="isVueNode(label)" :style="mergedStyles?.label">
       <Render :content="label" />
     </span>
-    <span v-if="isVueNode(content)" :style="styles?.content">
+    <span v-if="isVueNode(content)" :style="mergedStyles?.content">
       <Render :content="content" />
     </span>
   </component>
@@ -69,18 +82,18 @@ const { classNames: descriptionsClassNames } = toRefs(useDescriptionsContextInje
       <span
         v-if="isVueNode(label)"
         :class="
-          clsx(`${itemPrefixCls}-item-label`, descriptionsClassNames?.label, {
+          clsx(`${itemPrefixCls}-item-label`, mergedClassNames?.label, {
             [`${itemPrefixCls}-item-no-colon`]: !colon,
           })
         "
-        :style="styles?.label"
+        :style="mergedStyles?.label"
       >
         <Render :content="label" />
       </span>
       <span
         v-if="isVueNode(content)"
-        :class="clsx(`${itemPrefixCls}-item-content`, descriptionsClassNames?.content)"
-        :style="styles?.content"
+        :class="clsx(`${itemPrefixCls}-item-content`, mergedClassNames?.content)"
+        :style="mergedStyles?.content"
       >
         <Render :content="content" />
       </span>

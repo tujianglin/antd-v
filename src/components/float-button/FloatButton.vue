@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import { computed, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic } from '../_util/hooks';
 import Button from '../button';
 import { useConfigContextInject } from '../config-provider';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
@@ -74,7 +74,6 @@ const mergedProps = computed(() => {
 const [mergedClassNames, mergedStyles] = useMergeSemantic<FloatButtonClassNamesType, FloatButtonStylesType, FloatButtonProps>(
   computed(() => [floatButtonClassNames.value, groupPassedClassNames?.value, classNames]),
   computed(() => [groupPassedStyles?.value, styles]),
-  undefined,
   computed(() => ({ props: mergedProps.value })),
 );
 
@@ -116,7 +115,7 @@ const classes = computed(() => {
   <template v-if="tooltipProps">
     <Tooltip v-bind="tooltipProps">
       <Button
-        v-bind="{ ...restProps }"
+        v-bind="{ ...restProps as any }"
         :class="classes"
         :class-names="mergedClassNames"
         :styles="mergedStyles"
@@ -141,7 +140,7 @@ const classes = computed(() => {
   </template>
   <Button
     v-else
-    v-bind="{ ...restProps }"
+    v-bind="{ ...restProps as any }"
     :class="classes"
     :class-names="mergedClassNames"
     :styles="mergedStyles"

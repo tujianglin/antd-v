@@ -7,7 +7,7 @@ import { EllipsisOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
 import { isEmpty, omit } from 'lodash-es';
 import { computed, getCurrentInstance, h, toRefs, type CSSProperties } from 'vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic, type SemanticClassNames, type SemanticStyles } from '../_util/hooks';
 import initCollapseMotion from '../_util/motion';
 import { useComponentConfig, useConfigContextInject } from '../config-provider/context';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
@@ -27,7 +27,21 @@ import SubMenu from './SubMenu.vue';
 
 export type SemanticName = 'root' | 'itemTitle' | 'list' | 'item' | 'itemIcon' | 'itemContent';
 
-export type SubMenuName = 'item' | 'itemTitle' | 'list' | 'itemContent' | 'itemIcon';
+export type SubMenuSemanticName = 'item' | 'itemTitle' | 'list' | 'itemContent' | 'itemIcon';
+
+type MenuClassNamesSchemaType = SemanticClassNames<SemanticName> & {
+  popup?: SemanticClassNames<'root'> | string;
+  subMenu?: SemanticClassNames<SubMenuSemanticName>;
+};
+
+type MenuStylesSchemaType = SemanticStyles<SemanticName> & {
+  popup?: SemanticStyles<'root'> | CSSProperties;
+  subMenu?: SemanticStyles<SubMenuSemanticName>;
+};
+
+export type MenuClassNamesType = MenuClassNamesSchemaType | ((info: { props: MenuProps }) => MenuClassNamesSchemaType);
+
+export type MenuStylesType = MenuStylesSchemaType | ((info: { props: MenuProps }) => MenuStylesSchemaType);
 
 export interface MenuProps
   extends Omit<RcMenuProps, 'items' | '_internalComponents' | 'classNames' | 'styles' | 'activeKey' | 'defaultActiveFirst'> {
@@ -43,18 +57,8 @@ export interface MenuProps
   _internalDisableMenuItemTitleTooltip?: boolean;
 
   items?: ItemType[];
-  classNames?: Partial<
-    Record<SemanticName, string> & {
-      popup?: string | { root?: string };
-      subMenu?: Partial<Record<SubMenuName, string>>;
-    }
-  >;
-  styles?: Partial<
-    Record<SemanticName, CSSProperties> & {
-      subMenu?: Partial<Record<SubMenuName, CSSProperties>>;
-      popup?: { root?: CSSProperties };
-    }
-  >;
+  classNames?: MenuClassNamesType;
+  styles?: MenuStylesType;
 }
 
 type InternalMenuProps = MenuProps &
@@ -110,9 +114,30 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('menu'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const vm = getCurrentInstance();
+
+// ========================== Mode ===========================
+const mergedMode = computed(() => overrideObj.mode || mode);
+
+// ======================= Selectable ========================
+const mergedSelectable = computed(() => selectable ?? overrideObj.selectable);
+
+// ======================== Collapsed ========================
+// Inline Collapsed
+const mergedInlineCollapsed = computed(() => inlineCollapsed ?? siderCollapsed);
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<MenuClassNamesType, MenuStylesType, MenuProps>(
   computed(() => [contextClassNames?.value, classNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      mode: mergedMode.value,
+      inlineCollapsed: mergedInlineCollapsed.value,
+      selectable: mergedSelectable.value,
+      theme,
+    },
+  })),
   computed(() => ({
     popup: {
       _default: 'root',
@@ -135,16 +160,6 @@ const onItemClick = (e) => {
   onClick?.(e);
   overrideObj.onClick?.();
 };
-
-// ========================== Mode ===========================
-const mergedMode = computed(() => overrideObj.mode || mode);
-
-// ======================= Selectable ========================
-const mergedSelectable = computed(() => selectable ?? overrideObj.selectable);
-
-// ======================== Collapsed ========================
-// Inline Collapsed
-const mergedInlineCollapsed = computed(() => inlineCollapsed ?? siderCollapsed);
 
 const defaultMotions = computed<MenuProps['defaultMotions']>(() => ({
   horizontal: { motionName: `${rootPrefixCls.value}-slide-up` },
@@ -189,7 +204,6 @@ const contextValue = computed(() => {
   } as MenuContextProps;
 });
 
-const vm = getCurrentInstance();
 const changeRef = (el) => {
   vm.exposed = el;
   vm.exposeProxy = el;

@@ -6,8 +6,8 @@ import type { VueKey, VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
 import { isEqual } from 'lodash-es';
 import { computed, getCurrentInstance, nextTick, ref, toRefs, useTemplateRef, watch, type CSSProperties } from 'vue';
-import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks';
+import { useMergeSemantic } from '../_util/hooks';
 import type { Breakpoint } from '../_util/responsiveObserver';
 import { responsiveArray } from '../_util/responsiveObserver';
 import { useComponentConfig } from '../config-provider/context';
@@ -148,18 +148,16 @@ const columnCount = computed<number>(() => {
 
 // =========== Merged Props for Semantic ==========
 const vm = getCurrentInstance();
-const mergedProps = computed(() => {
-  return {
-    ...vm.props,
-    columns: columnCount.value,
-  } as MasonryProps;
-});
 
 const [mergedClassNames, mergedStyles] = useMergeSemantic<MasonryClassNamesType, MasonryStylesType, MasonryProps>(
   computed(() => [contextClassNames?.value, classNames]),
   computed(() => [contextStyles?.value, styles]),
-  undefined,
-  computed(() => ({ props: mergedProps.value })),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      columns: columnCount.value,
+    },
+  })),
 );
 
 // ================== Items Position ==================

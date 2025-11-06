@@ -10,6 +10,8 @@ import type { TriggerRef } from '../trigger/index.vue';
 import placements from './placements';
 import Popup from './Popup.vue';
 
+export type SemanticName = 'root' | 'arrow' | 'container' | 'uniqueContainer';
+
 export interface TooltipProps
   extends Pick<
     TriggerProps,
@@ -22,6 +24,11 @@ export interface TooltipProps
     | 'forceRender'
     | 'popupVisible'
   > {
+  // Style
+  classNames?: Partial<Record<SemanticName, string>>;
+  styles?: Partial<Record<SemanticName, CSSProperties>>;
+
+  /** Config popup motion */
   trigger?: ActionType | ActionType[];
   placement?: string;
   /** Config popup motion */
@@ -38,18 +45,11 @@ export interface TooltipProps
   arrowContent?: any;
   id?: string;
   zIndex?: number;
-  styles?: TooltipStyles;
-  classNames?: TooltipClassNames;
-}
-
-export interface TooltipStyles {
-  root?: CSSProperties;
-  body?: CSSProperties;
-}
-
-export interface TooltipClassNames {
-  root?: string;
-  body?: string;
+  /**
+   * Configures Tooltip to reuse the background for transition usage.
+   * This is an experimental API and may not be stable.
+   */
+  unique?: TriggerProps['unique'];
 }
 
 export interface TooltipRef extends TriggerRef {}
@@ -70,12 +70,12 @@ const {
   align = {},
   destroyOnHidden = false,
   getTooltipContainer,
-  arrowContent: _,
+  arrowContent,
   overlay: customOverlay,
   id: _1,
   showArrow = true,
-  classNames: tooltipClassNames,
-  styles: tooltipStyles,
+  classNames,
+  styles,
   // eslint-disable-next-line unused-imports/no-unused-vars
   visible = undefined,
   ...restProps
@@ -99,6 +99,25 @@ const extraProps = computed(() => {
   return res;
 });
 
+// ========================= Arrow ==========================
+// Process arrow configuration
+const mergedArrow = computed(() => {
+  if (!showArrow) {
+    return false;
+  }
+
+  // Convert true to object for unified processing
+  const arrowConfig = showArrow === true ? {} : showArrow;
+
+  // Apply semantic styles with unified logic
+  return {
+    ...arrowConfig,
+    class: clsx(arrowConfig.class, classNames?.arrow),
+    style: { ...arrowConfig.style, ...styles?.arrow },
+    content: arrowConfig.content ?? arrowContent,
+  };
+});
+
 defineExpose({
   get el() {
     return triggerRef.value;
@@ -107,7 +126,7 @@ defineExpose({
 </script>
 <template>
   <Trigger
-    :popup-class-name="clsx(tooltipClassNames?.root)"
+    :popup-class-name="classNames?.root"
     :prefix-cls="prefixCls"
     :action="trigger"
     :builtin-placements="placements"
@@ -121,20 +140,16 @@ defineExpose({
     :default-popup-visible="defaultVisible"
     :auto-destroy="destroyOnHidden"
     :mouse-leave-delay="mouseLeaveDelay"
-    :popup-style="tooltipStyles?.root"
+    :popup-style="styles?.root"
     :mouse-enter-delay="mouseEnterDelay"
-    :arrow="showArrow"
+    :arrow="mergedArrow"
+    :unique-container-class-name="classNames.uniqueContainer"
+    :unique-container-style="styles.uniqueContainer"
     v-bind="extraProps"
   >
     <component :is="cloneVNode(slots.default?.()[0], { 'aria-describedby': overlay ? mergedId : null })" />
     <template #popup>
-      <Popup
-        key="content"
-        :prefix-cls="prefixCls"
-        :id="mergedId"
-        :body-class-name="tooltipClassNames?.body"
-        :overlay-inner-style="{ ...tooltipStyles?.body }"
-      >
+      <Popup key="content" :prefix-cls="prefixCls" :id="mergedId" :class-names="classNames" :styles="styles">
         <Render :content="overlay" />
       </Popup>
     </template>

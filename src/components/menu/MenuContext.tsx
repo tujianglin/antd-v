@@ -1,17 +1,9 @@
 import type { VueNode } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
-import {
-  defineComponent,
-  inject,
-  provide,
-  reactive,
-  type CSSProperties,
-  type InjectionKey,
-  type PropType,
-  type Reactive,
-} from 'vue';
+import { defineComponent, inject, provide, reactive, type InjectionKey, type PropType, type Reactive } from 'vue';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks';
 import type { DirectionType } from '../config-provider';
-import type { MenuProps, SemanticName, SubMenuName } from './InternalMenu.vue';
+import type { MenuProps, SemanticName, SubMenuSemanticName } from './InternalMenu.vue';
 
 export type MenuTheme = 'light' | 'dark';
 
@@ -23,18 +15,14 @@ export interface MenuContextProps {
   firstLevel: boolean;
   /** @internal Safe to remove */
   disableMenuItemTitleTooltip?: boolean;
-  classNames: Required<
-    Record<SemanticName, string> & {
-      popup: { root: string };
-      subMenu: Required<Record<SubMenuName, string>>;
-    }
-  >;
-  styles: Required<
-    Record<SemanticName, CSSProperties> & {
-      subMenu: Required<Record<SubMenuName, CSSProperties>>;
-      popup: { root: CSSProperties };
-    }
-  >;
+  classNames: SemanticClassNames<SemanticName> & {
+    popup: SemanticClassNames<'root'>;
+    subMenu: SemanticClassNames<SubMenuSemanticName>;
+  };
+  styles: SemanticStyles<SemanticName> & {
+    popup: SemanticStyles<'root'>;
+    subMenu: SemanticStyles<SubMenuSemanticName>;
+  };
 }
 
 const MenuContext: InjectionKey<Reactive<MenuContextProps>> = Symbol('MenuContext');

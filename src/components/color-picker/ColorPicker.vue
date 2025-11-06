@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { computed, ref, toRefs, watch, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, ref, toRefs, watch, type CSSProperties } from 'vue';
 import ContextIsolator from '../_util/ContextIsolator';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic } from '../_util/hooks';
 import { getStatusClassNames } from '../_util/statusUtils';
 import { devUseWarning } from '../_util/warning';
 import { useComponentConfig } from '../config-provider/context';
@@ -126,18 +126,45 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('colorPicker'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
+const contextDisabled = useDisabledContextInject();
+const mergedDisabled = computed(() => disabled ?? contextDisabled?.value);
+
+const prefixCls = computed(() => getPrefixCls.value('color-picker', customizePrefixCls));
+
+// ==================== Compact ====================
+const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
+
+// ===================== Style =====================
+const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
+
+// =========== Merged Props for Semantic ===========
+const vm = getCurrentInstance();
+const mergedProps = computed(() => ({
+  ...vm.props,
+  trigger,
+  allowClear,
+  autoAdjustOverflow,
+  disabledAlpha,
+  arrow,
+  placement,
+  disabled: mergedDisabled.value,
+  size: mergedSize.value,
+}));
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<
+  NonNullable<ColorPickerProps['classNames']>,
+  NonNullable<ColorPickerProps['styles']>,
+  ColorPickerProps
+>(
   computed(() => [contextClassNames?.value, classNames]),
   computed(() => [contextStyles?.value, styles]),
+  computed(() => ({ props: mergedProps.value })),
   computed(() => ({
     popup: {
       _default: 'root',
     },
   })),
 );
-
-const contextDisabled = useDisabledContextInject();
-const mergedDisabled = computed(() => disabled ?? contextDisabled?.value);
 
 const popupOpen = defineModel('open', { default: false, get: (openData) => !mergedDisabled.value && openData });
 
@@ -154,8 +181,6 @@ watch(
   },
   { deep: true },
 );
-
-const prefixCls = computed(() => getPrefixCls.value('color-picker', customizePrefixCls));
 
 // ================== Value & Mode =================
 const [mergedColor, setColor, modeState, modeOptions] = useModeColor(
@@ -241,12 +266,6 @@ const onInternalModeChange = (newMode: ModeType) => {
 
 // ================== Form Status ==================
 
-// ==================== Compact ====================
-const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
-
-// ===================== Style =====================
-const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
-
 const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 const rtlCls = computed(() => ({ [`${prefixCls.value}-rtl`]: direction.value }));
@@ -298,7 +317,7 @@ const mergedStyle = computed<CSSProperties>(() => ({ ...mergedStyles?.value?.roo
 <template>
   <Popover
     :class-names="{ root: mergedPopupCls }"
-    :styles="{ root: mergedStyles.popup?.root, body: styles?.popupOverlayInner }"
+    :styles="{ root: mergedStyles.popup?.root, container: styles?.popupOverlayInner }"
     @open-change="
       (visible) => {
         if (!visible || !mergedDisabled) {

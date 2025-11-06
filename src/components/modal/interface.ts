@@ -1,6 +1,7 @@
 import type { DialogProps } from '@/vc-component/dialog';
 import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks';
 import type { ClosableType } from '../_util/hooks/useClosable';
 import type { MaskType } from '../_util/hooks/useMergedMask';
 import type { Breakpoint } from '../_util/responsiveObserver';
@@ -9,15 +10,30 @@ import type { DirectionType } from '../config-provider';
 
 export type SemanticName = 'root' | 'header' | 'body' | 'footer' | 'container' | 'title' | 'wrapper' | 'mask';
 
+export type ModalClassNamesType = SemanticClassNamesType<ModalProps, SemanticName>;
+
+export type ModalStylesType = SemanticStylesType<ModalProps, SemanticName>;
+
 export type FooterRender = (props: { originNode: VueNode; extra: { OkBtn: VueNode; CancelBtn: VueNode } }) => VueNode;
 
 interface ModalCommonProps
   extends Omit<
     DialogProps,
-    'footer' | 'width' | 'onClose' | 'animation' | 'maskAnimation' | 'transitionName' | 'maskTransitionName' | 'mask'
+    | 'footer'
+    | 'width'
+    | 'onClose'
+    | 'animation'
+    | 'maskAnimation'
+    | 'transitionName'
+    | 'maskTransitionName'
+    | 'mask'
+    | 'classNames'
+    | 'styles'
   > {
   footer?: VueNode | FooterRender;
   closable?: boolean | (Exclude<ClosableType, boolean> & { onClose?: () => void; afterClose?: () => void });
+  classNames?: ModalClassNamesType;
+  styles?: ModalStylesType;
 }
 
 export interface ModalProps extends ModalCommonProps {
@@ -75,8 +91,8 @@ export interface ModalProps extends ModalCommonProps {
    * @since 5.18.0
    */
   loading?: boolean;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: ModalClassNamesType;
+  styles?: ModalStylesType;
 }
 
 type getContainerFunc = () => HTMLElement;

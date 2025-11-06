@@ -1,8 +1,14 @@
 <script lang="tsx" setup>
-import { computed, h, toRefs, type AriaAttributes, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, h, toRefs, type AriaAttributes, type CSSProperties } from 'vue';
 import type { TreeSelectProps as RcTreeSelectProps } from '@/vc-component/tree-select';
 import RcTreeSelect from '@/vc-component/tree-select';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import {
+  useMergeSemantic,
+  type SemanticClassNames,
+  type SemanticClassNamesType,
+  type SemanticStyles,
+  type SemanticStylesType,
+} from '../_util/hooks';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import { getTransitionName, type SelectCommonPlacement } from '../_util/motion';
 import type { InputStatus } from '../_util/statusUtils';
@@ -44,8 +50,17 @@ export interface LabeledValue {
 
 export type SelectValue = RawValue | RawValue[] | LabeledValue | LabeledValue[];
 
-type SemanticName = 'root' | 'prefix' | 'input' | 'suffix';
+type SemanticName = 'root' | 'prefix' | 'input' | 'suffix' | 'content' | 'placeholder' | 'item' | 'itemContent' | 'itemRemove';
 type PopupSemantic = 'item' | 'itemTitle' | 'root';
+
+export type TreeSelectClassNamesType = SemanticClassNamesType<TreeSelectProps, SemanticName> & {
+  popup?: SemanticClassNames<PopupSemantic>;
+};
+
+export type TreeSelectStylesType = SemanticStylesType<TreeSelectProps, SemanticName> & {
+  popup?: SemanticStyles<PopupSemantic>;
+};
+
 export interface TreeSelectProps<ValueType = any, OptionType extends DataNode = DataNode>
   extends /** @vue-ignore */ AriaAttributes,
     Omit<
@@ -153,33 +168,6 @@ const [variant, enableVariantCls] = useVariant(
   computed(() => customVariant),
 );
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [contextClassNames?.value, classNames]),
-  computed(() => [contextStyles?.value, styles]),
-  computed(() => ({
-    popup: {
-      _default: 'root',
-    },
-  })),
-);
-
-const mergedPopupClassName = computed(() =>
-  clsx(
-    popupClassName,
-    `${treeSelectPrefixCls.value}-dropdown`,
-    {
-      [`${treeSelectPrefixCls.value}-dropdown-rtl`]: direction?.value === 'rtl',
-    },
-    rootClassName,
-    mergedClassNames?.value?.root,
-    mergedClassNames?.value?.popup?.root,
-    cssVarCls.value,
-    rootCls.value,
-    treeSelectRootCls.value,
-    hashId.value,
-  ),
-);
-
 const mergedPopupRender = usePopupRender(computed(() => popupRender));
 
 const isMultiple = computed(() => !!(treeCheckable || multiple));
@@ -243,6 +231,44 @@ const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize?
 // eslint-disable-next-line vue/no-dupe-keys
 const disabled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? disabled.value);
+
+const vm = getCurrentInstance();
+
+const [mergedClassNames, mergedStyles] = useMergeSemantic<TreeSelectClassNamesType, TreeSelectStylesType, TreeSelectProps>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      size: mergedSize.value,
+      disabled: mergedDisabled.value,
+      status: mergedStatus.value,
+      variant: variant.value,
+    } as TreeSelectProps,
+  })),
+  computed(() => ({
+    popup: {
+      _default: 'root',
+    },
+  })),
+);
+
+const mergedPopupClassName = computed(() =>
+  clsx(
+    popupClassName,
+    `${treeSelectPrefixCls.value}-dropdown`,
+    {
+      [`${treeSelectPrefixCls.value}-dropdown-rtl`]: direction?.value === 'rtl',
+    },
+    rootClassName,
+    mergedClassNames?.value?.root,
+    mergedClassNames?.value?.popup?.root,
+    cssVarCls.value,
+    rootCls.value,
+    treeSelectRootCls.value,
+    hashId.value,
+  ),
+);
 
 const mergedClassName = computed(() =>
   clsx(

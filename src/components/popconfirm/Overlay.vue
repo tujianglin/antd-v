@@ -10,6 +10,9 @@ import { useConfigContextInject } from '../config-provider';
 import { convertLegacyProps } from '../button/buttonHelpers';
 import ActionButton from '../_util/ActionButton.vue';
 import Render from '@/vc-component/render';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks';
+import type { PopoverSemanticName } from '../popover/index.vue';
+import clsx from 'clsx';
 
 export interface PopconfirmLocale {
   okText: string;
@@ -34,6 +37,8 @@ export interface OverlayProps
   close?: (...args: any[]) => void;
   onConfirm?: (e: MouseEvent) => void;
   onCancel?: (e: MouseEvent) => void;
+  classNames?: SemanticClassNames<PopoverSemanticName>;
+  styles?: SemanticStyles<PopoverSemanticName>;
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -53,6 +58,8 @@ const {
   onConfirm,
   onCancel,
   onPopupClick,
+  classNames,
+  styles,
 } = defineProps<OverlayProps>();
 
 const { getPrefixCls } = toRefs(useConfigContextInject());
@@ -69,10 +76,10 @@ const descriptionNode = getRenderPropValue(description);
         <Render :content="icon" />
       </span>
       <div :class="`${prefixCls}-message-text`">
-        <div v-if="titleNode" :class="`${prefixCls}-title`">
+        <div v-if="titleNode" :class="clsx(`${prefixCls}-title`, classNames?.title)" :style="styles?.title">
           <Render :content="titleNode" />
         </div>
-        <div v-if="descriptionNode" :class="`${prefixCls}-description`">
+        <div v-if="descriptionNode" :class="clsx(`${prefixCls}-description`, classNames?.content)" :style="styles?.content">
           <Render :content="descriptionNode" />
         </div>
       </div>

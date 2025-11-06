@@ -10,23 +10,23 @@ import {
   provide,
   reactive,
   ref,
-  type CSSProperties,
   type InjectionKey,
   type PropType,
   type Reactive,
   type Ref,
 } from 'vue';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks';
 import type { Variant } from '../config-provider';
 import type { ColProps } from '../grid/col.vue';
-import type { FormLayout, RequiredMark, SemanticName } from './Form.vue';
+import type { FormLayout, FormSemanticName, RequiredMark } from './Form.vue';
 import type { FeedbackIcons, ValidateStatus } from './FormItem/index.vue';
 import type { FormInstance } from './index';
 import type { FormLabelAlign } from './interface';
 
 /** Form Context. Set top form style and pass to Form Item usage. */
 export interface FormContextProps {
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: SemanticClassNames<FormSemanticName>;
+  styles?: SemanticStyles<FormSemanticName>;
   layout: FormLayout;
   name?: string;
   colon?: boolean;

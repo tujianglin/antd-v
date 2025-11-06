@@ -13,8 +13,8 @@ import type { AnchorLinkBaseProps } from './AnchorLink.vue';
 import { AnchorContextProvider } from './context';
 import useStyle from './style';
 import AnchorLink from './AnchorLink.vue';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
-import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
+import { useMergeSemantic } from '../_util/hooks';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks';
 
 export interface AnchorLinkItemProps extends AnchorLinkBaseProps {
   key: VueKey;
@@ -272,7 +272,6 @@ const mergedProps = computed<AnchorProps>(() => {
 const [mergedClassNames, mergedStyles] = useMergeSemantic<AnchorClassNamesType, AnchorStylesType, AnchorProps>(
   computed(() => [contextClassNames?.value, anchorClassNames]),
   computed(() => [contextStyles?.value, styles]),
-  undefined,
   computed(() => ({
     props: mergedProps.value,
   })),

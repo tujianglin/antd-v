@@ -1,8 +1,9 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
 import { computed, getCurrentInstance, type CSSProperties } from 'vue';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks';
 import type { DirectionType } from '../config-provider';
-import type { PercentPositionType, ProgressGradient, ProgressProps } from './progress.vue';
+import type { PercentPositionType, ProgressGradient, ProgressProps, SemanticName } from './progress.vue';
 import { LineStrokeColorVar } from './style';
 import { getSize, getSuccessPercent, handleGradient, validProgress } from './utils';
 
@@ -11,8 +12,8 @@ interface LineProps extends ProgressProps {
   direction?: DirectionType;
   strokeColor?: string | ProgressGradient;
   percentPosition: PercentPositionType;
-  classNames: Required<ProgressProps>['classNames'];
-  styles: Required<ProgressProps>['styles'];
+  classNames: SemanticClassNames<SemanticName>;
+  styles: SemanticStyles<SemanticName>;
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });

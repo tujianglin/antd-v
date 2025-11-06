@@ -1,5 +1,6 @@
 import type { VueNode } from '@/vc-util/type';
 import type { CSSProperties } from 'vue';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks';
 
 export interface AbstractCheckboxProps<T> {
   prefixCls?: string;
@@ -25,12 +26,16 @@ export interface AbstractCheckboxProps<T> {
   skipGroup?: boolean;
   required?: boolean;
 }
+
 type SemanticName = 'root' | 'icon' | 'label';
+
+export type CheckboxClassNamesType = SemanticClassNamesType<CheckboxProps, SemanticName>;
+export type CheckboxStylesType = SemanticStylesType<CheckboxProps, SemanticName>;
 
 export interface CheckboxProps extends AbstractCheckboxProps<CheckboxChangeEvent> {
   indeterminate?: boolean;
-  classNames?: Partial<Record<SemanticName, string>>;
-  styles?: Partial<Record<SemanticName, CSSProperties>>;
+  classNames?: CheckboxClassNamesType;
+  styles?: CheckboxStylesType;
 }
 
 export interface CheckboxChangeEventTarget extends CheckboxProps {

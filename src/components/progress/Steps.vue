@@ -2,15 +2,16 @@
 import clsx from 'clsx';
 import { isArray } from 'lodash-es';
 import { computed } from 'vue';
-import type { ProgressProps } from './progress.vue';
+import type { SemanticClassNames, SemanticStyles } from '../_util/hooks';
+import type { ProgressProps, SemanticName } from './progress.vue';
 import { getSize } from './utils';
 
 interface ProgressStepsProps extends ProgressProps {
   steps: number;
   strokeColor?: string | string[];
   railColor?: string;
-  classNames: Required<ProgressProps>['classNames'];
-  styles: Required<ProgressProps>['styles'];
+  classNames: SemanticClassNames<SemanticName>;
+  styles: SemanticStyles<SemanticName>;
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });

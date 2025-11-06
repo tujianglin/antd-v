@@ -8,7 +8,13 @@ import type {
 } from '@/vc-component/cascader';
 import RcCascader from '@/vc-component/cascader';
 
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import {
+  useMergeSemantic,
+  type SemanticClassNames,
+  type SemanticClassNamesType,
+  type SemanticStyles,
+  type SemanticStylesType,
+} from '../_util/hooks';
 import { useZIndex } from '../_util/hooks/useZIndex';
 import { getTransitionName, type SelectCommonPlacement } from '../_util/motion';
 import type { InputStatus } from '../_util/statusUtils';
@@ -50,8 +56,16 @@ export type FieldNamesType = FieldNames;
 
 export type FilledFieldNamesType = Required<FieldNamesType>;
 
-type SemanticName = 'root' | 'prefix' | 'suffix';
+type SemanticName = 'root' | 'prefix' | 'suffix' | 'input' | 'placeholder' | 'content' | 'item' | 'itemContent' | 'itemRemove';
 type PopupSemantic = 'root' | 'listItem' | 'list';
+
+export type CascaderClassNamesType = SemanticClassNamesType<
+  CascaderProps,
+  SemanticName,
+  { popup?: SemanticClassNames<PopupSemantic> }
+>;
+
+export type CascaderStylesType = SemanticStylesType<CascaderProps, SemanticName, { popup?: SemanticStyles<PopupSemantic> }>;
 
 export interface CascaderProps<
   OptionType extends DefaultOptionType = DefaultOptionType,
@@ -78,12 +92,8 @@ export interface CascaderProps<
    * @default "outlined"
    */
   variant?: Variant;
-  styles?: Partial<Record<SemanticName, CSSProperties>> & {
-    popup?: Partial<Record<PopupSemantic, CSSProperties>>;
-  };
-  classNames?: Partial<Record<SemanticName, string>> & {
-    popup?: Partial<Record<PopupSemantic, string>>;
-  };
+  classNames?: CascaderClassNamesType;
+  styles?: CascaderStylesType;
 }
 export type CascaderAutoProps<
   OptionType extends DefaultOptionType = DefaultOptionType,
@@ -188,16 +198,6 @@ const {
   styles: contextStyles,
 } = toRefs(useComponentConfig('cascader'));
 
-const [mergedClassNames, mergedStyles] = useMergeSemantic(
-  computed(() => [contextClassNames?.value, classNames]),
-  computed(() => [contextStyles?.value, styles]),
-  computed(() => ({
-    popup: {
-      _default: 'root',
-    },
-  })),
-);
-
 const { popupOverflow } = toRefs(useConfigContextInject());
 
 // =================== Form =====================
@@ -233,27 +233,7 @@ const mergedNotFoundContent = computed(
   () => notFoundContent || renderEmpty?.value?.('Cascader') || <DefaultRenderEmpty componentName="Cascader" />,
 );
 
-// =================== Dropdown ====================
-const mergedPopupClassName = computed(() =>
-  clsx(
-    popupClassName,
-    `${cascaderPrefixCls.value}-dropdown`,
-    {
-      [`${cascaderPrefixCls.value}-dropdown-rtl`]: mergedDirection.value === 'rtl',
-    },
-    rootClassName,
-    rootCls.value,
-    mergedClassNames?.value?.popup?.root,
-    mergedClassNames?.value?.root,
-    cascaderRootCls.value,
-    hashId.value,
-    cssVarCls.value,
-  ),
-);
-
 const mergedPopupRender = usePopupRender(computed(() => popupRender));
-
-const mergedPopupStyle = computed(() => mergedStyles?.value.popup?.root);
 
 // ==================== Search =====================
 const mergedShowSearch = computed(() => {
@@ -293,8 +273,8 @@ const checkable = useCheckable(
 );
 
 // ===================== Icons =====================
-const showSuffixIcon = useShowArrow(computed(() => rest.suffixIcon));
 const vm = getCurrentInstance();
+const showSuffixIcon = useShowArrow(computed(() => rest.suffixIcon));
 const { suffixIcon, removeIcon, clearIcon } = useIcons(
   reactiveComputed(() => ({
     ...vm.props,
@@ -316,6 +296,44 @@ const memoPlacement = computed<Placement>(() => {
 });
 
 const mergedAllowClear = computed(() => (allowClear === true ? { clearIcon: clearIcon.value } : allowClear));
+
+// =========== Merged Props for Semantic ==========
+const [mergedClassNames, mergedStyles] = useMergeSemantic<CascaderClassNamesType, CascaderStylesType, CascaderProps<any>>(
+  computed(() => [contextClassNames?.value, classNames]),
+  computed(() => [contextStyles?.value, styles]),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      variant: variant.value,
+      size: mergedSize.value,
+      status: mergedStatus.value,
+      disabled: mergedDisabled.value,
+    } as any,
+  })),
+  computed(() => ({
+    popup: {
+      _default: 'root',
+    },
+  })),
+);
+
+// =================== Dropdown ====================
+const mergedPopupClassName = computed(() =>
+  clsx(
+    popupClassName,
+    `${cascaderPrefixCls.value}-dropdown`,
+    {
+      [`${cascaderPrefixCls.value}-dropdown-rtl`]: mergedDirection.value === 'rtl',
+    },
+    rootClassName,
+    rootCls.value,
+    mergedClassNames?.value?.popup?.root,
+    cascaderRootCls.value,
+    hashId.value,
+    cssVarCls.value,
+  ),
+);
+const mergedPopupStyle = computed(() => mergedStyles?.value.popup?.root);
 
 // ============================ zIndex ============================
 const [zIndex] = useZIndex(

@@ -1,8 +1,8 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
 import { computed, getCurrentInstance, toRefs, useSlots, type CSSProperties } from 'vue';
-import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks/useMergeSemantic';
-import useMergeSemantic from '../_util/hooks/useMergeSemantic';
+import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks';
+import { useMergeSemantic } from '../_util/hooks';
 import type { Orientation } from '../_util/hooks/useOrientation';
 import useOrientation from '../_util/hooks/useOrientation';
 import { devUseWarning } from '../_util/warning';
@@ -119,7 +119,6 @@ const mergedProps = computed<DividerProps>(() => {
 const [mergedClassNames, mergedStyles] = useMergeSemantic<DividerClassNamesType, DividerStylesType, DividerProps>(
   computed(() => [contextClassNames?.value, classNames]),
   computed(() => [contextStyles?.value, styles]),
-  undefined,
   computed(() => ({ props: mergedProps.value })),
 );
 
