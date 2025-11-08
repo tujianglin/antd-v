@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { computed, toRefs } from 'vue';
+import { computed } from 'vue';
 import { useTableContextInject } from '../context/TableContext';
 import type { CellType, ColumnGroupType, ColumnsType, ColumnType, GetComponentProps, StickyOffsets } from '../interface';
 import type { TableProps } from '../Table.vue';
@@ -82,7 +82,7 @@ function parseHeaderRows<RecordType>(
   return rows;
 }
 
-const { prefixCls, getComponent, classNames, styles } = toRefs(useTableContextInject());
+const { prefixCls, getComponent, classNames, styles } = useTableContextInject();
 
 const headerCls = computed(() => (classNames?.value || {}) as TableProps['classNames']['header']);
 const headerStyles = computed(() => (styles?.value || {}) as TableProps['styles']['header']);

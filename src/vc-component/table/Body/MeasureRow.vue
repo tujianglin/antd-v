@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import type { VueKey } from '@/vc-util/type';
-import { ref, toRefs } from 'vue';
+import { ref } from 'vue';
 import { useTableContextInject } from '../context/TableContext';
 import type { ColumnType } from '../interface';
 import ResizeObserver from '@/vc-component/resize-observer';
@@ -19,7 +19,7 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { prefixCls, columnsKey, onColumnResize, columns } = defineProps<MeasureRowProps>();
 
-const { measureRowRender } = toRefs(useTableContextInject());
+const { measureRowRender } = useTableContextInject();
 
 const domRef = ref(null);
 

@@ -1,7 +1,7 @@
 import type { VueKey } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
 import { clsx } from 'clsx';
-import { computed, toRefs, type Ref } from 'vue';
+import { computed, type Ref } from 'vue';
 import { useTableContextInject } from '../context/TableContext';
 import { getColumnsKey } from '../utils/valueUtil';
 
@@ -22,7 +22,7 @@ export default function useRowInfo<RecordType>(
     onRow,
     expandRowByClick,
     rowClassName,
-  } = toRefs(context);
+  } = context;
 
   // ======================= Expandable =======================
   // Only when row is not expandable and `children` exist in record
@@ -63,23 +63,20 @@ export default function useRowInfo<RecordType>(
   // ========================= Column =========================
   const columnsKey = computed(() => getColumnsKey(flattenColumns.value));
 
-  return reactiveComputed(
-    () =>
-      ({
-        ...context,
-        columnsKey: columnsKey.value,
-        nestExpandable: nestExpandable.value,
-        expanded: expanded.value,
-        hasNestChildren: hasNestChildren.value,
-        record: record.value,
-        onTriggerExpand: onTriggerExpand.value,
-        rowSupportExpand: rowSupportExpand.value,
-        expandable: mergedExpandable.value,
-        rowProps: {
-          ...rowProps.value,
-          class: clsx(computeRowClassName.value, rowProps?.value?.class),
-          onClick,
-        },
-      }) as any,
-  );
+  return reactiveComputed(() => ({
+    ...context,
+    columnsKey: columnsKey.value,
+    nestExpandable: nestExpandable.value,
+    expanded: expanded.value,
+    hasNestChildren: hasNestChildren.value,
+    record: record.value,
+    onTriggerExpand: onTriggerExpand.value,
+    rowSupportExpand: rowSupportExpand.value,
+    expandable: mergedExpandable.value,
+    rowProps: {
+      ...rowProps.value,
+      class: clsx(computeRowClassName.value, rowProps?.value?.class),
+      onClick,
+    },
+  }));
 }

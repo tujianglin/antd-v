@@ -46,6 +46,7 @@ const {
   generateConfig,
   allowClear = true,
   valueFormat,
+  order = true,
   ...restProps
 } = defineProps<RangePickerProps & { generateConfig: GenerateConfig }>();
 
@@ -152,6 +153,7 @@ const [zIndex] = useZIndex(
       v-model:value="value"
       v-model:picker-value="pickerValue"
       v-model:open="open"
+      :order="order"
       :separator="() => h('span', { 'aria-label': 'to', class: `${prefixCls}-separator` }, h(SwapRightOutlined))"
       :disabled="mergedDisabled"
       :placement="placement"

@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import Render from '@/vc-component/render';
 import clsx from 'clsx';
-import { computed, ref, toRefs } from 'vue';
+import { computed, ref } from 'vue';
 import { PerfContextProvider, type PerfRecord } from '../context/PerfContext';
 import { useTableContextInject } from '../context/TableContext';
 import useFlattenRecords from '../hooks/useFlattenRecords';
@@ -32,7 +32,7 @@ const {
   styles,
   expandedRowOffset: ctxExpandedRowOffset,
   colWidths,
-} = toRefs(useTableContextInject());
+} = useTableContextInject();
 
 const expandedRowOffset = computed(() => ctxExpandedRowOffset.value || 0);
 

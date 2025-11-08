@@ -116,6 +116,15 @@ export { default as Steps } from './steps';
 export type { StepsProps } from './steps';
 export { default as Switch } from './switch';
 export type { SwitchProps } from './switch';
+export { default as Table } from './table';
+export type {
+  ColumnGroupType as TableColumnGroupType,
+  ColumnProps as TableColumnProps,
+  ColumnType as TableColumnType,
+  ColumnsType as TableColumnsType,
+  TablePaginationConfig,
+  TableProps,
+} from './table';
 export { default as Tabs } from './tabs';
 export type { TabsProps } from './tabs';
 export { default as Tag } from './tag';

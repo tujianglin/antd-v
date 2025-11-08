@@ -6,7 +6,7 @@ export type PrevSelectedIndex = null | number;
  * @title multipleSelect hooks
  * @description multipleSelect by hold down shift key
  */
-export default function useMultipleSelect<T, K>(getKey: (item: T) => K) {
+export const useMultipleSelect = <T, K>(getKey: (item: T, index: number, array: T[]) => K) => {
   const prevSelectedIndex = ref<PrevSelectedIndex>(null);
 
   const multipleSelect = (currentSelectedIndex: number, data: T[], selectedKeys: Set<K>) => {
@@ -15,7 +15,7 @@ export default function useMultipleSelect<T, K>(getKey: (item: T) => K) {
     // add/delete the selected range
     const startIndex = Math.min(configPrevSelectedIndex || 0, currentSelectedIndex);
     const endIndex = Math.max(configPrevSelectedIndex || 0, currentSelectedIndex);
-    const rangeKeys = data.slice(startIndex, endIndex + 1).map((item) => getKey(item));
+    const rangeKeys = data.slice(startIndex, endIndex + 1).map<K>(getKey);
     const shouldSelected = rangeKeys.some((rangeKey) => !selectedKeys.has(rangeKey));
     const changedKeys: K[] = [];
 
@@ -36,9 +36,9 @@ export default function useMultipleSelect<T, K>(getKey: (item: T) => K) {
     return changedKeys;
   };
 
-  const updatePrevSelectedIndex = (val: PrevSelectedIndex) => {
+  const setPrevSelectedIndex = (val) => {
     prevSelectedIndex.value = val;
   };
 
-  return [multipleSelect, updatePrevSelectedIndex] as const;
-}
+  return [multipleSelect, setPrevSelectedIndex] as const;
+};

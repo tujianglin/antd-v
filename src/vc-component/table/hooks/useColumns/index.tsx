@@ -1,7 +1,7 @@
 import { isValidNode } from '@/vc-util/Children/util';
+import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import type { VueNode } from '@/vc-util/type';
 import type { ReactiveComputedReturn } from '@vueuse/core';
-import { isEqual } from 'lodash-es';
 import { computed, ref, toRefs, type ComputedRef, type VNode } from 'vue';
 import { EXPAND_COLUMN } from '../../constant';
 import type {
@@ -20,17 +20,18 @@ import useWidthColumns from './useWidthColumns';
 
 export function convertChildrenToColumns<RecordType>(children: VNode[]): ColumnsType<RecordType> {
   return (children as any[])
-    .filter((node) => isValidNode(node))
+    ?.filter((node) => isValidNode(node))
     .map((node) => {
       const { key, props } = node;
-      const { children: nodeChildren, ...restProps } = props;
+      const { ...restProps } = props || {};
+      const nodeChildren = node.children;
       const column = {
         key,
         ...restProps,
       };
 
-      if (nodeChildren) {
-        column.children = convertChildrenToColumns(nodeChildren);
+      if (nodeChildren?.default?.()) {
+        column.children = convertChildrenToColumns(nodeChildren.default?.());
       }
 
       return column;
@@ -61,7 +62,6 @@ function flatColumns<RecordType>(columns: ColumnsType<RecordType>, parentKey = '
       const { fixed } = column;
       const parsedFixed = fixed === true || fixed === 'left' ? 'start' : fixed === 'right' ? 'end' : fixed;
       const mergedKey = `${parentKey}-${index}`;
-
       const subColumns = (column as ColumnGroupType<RecordType>).children;
       if (subColumns && subColumns.length > 0) {
         return [
@@ -108,7 +108,7 @@ interface ColumnsInfo<RecordType = any> {
  */
 function useColumns<RecordType>(
   props: ReactiveComputedReturn<ColumnsInfo>,
-  transformColumns: (columns: ColumnsType<RecordType>) => ColumnsType<RecordType>,
+  transformColumns: ComputedRef<(columns: ColumnsType<RecordType>) => ColumnsType<RecordType>>,
 ): [
   columns: ComputedRef<ColumnsType<RecordType>>,
   flattenColumns: ComputedRef<ColumnType<any>[]>,
@@ -135,7 +135,7 @@ function useColumns<RecordType>(
   } = toRefs(props);
 
   const baseColumns = computed<ColumnsType<RecordType>>(() => {
-    const newColumns = columns?.value || convertChildrenToColumns(children.value) || [];
+    const newColumns = columns?.value || convertChildrenToColumns(flattenChildren(children.value)) || [];
 
     return filterHiddenColumns(newColumns.slice());
   });
@@ -145,7 +145,7 @@ function useColumns<RecordType>(
     direction.value;
     if (expandable.value) {
       let cloneColumns = baseColumns.value.slice();
-      const flag = cloneColumns.some((col) => isEqual(col, EXPAND_COLUMN));
+      const flag = cloneColumns.some((col) => col.key === EXPAND_COLUMN.key);
       // >>> Insert expand column if not exist
       if (!flag) {
         const expandColIndex = 0;
@@ -158,7 +158,7 @@ function useColumns<RecordType>(
         }
       }
 
-      const expandColumnIndex = cloneColumns.findIndex((col) => isEqual(col, EXPAND_COLUMN));
+      const expandColumnIndex = cloneColumns.findIndex((col) => col.key === EXPAND_COLUMN.key);
       cloneColumns = cloneColumns.filter((column, index) => column !== EXPAND_COLUMN || index === expandColumnIndex);
 
       // >>> Check if expand column need to fixed
@@ -202,7 +202,7 @@ function useColumns<RecordType>(
       };
 
       return cloneColumns.map((col, index) => {
-        const column = isEqual(col, EXPAND_COLUMN) ? expandColumn : col;
+        const column = col.key === EXPAND_COLUMN.key ? expandColumn : col;
         if (index < expandedRowOffset.value) {
           return {
             ...column,
@@ -213,19 +213,19 @@ function useColumns<RecordType>(
       });
     }
 
-    return baseColumns.value.filter((col) => !isEqual(col, EXPAND_COLUMN));
+    return baseColumns.value.filter((col) => col.key !== EXPAND_COLUMN.key);
   });
 
   // ========================= Transform ========================
   const mergedColumns = computed(() => {
     direction.value;
     let finalColumns = withExpandColumns.value;
-    if (transformColumns) {
-      finalColumns = transformColumns(finalColumns);
+    if (transformColumns.value) {
+      finalColumns = transformColumns.value(finalColumns);
     }
 
     // Always provides at least one column for table display
-    if (!finalColumns.length) {
+    if (!finalColumns?.length) {
       finalColumns = [
         {
           render: () => null,

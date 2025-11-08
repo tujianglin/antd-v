@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, toRefs } from 'vue';
+import { computed } from 'vue';
 import Cell from '../Cell/index.vue';
 import { useTableContextInject } from '../context/TableContext';
 import type { CellType, ColumnType, CustomizeComponent, GetComponentProps, StickyOffsets } from '../interface';
@@ -32,7 +32,7 @@ const {
   styles,
 } = defineProps<RowProps>();
 
-const { prefixCls } = toRefs(useTableContextInject());
+const { prefixCls } = useTableContextInject();
 
 const rowProps = computed(() => {
   let result;

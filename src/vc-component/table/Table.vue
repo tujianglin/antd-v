@@ -16,7 +16,9 @@ import {
   ref,
   toRefs,
   watch,
+  watchEffect,
   type CSSProperties,
+  type Ref,
   type VNode,
 } from 'vue';
 import { INTERNAL_HOOKS } from './constant';
@@ -149,7 +151,7 @@ export interface TableProps<RecordType = any> extends Omit<LegacyExpandableProps
    * !!! DO NOT USE IN PRODUCTION ENVIRONMENT !!!
    */
   internalRefs?: {
-    body: HTMLElement;
+    body: Ref<HTMLElement>;
   };
   /**
    * @private Internal usage, may remove by refactor.
@@ -210,6 +212,7 @@ const {
 
   sticky,
   rowHoverable = true,
+  internalRefs,
 } = defineProps<TableProps>();
 
 const slots = defineSlots<{
@@ -265,8 +268,9 @@ const [columns, flattenColumns, flattenScrollX] = useColumns(
     scrollWidth: useInternalHooks.value && tailor && typeof scrollX.value === 'number' ? scrollX.value : null,
     clientWidth: componentWidth.value,
   })),
-  useInternalHooks.value ? transformColumns : null,
+  computed(() => (useInternalHooks.value ? transformColumns : null)),
 );
+
 const mergedScrollX = computed(() => flattenScrollX.value ?? scrollX.value);
 
 const columnContext = computed(() => ({ columns: columns.value, flattenColumns: flattenColumns.value }));
@@ -398,10 +402,14 @@ function forceScroll(scrollLeft: number, target: HTMLDivElement | ((left: number
   if (typeof target === 'function') {
     target(scrollLeft);
   } else if (target.scrollLeft !== scrollLeft) {
+    target.scrollLeft = scrollLeft;
+
     // Delay to force scroll position if not sync
     // ref: https://github.com/ant-design/ant-design/issues/37179
     if (target.scrollLeft !== scrollLeft) {
-      target.scrollLeft = scrollLeft;
+      setTimeout(() => {
+        target.scrollLeft = scrollLeft;
+      }, 0);
     }
   }
 }
@@ -441,7 +449,7 @@ const onInternalScroll = ({ currentTarget, scrollLeft }: any) => {
       return;
     }
     shadowStart.value = absScrollStart > 0;
-    shadowEnd.value = absScrollStart < scrollWidth - clientWidth;
+    shadowEnd.value = absScrollStart < scrollWidth - clientWidth - 1;
   }
 };
 
@@ -519,11 +527,12 @@ onMounted(() => {
 });
 
 // ================== INTERNAL HOOKS ==================
-// watchEffect(() => {
-//   if (useInternalHooks.value && internalRefs) {
-//     internalRefs.body = scrollBodyRef.value;
-//   }
-// });
+watchEffect(() => {
+  if (useInternalHooks.value && internalRefs) {
+    // eslint-disable-next-line vue/no-mutating-props
+    internalRefs.body.value = scrollBodyRef.value;
+  }
+});
 
 // ========================================================================
 // ==                               Render                               ==
@@ -581,13 +590,13 @@ const emptyNode = computed(() => {
 });
 
 // Body
-const BodyTable = () => (
-  <Body data={mergedData.value} measureColumnWidth={fixHeader.value || horizonScroll.value || isSticky.value} />
-);
+const BodyTable = () => {
+  return <Body data={mergedData.value} measureColumnWidth={fixHeader.value || horizonScroll.value || isSticky.value} />;
+};
 
 const BodyColGroup = () => <ColGroup colWidths={flattenColumns.value.map(({ width }) => width)} columns={flattenColumns.value} />;
 
-const captionElement =
+const CaptionElement = () =>
   caption !== null && caption !== undefined ? <caption class={`${prefixCls}-caption`}>{caption}</caption> : undefined;
 
 const dataProps = computed(() => pickAttrs({ ...vm.props, ...vm.attrs }, { data: true }));
@@ -632,7 +641,7 @@ const GroupTableNode = () => {
             }}
             {...ariaProps.value}
           >
-            {captionElement}
+            <CaptionElement></CaptionElement>
             <BodyColGroup></BodyColGroup>
             <BodyTable></BodyTable>
             {!fixFooter.value && summaryNode.value && (
@@ -711,7 +720,7 @@ const GroupTableNode = () => {
         ref={scrollBodyRef}
       >
         <TableComponent style={{ ...scrollTableStyle.value, tableLayout: mergedTableLayout.value }} {...ariaProps.value}>
-          {captionElement}
+          <CaptionElement></CaptionElement>
           <BodyColGroup></BodyColGroup>
           {showHeader !== false && <Header {...headerProps.value} {...columnContext.value} />}
           <BodyTable></BodyTable>

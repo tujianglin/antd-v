@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, toRefs } from 'vue';
+import { computed } from 'vue';
 import { useTableContextInject } from './context/TableContext';
 import type { ColumnType } from './interface';
 import { INTERNAL_COL_DEFINE } from './utils/legacyUtil';
@@ -14,7 +14,7 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { colWidths, columns, columCount } = defineProps<ColGroupProps<any>>();
 
-const { tableLayout } = toRefs(useTableContextInject());
+const { tableLayout } = useTableContextInject();
 
 const len = computed(() => columCount || columns.length);
 
@@ -37,13 +37,13 @@ const cols = computed(() => {
 
     if (width || minWidth || additionalProps || mustInsert) {
       const { columnType: _, ...restAdditionalProps } = additionalProps || {};
-      result.unshift(
-        <col
-          key={i}
-          style={{ width: width ? `${width}px` : null, minWidth: minWidth ? `${minWidth}px` : null }}
-          {...restAdditionalProps}
-        ></col>,
-      );
+      result.unshift({
+        style: {
+          width: width ? `${width}px` : null,
+          minWidth: minWidth ? `${minWidth}px` : null,
+        },
+        props: restAdditionalProps,
+      });
       mustInsert = true;
     }
   }
@@ -52,6 +52,6 @@ const cols = computed(() => {
 </script>
 <template>
   <colgroup v-if="cols.length > 0">
-    <component :is="() => cols" />
+    <col v-for="(col, index) in cols" :key="index" :style="col.style" v-bind="col.props" />
   </colgroup>
 </template>

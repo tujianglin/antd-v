@@ -4,7 +4,7 @@ import { getDOM } from '@/vc-util/Dom/findDOMNode';
 import getScrollBarSize from '@/vc-util/getScrollBarSize';
 import raf from '@/vc-util/raf';
 import clsx from 'clsx';
-import { computed, onBeforeUnmount, ref, toRefs, watch, type Ref } from 'vue';
+import { computed, onBeforeUnmount, ref, watch, type Ref } from 'vue';
 import { useTableContextInject } from './context/TableContext';
 import { useLayoutState } from './hooks/useFrame';
 import { getOffset } from './utils/offsetUtil';
@@ -26,7 +26,7 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { scrollBodyRef, onScroll, offsetScroll, container, direction } = defineProps<StickyScrollBarProps>();
 
-const { prefixCls } = toRefs(useTableContextInject());
+const { prefixCls } = useTableContextInject();
 const bodyScrollWidth = computed(() => scrollBodyRef.value?.scrollWidth || 0);
 const bodyWidth = computed(() => scrollBodyRef.value?.clientWidth || 0);
 const scrollBarWidth = computed(() => bodyScrollWidth.value && bodyWidth.value * (bodyWidth.value / bodyScrollWidth.value));

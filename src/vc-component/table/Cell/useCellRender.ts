@@ -15,7 +15,7 @@ export default function useCellRender<RecordType>(
   dataIndex: Ref<DataIndex<RecordType>>,
   renderIndex: Ref<number>,
   children?: Ref<VueNode>,
-  render?: ColumnType<RecordType>['render'],
+  render?: Ref<ColumnType<RecordType>['render']>,
 ): [ComputedRef<VueNode>, ComputedRef<CellType<RecordType>>] {
   // TODO: Remove this after next major version
   const perfRecord = usePerfContextInject();
@@ -39,8 +39,8 @@ export default function useCellRender<RecordType>(
     let returnChildNode = value;
     let returnCellProps: CellType<RecordType> | undefined;
 
-    if (render) {
-      const renderData = render(value, record.value, renderIndex.value);
+    if (render.value) {
+      const renderData = render.value(value, record.value, renderIndex.value);
 
       if (isRenderCell(renderData)) {
         returnChildNode = renderData.children;

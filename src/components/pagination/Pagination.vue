@@ -75,7 +75,7 @@ const pageSize = defineModel('pageSize', { default: 10 });
 
 const current = defineModel('current', { default: 1 });
 
-const breakpoint = useBreakpoint(responsive);
+const breakpoint = useBreakpoint(computed(() => responsive));
 const xs = computed(() => breakpoint.value.xs);
 const [, token] = useToken();
 

@@ -128,7 +128,7 @@ const needResponsive = computed(() =>
     ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'].includes(key),
   ),
 );
-const screens = useBreakpoint(needResponsive.value);
+const screens = useBreakpoint(needResponsive);
 const responsiveSizeStyle = computed<CSSProperties>(() => {
   if (typeof size.value !== 'object') {
     return {};

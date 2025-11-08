@@ -31,7 +31,7 @@ const {
   active,
   data,
   onMousemove,
-  selectable,
+  selectable = undefined,
   ...otherProps
 } = defineProps<TreeNodeProps>();
 

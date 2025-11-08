@@ -1,4 +1,4 @@
-import type { VueKey, VueNode } from '@/vc-util/type';
+import type { AnyObject, VueKey, VueNode } from '@/vc-util/type';
 import type { CSSProperties, HTMLAttributes, Ref, TdHTMLAttributes } from 'vue';
 import type { DeepNamePath } from './namePathType';
 
@@ -104,7 +104,7 @@ interface ColumnSharedType<RecordType> {
   rowScope?: RowScopeType;
 }
 
-export interface ColumnGroupType<RecordType> extends ColumnSharedType<RecordType> {
+export interface ColumnGroupType<RecordType extends AnyObject> extends ColumnSharedType<RecordType> {
   children: ColumnsType<RecordType>;
 }
 
@@ -123,7 +123,7 @@ export interface ColumnType<RecordType> extends ColumnSharedType<RecordType> {
 
 export type ColumnsType<RecordType = unknown> = (ColumnGroupType<RecordType> | ColumnType<RecordType>)[];
 
-export type GetRowKey<RecordType> = (record: RecordType, index?: number) => Key;
+export type GetRowKey<RecordType extends AnyObject = AnyObject> = (record: RecordType, index?: number) => Key;
 
 // ================= Fix Column =================
 export interface StickyOffsets {

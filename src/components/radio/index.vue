@@ -52,6 +52,7 @@ const disabled = useDisabledContextInject();
 
 const radioProps = computed(() => {
   const result: RadioProps & { checked?: boolean } = {};
+  result.checked = value.value as boolean;
   if (!isEmpty(groupContext)) {
     result.name = groupContext.name;
     result.onChange = onChange;

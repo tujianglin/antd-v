@@ -30,6 +30,7 @@ const {
   onMotionEnd: onOriginMotionEnd,
   active,
   treeNodeRequiredProps,
+  selectable = undefined,
   ...props
 } = defineProps<MotionTreeNodeProps>();
 
@@ -90,6 +91,7 @@ const ItemNode = (treeNode: FlattenNode<DataNode>) => {
   delete restProps.children;
 
   const treeNodeProps = getTreeNodeProps(key, treeNodeRequiredProps);
+
   return (
     <TreeNode
       {...restProps}
@@ -126,6 +128,6 @@ const domRef = ref(null);
   </template>
 
   <template v-else>
-    <TreeNode ref="domRef" :class="className" :style="style" v-bind="props" :active="active" />
+    <TreeNode ref="domRef" :class="className" :style="style" v-bind="props" :active="active" :selectable="selectable" />
   </template>
 </template>

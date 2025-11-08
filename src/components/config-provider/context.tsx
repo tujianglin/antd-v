@@ -1,3 +1,5 @@
+import type { VueNode } from '@/vc-util/type';
+import { reactiveComputed } from '@vueuse/core';
 import {
   defineComponent,
   inject,
@@ -8,13 +10,17 @@ import {
   type PropType,
   type Reactive,
 } from 'vue';
+import type { MaskType } from '../_util/hooks/useMergedMask';
 import type { WarningContextProps } from '../_util/warning';
 import type { ShowWaveEffect } from '../_util/wave/interface';
 import type { AlertProps } from '../alert';
 import type { AnchorProps } from '../anchor';
 import type { BadgeProps } from '../badge';
+import type { RibbonProps } from '../badge/Ribbon.vue';
 import type { BreadcrumbProps } from '../breadcrumb';
+import type { ButtonProps } from '../button';
 import type { CalendarProps } from '../calendar';
+import type { CardMetaProps, CardProps } from '../card';
 import type { CascaderProps } from '../cascader';
 import type { CheckboxProps } from '../checkbox';
 import type { CollapseProps } from '../collapse';
@@ -55,13 +61,7 @@ import type { SpinProps } from '../spin';
 import type { StatisticProps } from '../statistic';
 import type { StepsProps } from '../steps';
 import type { SwitchProps } from '../switch';
-// import type { TableProps } from '../table';
-import type { VueNode } from '@/vc-util/type';
-import { reactiveComputed } from '@vueuse/core';
-import type { MaskType } from '../_util/hooks/useMergedMask';
-import type { RibbonProps } from '../badge/Ribbon.vue';
-import type { ButtonProps } from '../button';
-import type { CardMetaProps, CardProps } from '../card';
+import type { TableProps } from '../table';
 import type { TabsProps } from '../tabs';
 import type { TagProps } from '../tag/index.vue';
 import type { AliasToken, MappingAlgorithm, OverrideToken } from '../theme/interface';
@@ -155,12 +155,12 @@ export interface ComponentStyleConfig {
   style?: CSSProperties;
 }
 
-// export interface TableConfig extends ComponentStyleConfig {
-//   expandable?: {
-//     expandIcon?: NonNullable<TableProps['expandable']>['expandIcon'];
-//   };
-//   rowKey?: string;
-// }
+export interface TableConfig extends ComponentStyleConfig {
+  expandable?: {
+    expandIcon?: NonNullable<TableProps['expandable']>['expandIcon'];
+  };
+  rowKey?: string;
+}
 
 export type ImageConfig = ComponentStyleConfig &
   Pick<ImageProps, 'classNames' | 'styles'> & {
@@ -372,7 +372,7 @@ export interface ConfigComponentProps {
   avatar?: ComponentStyleConfig;
   message?: MessageConfig;
   tag?: TagConfig;
-  // table?: TableConfig;
+  table?: TableConfig;
   card?: CardConfig;
   cardMeta?: CardMetaConfig;
   tabs?: TabsConfig;

@@ -82,7 +82,7 @@ function useMergedPropByScreen(oriProp: Ref<RowProps['align'] | RowProps['justif
 
 const { getPrefixCls, direction } = toRefs(useConfigContextInject());
 
-const screens = useBreakpoint(true, null);
+const screens = useBreakpoint(ref(true), null);
 
 const mergedAlign = useMergedPropByScreen(
   computed(() => align),

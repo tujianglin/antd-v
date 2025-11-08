@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, toRefs } from 'vue';
+import { computed } from 'vue';
 import { useTableContextInject } from '../context/TableContext';
 import type { ColumnType, StickyOffsets } from '../interface';
 import { SummaryContextProvider } from './SummaryContext';
@@ -15,7 +15,7 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { stickyOffsets, flattenColumns } = defineProps<FooterProps<any>>();
 
-const { prefixCls } = toRefs(useTableContextInject());
+const { prefixCls } = useTableContextInject();
 
 const lastColumnIndex = computed(() => flattenColumns.length - 1);
 const scrollColumn = computed(() => flattenColumns[lastColumnIndex.value]);

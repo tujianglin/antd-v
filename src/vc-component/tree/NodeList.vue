@@ -61,8 +61,10 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 const {
   prefixCls,
   data,
-  selectable: _,
-  checkable: _1,
+  // eslint-disable-next-line unused-imports/no-unused-vars, no-unused-vars
+  selectable = undefined,
+  // eslint-disable-next-line unused-imports/no-unused-vars, no-unused-vars
+  checkable = undefined,
   expandedKeys,
   selectedKeys,
   checkedKeys,
@@ -270,13 +272,6 @@ const ItemNode = (treeNode: FlattenNode) => {
     isEnd,
   } = treeNode;
   const mergedKey = getKey(key, pos);
-  if (!('selectable' in restProps)) {
-    restProps.selectable = true;
-  }
-  if (!('checkable' in restProps)) {
-    restProps.checkable = true;
-  }
-  // restProps.isLeaf = restProps.isLeaf || undefined;
   delete restProps.key;
   delete restProps.children;
 

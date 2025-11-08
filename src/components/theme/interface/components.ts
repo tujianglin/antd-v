@@ -52,7 +52,7 @@ import type { ComponentToken as SplitterComponentToken } from '../../splitter/st
 import type { ComponentToken as StatisticComponentToken } from '../../statistic/style';
 import type { ComponentToken as StepsComponentToken } from '../../steps/style';
 import type { ComponentToken as SwitchComponentToken } from '../../switch/style';
-// import type { ComponentToken as TableComponentToken } from '../../table/style';
+import type { ComponentToken as TableComponentToken } from '../../table/style';
 import type { ComponentToken as TabsComponentToken } from '../../tabs/style';
 import type { ComponentToken as TagComponentToken } from '../../tag/style';
 import type { ComponentToken as TimelineComponentToken } from '../../timeline/style';
@@ -123,7 +123,7 @@ export interface ComponentTokenMap {
   Message?: MessageComponentToken;
   Upload?: UploadComponentToken;
   Tooltip?: TooltipComponentToken;
-  // Table?: TableComponentToken;
+  Table?: TableComponentToken;
   Space?: SpaceComponentToken;
   Progress?: ProgressComponentToken;
   Tour?: TourComponentToken;

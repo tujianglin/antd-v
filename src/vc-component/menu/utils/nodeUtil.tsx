@@ -1,3 +1,4 @@
+import { Render } from '@/components';
 import type { VNode } from 'vue';
 import Divider from '../Divider.vue';
 import type { Components, ItemType } from '../interface';
@@ -39,7 +40,7 @@ function convertItemsToNodes(list: ItemType[], components: Required<Components>,
 
         return (
           <MergedMenuItem eventKey={mergedKey} {...restProps} extra={extra}>
-            {label}
+            <Render content={label}></Render>
             {(!!extra || extra === 0) && <span class={`${prefixCls}-item-extra`}>{extra}</span>}
           </MergedMenuItem>
         );

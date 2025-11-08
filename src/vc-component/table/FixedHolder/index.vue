@@ -2,7 +2,7 @@
 <script lang="tsx" setup>
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { computed, onBeforeUnmount, onMounted, toRefs, useTemplateRef, type CSSProperties, type Ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, useTemplateRef, type CSSProperties, type Ref } from 'vue';
 import ColGroup from '../ColGroup.vue';
 import { useTableContextInject } from '../context/TableContext';
 import type { HeaderProps } from '../Header/Header.vue';
@@ -64,7 +64,7 @@ const {
   ...restProps
 } = defineProps<FixedHeaderProps<any>>();
 
-const { prefixCls, scrollbarSize, isSticky, getComponent } = toRefs(useTableContextInject());
+const { prefixCls, scrollbarSize, isSticky, getComponent } = useTableContextInject();
 
 const TableComponent = getComponent.value(['header', 'table'], 'table');
 

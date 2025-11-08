@@ -22,7 +22,7 @@ export const PathRegisterContextProvider = defineComponent({
   },
   setup(props, { slots }) {
     usePathRegisterContextProvider(props.value);
-    return () => <>{slots?.default?.()}</>;
+    return () => slots?.default?.();
   },
 });
 
@@ -43,7 +43,7 @@ export const PathTrackerContextProvider = defineComponent({
   },
   setup(props, { slots }) {
     usePathTrackerContextProvider(computed(() => props.value));
-    return () => <>{slots?.default?.()}</>;
+    return () => slots?.default?.();
   },
 });
 
@@ -73,6 +73,6 @@ export const PathUserContextProvider = defineComponent({
   },
   setup(props, { slots }) {
     usePathUserContextProvider(props.value);
-    return () => <>{slots?.default?.()}</>;
+    return () => slots?.default?.();
   },
 });

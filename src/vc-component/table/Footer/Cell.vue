@@ -17,7 +17,7 @@ export interface SummaryCellProps {
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
 const { class: className, index, colspan = 1, rowspan, align } = defineProps<SummaryCellProps>();
-const { prefixCls } = toRefs(useTableContextInject());
+const { prefixCls } = useTableContextInject();
 const { scrollColumnIndex, stickyOffsets, flattenColumns } = toRefs(useSummaryContextInject());
 const lastIndex = computed(() => index + colspan - 1);
 const mergedColSpan = computed(() => (lastIndex.value + 1 === scrollColumnIndex.value ? colspan + 1 : colspan));

@@ -68,7 +68,6 @@ export default function useFlattenRecords<T>(
 
       return list;
     }
-
     return data.value?.map((item, index) => {
       return {
         record: item,

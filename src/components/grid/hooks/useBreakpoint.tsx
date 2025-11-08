@@ -3,10 +3,10 @@ import useForceUpdate from '../../_util/hooks/useForceUpdate';
 import type { ScreenMap } from '../../_util/responsiveObserver';
 import useResponsiveObserver from '../../_util/responsiveObserver';
 
-function useBreakpoint(refreshOnChange: boolean, defaultScreens: null): Ref<ScreenMap | null>;
-function useBreakpoint(refreshOnChange?: boolean, defaultScreens?: ScreenMap): Ref<ScreenMap>;
+function useBreakpoint(refreshOnChange: Ref<boolean>, defaultScreens: null): Ref<ScreenMap | null>;
+function useBreakpoint(refreshOnChange?: Ref<boolean>, defaultScreens?: ScreenMap): Ref<ScreenMap>;
 
-function useBreakpoint(refreshOnChange = true, defaultScreens: ScreenMap | null = {} as ScreenMap): Ref<ScreenMap | null> {
+function useBreakpoint(refreshOnChange = ref(true), defaultScreens: ScreenMap | null = {} as ScreenMap): Ref<ScreenMap | null> {
   const screensRef = ref<ScreenMap | null>(defaultScreens);
   const forceUpdate = useForceUpdate();
   const responsiveObserver = useResponsiveObserver();
@@ -14,7 +14,7 @@ function useBreakpoint(refreshOnChange = true, defaultScreens: ScreenMap | null 
   onMounted(() => {
     const token = responsiveObserver.value.subscribe((supportScreens: ScreenMap) => {
       screensRef.value = supportScreens;
-      if (refreshOnChange) {
+      if (refreshOnChange.value) {
         forceUpdate();
       }
     });

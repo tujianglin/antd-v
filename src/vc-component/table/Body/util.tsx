@@ -2,8 +2,10 @@
 // ==                                 getCellProps                                 ==
 
 import type { VueKey } from '@/vc-util/type';
+import { useTableContextInject } from '../context/TableContext';
 import type useRowInfo from '../hooks/useRowInfo';
 import type { ColumnType } from '../interface';
+import { INTERNAL_COL_DEFINE } from '../utils/legacyUtil';
 
 // ==================================================================================
 export function getCellProps<RecordType>(
@@ -29,13 +31,14 @@ export function getCellProps<RecordType>(
     expandable,
     expandedKeys,
   } = rowInfo;
-
+  const { columns } = useTableContextInject();
   const key = columnsKey[colIndex];
   const fixedInfo = fixedInfoList[colIndex];
-
+  const flattenColumns = columns.value;
+  const selection = flattenColumns[0][INTERNAL_COL_DEFINE];
   // ============= Used for nest expandable =============
   let appendCellNode;
-  if (colIndex === 0 && nestExpandable) {
+  if ((selection ? colIndex === 1 : colIndex === 0) && nestExpandable) {
     appendCellNode = (
       <>
         <span style={{ paddingLeft: `${indentSize * indent}px` }} class={`${prefixCls}-row-indent indent-level-${indent}`} />

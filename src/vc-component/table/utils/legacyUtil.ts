@@ -22,6 +22,5 @@ export function getExpandableProps<RecordType>(
   if (config.showExpandColumn === false) {
     config.expandIconColumnIndex = -1;
   }
-
   return config;
 }

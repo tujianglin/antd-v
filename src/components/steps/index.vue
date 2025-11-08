@@ -182,7 +182,7 @@ const mergedSize = useSize(computed(() => size));
 const mergedItems = computed(() => (items || []).filter(Boolean) as RcStepsProps['items']);
 
 // ============================ Layout ============================
-const point = useBreakpoint(responsive);
+const point = useBreakpoint(computed(() => responsive));
 const xs = computed(() => point.value?.xs);
 
 // Type

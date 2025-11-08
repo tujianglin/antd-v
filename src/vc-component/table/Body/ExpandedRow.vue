@@ -1,5 +1,4 @@
 <script lang="tsx" setup>
-import { toRefs } from 'vue';
 import Cell from '../Cell/index.vue';
 import { useTableContextInject } from '../context/TableContext';
 import type { CustomizeComponent } from '../interface';
@@ -28,7 +27,7 @@ const {
   stickyOffset = 0,
 } = defineProps<ExpandedRowProps>();
 
-const { scrollbarSize, fixHeader, fixColumn, componentWidth, horizonScroll } = toRefs(useTableContextInject());
+const { scrollbarSize, fixHeader, fixColumn, componentWidth, horizonScroll } = useTableContextInject();
 </script>
 <template>
   <component :is="Component" :class="className" :style="{ display: expanded ? null : 'none' }">

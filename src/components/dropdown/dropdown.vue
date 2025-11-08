@@ -19,9 +19,8 @@ import { omit } from 'lodash-es';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons-vue';
 import { ZIndexContextProvider } from '../_util/zindexContext';
 import { onlyChild } from '../_util/onlyChild';
-import isPrimitive from '../_util/isPrimitive';
 import OverrideProvider from '../menu/OverrideProvider.vue';
-import { cloneElement } from '@/vc-util/Children/util';
+import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 
 type Placement = (typeof _Placements)[number];
 
@@ -78,6 +77,7 @@ const {
   popupRender,
   getPopupContainer,
   onOpenChange,
+  rootClassName,
   mouseEnterDelay = 0.15,
   mouseLeaveDelay = 0.1,
   autoAdjustOverflow = true,
@@ -168,7 +168,7 @@ const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 const [, token] = useToken();
 
 const PopupTrigger = (props) => {
-  const child = onlyChild(isPrimitive(slots.default?.()) ? <span>{slots.default?.()}</span> : slots.default?.()) as VNode;
+  const child = onlyChild(!isValidElement(slots.default?.()) ? <span>{slots.default?.()}</span> : slots.default?.()) as VNode;
   return cloneElement(child, {
     ...omit(props, ['class']),
     class: clsx(
@@ -176,10 +176,10 @@ const PopupTrigger = (props) => {
       {
         [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
       },
-      child.props?.class,
+      child?.props?.class,
       props?.class,
     ),
-    ...((child.props?.disabled ?? disabled) && {
+    ...((child?.props?.disabled ?? disabled) && {
       disabled: true,
     }),
   });
@@ -197,7 +197,7 @@ const onInnerOpenChange = (nextOpen: boolean) => {
 
 // =========================== Overlay ============================
 const overlayClassNameCustomized = computed(() =>
-  clsx(hashId.value, cssVarCls.value, rootCls.value, contextClassName?.value, mergedClassNames.value?.root, {
+  clsx(rootClassName, hashId.value, cssVarCls.value, rootCls.value, contextClassName?.value, mergedClassNames?.value?.root, {
     [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
   }),
 );
@@ -217,7 +217,9 @@ const onMenuClick = () => {
     return;
   }
   onOpenChange?.(false, { source: 'menu' });
-  mergedOpen.value = false;
+  if (!popupRender) {
+    mergedOpen.value = false;
+  }
 };
 
 const renderOverlay = () => {

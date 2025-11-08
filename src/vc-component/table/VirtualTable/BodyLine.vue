@@ -28,9 +28,9 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 const { data, index, class: className, rowKey, style, extra, getHeight, ...restProps } = defineProps<BodyLineProps>();
 const { record, indent, index: renderIndex } = toRefs(reactiveComputed(() => data));
 
-const { scrollX, flattenColumns, prefixCls, fixColumn, componentWidth } = toRefs(useTableContextInject());
+const { scrollX, flattenColumns, prefixCls, fixColumn, componentWidth } = useTableContextInject();
 
-const { getComponent } = toRefs(useStaticContextInject());
+const { getComponent } = useStaticContextInject();
 
 const rowInfo = useRowInfo(
   record,

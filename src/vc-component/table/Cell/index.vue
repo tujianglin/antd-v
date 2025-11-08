@@ -2,7 +2,7 @@
 import { isValidElement } from '@/vc-util/Children/util';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { computed, toRefs, type CSSProperties, type TdHTMLAttributes, type VNode } from 'vue';
+import { computed, type CSSProperties, type TdHTMLAttributes, type VNode } from 'vue';
 import { useTableContextInject } from '../context/TableContext';
 import type {
   AlignType,
@@ -135,7 +135,7 @@ const getTitleFromCellRenderChildren = ({
 
 const cellPrefixCls = computed(() => `${prefixCls}-cell`);
 
-const { allColumnsFixedLeft, rowHoverable, scrollInfo } = toRefs(useTableContextInject());
+const { allColumnsFixedLeft, rowHoverable, scrollInfo } = useTableContextInject();
 
 // ====================== Value =======================
 const [childNode, legacyCellProps] = useCellRender(
@@ -143,7 +143,7 @@ const [childNode, legacyCellProps] = useCellRender(
   computed(() => dataIndex),
   computed(() => renderIndex),
   children,
-  render,
+  computed(() => render),
 );
 
 // ====================== Fixed =======================
@@ -175,7 +175,7 @@ const showFixEndShadow = computed(() => {
   return (
     (isFixEnd.value && fixedEndShadow && scrollWidth - absScroll) -
       // Same as above
-      (offsetFixedEndShadow as number) >=
+      (offsetFixedEndShadow as number) >
     1
   );
 });

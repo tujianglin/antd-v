@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import type { VueKey } from '@/vc-util/type';
-import { computed, ref, toRefs, watch, type CSSProperties, type TdHTMLAttributes } from 'vue';
+import { computed, ref, watch, type CSSProperties, type TdHTMLAttributes } from 'vue';
 import { useTableContextInject } from '../context/TableContext';
 import useFlattenRecords from '../hooks/useFlattenRecords';
 import type { ColumnType, OnCustomizeScroll, ScrollConfig } from '../interface';
@@ -24,9 +24,9 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 const { data, onScroll } = defineProps<GridProps>();
 
 const { flattenColumns, onColumnResize, getRowKey, expandedKeys, prefixCls, childrenColumnName, scrollX, direction } =
-  toRefs(useTableContextInject());
+  useTableContextInject();
 
-const { sticky, scrollY, listItemHeight, getComponent, onScroll: onTablePropScroll } = toRefs(useStaticContextInject());
+const { sticky, scrollY, listItemHeight, getComponent, onScroll: onTablePropScroll } = useStaticContextInject();
 
 // =========================== Ref ============================
 const listRef = ref<ListRef>(null);
@@ -92,10 +92,10 @@ defineExpose({
 
 // ======================= Col/Row Span =======================
 const getRowSpan = (column: ColumnType<any>, index: number): number => {
-  const record = flattenData[index]?.record;
+  const record = flattenData.value?.[index]?.record;
   const { onCell } = column;
 
-  if (onCell) {
+  if (onCell && record) {
     const cellProps = onCell(record, index) as TdHTMLAttributes;
     return (cellProps?.rowspan as number) ?? 1;
   }
@@ -157,7 +157,6 @@ const extraRender: ListProps<any>['extraRender'] = (info) => {
       spanLines.push(i);
     }
   }
-
   // Patch extra line on the page
   const nodes = spanLines.map((index) => {
     const item = flattenData.value[index];

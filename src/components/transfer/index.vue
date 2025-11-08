@@ -15,7 +15,7 @@ import type { TransferCustomListBodyProps, TransferListProps } from './Section.v
 import useStyle from './style';
 import { computed, getCurrentInstance, toRefs, type CSSProperties, type VNode } from 'vue';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
-import useMultipleSelect, { type PrevSelectedIndex } from '../_util/hooks/useMultipleSelect';
+import { type PrevSelectedIndex, useMultipleSelect } from '../_util/hooks';
 import DefaultRenderEmpty from '../config-provider/defaultRenderEmpty.vue';
 import clsx from 'clsx';
 import Section from './Section.vue';

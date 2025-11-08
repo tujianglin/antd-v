@@ -1,5 +1,15 @@
 import { reactiveComputed } from '@vueuse/core';
-import { defineComponent, inject, provide, reactive, type InjectionKey, type PropType, type Reactive } from 'vue';
+import {
+  computed,
+  defineComponent,
+  inject,
+  provide,
+  reactive,
+  type ComputedRef,
+  type InjectionKey,
+  type PropType,
+  type Reactive,
+} from 'vue';
 import type { GetComponent, TableSticky } from '../interface';
 export interface StaticContextProps {
   scrollY: number;
@@ -9,23 +19,42 @@ export interface StaticContextProps {
   onScroll?: (e: UIEvent) => void;
 }
 
-const StaticContext: InjectionKey<Reactive<StaticContextProps>> = Symbol('StaticContext');
-
-export const useStaticContextInject = (): Reactive<Partial<StaticContextProps>> => {
-  return inject(StaticContext, reactive<Partial<StaticContextProps>>({}));
+// TableContext 类型，每个属性是 ComputedRef
+export type TableContextType = {
+  [K in keyof StaticContextProps]: ComputedRef<StaticContextProps[K]>;
 };
 
-export const useStaticContextProvider = (props: Reactive<StaticContextProps>) => {
-  provide(StaticContext, props);
+// InjectionKey
+const StaticContext: InjectionKey<TableContextType> = Symbol('StaticContext');
+
+// Inject hook
+export const useStaticContextInject = (): Partial<TableContextType> => {
+  return inject(StaticContext, null) as Partial<TableContextType>;
 };
 
+// Provider helper
+export const useStaticContextProvider = (props: ComputedRef<StaticContextProps>) => {
+  const state = {};
+
+  // 每个属性独立 computed
+  (Object.keys(props.value) as Array<keyof StaticContextProps>).forEach((key) => {
+    state[key] = computed(() => props.value[key]);
+  });
+
+  provide(StaticContext, state as TableContextType);
+};
+
+// TableContextProvider 组件
 export const StaticContextProvider = defineComponent({
   props: {
-    value: Object as PropType<StaticContextProps>,
+    value: {
+      type: Object as PropType<StaticContextProps>,
+      required: true,
+    },
   },
   setup(props, { slots }) {
-    useStaticContextProvider(reactiveComputed(() => props.value));
-    return () => <>{slots.default?.()}</>;
+    useStaticContextProvider(computed(() => props.value as StaticContextProps));
+    return () => slots.default?.();
   },
 });
 
@@ -49,6 +78,6 @@ export const GridContextProvider = defineComponent({
   },
   setup(props, { slots }) {
     useGridContextProvider(reactiveComputed(() => props.value));
-    return () => <>{slots.default?.()}</>;
+    return () => slots.default?.();
   },
 });

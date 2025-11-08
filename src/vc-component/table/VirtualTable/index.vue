@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import getValue from '@/vc-util/utils/get';
 import clsx from 'clsx';
-import { computed, getCurrentInstance } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import { INTERNAL_HOOKS } from '../constant';
 import type { TableProps } from '../Table.vue';
 import Table from '../Table.vue';
@@ -27,6 +27,7 @@ const {
   components,
   onScroll,
   showHeader = true,
+  rowHoverable = true,
 } = defineProps<VirtualTableProps<any>>();
 
 const scrollX = computed(() => {
@@ -48,25 +49,36 @@ const scrollY = computed(() => {
 const getComponent = (path, defaultComponent) => getValue(components, path) || defaultComponent;
 
 // ========================= Context ==========================
-const context = computed(() => ({ sticky, scrollY: scrollY.value, listItemHeight, getComponent, onScroll }));
+const context = computed(() => ({
+  sticky,
+  scrollY: scrollY.value,
+  listItemHeight,
+  getComponent,
+  onScroll,
+}));
 
 const renderBody: CustomizeScrollBody<any> = (rawData, props) => {
-  const { ref, onScroll } = props;
-  return <Grid ref={ref as any} data={rawData as any} onScroll={onScroll} />;
+  const { ref: domRef, onScroll } = props;
+  return <Grid ref={domRef} data={rawData} onScroll={onScroll} />;
 };
 
-const vm = getCurrentInstance();
+const tableRef = useTemplateRef('tableRef');
 
-const changeRef = (instance) => {
-  vm.exposeProxy = instance;
-  vm.exposed = instance;
-};
+defineExpose({
+  get nativeElement() {
+    return tableRef.value?.nativeElement;
+  },
+  scrollTo: (config) => {
+    tableRef.value?.scrollTo(config);
+  },
+});
 </script>
 <template>
   <StaticContextProvider :value="context">
     <Table
       v-bind="$props"
       :show-header="showHeader"
+      :row-hoverable="rowHoverable"
       :class="clsx(className, `${prefixCls}-virtual`)"
       :scroll="{ ...scroll, x: scrollX }"
       :components="{
@@ -76,7 +88,7 @@ const changeRef = (instance) => {
       :columns="columns"
       :internal-hooks="INTERNAL_HOOKS"
       tailor
-      :ref="changeRef"
+      ref="tableRef"
     />
   </StaticContextProvider>
 </template>

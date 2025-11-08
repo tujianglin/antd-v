@@ -5,7 +5,7 @@ export type SizeType = 'small' | 'middle' | 'large' | undefined;
 const SizeContext: InjectionKey<Ref<SizeType>> = Symbol('SizeContext');
 
 export const useSizeContextInject = () => {
-  return inject(SizeContext, ref<SizeType>('middle'));
+  return inject(SizeContext, ref<SizeType>(undefined));
 };
 
 export const useSizeContextProvider = (props: Ref<SizeType>) => {
