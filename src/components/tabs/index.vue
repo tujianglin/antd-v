@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, getCurrentInstance, h, toRefs, useTemplateRef } from 'vue';
+import { computed, getCurrentInstance, h, toRefs, useTemplateRef, type VNode } from 'vue';
 import {
   useMergeSemantic,
   type SemanticClassNames,
@@ -19,12 +19,16 @@ import type { EditableConfig, MoreProps, Tab } from '@/vc-component/tabs/interfa
 import { reactiveComputed } from '@vueuse/core';
 import { CloseOutlined, EllipsisOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
+import type { TabPaneProps } from './TabPane.vue';
+import useLegacyItems from './hooks/useLegacyItems';
 
 export type TabsType = 'line' | 'card' | 'editable-card';
 
 export type TabPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export type TabPlacement = 'top' | 'end' | 'bottom' | 'start';
+
+export type { TabPaneProps };
 
 export type TabsSemanticName = 'root' | 'item' | 'indicator' | 'content' | 'header';
 
@@ -85,6 +89,10 @@ const {
   ...restProps
 } = defineProps<TabsProps>();
 
+const slots = defineSlots<{
+  default: () => VNode[];
+}>();
+
 const activeKey = defineModel<string | undefined>('activeKey');
 
 const { prefixCls: customizePrefixCls } = toRefs(reactiveComputed(() => restProps));
@@ -130,6 +138,11 @@ const editable = computed<EditableConfig | undefined>(() => {
 const rootPrefixCls = computed(() => getPrefixCls.value());
 
 const size = useSize(computed(() => customSize));
+
+const mergedItems = useLegacyItems(
+  computed(() => items),
+  computed(() => slots.default?.()),
+);
 
 const mergedAnimated = computed(() => useAnimateConfig(prefixCls.value, animated));
 
@@ -180,7 +193,7 @@ const [mergedClassNames, mergedStyles] = useMergeSemantic<TabsClassNamesType, Ta
     :get-popup-container="getPopupContainer"
     v-bind="restProps"
     v-model:active-key="activeKey"
-    :items="items"
+    :items="mergedItems"
     :class="clsx({
           [`${prefixCls}-${size}`]: size,
           [`${prefixCls}-card`]: ['card', 'editable-card'].includes(type!),
