@@ -26,6 +26,8 @@ import type { RangePickerProps } from './interface';
 import dayjs from 'dayjs';
 import type { DateType } from '@/vc-util/type';
 
+defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
+
 const {
   prefixCls: customizePrefixCls,
   getPopupContainer: customGetPopupContainer,

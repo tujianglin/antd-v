@@ -55,12 +55,10 @@ const memoFlattenOptions = ref(flattenOptions.value);
 
 watch(
   [open, flattenOptions],
-  (next, prev) => {
-    if (next[0] && prev[1] !== next[1]) {
-      memoFlattenOptions.value = next[1]; // 更新
-    }
+  (next) => {
+    memoFlattenOptions.value = next[1]; // 更新
   },
-  { immediate: true },
+  { immediate: true, deep: true },
 );
 
 // =========================== List ===========================

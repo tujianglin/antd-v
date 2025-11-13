@@ -728,7 +728,7 @@ if (process.env.NODE_ENV !== 'production') {
       range
     >
       <RangeSelector
-        v-bind="{ ...omit(filledProps, ['onChange', 'onFocus', 'onBlur']) }"
+        v-bind="{ ...omit(filledProps,['onFoucs', 'onBlur', 'onClick', 'onKeydown', 'onChange', 'onOpenChange']) as any }"
         :ref="(el) => (selectorRef = el)"
         :class="clsx(rootClassName, mergedClassNames.root)"
         :style="{
