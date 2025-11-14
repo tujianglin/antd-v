@@ -2,7 +2,7 @@
 import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, ref, toRefs, useTemplateRef, type CSSProperties } from 'vue';
 import { useConfigContextInject } from '../config-provider';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';

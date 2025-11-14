@@ -12,7 +12,7 @@ import useStyle from './style';
 import type { VueKey, VueNode } from '@/vc-util/type';
 import { RightOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { cloneElement } from '@/vc-util/Children/util';
 import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 

@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { isArray } from 'lodash-es';
+import { isArray } from 'es-toolkit/compat';
 import { toRefs } from 'vue';
 import type { AggregationColor } from '../color';
 import { usePanelPresetsContextInject } from '../context';

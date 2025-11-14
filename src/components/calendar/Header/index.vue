@@ -2,7 +2,7 @@
 import type { GenerateConfig } from '@/vc-component/picker/generate';
 import type { Locale } from '@/vc-component/picker/interface';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, getCurrentInstance, ref, type CSSProperties, type Ref } from 'vue';
 import { FormItemInputContextProvider, useFormItemInputContextInject } from '../../form/context';
 import type { CalendarMode, DateType, SelectInfo } from '../CalendarPanel.vue';

@@ -10,7 +10,7 @@ import { isValidCount } from './utils/valueUtil';
 import pickAttrs from '@/vc-util/pickAttrs';
 import List from '@/vc-component/virtual-list/List.vue';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import TransBtn from './TransBtn.vue';
 import Render from '@/vc-component/render';
 import { isValidElement, isValidNode } from '@/vc-util/Children/util';

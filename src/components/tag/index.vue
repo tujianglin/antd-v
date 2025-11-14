@@ -22,7 +22,7 @@ import StatusCmp from './style/statusCmp';
 import type { VueNode } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import clsx from 'clsx';
 import { cloneElement, isValidElement, replaceElement } from '@/vc-util/Children/util';
 import Render from '@/vc-component/render';

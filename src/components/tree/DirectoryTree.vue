@@ -11,7 +11,7 @@ import type { VueKey } from '@/vc-util/type';
 import { FileOutlined, FolderOpenOutlined, FolderOutlined } from '@ant-design/icons-vue';
 import { useConfigContextInject } from '../config-provider';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 
 export type ExpandAction = false | 'click' | 'doubleClick';
 

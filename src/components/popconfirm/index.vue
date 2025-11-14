@@ -11,7 +11,7 @@ import type { LegacyButtonType } from '../button/interface';
 import { ExclamationCircleFilled } from '@ant-design/icons-vue';
 import { computed, getCurrentInstance, toRefs } from 'vue';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import Overlay from './Overlay.vue';
 import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import type { PopoverSemanticName } from '../popover/index.vue';

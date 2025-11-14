@@ -7,7 +7,7 @@ import { getMinimumRangeTransitionRange } from './util';
 import { findExpandedKeys, getExpandRange } from './utils/diffUtil';
 import { getKey, getTreeNodeProps } from './utils/treeUtil';
 import MotionTreeNode from './MotionTreeNode.vue';
-import { isEqual } from 'lodash-es';
+import { isEqual } from 'es-toolkit/compat';
 import type { VueKey } from '@/vc-util/type';
 export interface NodeListRef {
   scrollTo: ScrollTo;

@@ -6,7 +6,7 @@ import { getTargetScrollBarSize } from '@/vc-util/getScrollBarSize';
 import type { VueKey, VueNode } from '@/vc-util/type';
 import getValue from '@/vc-util/utils/get';
 import { reactiveComputed } from '@vueuse/core';
-import { isEqual } from 'lodash-es';
+import { isEqual } from 'es-toolkit/compat';
 import {
   computed,
   getCurrentInstance,

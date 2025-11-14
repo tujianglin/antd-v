@@ -3,7 +3,7 @@ import { isValidNode } from '@/vc-util/Children/util';
 import useControlledState from '@/vc-util/hooks/useControlledState';
 import warning from '@/vc-util/warning';
 import { reactiveComputed } from '@vueuse/core';
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'es-toolkit/compat';
 import { computed, ref, toRefs, useId, useSlots, watch, type VNode } from 'vue';
 import BaseSelect from './BaseSelect/index.vue';
 import { isMultiple, type BaseSelectProps } from './BaseSelect/interface';

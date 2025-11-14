@@ -4,7 +4,7 @@ import useControlledState from '@/vc-util/hooks/useControlledState';
 import { toPx } from '@/vc-util/setStyle';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { isEmpty, omit } from 'lodash-es';
+import { isEmpty, omit } from 'es-toolkit/compat';
 import { computed, getCurrentInstance, ref, type CSSProperties, type ImgHTMLAttributes } from 'vue';
 import { COMMON_PROPS } from './common';
 import { usePreviewGroupContextInject } from './context';

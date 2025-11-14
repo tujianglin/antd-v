@@ -8,7 +8,7 @@ import { floatButtonPrefixCls, type FloatButtonProps } from './interface';
 import { VerticalAlignTopOutlined } from '@ant-design/icons-vue';
 import FloatButton from './FloatButton.vue';
 import clsx from 'clsx';
-import { throttle } from 'lodash-es';
+import { throttle } from 'es-toolkit/compat';
 import CSSMotion from '@/vc-component/motion';
 import { composeRef } from '@/vc-util/ref';
 import { useComponentConfig } from '../config-provider/context';

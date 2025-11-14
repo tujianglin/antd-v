@@ -1,6 +1,6 @@
 import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import warning from '@/vc-util/warning';
-import { merge } from 'lodash-es';
+import { merge } from 'es-toolkit/compat';
 import RawAsyncValidator from '../../async-validator';
 import type { InternalNamePath, InternalValidateOptions, RuleError, RuleObject, StoreValue } from '../interface';
 import { defaultValidateMessages } from './messages';

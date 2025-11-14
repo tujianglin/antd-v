@@ -12,7 +12,7 @@ import type { MenuInfo } from '../interface';
 import { warnItemProp } from '../utils/warnUtil';
 import LegacyMenuItem from './LegacyMenuItem.vue';
 import { composeRef } from '@/vc-util/ref';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import clsx from 'clsx';
 import Icon from './Icon.vue';
 import type { MenuItemProps } from './MenuItem.vue';

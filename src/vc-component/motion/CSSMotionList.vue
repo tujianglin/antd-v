@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import type { VueKey } from '@/vc-util/type';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { reactive, watch, type HTMLAttributes, type VNode } from 'vue';
 import type { CSSMotionProps } from './CSSMotion.vue';
 import OriginCSSMotion from './CSSMotion.vue';

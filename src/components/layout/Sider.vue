@@ -5,7 +5,7 @@ import useStyle from './style/sider';
 import type { VueNode } from '@/vc-util/type';
 import { SiderContextProvider, useLayoutContextInject, type SiderContextProps } from './context';
 import { useConfigContextInject } from '../config-provider';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import clsx from 'clsx';
 import { BarsOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons-vue';
 import Render from '@/vc-component/render';

@@ -42,7 +42,7 @@ import clsx from 'clsx';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import { reactiveComputed } from '@vueuse/core';
 import type { Placement } from '@/vc-component/select/interface';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import mergedBuiltinPlacements from '../select/mergedBuiltinPlacements';
 
 // Align the design since we use `@rc-component/select` in root. This help:

@@ -9,7 +9,7 @@ import PopupPanel, { type PopupPanelProps } from './PopupPanel.vue';
 import PresetPanel from './PresetPanel.vue';
 import clsx from 'clsx';
 import ResizeObserver from '@/vc-component/resize-observer';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import type { DateType } from '@/vc-util/type';
 
 export type PopupShowTimeConfig = Omit<RangeTimeProps, 'defaultValue' | 'defaultOpenValue' | 'disabledTime'> &

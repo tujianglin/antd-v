@@ -6,7 +6,7 @@ import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import useControlledState from '@/vc-util/hooks/useControlledState';
 import type { VueNode } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'es-toolkit/compat';
 import { computed, ref, toRefs, useId, type CSSProperties } from 'vue';
 import { CascaderContextProvider } from './context';
 import useDisplayValues from './hooks/useDisplayValues';

@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/one-component-per-file -->
 <script lang="tsx">
 import { defineComponent, ref, computed, onMounted, onBeforeUnmount, Fragment, unref, type PropType, type VNode } from 'vue';
-import { isEqual } from 'lodash-es';
+import { isEqual } from 'es-toolkit/compat';
 import warning from '@/vc-util/warning';
 import { HOOK_MARK, useFieldContextInject } from './FieldContext';
 import type {

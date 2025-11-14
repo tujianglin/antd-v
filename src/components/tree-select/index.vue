@@ -34,7 +34,7 @@ import { useCompactItemContext } from '../space/CompactContext';
 import clsx from 'clsx';
 import { useFormItemInputContextInject } from '../form/context';
 import DefaultRenderEmpty from '../config-provider/defaultRenderEmpty.vue';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import type { Placement } from '@/vc-component/select/interface';
 import mergedBuiltinPlacements from '../select/mergedBuiltinPlacements';

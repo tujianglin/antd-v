@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { ref, toRefs, type HTMLAttributes } from 'vue';
 import { useMenuContextInject } from '../context/MenuContext';
 

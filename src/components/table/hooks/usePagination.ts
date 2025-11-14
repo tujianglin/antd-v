@@ -1,4 +1,4 @@
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, ref, type ComputedRef, type Ref } from 'vue';
 import extendsObject from '../../_util/extendsObject';
 import type { PaginationProps } from '../../pagination';

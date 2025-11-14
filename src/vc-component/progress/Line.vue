@@ -5,7 +5,7 @@ import getIndeterminateLine from './utils/getIndeterminateLine';
 import type { ProgressProps } from './interface';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import Render from '@/vc-component/render';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });

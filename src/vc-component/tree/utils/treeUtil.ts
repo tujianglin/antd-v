@@ -1,6 +1,6 @@
 import type { VueKey } from '@/vc-util/type';
 import warning from '@/vc-util/warning';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import type {
   BasicDataNode,
   DataEntity,

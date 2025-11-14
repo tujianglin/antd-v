@@ -7,7 +7,7 @@ import { useLocale } from '../locale';
 import enUS from './locale/en_US';
 import useStyle from './style';
 import type { VueNode } from '@/vc-util/type';
-import { computed, getCurrentInstance, toRaw, toRefs, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, toRaw, toRefs, type CSSProperties, type VNode } from 'vue';
 import { reactiveComputed } from '@vueuse/core';
 import type { GenerateConfig } from '@/vc-component/picker/generate';
 import useControlledState from '@/vc-util/hooks/useControlledState';
@@ -15,6 +15,7 @@ import clsx from 'clsx';
 import Render from '@/vc-component/render';
 import CalendarHeader from './Header/index.vue';
 import { PickerPanel as RCPickerPanel } from '@/vc-component/picker';
+import generateConfig from '@/vc-component/picker/generate/dayjs';
 
 export type CalendarMode = 'year' | 'month';
 export type HeaderRender = (config: {
@@ -45,8 +46,8 @@ export interface CalendarProps {
   validRange?: [DateType, DateType];
   disabledDate?: (date: DateType) => boolean;
   monthCellRender?: (date: DateType) => VueNode;
-  cellRender?: (date: DateType, info: CellRenderInfo) => VueNode;
-  fullCellRender?: (date: DateType, info: CellRenderInfo) => VueNode;
+  cellRender?: (props: { date: DateType; info: CellRenderInfo }) => VueNode;
+  fullCellRender?: (props: { date: DateType; info: CellRenderInfo }) => VueNode;
   headerRender?: HeaderRender;
   value?: DateType;
   defaultValue?: DateType;
@@ -65,10 +66,10 @@ const {
   class: className,
   rootClassName,
   style,
-  monthCellRender,
-  cellRender,
-  fullCellRender,
-  headerRender,
+  monthCellRender: customMonthCellRender,
+  cellRender: customCellRender,
+  fullCellRender: customFullCellRender,
+  headerRender: customHeaderRender,
   value,
   defaultValue,
   disabledDate,
@@ -81,9 +82,19 @@ const {
   onSelect,
   styles,
   classNames: calendarClassNames,
-  generateConfig,
   locale: customLocale,
-} = defineProps<CalendarProps & { generateConfig?: GenerateConfig }>();
+} = defineProps<CalendarProps>();
+const slots = defineSlots<{
+  headerRender: (props: Parameters<CalendarProps['headerRender']>[0]) => VNode[];
+  cellRender: (props: Parameters<CalendarProps['cellRender']>[0]) => VNode[];
+  fullCellRender: (props: Parameters<CalendarProps['fullCellRender']>[0]) => VNode[];
+  monthCellRender: (props: Parameters<CalendarProps['monthCellRender']>[0]) => VNode[];
+}>();
+
+const headerRender = computed(() => slots.headerRender || customHeaderRender);
+const cellRender = computed(() => slots.cellRender || customCellRender);
+const fullCellRender = computed(() => slots.fullCellRender || customFullCellRender);
+const monthCellRender = computed(() => slots.monthCellRender || customMonthCellRender);
 
 const isSameYear = (date1: DateType, date2: DateType, config: GenerateConfig) => {
   const { getYear } = config;
@@ -202,8 +213,8 @@ const onInternalSelect = (date: DateType, source: SelectInfo['source']) => {
 
 // ====================== Render ======================
 const dateRender = (date: DateType, info: CellRenderInfo): VueNode => {
-  if (fullCellRender) {
-    return fullCellRender(date, info);
+  if (fullCellRender.value) {
+    return fullCellRender.value({ date, info });
   }
 
   return (
@@ -213,14 +224,14 @@ const dateRender = (date: DateType, info: CellRenderInfo): VueNode => {
       })}
     >
       <div class={`${calendarPrefixCls.value}-date-value`}>{String(generateConfig.getDate(date)).padStart(2, '0')}</div>
-      <div class={`${calendarPrefixCls.value}-date-content`}>{cellRender?.(date, info)}</div>
+      <div class={`${calendarPrefixCls.value}-date-content`}>{cellRender.value?.({ date, info })}</div>
     </div>
   );
 };
 
 const monthRender = (date: DateType, info: CellRenderInfo): VueNode => {
-  if (fullCellRender) {
-    return fullCellRender(date, info);
+  if (fullCellRender.value) {
+    return fullCellRender.value({ date, info });
   }
 
   const months = info.locale!.shortMonths || generateConfig.locale.getShortMonths!(info.locale!.locale);
@@ -232,7 +243,9 @@ const monthRender = (date: DateType, info: CellRenderInfo): VueNode => {
       })}
     >
       <div class={`${calendarPrefixCls.value}-date-value`}>{months[generateConfig.getMonth(date)]}</div>
-      <div class={`${calendarPrefixCls.value}-date-content`}>{cellRender ? cellRender(date, info) : monthCellRender?.(date)}</div>
+      <div class={`${calendarPrefixCls.value}-date-content`}>
+        {cellRender.value ? cellRender.value({ date, info }) : monthCellRender.value?.(date)}
+      </div>
     </div>
   );
 };

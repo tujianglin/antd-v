@@ -18,7 +18,7 @@ import PopupTrigger from './PopupTrigger.vue';
 import SubMenuList from './SubMenuList.vue';
 import InlineSubMenuList from './InlineSubMenuList.vue';
 import Render from '@/vc-component/render';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 

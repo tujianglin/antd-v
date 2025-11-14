@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import useControlledState from '@/vc-util/hooks/useControlledState';
 import { reactiveComputed } from '@vueuse/core';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, ref, watch, type CSSProperties } from 'vue';
 import { PreviewGroupContextProvider } from './context';
 import type { TransformType } from './hooks/useImageTransform';

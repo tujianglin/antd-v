@@ -20,7 +20,7 @@ import DefaultListBody from './ListBody.vue';
 import Search from './search.vue';
 import { isValidElement } from '@/vc-util/Children/util';
 import { computed, getCurrentInstance, ref, type CSSProperties } from 'vue';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { DownOutlined } from '@ant-design/icons-vue';

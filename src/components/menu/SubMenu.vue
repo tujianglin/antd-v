@@ -5,7 +5,7 @@ import { useZIndex } from '../_util/hooks/useZIndex';
 import type { SubMenuType } from './interface';
 import { MenuContextProvider, useMenuContextInject, type MenuContextProps } from './MenuContext';
 import type { VueNode } from '@/vc-util/type';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import clsx from 'clsx';
 import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import Render from '@/vc-component/render';

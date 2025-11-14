@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import type { DateType } from '@/vc-util/type';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, getCurrentInstance, toRefs } from 'vue';
 import { PickerPanel } from '../..';
 import { PickerHackContextProvider, type PickerHackContextProps } from '../../PickerPanel/context';

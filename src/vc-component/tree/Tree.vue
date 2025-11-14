@@ -5,7 +5,7 @@ import pickAttrs from '@/vc-util/pickAttrs';
 import type { VueKey } from '@/vc-util/type';
 import warning from '@/vc-util/warning';
 import clsx from 'clsx';
-import { assign } from 'lodash-es';
+import { assign } from 'es-toolkit/compat';
 import {
   computed,
   onBeforeUnmount,

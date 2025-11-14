@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import Render from '@/vc-component/render';
 import type { VueNode } from '@/vc-util/type';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed } from 'vue';
 import { useFullPath, usePathRegisterContextInject } from '../context/PathContext';
 import type { MenuItemGroupType } from '../interface';

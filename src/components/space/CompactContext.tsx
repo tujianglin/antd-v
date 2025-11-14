@@ -1,6 +1,6 @@
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'es-toolkit/compat';
 import {
   computed,
   defineComponent,

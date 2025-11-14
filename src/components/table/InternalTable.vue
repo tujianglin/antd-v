@@ -3,7 +3,7 @@ import { INTERNAL_HOOKS, type TableProps as RcTableProps } from '@/vc-component/
 import type { AnyObject } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, getCurrentInstance, ref, toRefs, useTemplateRef } from 'vue';
 import {
   useMergeSemantic,

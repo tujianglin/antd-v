@@ -1,5 +1,5 @@
 import { reactiveComputed } from '@vueuse/core';
-import { assign } from 'lodash-es';
+import { assign } from 'es-toolkit/compat';
 import { computed, createVNode, defineComponent, shallowReactive, toRefs, render as vueRender, type VNode } from 'vue';
 import warning from '../_util/warning';
 import ConfigProvider, { useConfigContextInject } from '../config-provider';

@@ -2,7 +2,7 @@
 import { QRCodeCanvas, QRCodeSVG } from '@/vc-component/qrcode';
 import pickAttrs from '@/vc-util/pickAttrs';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, getCurrentInstance, toRefs } from 'vue';
 import { useMergeSemantic } from '../_util/hooks';
 import { useComponentConfig } from '../config-provider/context';

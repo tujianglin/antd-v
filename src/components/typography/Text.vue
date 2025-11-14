@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed } from 'vue';
 import type { BlockProps, EllipsisConfig } from './Base/index.vue';
 import Base from './Base/index.vue';

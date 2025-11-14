@@ -18,7 +18,7 @@ import { ZIndexContextProvider } from '../_util/zindexContext';
 import Dialog from '@/vc-component/dialog';
 import Footer from './shared.vue';
 import { getTransitionName } from '../_util/motion';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import type { FooterRender } from './interface';
 import Skeleton from '../skeleton';
 import { usePanelRef } from '../watermark/context';

@@ -3,7 +3,7 @@ import { List } from '@/vc-component/form';
 import type { ValidatorRule } from '@/vc-component/form/interface';
 import { computed } from 'vue';
 
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { useConfigContextInject } from '../config-provider';
 import { FormItemPrefixContextProvider } from './context';
 

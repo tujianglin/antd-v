@@ -10,10 +10,11 @@ import type { VueNode } from '@/vc-util/type';
 import { CheckCircleFilled, CheckOutlined, CloseCircleFilled, CloseOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
 import Render from '@/vc-component/render';
-import { isArray, omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import Steps from './Steps.vue';
 import Line from './Line.vue';
 import Circle from './Circle.vue';
+import { isArray } from 'es-toolkit/compat';
 
 export type SemanticName = 'root' | 'body' | 'rail' | 'track' | 'indicator';
 

@@ -18,7 +18,7 @@ import { isEleEllipsis, isValidText } from './util';
 import type { AutoSizeType } from '@/vc-component/textarea';
 import { computed, createElementVNode, ref, toRefs, useTemplateRef, watch, type VNode } from 'vue';
 import { useConfigContextInject } from '@/components/config-provider';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import useControlledState from '@/vc-util/hooks/useControlledState';
 import { toArray } from '@/vc-util/Children/toArray';
 import { EditOutlined } from '@ant-design/icons-vue';

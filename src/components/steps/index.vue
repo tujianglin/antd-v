@@ -13,7 +13,7 @@ import useStyle from './style';
 import type { VueNode } from '@/vc-util/type';
 import { computed, getCurrentInstance, toRefs, type CSSProperties, type VNode } from 'vue';
 import { useInternalContextInject } from './context';
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'es-toolkit/compat';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons-vue';
 import Render from '@/vc-component/render';
 import { Wave } from '../_util/wave';

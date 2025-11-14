@@ -16,7 +16,7 @@ import type { VueNode } from '@/vc-util/type';
 import { computed, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
 import clsx from 'clsx';
 import { DoubleLeftOutlined, DoubleRightOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons-vue';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 
 export type SemanticName = 'root' | 'item';
@@ -62,7 +62,7 @@ const {
   size: customizeSize,
   locale: customLocale,
   responsive,
-  showSizeChanger,
+  showSizeChanger = undefined,
   pageSizeOptions,
   styles,
   classNames,

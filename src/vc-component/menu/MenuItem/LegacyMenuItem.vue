@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import Overflow from '@/vc-component/overflow';
 import type { RawItemProps } from '@/vc-component/overflow/RawItem.vue';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { useTemplateRef } from 'vue';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });

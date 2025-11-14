@@ -39,7 +39,7 @@ const {
   disabled,
   simple,
   showTotal,
-  showSizeChanger: defaultShowSizeChanger,
+  showSizeChanger: defaultShowSizeChanger = undefined,
   sizeChangerRender,
   pageSizeOptions,
 
@@ -61,7 +61,7 @@ function isInteger(v: number) {
   return typeof value === 'number' && !Number.isNaN(value) && isFinite(value) && Math.floor(value) === value;
 }
 
-const showSizeChanger = computed(() => total > totalBoundaryShowSizeChanger || defaultShowSizeChanger !== false);
+const showSizeChanger = computed(() => total > totalBoundaryShowSizeChanger && defaultShowSizeChanger !== false);
 const itemRender = computed<any>(() => defaultItemRender || ((_, __, element) => element));
 const paginationRef = ref<HTMLUListElement>(null);
 

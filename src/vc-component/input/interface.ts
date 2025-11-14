@@ -70,6 +70,8 @@ export interface InputProps
       InputHTMLAttributes,
       'class' | 'maxlength' | 'style' | 'disabled' | 'size' | 'prefix' | 'type' | 'value'
     > {
+  class?: string;
+  style?: CSSProperties;
   hidden?: boolean;
   readonly?: boolean;
   prefixCls?: string;

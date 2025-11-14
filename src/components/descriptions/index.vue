@@ -13,7 +13,7 @@ import DEFAULT_COLUMN_MAP from './constant';
 import { DescriptionsContextProvider } from './DescriptionsContext';
 import useItems from './hooks/useItems';
 import useRow from './hooks/useRow';
-import type { DescriptionsItemProps } from './Item';
+import type { DescriptionsItemProps } from './Item.vue';
 import Row from './Row.vue';
 import useStyle from './style';
 
@@ -74,10 +74,12 @@ const {
 const slots = defineSlots<{
   title?: () => VNode[];
   extra?: () => VNode[];
+  default?: () => VNode[];
 }>();
 
 const title = computed(() => slots.title || customTitle);
 const extra = computed(() => slots.extra || extraTitle);
+const children = computed(() => slots.default?.());
 
 const {
   getPrefixCls,
@@ -108,6 +110,7 @@ const mergedColumn = computed(() => {
 const mergedItems = useItems(
   screens,
   computed(() => items),
+  children,
 );
 
 const mergedSize = useSize(computed(() => customizeSize));

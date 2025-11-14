@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import type { PortalProps } from '@/vc-component/portal/index.vue';
 import { reactiveComputed } from '@vueuse/core';
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'es-toolkit/compat';
 import { computed, nextTick, onBeforeUnmount, ref, toRefs, watch, type CSSProperties, type ImgHTMLAttributes } from 'vue';
 import { usePreviewGroupContextInject } from '../context';
 import type { TransformAction, TransformType } from '../hooks/useImageTransform';

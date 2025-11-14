@@ -7,7 +7,7 @@ import { useRemovePasswordTimeout } from './hooks/useRemovePasswordTimeout';
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
 import Input from './Input.vue';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import Render from '@/vc-component/render';
 import type { VueKey, VueNode } from '@/vc-util/type';
 import type { InputRef } from '@/vc-component/input';

@@ -1,4 +1,4 @@
-import { isArray } from 'lodash-es';
+import { isArray } from 'es-toolkit/compat';
 import { cloneVNode, Fragment, isVNode, type VNode } from 'vue';
 import type { AnyObject } from '../type';
 

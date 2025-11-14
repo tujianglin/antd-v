@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import RcCheckbox from '@/vc-component/checkbox/index.vue';
 import clsx from 'clsx';
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'es-toolkit/compat';
 import { computed, getCurrentInstance, toRefs } from 'vue';
 import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { Wave } from '../_util/wave';

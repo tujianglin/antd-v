@@ -28,7 +28,7 @@ import { DEFAULT_OMIT_PROPS, isMultiple, type BaseSelectProps, type RefOptionLis
 import TransBtn from '../TransBtn.vue';
 import clsx from 'clsx';
 import { useAllowClear } from '../hooks/useAllowClear';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import Render from '@/vc-component/render';
 import { falseToUndefined } from '@/vc-util/props';
 import Polite from './Polite.vue';

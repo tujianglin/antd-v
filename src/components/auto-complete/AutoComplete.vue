@@ -3,7 +3,7 @@ import { isValidElement } from '@/vc-util/Children/util';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, getCurrentInstance, toRefs } from 'vue';
 import {
   useMergeSemantic,

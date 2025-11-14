@@ -2,7 +2,7 @@
 import { CSSMotionList, type CSSMotionProps } from '@/vc-component/motion';
 import type { VueKey } from '@/vc-util/type';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, ref, toRefs, watch, type CSSProperties } from 'vue';
 import useStack from './hooks/useStack';
 import type { InnerOpenConfig, OpenConfig, Placement, StackConfig } from './interface';

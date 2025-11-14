@@ -7,7 +7,7 @@ import type { GapPosition, ProgressGradient, ProgressProps, SemanticName } from 
 import { getPercentage, getSize, getStrokeColor } from './utils';
 import { computed, getCurrentInstance, toRefs, type VNode } from 'vue';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import type { SemanticClassNames, SemanticStyles } from '../_util/hooks';
 
 export interface CircleProps extends ProgressProps {

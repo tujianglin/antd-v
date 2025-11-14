@@ -31,7 +31,7 @@ import { useCompactItemContext } from '../space/CompactContext';
 import { useFormItemInputContextInject } from '../form/context';
 import DefaultRenderEmpty from '../config-provider/defaultRenderEmpty.vue';
 import { reactiveComputed } from '@vueuse/core';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import clsx from 'clsx';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import mergedBuiltinPlacements from './mergedBuiltinPlacements';

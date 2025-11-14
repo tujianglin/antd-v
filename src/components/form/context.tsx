@@ -2,7 +2,7 @@ import { FormProvider as RcFormProvider } from '@/vc-component/form';
 import type { FormProviderProps as RcFormProviderProps } from '@/vc-component/form/FormContext';
 import type { VueKey, VueNode } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import {
   computed,
   defineComponent,

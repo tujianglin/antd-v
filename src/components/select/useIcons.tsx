@@ -58,21 +58,21 @@ export default function useIcons(
 
   // Arrow item icon
   const mergedSuffixIcon = computed(() => {
-    let result = null;
-    if (suffixIcon.value !== undefined) {
-      result = getSuffixIconNode(suffixIcon.value);
-    } else if (loading.value) {
-      result = getSuffixIconNode(() => <LoadingOutlined spin />);
-    } else {
+    return ({ open, showSearch }: { open: boolean; showSearch: boolean }) => {
+      if (suffixIcon.value !== undefined) {
+        return getSuffixIconNode(suffixIcon.value);
+      }
+
+      if (loading.value) {
+        return getSuffixIconNode(() => <LoadingOutlined spin />);
+      }
+
       const iconCls = `${prefixCls.value}-suffix`;
-      result = ({ open, showSearch }: { open: boolean; showSearch: boolean }) => {
-        if (open && showSearch) {
-          return getSuffixIconNode(() => <SearchOutlined class={iconCls} />);
-        }
-        return getSuffixIconNode(() => <DownOutlined class={iconCls} />);
-      };
-    }
-    return result;
+      if (open && showSearch) {
+        return getSuffixIconNode(() => <SearchOutlined class={iconCls} />);
+      }
+      return getSuffixIconNode(() => <DownOutlined class={iconCls} />);
+    };
   });
 
   // Checked item icon

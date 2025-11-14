@@ -1,4 +1,4 @@
-import { assign } from 'lodash-es';
+import { assign } from 'es-toolkit/compat';
 import { getCurrentInstance, isVNode, type Ref, type VNode } from 'vue';
 import { isFragment, isValidNode } from './Children/util';
 

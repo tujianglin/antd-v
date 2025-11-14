@@ -11,7 +11,7 @@ import {
 } from './context';
 import type { ColorPickerProps } from './interface';
 import Render from '@/vc-component/render';
-import { isArray } from 'lodash-es';
+import { isArray } from 'es-toolkit/compat';
 
 export interface ColorPickerPanelProps extends PanelPickerContextProps, Omit<PanelPresetsContextProps, 'onChange'> {
   onClear?: () => void;

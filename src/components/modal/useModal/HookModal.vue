@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import { useConfigContextInject } from '@/components/config-provider';
-import { assign } from 'lodash-es';
+import { assign } from 'es-toolkit/compat';
 import { computed, ref, toRefs, watchEffect } from 'vue';
 import defaultLocale from '../../locale/en_US';
 import useLocale from '../../locale/useLocale';

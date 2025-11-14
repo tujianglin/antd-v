@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed } from 'vue';
 import useTimeInfo from '../../hooks/useTimeInfo';
 import type { SharedPanelProps } from '../../interface';

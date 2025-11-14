@@ -1,5 +1,5 @@
 import type { VueKey } from '@/vc-util/type';
-import { camelCase } from 'lodash-es';
+import { camelCase } from 'es-toolkit/compat';
 import type { Component, FunctionalComponent, VNode } from 'vue';
 import { Fragment, isVNode } from 'vue';
 

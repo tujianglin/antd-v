@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import VcCheckbox from '@/vc-component/checkbox/index.vue';
 import clsx from 'clsx';
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'es-toolkit/compat';
 import { computed, getCurrentInstance, onBeforeUnmount, onMounted, ref, toRefs, useTemplateRef, watch, type VNode } from 'vue';
 import { useMergeSemantic } from '../_util/hooks';
 import { Wave } from '../_util/wave';

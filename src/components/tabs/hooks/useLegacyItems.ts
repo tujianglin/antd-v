@@ -28,7 +28,7 @@ function useLegacyItems(items?: ComputedRef<TabsProps['items']>, children?: Comp
           key: String(key || index) as any,
           ...restProps,
           label: tab,
-          children: (node.children as any).default?.(),
+          children: flattenChildren((node.children as any).default?.()) || [],
         };
         return item;
       }

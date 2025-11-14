@@ -5,7 +5,7 @@ import type { ExpandAction } from '@/vc-component/tree/Tree.vue';
 import { conductCheck } from '@/vc-component/tree/utils/conductUtil';
 import useControlledState from '@/vc-util/hooks/useControlledState';
 import { reactiveComputed } from '@vueuse/core';
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'es-toolkit/compat';
 import { computed, ref, toRefs, useId, useTemplateRef, type CSSProperties } from 'vue';
 import useCache from './hooks/useCache';
 import useCheckedKeys from './hooks/useCheckedKeys';

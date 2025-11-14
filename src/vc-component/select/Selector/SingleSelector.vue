@@ -1,11 +1,11 @@
 <script lang="tsx" setup>
+import Render from '@/vc-component/render';
+import pickAttrs from '@/vc-util/pickAttrs';
+import type { VueNode } from '@/vc-util/type';
 import { computed, getCurrentInstance, ref, watch } from 'vue';
-import type { InnerSelectorProps } from './interface';
 import { getTitle } from '../utils/commonUtil';
 import Input from './Input.vue';
-import pickAttrs from '@/vc-util/pickAttrs';
-import Render from '@/vc-component/render';
-import type { VueNode } from '@/vc-util/type';
+import type { InnerSelectorProps } from './interface';
 interface SelectorProps extends InnerSelectorProps {
   inputElement: VueNode;
   activeValue: string;
@@ -72,17 +72,6 @@ const hasTextInput = computed(() => (mode !== 'combobox' && !open && !showSearch
 // Get title of selection item
 const selectionTitle = computed(() => (title === undefined ? getTitle(item.value) : title));
 
-const placeholderNode = computed(() => {
-  if (item.value) {
-    return null;
-  }
-  return (
-    <span class={`${prefixCls}-selection-placeholder`} style={hasTextInput.value ? { visibility: 'hidden' } : undefined}>
-      {placeholder}
-    </span>
-  );
-});
-
 const vm = getCurrentInstance();
 
 const changeRef = (instance) => {
@@ -130,6 +119,8 @@ const changeRef = (instance) => {
     >
       <Render :content="item.label" />
     </span>
-    <Render :content="placeholderNode" />
+    <span v-if="!item" :class="`${prefixCls}-selection-placeholder`" :style="hasTextInput ? { visibility: 'hidden' } : undefined">
+      <Render :content="placeholder" />
+    </span>
   </span>
 </template>

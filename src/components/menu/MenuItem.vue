@@ -5,7 +5,7 @@ import { Item } from '@/vc-component/menu';
 import Tooltip, { type TooltipProps } from '../tooltip';
 import { useMenuContextInject } from './MenuContext';
 import type { VueNode } from '@/vc-util/type';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import clsx from 'clsx';
 import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import { useSiderContextInject } from '../layout/context';

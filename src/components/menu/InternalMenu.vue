@@ -5,7 +5,7 @@ import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import type { VueNode } from '@/vc-util/type';
 import { EllipsisOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
-import { isEmpty, omit } from 'lodash-es';
+import { isEmpty, omit } from 'es-toolkit/compat';
 import { computed, getCurrentInstance, h, toRefs, type CSSProperties } from 'vue';
 import { useMergeSemantic, type SemanticClassNames, type SemanticStyles } from '../_util/hooks';
 import initCollapseMotion from '../_util/motion';

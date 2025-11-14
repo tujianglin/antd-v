@@ -15,7 +15,7 @@ import { useToken } from '../theme/internal';
 import useStyle from './style';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons-vue';
 import { ZIndexContextProvider } from '../_util/zindexContext';
 import { onlyChild } from '../_util/onlyChild';

@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, toRefs } from 'vue';
 import { CONTAINER_MAX_OFFSET } from '../_util/hooks/useZIndex';
 import { getTransitionName } from '../_util/motion';

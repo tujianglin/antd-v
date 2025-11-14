@@ -3,7 +3,7 @@ import type { Meta } from '@/vc-component/form/interface';
 import isVisible from '@/vc-util/Dom/isVisible';
 import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, ref, toRefs, watch, type CSSProperties } from 'vue';
 import type { FormItemProps } from '.';
 import { Row } from '../../grid';

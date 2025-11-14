@@ -3,7 +3,7 @@ import Render from '@/vc-component/render';
 import raf from '@/vc-util/raf';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, nextTick, onBeforeUnmount, ref, toRefs, useTemplateRef, watch, type InputHTMLAttributes } from 'vue';
 import type { PickerRef } from '../../interface';
 import { leftPad } from '../../utils/miscUtil';

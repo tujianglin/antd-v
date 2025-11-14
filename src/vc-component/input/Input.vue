@@ -6,7 +6,7 @@ import useCount from './hooks/useCount';
 import BaseInput from './BaseInput.vue';
 import Render from '@/vc-component/render';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 
 defineOptions({ inheritAttrs: false });
 

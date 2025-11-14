@@ -15,7 +15,7 @@ import { cloneElement, isValidElement } from '@/vc-util/Children/util';
 import Render from '@/vc-component/render';
 import { useConfigContextInject } from '@/components/config-provider';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 

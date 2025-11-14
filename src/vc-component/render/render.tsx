@@ -1,6 +1,6 @@
 import { isComponent } from '@/vc-util/Children/util';
 import type { VueNode } from '@/vc-util/type';
-import { isArray, isBoolean } from 'lodash-es';
+import { isArray, isBoolean } from 'es-toolkit/compat';
 import { cloneVNode, defineComponent, getCurrentInstance, h, isVNode, type Component, type PropType } from 'vue';
 
 export default defineComponent({

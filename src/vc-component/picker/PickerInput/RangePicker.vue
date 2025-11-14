@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import pickAttrs from '@/vc-util/pickAttrs';
 import { reactiveComputed } from '@vueuse/core';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, nextTick, ref, toRefs, watch } from 'vue';
 import useSemantic from '../hooks/useSemantic';
 import type {

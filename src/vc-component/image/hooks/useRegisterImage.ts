@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'es-toolkit/compat';
 import { computed, onBeforeUnmount, ref, watch, type Ref } from 'vue';
 import { usePreviewGroupContextInject } from '../context';
 import type { ImageElementProps } from '../interface';

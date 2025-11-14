@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import { composeRef } from '@/vc-util/ref';
 import clsx from 'clsx';
-import { isEmpty, omit } from 'lodash-es';
+import { isEmpty, omit } from 'es-toolkit/compat';
 import { ref, type HTMLAttributes } from 'vue';
 import { OverflowContextProvider, useOverflowContextInject } from './context';
 import Item from './Item.vue';

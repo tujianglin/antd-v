@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { isArray } from 'lodash-es';
+import { isArray } from 'es-toolkit/compat';
 import { computed } from 'vue';
 import type { SemanticClassNames, SemanticStyles } from '../_util/hooks';
 import type { ProgressProps, SemanticName } from './progress.vue';

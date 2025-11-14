@@ -10,7 +10,7 @@ import { useSpaceCompactItemContextInject } from './CompactContext';
 import CompactItem from './CompactItem.vue';
 import useStyle from './style';
 import Render from '@/vc-component/render';
-import { isEmpty } from 'lodash-es';
+import { isEmpty } from 'es-toolkit/compat';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 
 export interface SpaceCompactProps {

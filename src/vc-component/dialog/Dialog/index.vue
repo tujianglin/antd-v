@@ -3,7 +3,7 @@ import contains from '@/vc-util/Dom/contains';
 import KeyCode from '@/vc-util/KeyCode';
 import pickAttrs from '@/vc-util/pickAttrs';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, onBeforeUnmount, ref, useId, useTemplateRef, watch, type CSSProperties } from 'vue';
 import type { IDialogPropTypes } from '../IDialogPropTypes';
 import { getMotionName } from '../util';

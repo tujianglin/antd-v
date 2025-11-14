@@ -6,7 +6,7 @@ import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import type { VueNode } from '@/vc-util/type';
 import { computedAsync } from '@vueuse/core';
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, getCurrentInstance, nextTick, toRefs, type CSSProperties, type HTMLAttributes, type VNode } from 'vue';
 import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
 import { useComponentConfig } from '../config-provider/context';

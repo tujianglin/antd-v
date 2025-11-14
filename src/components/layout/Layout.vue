@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import clsx from 'clsx';
-import { omit } from 'lodash-es';
+import { omit } from 'es-toolkit/compat';
 import { computed, ref, toRefs, useSlots, type CSSProperties, type HTMLAttributes } from 'vue';
 import { useConfigContextInject } from '../config-provider';
 import { useComponentConfig } from '../config-provider/context';

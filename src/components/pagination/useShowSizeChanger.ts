@@ -4,12 +4,12 @@ import type { SelectProps } from '../select';
 
 export default function useShowSizeChanger(showSizeChanger?: Ref<PaginationProps['showSizeChanger']>) {
   const value = computed<[show: boolean | undefined, selectProps: SelectProps | undefined]>(() => {
-    if (typeof showSizeChanger.value === 'boolean') {
-      return [showSizeChanger.value, {}];
+    if (typeof showSizeChanger?.value === 'boolean') {
+      return [showSizeChanger?.value, {}];
     }
 
-    if (showSizeChanger.value && typeof showSizeChanger.value === 'object') {
-      return [true, showSizeChanger.value];
+    if (showSizeChanger?.value && typeof showSizeChanger?.value === 'object') {
+      return [true, showSizeChanger?.value];
     }
 
     return [undefined, undefined];

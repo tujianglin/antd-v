@@ -4,7 +4,7 @@ import ResizeObserver from '@/vc-component/resize-observer';
 import { composeRef } from '@/vc-util/ref';
 import type { VueKey, VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { isEqual } from 'lodash-es';
+import { isEqual } from 'es-toolkit/compat';
 import { computed, getCurrentInstance, nextTick, ref, toRefs, useTemplateRef, watch, type CSSProperties } from 'vue';
 import type { SemanticClassNamesType, SemanticStylesType } from '../_util/hooks';
 import { useMergeSemantic } from '../_util/hooks';
