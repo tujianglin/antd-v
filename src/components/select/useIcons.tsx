@@ -13,7 +13,7 @@ import { computed, toRefs } from 'vue';
 
 export default function useIcons(
   options: ReactiveComputedReturn<{
-    suffixIcon?: VueNode;
+    suffix?: VueNode;
     clearIcon?: VueNode;
     menuItemSelectedIcon?: VueNode;
     removeIcon?: VueNode;
@@ -28,7 +28,7 @@ export default function useIcons(
   }>,
 ): any {
   const {
-    suffixIcon,
+    suffix,
     clearIcon,
     menuItemSelectedIcon,
     removeIcon,
@@ -45,7 +45,7 @@ export default function useIcons(
 
   // Validation Feedback Icon
   const getSuffixIconNode = (arrowIcon?: VueNode) => {
-    if (!suffixIcon?.value && !hasFeedback?.value && showArrow?.value === false) {
+    if (!suffix?.value && !hasFeedback?.value && showArrow?.value === false) {
       return null;
     }
     return (
@@ -59,8 +59,8 @@ export default function useIcons(
   // Arrow item icon
   const mergedSuffixIcon = computed(() => {
     return ({ open, showSearch }: { open: boolean; showSearch: boolean }) => {
-      if (suffixIcon.value !== undefined) {
-        return getSuffixIconNode(suffixIcon.value);
+      if (suffix.value !== undefined) {
+        return getSuffixIconNode(suffix.value);
       }
 
       if (loading.value) {

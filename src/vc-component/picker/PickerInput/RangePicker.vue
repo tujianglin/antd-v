@@ -2,7 +2,7 @@
 import pickAttrs from '@/vc-util/pickAttrs';
 import { reactiveComputed } from '@vueuse/core';
 import { omit } from 'es-toolkit/compat';
-import { computed, nextTick, ref, toRefs, watch } from 'vue';
+import { computed, nextTick, ref, toRefs, useTemplateRef, watch } from 'vue';
 import useSemantic from '../hooks/useSemantic';
 import type {
   BaseInfo,
@@ -195,7 +195,7 @@ const {
   // Native
   onClick,
 } = toRefs(reactiveComputed(() => filledProps.value) as FilledProps<RangePickerProps, DateType, ReturnType<typeof updateProps>>);
-const selectorRef = ref();
+const selectorRef = useTemplateRef('selectorRef');
 
 defineExpose({
   get nativeElement() {
@@ -728,8 +728,8 @@ if (process.env.NODE_ENV !== 'production') {
       range
     >
       <RangeSelector
-        v-bind="{ ...omit(filledProps,['onFoucs', 'onBlur', 'onClick', 'onKeydown', 'onChange', 'onOpenChange']) as any }"
-        :ref="(el) => (selectorRef = el)"
+        v-bind="{ ...omit(filledProps,['onFocus', 'onBlur', 'onClick', 'onKeydown', 'onChange', 'onOpenChange']) as any }"
+        ref="selectorRef"
         :class="clsx(rootClassName, mergedClassNames.root)"
         :style="{
           ...mergedStyles.root,

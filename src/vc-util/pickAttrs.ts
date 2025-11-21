@@ -4,7 +4,7 @@ const attributes = `accept acceptCharset accessKey action allowFullScreen allowT
     controls coords crossOrigin data dateTime default defer dir disabled download draggable
     encType form formAction formEncType formMethod formNoValidate formTarget frameBorder
     headers height hidden high href hrefLang htmlFor httpEquiv icon id inputMode integrity
-    is keyParams keyType kind label lang list loop low manifest marginHeight marginWidth max maxLength media
+    is keyParams keyType kind label lang list loop low manifest marginHeight marginWidth max maxlength media
     mediaGroup method min minlength multiple muted name noValidate nonce open
     optimum pattern placeholder poster preload radioGroup readOnly rel required
     reversed role rowSpan rows sandbox scope scoped scrolling seamless selected

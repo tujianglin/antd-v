@@ -3,7 +3,7 @@ import TextArea from '@/vc-component/textarea';
 import KeyCode from '@/vc-util/KeyCode';
 import { reactiveComputed } from '@vueuse/core';
 import clsx from 'clsx';
-import { computed, ref, toRefs, useAttrs, useTemplateRef, watch, type TextareaHTMLAttributes } from 'vue';
+import { computed, ref, toRefs, useAttrs, useId, useTemplateRef, watch, type TextareaHTMLAttributes } from 'vue';
 import { useUnstableContextInject } from './context';
 import useEffectState from './hooks/useEffectState';
 import KeywordTrigger from './KeywordTrigger.vue';
@@ -18,6 +18,11 @@ import {
   replaceWithMeasure,
   setInputSelection,
 } from './util';
+import { assign } from 'es-toolkit/compat';
+
+interface InternalMentionsProps extends MentionsProps {
+  hasWrapper: boolean;
+}
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -35,6 +40,7 @@ const {
   notFoundContent = 'Not Found',
   options,
   allowClear: _,
+  hasWrapper,
   silent,
 
   // Events
@@ -65,22 +71,22 @@ const {
 
   // Rest
   ...restProps
-} = defineProps<MentionsProps>();
+} = defineProps<InternalMentionsProps>();
 
 const mergedPrefix = computed(() => (Array.isArray(prefix) ? prefix : [prefix]));
 
 // =============================== Refs ===============================
-const containerRef = ref<HTMLDivElement>(null);
-const textareaRef = useTemplateRef('textareaRef');
-const measureRef = ref<HTMLDivElement>(null);
+const containerRef = useTemplateRef('containerRef');
+const textareaRef = ref(null);
+const measureRef = ref(null);
 
 const getTextArea = () => {
   return textareaRef.value?.resizableTextArea?.textArea;
 };
 
 defineExpose({
-  focus: () => textareaRef.value?.focus(),
-  blur: () => textareaRef.value?.blur(),
+  focus: textareaRef.value?.focus,
+  blur: textareaRef.value?.blur,
   get textarea() {
     return textareaRef.value?.resizableTextArea?.textArea;
   },
@@ -96,6 +102,10 @@ const measurePrefix = ref('');
 const measureLocation = ref(0);
 const activeIndex = ref(0);
 const isFocus = ref(false);
+
+// ================================ Id ================================
+const id = useId();
+const uniqueKey = computed(() => restProps?.id || id);
 
 // ============================== Value ===============================
 const mergedValue = defineModel('value', { default: '' });
@@ -146,7 +156,7 @@ const getOptions = (targetMeasureText: string) => {
   if (options && options.length > 0) {
     list = options.map((item) => ({
       ...item,
-      key: item?.key ?? item.value,
+      key: `${item?.key ?? item.value}-${uniqueKey.value}`,
     }));
   }
   return list.filter((option: OptionProps) => {
@@ -343,52 +353,84 @@ const onInternalPopupScroll = (event) => {
   onPopupScroll?.(event);
 };
 
+// ============================== Styles ==============================
+const mergedStyles = computed(() => {
+  const resizeStyle = styles?.textarea?.resize ?? style?.resize;
+  const mergedTextareaStyle = { ...styles?.textarea };
+
+  // Only add resize if it has a valid value, avoid setting undefined
+  if (resizeStyle !== undefined) {
+    mergedTextareaStyle.resize = resizeStyle;
+  }
+
+  return {
+    ...styles,
+    textarea: mergedTextareaStyle,
+  };
+});
+
 const attrs = useAttrs() as TextareaHTMLAttributes;
+
+const MentionNode = () => {
+  return (
+    <>
+      <TextArea
+        classNames={{ textarea: mentionClassNames?.textarea }}
+        /**
+         * Example:<Mentions style={{ resize: 'none' }} />.
+         * If written this way, resizing here will become invalid.
+         * The TextArea component code and found that the resize parameter in the style of the ResizeTextArea component is obtained from prop.style.
+         * Just pass the resize attribute and leave everything else unchanged.
+         */
+        styles={mergedStyles.value}
+        ref={textareaRef}
+        value={mergedValue.value}
+        {...(assign(restProps, attrs) as any)}
+        rows={attrs.rows || 1}
+        onChange={onInternalChange}
+        onKeydown={onInternalKeyDown}
+        onKeyup={onInternalKeyUp}
+        onPressEnter={onInternalPressEnter}
+        onFocus={onInternalFocus}
+        onBlur={onInternalBlur}
+      />
+      {mergedMeasuring.value && (
+        <div ref={measureRef} class={`${prefixCls}-measure`}>
+          {mergedValue?.value?.slice(0, mergedMeasureLocation?.value)}
+          <MentionsContextProvider
+            value={{
+              notFoundContent,
+              activeIndex: activeIndex.value,
+              selectOption,
+              onFocus: onDropdownFocus,
+              onBlur: onDropdownBlur,
+              onScroll: onInternalPopupScroll,
+            }}
+          >
+            <KeywordTrigger
+              prefixCls={prefixCls}
+              transitionName={transitionName}
+              placement={placement}
+              direction={direction}
+              options={mergedOptions?.value}
+              visible
+              getPopupContainer={getPopupContainer}
+              popupClassName={clsx(popupClassName, mentionClassNames?.popup)}
+              popupStyle={styles?.popup}
+            >
+              <span>{mergedMeasurePrefix.value}</span>
+            </KeywordTrigger>
+          </MentionsContextProvider>
+          {mergedValue?.value?.slice(mergedMeasureLocation?.value + mergedMeasurePrefix?.value?.length)}
+        </div>
+      )}
+    </>
+  );
+};
 </script>
 <template>
-  <div :class="clsx(prefixCls, className)" :style="style" ref="containerRef">
-    <TextArea
-      :class-names="{ textarea: mentionClassNames?.textarea }"
-      :style="{ resize: style?.resize }"
-      :styles="{ textarea: styles?.textarea }"
-      ref="textareaRef"
-      v-bind="{ ...restProps, ...$attrs }"
-      :value="mergedValue"
-      :rows="attrs.rows || 1"
-      @change="onInternalChange"
-      @keydown="onInternalKeyDown"
-      @keyup="onInternalKeyUp"
-      @press-enter="onInternalPressEnter"
-      @focus="onInternalFocus"
-      @blur="onInternalBlur"
-    />
-    <div v-if="mergedMeasuring" ref="measureRef" :class="`${prefixCls}-measure`">
-      {{ mergedValue.slice(0, mergedMeasureLocation) }}
-      <MentionsContextProvider
-        :value="{
-          notFoundContent,
-          activeIndex,
-          selectOption,
-          onFocus: onDropdownFocus,
-          onBlur: onDropdownBlur,
-          onScroll: onInternalPopupScroll,
-        }"
-      >
-        <KeywordTrigger
-          :prefix-cls="prefixCls"
-          :transition-name="transitionName"
-          :placement="placement"
-          :direction="direction"
-          :options="mergedOptions"
-          visible
-          :get-popup-container="getPopupContainer"
-          :popup-class-name="clsx(popupClassName, mentionClassNames?.popup)"
-          :popup-style="styles?.popup"
-        >
-          <span>{{ mergedMeasurePrefix }}</span>
-        </KeywordTrigger>
-      </MentionsContextProvider>
-      {{ mergedValue.slice(mergedMeasureLocation + mergedMeasurePrefix.length) }}
-    </div>
+  <div v-if="!hasWrapper" :class="clsx(prefixCls, className)" :style="style" ref="containerRef">
+    <MentionNode />
   </div>
+  <MentionNode v-else />
 </template>

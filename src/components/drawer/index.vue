@@ -3,7 +3,7 @@ import type { DrawerProps as RcDrawerProps } from '@/vc-component/drawer';
 import RcDrawer from '@/vc-component/drawer';
 import type { CSSMotionProps } from '@/vc-component/motion';
 import clsx from 'clsx';
-import { computed, getCurrentInstance, toRefs } from 'vue';
+import { computed, getCurrentInstance, toRefs, useId } from 'vue';
 import ContextIsolator from '../_util/ContextIsolator';
 import { useMergeSemantic } from '../_util/hooks';
 import type { MaskType } from '../_util/hooks/useMergedMask';
@@ -31,7 +31,7 @@ export interface DrawerResizableConfig {
 // Drawer diff props: 'open' | 'motion' | 'maskMotion' | 'wrapperClassName'
 export interface DrawerProps
   extends Omit<RcDrawerProps, 'maskStyle' | 'destroyOnClose' | 'mask' | 'resizable' | 'classNames' | 'styles'>,
-    Omit<DrawerPanelProps, 'prefixCls'> {
+    Omit<DrawerPanelProps, 'prefixCls' | 'ariaId'> {
   size?: sizeType | number;
   resizable?: DrawerResizableConfig;
   open?: boolean;
@@ -41,6 +41,7 @@ export interface DrawerProps
    */
   destroyOnHidden?: boolean;
   mask?: MaskType;
+  ariaLabelledby?: any;
 }
 
 defineOptions({ name: 'Drawer', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -59,7 +60,7 @@ const {
   style,
   class: className,
   resizable,
-
+  ariaLabelledby,
   // Deprecated
   destroyOnHidden,
   autofocus = true,
@@ -67,6 +68,9 @@ const {
   maskClosable = true,
   ...rest
 } = defineProps<DrawerProps>();
+
+const id = useId();
+const ariaId = computed(() => (rest.title ? id : undefined));
 
 const {
   getPopupContainer,
@@ -206,6 +210,7 @@ const drawerClassName = computed(() =>
         :get-container="getContainer"
         :after-open-change="afterOpenChange"
         :z-index="zIndex"
+        :aria-labelledby="ariaLabelledby ?? ariaId"
         :destroy-on-hidden="destroyOnHidden"
       >
         <DrawerPanel :prefix-cls="prefixCls" v-bind="rest" @close="onClose">

@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { cloneVNode, computed, getCurrentInstance, ref, toRefs, useTemplateRef, type CSSProperties, type VNode } from 'vue';
+import { computed, getCurrentInstance, ref, toRefs, useTemplateRef, type CSSProperties, type VNode } from 'vue';
 import {
   useMergeSemantic,
   type SemanticClassNames,
@@ -10,8 +10,7 @@ import {
 import { useComponentConfig } from '../config-provider/context';
 import useSize from '../config-provider/hooks/useSize';
 import { useCompactItemContext } from '../space/CompactContext';
-import type { InputProps } from './interface';
-import Input from './Input.vue';
+import Input, { type InputProps } from './Input.vue';
 import { SearchOutlined } from '@ant-design/icons-vue';
 import Button from '../button';
 import Render from '@/vc-component/render';
@@ -19,6 +18,11 @@ import clsx from 'clsx';
 import type { ButtonSemanticName } from '../button/interface';
 import type { ValueType } from '@/vc-component/input/interface';
 import type { VueNode } from '@/vc-util/type';
+import Compact from '../space/Compact.vue';
+import useStyle from './style/search';
+import pickAttrs from '@/vc-util/pickAttrs';
+import { omit } from 'es-toolkit';
+import { cloneElement } from '@/vc-util/Children/util';
 
 type SemanticName = 'root' | 'input' | 'prefix' | 'suffix' | 'count';
 
@@ -52,7 +56,6 @@ const {
   size: customizeSize,
   suffix,
   enterButton = false,
-  addonAfter,
   loading,
   disabled,
   variant,
@@ -69,12 +72,14 @@ const emits = defineEmits<{
   compositionend: [CompositionEvent];
 }>();
 
-const slots = defineSlots<{ suffix?: () => VNode[]; addonAfter?: () => VNode[]; enterButton?: () => VNode[] }>();
+const slots = defineSlots<{
+  suffix?: () => VNode[];
+  enterButton?: () => VNode[];
+}>();
 
 const value = defineModel<ValueType>('value');
 
 const suffixSlot = computed(() => slots.suffix || suffix);
-const addonAfterSlot = computed(() => slots.addonAfter || addonAfter);
 const enterButtonSlot = computed(() => slots.enterButton || enterButton);
 
 const {
@@ -102,7 +107,8 @@ const [mergedClassNames, mergedStyles] = useMergeSemantic<InputSearchClassNamesT
 );
 
 const prefixCls = computed(() => getPrefixCls.value('input-search', customizePrefixCls));
-const inputPrefix = computed(() => getPrefixCls.value('input', customizeInputPrefixCls));
+const inputPrefixCls = computed(() => getPrefixCls.value('input', customizeInputPrefixCls));
+const [hashId, cssVarCls] = useStyle(prefixCls);
 const { compactSize } = useCompactItemContext(prefixCls, direction);
 
 const size = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
@@ -119,39 +125,39 @@ function onChange(e: Event) {
   emits('change', e);
 }
 
-function onMouseDown(e: MouseEvent) {
+function onMousedown(e: MouseEvent) {
   if (document.activeElement === inputRef.value?.input) {
     e.preventDefault();
   }
 }
 
-function handleSearch(e: MouseEvent | KeyboardEvent) {
+function onSearch(e: MouseEvent | KeyboardEvent) {
   emits('search', inputRef.value.input.value, e, {
     source: 'input',
   });
 }
 
-function handlePressEnter(e: KeyboardEvent) {
+function onPressEnter(e: KeyboardEvent) {
   if (composedRef.value || loading) {
     return;
   }
   customOnPressEnter?.(e);
-  handleSearch(e);
+  onSearch(e);
 }
 
 const searchIcon = computed(() => (typeof enterButton === 'boolean' ? <SearchOutlined /> : null));
 const btnClassName = computed(() => clsx(`${prefixCls.value}-button`, mergedClassNames?.value?.button?.root));
 
-const button = computed(() => {
+const SearchButton = () => {
   let button;
   const enterButtonAsElement = (enterButton || {}) as VNode;
   const isAntdButton = enterButtonAsElement.type && (enterButtonAsElement.type as typeof Button).name === 'Button';
   if (isAntdButton) {
-    button = cloneVNode(enterButtonAsElement, {
-      onMousedown: onMouseDown,
+    button = cloneElement(enterButtonAsElement, {
+      onMousedown,
       onClick: (e: MouseEvent) => {
         enterButtonAsElement?.props?.onClick?.(e);
-        handleSearch(e);
+        onSearch(e);
       },
       key: 'enterButton',
       ...(isAntdButton
@@ -171,8 +177,8 @@ const button = computed(() => {
         size={size.value}
         disabled={disabled}
         key="enterButton"
-        onMousedown={onMouseDown}
-        onClick={handleSearch}
+        onMousedown={onMousedown}
+        onClick={onSearch}
         loading={loading}
         icon={searchIcon.value}
         variant={
@@ -183,25 +189,24 @@ const button = computed(() => {
               : undefined
         }
       >
-        <Render content={enterButtonSlot.value}></Render>
+        {enterButtonSlot.value && <Render content={enterButtonSlot.value}></Render>}
       </Button>
     );
   }
-  if (addonAfterSlot.value) {
-    button = [button, cloneVNode(<Render content={addonAfterSlot.value}></Render>, { key: 'addonAfter' })];
-  }
   return button;
-});
+};
 
 const mergedClassName = computed(() => {
   return clsx(
     prefixCls.value,
+    cssVarCls.value,
     {
       [`${prefixCls.value}-rtl`]: direction?.value === 'rtl',
       [`${prefixCls.value}-${size.value}`]: !!size.value,
       [`${prefixCls.value}-with-button`]: !!enterButton,
     },
     className,
+    hashId.value,
     mergedClassNames?.value?.root,
   );
 });
@@ -215,25 +220,34 @@ const handleOnCompositionEnd = (e: CompositionEvent) => {
   composedRef.value = false;
   emits('compositionend', e);
 };
+
+// ========================== Render ==========================
+// >>> Root Props
+const rootProps = pickAttrs(restProps, {
+  data: true,
+});
+
+const inputProps: InputProps = omit(
+  {
+    ...restProps,
+    classNames: omit(mergedClassNames.value, ['button', 'root']),
+    styles: omit(mergedStyles.value, ['button', 'root']),
+    prefixCls: inputPrefixCls.value,
+    type: 'search',
+    size,
+    variant,
+    onPressEnter,
+    onCompositionStart: handleOnCompositionStart,
+    onCompositionEnd: handleOnCompositionEnd,
+    onChange,
+    disabled,
+  },
+  Object.keys(rootProps) as any[],
+);
 </script>
 <template>
-  <Input
-    ref="inputRef"
-    v-bind="{ ...restProps, ...$attrs }"
-    v-model:value="value"
-    :class="mergedClassName"
-    :class-names="mergedClassNames"
-    :styles="mergedStyles"
-    :prefix-cls="inputPrefix"
-    type="search"
-    :size="size"
-    :variant="variant"
-    :addon-after="button"
-    :suffix="suffixSlot"
-    :disabled="disabled"
-    @press-enter="handlePressEnter"
-    @change="onChange"
-    @compositionstart="handleOnCompositionStart"
-    @compositionend="handleOnCompositionEnd"
-  />
+  <Compact :class="mergedClassName" :style="{ ...style, ...mergedStyles?.root }" v-bind="rootProps" :hidden="hidden">
+    <Input ref="inputRef" v-bind="{ ...inputProps, ...$attrs }" v-model:value="value" :suffix="suffixSlot" />
+    <SearchButton />
+  </Compact>
 </template>

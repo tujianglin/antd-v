@@ -3,8 +3,10 @@ import { camelCase } from 'es-toolkit/compat';
 import type { Component, FunctionalComponent, VNode } from 'vue';
 import { Fragment, isVNode } from 'vue';
 
+export type Primitive = null | undefined | string | number | boolean | symbol | bigint;
+
 /** https://github.com/Microsoft/TypeScript/issues/29729 */
-export type LiteralUnion<T extends string> = T | (string & {});
+export type LiteralUnion<T, U extends Primitive = string> = T | (U & Record<never, never>);
 
 export type AnyObject = Record<VueKey, any>;
 

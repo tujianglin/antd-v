@@ -53,4 +53,8 @@ export default genStyleHooks(
     return [genFloatButtonStyle(floatButtonToken), genGroupStyle(floatButtonToken), initFadeMotion(token)];
   },
   prepareComponentToken,
+  {
+    // Should be higher than Button (-999)
+    order: -998,
+  },
 );

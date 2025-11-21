@@ -2,7 +2,7 @@
 import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { computed, getCurrentInstance, h, ref, toRefs, useTemplateRef } from 'vue';
-import { triggerFocus, type InputFocusOptions } from '../../vc-component/input/utils/commonUtils';
+import { triggerFocus } from '.';
 import type { TextAreaProps as VcTextAreaProps } from '../../vc-component/textarea';
 import VcTextArea from '../../vc-component/textarea';
 import getAllowClear from '../_util/getAllowClear';
@@ -16,6 +16,7 @@ import type { SizeType } from '../config-provider/SizeContext';
 import { useFormItemInputContextInject } from '../form/context';
 import useVariant from '../form/hooks/useVariants';
 import { useCompactItemContext } from '../space/CompactContext';
+import type { InputFocusOptions } from './Input.vue';
 import { useSharedStyle } from './style';
 import useStyle from './style/textarea';
 

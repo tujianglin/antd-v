@@ -1,13 +1,15 @@
 export type { InputRef } from '../../vc-component/input';
-import InternalInput from './Input.vue';
+import { triggerFocus } from '@/vc-util/Dom/focus';
+import InternalInput, { type InputProps } from './Input.vue';
 import OTP from './OTP/index.vue';
 import Password from './Password.vue';
 import Search from './Search.vue';
 import TextArea from './TextArea.vue';
 
-export type { InputProps } from './interface';
 export type { SearchProps } from './Search.vue';
 export type { TextAreaProps } from './TextArea.vue';
+export { triggerFocus };
+export type { InputProps };
 
 type CompoundedComponent = typeof InternalInput & {
   Search: typeof Search;

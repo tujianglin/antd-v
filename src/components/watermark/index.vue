@@ -33,6 +33,10 @@ export interface WatermarkProps {
   gap?: [number, number];
   offset?: [number, number];
   inherit?: boolean;
+  /**
+   * @since 6.0.0
+   */
+  onRemove?: () => void;
 }
 
 defineOptions({ name: 'Watermark', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -55,6 +59,7 @@ const {
   gap = [100, 100],
   offset,
   inherit = true,
+  onRemove,
 } = defineProps<WatermarkProps>();
 
 /**
@@ -220,7 +225,7 @@ const syncWatermark = useRafDebounce(renderWatermark);
 
 // ============================= Effect =============================
 // Append watermark to the container
-const [appendWatermark, removeWatermark, isWatermarkEle] = useWatermark(markStyle);
+const [appendWatermark, removeWatermark, isWatermarkEle] = useWatermark(markStyle, onRemove);
 
 watch(
   [watermarkInfo, targetElements],

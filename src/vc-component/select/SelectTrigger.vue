@@ -8,7 +8,7 @@ import { computed, useTemplateRef, type CSSProperties } from 'vue';
 import type { Placement, RenderDOMFunc } from './interface';
 
 export interface RefTriggerProps {
-  getPopupElement: HTMLDivElement;
+  getPopupElement: () => HTMLDivElement;
 }
 
 export interface SelectTriggerProps {
@@ -33,6 +33,7 @@ export interface SelectTriggerProps {
   onPopupVisibleChange?: (visible: boolean) => void;
 
   onPopupMouseEnter: () => void;
+  onPopupMouseDown: (e: MouseEvent) => void;
 }
 
 defineOptions({ name: 'SelectTrigger', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -56,6 +57,7 @@ const {
   empty,
   onPopupVisibleChange,
   onPopupMouseEnter,
+  onPopupMouseDown,
   ...restProps
 } = defineProps<SelectTriggerProps>();
 
@@ -148,7 +150,7 @@ const mergedPopupStyle = computed(() => {
 const triggerPopupRef = useTemplateRef('triggerPopupRef');
 
 defineExpose({
-  get getPopupElement() {
+  getPopupElement: () => {
     return triggerPopupRef.value?.popupElement;
   },
 });
@@ -176,7 +178,7 @@ defineExpose({
     @open-change="onPopupVisibleChange"
   >
     <template #popup>
-      <div @mousedown="onPopupMouseEnter"><Render :content="popupNode" /></div>
+      <div @mouseenter="onPopupMouseEnter" @mousedown="onPopupMouseDown"><Render :content="popupNode" /></div>
     </template>
     <slot></slot>
   </Trigger>

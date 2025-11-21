@@ -2,11 +2,10 @@
 import { cloneVNode, computed, ref, toRefs, useAttrs, useTemplateRef, watch, type VNode } from 'vue';
 import { useConfigContextInject } from '../config-provider';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
-import type { InputProps } from './interface';
 import { useRemovePasswordTimeout } from './hooks/useRemovePasswordTimeout';
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons-vue';
 import clsx from 'clsx';
-import Input from './Input.vue';
+import Input, { type InputProps } from './Input.vue';
 import { omit } from 'es-toolkit/compat';
 import Render from '@/vc-component/render';
 import type { VueKey, VueNode } from '@/vc-util/type';

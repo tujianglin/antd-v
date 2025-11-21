@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted, ref, watch, type Ref } from 'vue';
+import { onBeforeUnmount, onMounted, type Ref } from 'vue';
 
 export default function useSelectTriggerControl(
   elements: () => (HTMLElement | undefined)[],
@@ -6,23 +6,9 @@ export default function useSelectTriggerControl(
   triggerOpen: (open: boolean) => void,
   customizedTrigger: Ref<boolean>,
 ) {
-  const propsRef = ref(null);
-
-  watch(
-    [open, customizedTrigger],
-    () => {
-      propsRef.value = {
-        open: open.value,
-        triggerOpen,
-        customizedTrigger: customizedTrigger.value,
-      };
-    },
-    { deep: true, immediate: true },
-  );
-
   function onGlobalMouseDown(event: MouseEvent) {
     // If trigger is customized, Trigger will take control of popupVisible
-    if (propsRef.value?.customizedTrigger) {
+    if (customizedTrigger.value) {
       return;
     }
 
@@ -33,13 +19,13 @@ export default function useSelectTriggerControl(
     }
 
     if (
-      propsRef.value.open &&
+      open.value &&
       elements()
         .filter((element) => element)
         .every((element) => !element.contains(target) && element !== target)
     ) {
       // Should trigger close
-      propsRef.value.triggerOpen(false);
+      triggerOpen(false);
     }
   }
 

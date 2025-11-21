@@ -1,10 +1,10 @@
 import type { CSSInterpolation } from '@/vc-cssinjs';
 import { unit } from '@/vc-cssinjs';
 
-import { genOverflowStyle, getMultipleSelectorUnit } from '../../select/style/multiple';
 import type { GenerateStyle } from '../../theme/internal';
 import { mergeToken } from '../../theme/internal';
 import type { PickerToken } from './token';
+import { genOverflowStyle, getMultipleSelectorUnit } from './util';
 
 const genSize = (token: PickerToken, suffix?: string): CSSInterpolation => {
   const { componentCls, controlHeight } = token;

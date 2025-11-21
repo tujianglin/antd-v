@@ -21,6 +21,8 @@ import DefaultRenderEmpty from '../config-provider/defaultRenderEmpty.vue';
 import clsx from 'clsx';
 import Render from '@/vc-component/render';
 import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
+import useSize from '../config-provider/hooks/useSize';
+import type { SizeType } from '../config-provider/SizeContext';
 
 export type { DataDrivenOptionProps as MentionsOptionProps } from '@/vc-component/mentions/Mentions.vue';
 
@@ -31,7 +33,7 @@ export interface OptionProps {
   [key: string]: any;
 }
 
-type SemanticName = 'root' | 'textarea' | 'popup';
+type SemanticName = 'root' | 'textarea' | 'popup' | 'suffix';
 
 export type MentionsClassNamesType = SemanticClassNamesType<MentionProps, SemanticName>;
 export type MentionsStylesType = SemanticStylesType<MentionProps, SemanticName>;
@@ -49,6 +51,7 @@ export interface MentionProps extends Omit<RcMentionsProps, 'suffix' | 'classNam
   variant?: Variant;
   classNames?: MentionsClassNamesType;
   styles?: MentionsStylesType;
+  size?: SizeType;
 }
 
 export interface MentionsProps extends MentionProps {}
@@ -73,6 +76,7 @@ const {
   variant: customVariant,
   classNames,
   styles,
+  size: customSize,
   ...restProps
 } = defineProps<MentionsProps>();
 
@@ -89,6 +93,9 @@ defineExpose({
     return innerRef.value;
   },
 });
+
+// ===================== Size =====================
+const mergedSize = useSize(computed(() => (ctx) => customSize ?? ctx));
 
 const {
   getPrefixCls,
@@ -177,7 +184,10 @@ const [variant, enableVariantCls] = useVariant(
 const suffixNode = computed(() => hasFeedback?.value && <Render content={feedbackIcon?.value}></Render>);
 
 const mergedClassName = computed(() =>
-  clsx(contextClassName?.value, className, rootClassName, cssVarCls.value, rootCls.value, mergedClassNames?.value?.root),
+  clsx(contextClassName?.value, className, rootClassName, cssVarCls.value, rootCls.value, mergedClassNames?.value?.root, {
+    [`${prefixCls.value}-sm`]: mergedSize.value === 'small',
+    [`${prefixCls.value}-lg`]: mergedSize.value === 'large',
+  }),
 );
 </script>
 <template>

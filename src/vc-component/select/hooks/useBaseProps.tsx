@@ -9,9 +9,10 @@ import type { BaseSelectProps } from '../BaseSelect/interface';
 
 export interface BaseSelectContextProps extends BaseSelectProps {
   triggerOpen: boolean;
+  open: boolean;
   multiple: boolean;
   toggleOpen: (open?: boolean) => void;
-  open: boolean;
+  role?: string;
 }
 
 const BaseSelectContext: InjectionKey<Reactive<BaseSelectContextProps>> = Symbol('BaseSelectContext');

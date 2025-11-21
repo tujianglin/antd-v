@@ -2,24 +2,20 @@ import type { AlignType, BuildInPlacements } from '@/vc-component/trigger/interf
 import type { ScrollConfig, ScrollTo } from '@/vc-component/virtual-list/interface';
 import type { VueNode } from '@/vc-util/type';
 import type { AriaAttributes, CSSProperties } from 'vue';
+import type { ComponentsConfig } from '../hooks/useComponents';
 import type { DisplayInfoType, DisplayValueType, Mode, Placement, RenderDOMFunc } from '../interface';
 
-export type BaseSelectSemanticName = 'prefix' | 'suffix' | 'input';
+export type BaseSelectSemanticName =
+  | 'prefix'
+  | 'suffix'
+  | 'input'
+  | 'clear'
+  | 'placeholder'
+  | 'content'
+  | 'item'
+  | 'itemContent'
+  | 'itemRemove';
 
-export const DEFAULT_OMIT_PROPS = [
-  'value',
-  'onChange',
-  'removeIcon',
-  'placeholder',
-  'autofocus',
-  'maxTagCount',
-  'maxTagTextLength',
-  'maxTagPlaceholder',
-  'choiceTransitionName',
-  'onInputKeyDown',
-  'onPopupScroll',
-  'tabindex',
-] as const;
 export interface RefOptionListProps {
   onKeydown: (e: KeyboardEvent) => void;
   onKeyup: (e: KeyboardEvent) => void;
@@ -141,7 +137,7 @@ interface CommonSelectProps {
   // >>> Icons
   allowClear?: boolean | { clearIcon?: VueNode };
   prefix?: VueNode;
-  suffixIcon?: VueNode;
+  suffix?: VueNode;
   /** Selector remove icon */
   removeIcon?: VueNode;
 
@@ -173,6 +169,9 @@ interface CommonSelectProps {
   onMouseenter?: (e: MouseEvent) => void;
   onMouseleave?: (e: MouseEvent) => void;
   onClick?: (e: MouseEvent) => void;
+
+  // >>> Components
+  components?: ComponentsConfig;
 }
 
 export type BaseSelectPropsWithoutPrivate = CommonSelectProps;

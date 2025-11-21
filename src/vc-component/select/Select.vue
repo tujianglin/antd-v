@@ -2,15 +2,14 @@
 import { isValidNode } from '@/vc-util/Children/util';
 import useControlledState from '@/vc-util/hooks/useControlledState';
 import warning from '@/vc-util/warning';
-import { reactiveComputed } from '@vueuse/core';
-import { isEmpty } from 'es-toolkit/compat';
-import { computed, ref, toRefs, useId, useSlots, watch, type VNode } from 'vue';
+import { computed, ref, useId, useSlots, watch, type VNode } from 'vue';
 import BaseSelect from './BaseSelect/index.vue';
 import { isMultiple, type BaseSelectProps } from './BaseSelect/interface';
 import useCache from './hooks/useCache';
 import useFilterOptions from './hooks/useFilterOptions';
 import useOptions from './hooks/useOptions';
 import useRefFunc from './hooks/useRefFunc';
+import useSearchConfig from './hooks/useSearchConfig';
 import type {
   DefaultOptionType,
   DisplayInfoType,
@@ -63,14 +62,17 @@ const {
 
 const open = defineModel('open', { default: false });
 
-const {
-  filterOption,
-  searchValue,
-  autoClearSearchValue = ref(true),
-  optionFilterProp = ref('value'),
-  filterSort,
-  onSearch,
-} = toRefs(reactiveComputed(() => (typeof showSearch === 'boolean' && showSearch === true ? {} : showSearch || {})));
+const [mergedShowSearch, searchConfig] = useSearchConfig(
+  computed(() => showSearch),
+  computed(() => mode),
+);
+
+const filterOption = computed(() => searchConfig.value?.filterOption);
+const searchValue = computed(() => searchConfig.value?.searchValue);
+const autoClearSearchValue = computed(() => searchConfig.value?.autoClearSearchValue || true);
+const optionFilterProp = computed(() => searchConfig.value?.optionFilterProp);
+const filterSort = computed(() => searchConfig.value?.filterSort);
+const onSearch = computed(() => searchConfig.value?.onSearch);
 
 const mergedId = useId();
 const multiple = computed(() => isMultiple(mode));
@@ -493,7 +495,7 @@ const OMIT_DOM_PROPS = ['inputValue'];
       @display-values-change="onDisplayValuesChange"
       :max-count="maxCount"
       :direction="direction"
-      :show-search="(typeof showSearch === 'boolean' && showSearch === true) || !isEmpty(showSearch) || multiple"
+      :show-search="mergedShowSearch"
       :search-value="mergedSearchValue"
       @search="onInternalSearch"
       :auto-clear-search-value="!!autoClearSearchValue"

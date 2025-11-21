@@ -2,7 +2,8 @@
 import { BaseInput } from '@/vc-component/input';
 import type { CommonInputProps } from '@/vc-component/input/interface';
 import type { TextAreaProps } from '@/vc-component/textarea';
-import { useTemplateRef, type CSSProperties } from 'vue';
+import clsx from 'clsx';
+import { computed, useTemplateRef, type CSSProperties } from 'vue';
 import InternalMentions from './InternalMentions.vue';
 import type { OptionProps } from './Option';
 import { validateSearch as defaultValidateSearch } from './util';
@@ -17,6 +18,7 @@ export interface DataDrivenOptionProps extends Omit<OptionProps, 'children'> {
 }
 
 export interface MentionsProps extends BaseTextareaAttrs {
+  id?: string;
   autofocus?: boolean;
   class?: string;
   notFoundContent?: any;
@@ -75,6 +77,8 @@ const {
   ...rest
 } = defineProps<MentionsProps>();
 
+const hasSuffix = computed(() => !!(suffix || allowClear));
+
 // =============================== Ref ================================
 const holderRef = useTemplateRef('holderRef');
 const mentionRef = useTemplateRef('mentionRef');
@@ -109,7 +113,12 @@ const handleReset = () => {
     :value="mergedValue"
     :allow-clear="allowClear"
     :handle-reset="handleReset"
-    :class="className"
+    :class="
+      clsx(prefixCls, className, {
+        // hasSuffix
+        [`${prefixCls}-has-suffix`]: hasSuffix,
+      })
+    "
     :class-names="mentionsClassNames"
     :disabled="disabled"
     ref="holderRef"
@@ -124,6 +133,7 @@ const handleReset = () => {
       :prefix-cls="prefixCls"
       @change="triggerChange"
       :disabled="disabled"
+      :has-wrapper="hasSuffix"
     />
   </BaseInput>
 </template>

@@ -52,7 +52,7 @@ export interface InternalSelectProps<ValueType = any, OptionType extends BaseOpt
   extends Omit<RcSelectProps<ValueType, OptionType>, 'mode'> {
   rootClassName?: string;
   prefix?: VueNode;
-  suffixIcon?: VueNode;
+  suffix?: VueNode;
   size?: SizeType;
   disabled?: boolean;
   mode?: 'multiple' | 'tags' | 'SECRET_COMBOBOX_MODE_DO_NOT_USE' | 'combobox';
@@ -217,7 +217,7 @@ const { suffixIcon, itemIcon, removeIcon, clearIcon } = useIcons(
 
 const mergedAllowClear = computed(() => (allowClear === true ? { clearIcon: clearIcon?.value } : allowClear));
 
-const selectProps = computed(() => omit(rest, ['suffixIcon', 'itemIcon' as any]));
+const selectProps = computed(() => omit(rest, ['suffix', 'itemIcon' as any]));
 
 const mergedSize = useSize(computed(() => (ctx) => customizeSize ?? compactSize.value ?? ctx));
 
@@ -315,7 +315,7 @@ const [zIndex] = useZIndex(
     :placement="memoPlacement"
     :direction="direction"
     :prefix="prefix"
-    :suffix-icon="suffixIcon"
+    :suffix="suffixIcon"
     :menu-item-selected-icon="itemIcon"
     :remove-icon="removeIcon"
     :allow-clear="mergedAllowClear"

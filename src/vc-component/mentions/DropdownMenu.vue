@@ -9,11 +9,12 @@ import { useMentionsContextInject } from './MentionsContext';
 export interface DropdownMenuProps {
   prefixCls?: string;
   options: DataDrivenOptionProps[];
+  opened: boolean;
 }
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { prefixCls, options } = defineProps<DropdownMenuProps>();
+const { prefixCls, options, opened } = defineProps<DropdownMenuProps>();
 
 const { notFoundContent, activeIndex, selectOption, onFocus, onBlur, onScroll } = toRefs(useMentionsContextInject());
 
@@ -22,9 +23,9 @@ const menuRef = ref<MenuRef>(null);
 
 // Monitor the changes in ActiveIndex and scroll to the visible area if there are any changes
 watch(
-  [activeIndex, () => activeOption.value.key],
+  [activeIndex, () => activeOption.value.key, () => opened],
   () => {
-    if (activeIndex.value === -1 || !menuRef.value) {
+    if (activeIndex.value === -1 || !menuRef.value || !opened) {
       return;
     }
 

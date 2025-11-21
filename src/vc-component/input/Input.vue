@@ -1,12 +1,13 @@
 <script lang="tsx" setup>
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import type { ChangeEventInfo, InputProps, ValueType } from './interface';
-import { resolveOnChange, triggerFocus, type InputFocusOptions } from './utils/commonUtils';
+import { resolveOnChange } from './utils/commonUtils';
 import useCount from './hooks/useCount';
 import BaseInput from './BaseInput.vue';
 import Render from '@/vc-component/render';
 import clsx from 'clsx';
 import { omit } from 'es-toolkit/compat';
+import { triggerFocus, type InputFocusOptions } from '@/vc-util/Dom/focus';
 
 defineOptions({ inheritAttrs: false });
 

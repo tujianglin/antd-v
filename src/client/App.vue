@@ -1,10 +1,16 @@
 <script lang="tsx" setup>
-import { Pagination } from '@/components';
+import { Flex, InputNumber } from '@/components';
+
+const sharedProps = {
+  mode: 'spinner' as const,
+  min: 1,
+  max: 10,
+  style: { width: '150px' },
+};
 </script>
 <template>
-  <Pagination simple :current="2" :total="500" :show-size-changer="false" />
-  <br />
-  <Pagination :simple="{ readOnly: true }" :current="2" :total="50" />
-  <br />
-  <Pagination disabled simple :current="2" :total="50" />
+  <Flex orientation="vertical" gap="middle">
+    <InputNumber v-bind="sharedProps" placeholder="Outlined" />
+    <InputNumber v-bind="sharedProps" variant="filled" placeholder="Filled" />
+  </Flex>
 </template>

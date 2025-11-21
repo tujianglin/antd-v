@@ -1,23 +1,23 @@
 <script lang="tsx" setup>
-import Render from '@/vc-component/render';
 import raf from '@/vc-util/raf';
-import type { VueNode } from '@/vc-util/type';
 import clsx from 'clsx';
-import { computed, onMounted, ref, toRefs } from 'vue';
-import { useSemanticContextInject } from './SemanticContext';
+import { computed, onMounted, ref, type CSSProperties } from 'vue';
 
 export interface StepHandlerProps {
   prefixCls: string;
-  upNode?: VueNode;
-  downNode?: VueNode;
-  upDisabled?: boolean;
-  downDisabled?: boolean;
+  action: 'up' | 'down';
+  disabled?: boolean;
+  class?: string;
+  style?: CSSProperties;
   onStep: (up: boolean, emitter: 'handler' | 'keyboard' | 'wheel') => void;
 }
 
 defineOptions({ inheritAttrs: false });
 
-const { prefixCls, upNode, downNode, upDisabled, downDisabled, onStep } = defineProps<StepHandlerProps>();
+const { prefixCls, action, disabled, class: className, style, onStep } = defineProps<StepHandlerProps>();
+
+// ======================== MISC ========================
+const isUpAction = computed(() => action === 'up');
 
 const STEP_INTERVAL = 200;
 
@@ -26,47 +26,45 @@ const STEP_DELAY = 600;
 const stepTimeoutRef = ref<any>();
 const frameIds = ref<number[]>([]);
 
-const onStepRef = ref<StepHandlerProps['onStep']>();
-
-onMounted(() => {
-  onStepRef.value = onStep;
-  onStopStep();
-  frameIds.value.forEach((id) => raf.cancel(id));
-});
-
-const { classNames, styles } = toRefs(useSemanticContextInject());
-
 function onStopStep() {
   clearTimeout(stepTimeoutRef.value);
 }
 
 // We will interval update step when hold mouse down
-function onStepMouseDown(e: MouseEvent, up: boolean) {
+function onStepMouseDown(e) {
   e.preventDefault();
   onStopStep();
-  onStepRef.value(up, 'handler');
+
+  onStep(isUpAction.value, 'handler');
+
   // Loop step for interval
   function loopStep() {
-    onStepRef.value(up, 'handler');
+    onStep(isUpAction.value, 'handler');
+
     stepTimeoutRef.value = setTimeout(loopStep, STEP_INTERVAL);
   }
+
   // First time press will wait some time to trigger loop step update
   stepTimeoutRef.value = setTimeout(loopStep, STEP_DELAY);
 }
 
+onMounted(() => {
+  onStopStep();
+  frameIds.value.forEach((id) => raf.cancel(id));
+});
+
 // ======================= Render =======================
+const actionClassName = computed(() => `${prefixCls}-action`);
 
-const handlerClassName = computed(() => `${prefixCls}-handler`);
-
-const upClassName = computed(() =>
-  clsx(handlerClassName.value, `${handlerClassName.value}-up`, {
-    [`${handlerClassName.value}-up-disabled`]: upDisabled,
-  }),
-);
-const downClassName = computed(() =>
-  clsx(handlerClassName.value, `${handlerClassName.value}-down`, {
-    [`${handlerClassName.value}-down-disabled`]: downDisabled,
-  }),
+const mergedClassName = computed(() =>
+  clsx(
+    actionClassName.value,
+    `${actionClassName.value}-${action}`,
+    {
+      [`${actionClassName.value}-${action}-disabled`]: disabled,
+    },
+    className,
+  ),
 );
 
 // fix: https://github.com/ant-design/ant-design/issues/43088
@@ -75,35 +73,21 @@ const downClassName = computed(() =>
 // resulting in a disordered program execution.
 // So, we need to use requestAnimationFrame to ensure that the onmouseup event is executed after the onmousedown event.
 const safeOnStopStep = () => frameIds.value.push(raf(onStopStep));
-
-const sharedHandlerProps = {
-  unselectable: 'on' as const,
-  role: 'button',
-  onMouseup: safeOnStopStep,
-  onMouseleave: safeOnStopStep,
-};
 </script>
 <template>
-  <div :class="clsx(`${handlerClassName}-wrap`, classNames?.actions)" :style="styles?.actions">
-    <span
-      v-bind="sharedHandlerProps"
-      @mousedown="(e) => onStepMouseDown(e, true)"
-      aria-label="Increase Value"
-      :aria-disabled="upDisabled"
-      :class="upClassName"
-    >
-      <Render v-if="upNode" :content="upNode" />
-      <span v-else unselectable="on" :class="`${prefixCls}-handler-up-inner`"></span>
-    </span>
-    <span
-      v-bind="sharedHandlerProps"
-      @mousedown="(e) => onStepMouseDown(e, false)"
-      aria-label="Decrease Value"
-      :aria-disabled="downDisabled"
-      :class="downClassName"
-    >
-      <Render v-if="downNode" :content="downNode" />
-      <span v-else unselectable="on" :class="`${prefixCls}-handler-down-inner`"></span>
-    </span>
-  </div>
+  <span
+    unselectable="on"
+    role="button"
+    @mouseup="safeOnStopStep"
+    @mouseleave="safeOnStopStep"
+    @mousedown="onStepMouseDown"
+    :aria-label="isUpAction ? 'Increase Value' : 'Decrease Value'"
+    :aria-disabled="disabled"
+    :class="mergedClassName"
+    :style="style"
+  >
+    <slot>
+      <span unselectable="on" :class="`${prefixCls}-action-${action}-inner`"></span>
+    </slot>
+  </span>
 </template>

@@ -6,7 +6,7 @@ export type LocaleContextProps = Locale & { exist?: boolean };
 
 const LocaleContext: InjectionKey<Reactive<LocaleContextProps>> = Symbol('LocaleContext');
 
-export const useLocaleContextInject = () => {
+export const useLocaleContextInject = (): LocaleContextProps => {
   return inject(LocaleContext, reactive({} as LocaleContextProps));
 };
 

@@ -1,6 +1,14 @@
+import type { ValidateMessages } from '@/vc-component/form/interface';
 import type { PaginationLocale } from '@/vc-component/pagination';
 import { computed, defineComponent, type PropType } from 'vue';
 import type { PickerLocale as DatePickerLocale } from '../date-picker/generatePicker';
+import type { TransferLocale as TransferLocaleForEmpty } from '../empty/index.vue';
+import type { ModalLocale } from '../modal/interface';
+import type { PopconfirmLocale } from '../popconfirm/Overlay.vue';
+import type { TableLocale } from '../table/interface';
+import type { TourLocale } from '../tour/interface';
+import type { TransferLocale } from '../transfer/index.vue';
+import type { UploadLocale } from '../upload/interface';
 import { LocaleContextProvider, type LocaleContextProps } from './context';
 
 export { default as useLocale } from './useLocale';
@@ -12,14 +20,14 @@ export interface Locale {
   DatePicker?: DatePickerLocale;
   TimePicker?: Record<string, any>;
   Calendar?: Record<string, any>;
-  Table?: any;
-  Modal?: any;
-  Tour?: any;
-  Popconfirm?: any;
-  Transfer?: any;
+  Table?: TableLocale;
+  Modal?: ModalLocale;
+  Tour?: TourLocale;
+  Popconfirm?: PopconfirmLocale;
+  Transfer?: TransferLocale;
   Select?: Record<string, any>;
-  Upload?: any;
-  Empty?: any;
+  Upload?: UploadLocale;
+  Empty?: TransferLocaleForEmpty;
   global?: {
     placeholder?: string;
     close?: string;
@@ -35,7 +43,7 @@ export interface Locale {
   };
   Form?: {
     optional?: string;
-    defaultValidateMessages: any;
+    defaultValidateMessages: ValidateMessages;
   };
   Image?: {
     preview: string;

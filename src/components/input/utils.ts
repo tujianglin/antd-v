@@ -1,5 +1,5 @@
 import type { VueNode } from '@/vc-util/type';
-import type { InputProps } from './interface';
+import type { InputProps } from './Input.vue';
 
 export function hasPrefixSuffix(props: {
   prefix?: VueNode;

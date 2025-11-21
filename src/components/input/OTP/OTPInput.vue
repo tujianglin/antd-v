@@ -4,8 +4,7 @@ import clsx from 'clsx';
 import { computed, getCurrentInstance, ref, toRefs, useAttrs } from 'vue';
 import { useConfigContextInject } from '../../../components/config-provider';
 import raf from '../../../vc-util/raf';
-import Input from '../Input.vue';
-import type { InputProps } from '../interface';
+import Input, { type InputProps } from '../Input.vue';
 
 export interface OTPInputProps extends Omit<InputProps, 'onChange'> {
   index: number;

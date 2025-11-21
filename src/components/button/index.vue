@@ -248,6 +248,10 @@ const [mergedClassNames, mergedStyles] = useMergeSemantic<ButtonClassNamesType, 
   })),
 );
 
+const isOnly = computed(() => {
+  return !isValidElement(children.value) && children.value.length === 0 && !!iconType?.value;
+});
+
 const classes = computed(() => {
   return clsx(
     prefixCls.value,
@@ -262,7 +266,7 @@ const classes = computed(() => {
       [`${prefixCls.value}-color-${mergedColorText.value}`]: mergedColorText.value,
       [`${prefixCls.value}-variant-${mergedVariant.value}`]: mergedVariant.value,
       [`${prefixCls.value}-${sizeCls.value}`]: sizeCls.value,
-      [`${prefixCls.value}-icon-only`]: !isValidElement(children.value) && children.value.length === 0 && !!iconType?.value,
+      [`${prefixCls.value}-icon-only`]: isOnly.value,
       [`${prefixCls.value}-background-ghost`]: ghost && !isUnBorderedButtonVariant(mergedVariant.value),
       [`${prefixCls.value}-loading`]: innerLoading.value,
       [`${prefixCls.value}-two-chinese-chars`]: hasTwoCNChar?.value && mergedInsertSpace.value && !innerLoading?.value,

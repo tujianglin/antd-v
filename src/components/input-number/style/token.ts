@@ -1,4 +1,5 @@
 import { FastColor } from '@ant-design/fast-color';
+
 import type { SharedComponentToken, SharedInputToken } from '../../input/style/token';
 import { initComponentToken } from '../../input/style/token';
 import type { FullToken, GetDefaultToken } from '../../theme/internal';

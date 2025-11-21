@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import { computed, getCurrentInstance, h, toRefs, type ComponentInstance, type VNode } from 'vue';
-import { useMergeSemantic } from '../_util/hooks';
-import { useComponentConfig } from '../config-provider/context';
+import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
+import { useComponentConfig, type Variant } from '../config-provider/context';
 import { useDisabledContextInject } from '../config-provider/DisabledContext';
 import useCSSVarCls from '../config-provider/hooks/useCSSVarCls';
 import useSize from '../config-provider/hooks/useSize';
@@ -13,10 +13,37 @@ import useVariant from '../form/hooks/useVariants';
 import clsx from 'clsx';
 import RcInput from '@/vc-component/input';
 import ContextIsolator from '../_util/ContextIsolator';
-import type { InputClassNamesType, InputProps, InputStylesType } from './interface';
 import type { ValueType } from '@/vc-component/input/interface';
 import { useFormItemInputContextInject } from '../form/context';
-import { getMergedStatus, getStatusClassNames } from '../_util/statusUtils';
+import { getMergedStatus, getStatusClassNames, type InputStatus } from '../_util/statusUtils';
+import type { InputFocusOptions } from '@/vc-util/Dom/focus';
+import type { InputProps as RcInputProps } from '../../vc-component/input';
+import type { SizeType } from '../config-provider/SizeContext';
+
+export type { InputFocusOptions };
+
+type SemanticName = 'root' | 'prefix' | 'suffix' | 'input' | 'count';
+
+export type InputClassNamesType = SemanticClassNamesType<InputProps, SemanticName>;
+export type InputStylesType = SemanticStylesType<InputProps, SemanticName>;
+export interface InputProps
+  extends Omit<
+    RcInputProps,
+    'wrapperClassName' | 'groupClassName' | 'inputClassName' | 'affixWrapperClassName' | 'classes' | 'classNames' | 'styles'
+  > {
+  rootClassName?: string;
+  size?: SizeType;
+  disabled?: boolean;
+  status?: InputStatus;
+  /**
+   * @since 5.13.0
+   * @default "outlined"
+   */
+  variant?: Variant;
+  classNames?: InputClassNamesType;
+  styles?: InputStylesType;
+  [key: `data-${string}`]: string | undefined;
+}
 
 defineOptions({ name: 'Input', inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -26,9 +53,9 @@ const {
   size: customSize,
   disabled: customDisabled = undefined,
   suffix,
-  allowClear = undefined,
-  addonAfter,
   addonBefore,
+  addonAfter,
+  allowClear = undefined,
   class: className,
   style,
   styles,
@@ -81,30 +108,44 @@ useStyle(prefixCls, rootCls);
 // ===================== Compact Item =====================
 const { compactSize, compactItemClassnames } = useCompactItemContext(prefixCls, direction);
 
+// ===================== Size =====================
 const mergedSize = useSize(computed(() => (ctx) => customSize ?? compactSize.value ?? ctx));
 
+// ===================== Disabled =====================
+// eslint-disable-next-line vue/no-dupe-keys
 const disabled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 
 // =========== Merged Props for Semantic ==========
 const vm = getCurrentInstance();
-const mergedProps = computed(() => {
-  return {
-    ...vm.props,
-    size: mergedSize.value,
-    disabled: mergedDisabled.value,
-  } as InputProps;
-});
 
 const [mergedClassNames, mergedStyles] = useMergeSemantic<InputClassNamesType, InputStylesType, InputProps>(
   computed(() => [contextClassNames.value, classNames]),
   computed(() => [contextStyles.value, styles]),
-  computed(() => ({ props: mergedProps.value })),
+  computed(() => ({
+    props: {
+      ...vm.props,
+      size: mergedSize.value,
+      disabled: mergedDisabled.value,
+    },
+  })),
 );
 
 // ===================== Status =====================
 const { status: contextStatus, hasFeedback, feedbackIcon } = toRefs(useFormItemInputContextInject());
 const mergedStatus = computed(() => getMergedStatus(contextStatus?.value, customStatus));
+
+function handleChange(e) {
+  emits('change', e);
+}
+
+function handleBlur(e: FocusEvent) {
+  emits('blur', e);
+}
+
+function handleFocus(e: FocusEvent) {
+  emits('focus', e);
+}
 
 const suffixNode = computed(() => {
   if (hasFeedback?.value || suffixSlot?.value) {
@@ -119,22 +160,10 @@ const suffixNode = computed(() => {
 });
 
 const mergedAllowClear = computed(() => getAllowClear((contextAllowClear?.value as any) ?? allowClear));
-
 const [variant, enableVariantCls] = useVariant(
   'input',
   computed(() => customVariant),
 );
-function handleChange(e) {
-  emits('change', e);
-}
-
-function handleBlur(e: FocusEvent) {
-  emits('blur', e);
-}
-
-function handleFocus(e: FocusEvent) {
-  emits('focus', e);
-}
 
 function changeRef(el) {
   vm.exposed = el || {};

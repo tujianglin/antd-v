@@ -1,5 +1,5 @@
+import type { FullToken, GetDefaultToken } from '@/components/theme/internal';
 import type { CSSProperties } from 'vue';
-import type { FullToken, GetDefaultToken } from '../../theme/internal';
 
 export interface MultipleSelectorToken {
   /**

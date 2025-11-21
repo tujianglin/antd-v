@@ -16,7 +16,6 @@ import {
 
 import type { CSSMotionProps } from '@/vc-component/motion';
 import ResizeObserver from '@/vc-component/resize-observer';
-import { cloneElement } from '@/vc-util/Children/util';
 import { flattenChildren, isDOM } from '@/vc-util/Dom/findDOMNode';
 import { getShadowRoot } from '@/vc-util/Dom/shadow';
 import type { VueNode } from '@/vc-util/type';
@@ -798,8 +797,23 @@ const triggerProps = computed(() => ({
 }));
 
 const Child = () => {
-  const trigger = cloneElement(flattenChildren(slots.default?.())[0], { ...triggerProps.value, ref: triggerRef });
-  return trigger;
+  const vnodes = flattenChildren(slots.default?.());
+  const vnode = vnodes[0];
+
+  const oldProps = vnode.props ?? {};
+
+  vnode.props = {
+    ...oldProps,
+    ...triggerProps.value,
+    ref: (el) => {
+      triggerRef.value = el;
+      const oldRef = vnode.ref as any;
+      if (typeof oldRef === 'function') oldRef(el);
+      else if (oldRef && typeof oldRef === 'object') oldRef.value = el;
+    },
+  };
+
+  return vnode; // 不用 cloneElement
 };
 </script>
 <template>

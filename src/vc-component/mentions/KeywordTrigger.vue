@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import Trigger from '@/vc-component/trigger';
 import type { CSSProperties } from 'vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import DropdownMenu from './DropdownMenu.vue';
 import type { DataDrivenOptionProps, Direction, Placement } from './Mentions.vue';
 
@@ -59,6 +59,7 @@ const BUILT_IN_PLACEMENTS = {
 };
 
 const dropdownPrefix = computed(() => `${prefixCls}-dropdown`);
+const opened = ref(false);
 
 const dropdownPlacement = computed(() => {
   let popupPlacement;
@@ -80,9 +81,10 @@ const dropdownPlacement = computed(() => {
     :get-popup-container="getPopupContainer"
     :popup-class-name="popupClassName"
     :popup-style="popupStyle"
+    :after-open-change="(e) => (opened = e)"
   >
     <template #popup>
-      <DropdownMenu :prefix-cls="dropdownPrefix" :options="options" />
+      <DropdownMenu :prefix-cls="dropdownPrefix" :options="options" :opened="opened" />
     </template>
     <slot></slot>
   </Trigger>

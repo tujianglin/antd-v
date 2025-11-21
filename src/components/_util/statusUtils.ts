@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-const _InputStatuses = ['warning', 'error', ''] as const;
+const _InputStatuses = ['warning', 'error', '', 'success', 'validating'] as const;
 export type InputStatus = (typeof _InputStatuses)[number];
 
 const _ValidateStatuses = ['success', 'warning', 'error', 'validating', ''] as const;

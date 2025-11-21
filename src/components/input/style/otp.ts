@@ -63,7 +63,6 @@ export default genStyleHooks(
   ['Input', 'OTP'],
   (token) => {
     const inputToken = mergeToken<InputToken>(token, initInputToken(token));
-
     return genOTPStyle(inputToken);
   },
   initComponentToken,

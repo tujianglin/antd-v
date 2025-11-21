@@ -61,30 +61,3 @@ export function resolveOnChange<T extends HTMLInputElement | HTMLTextAreaElement
 
   onChange(event);
 }
-
-// ========================== triggerFocus ==========================
-export interface InputFocusOptions extends FocusOptions {
-  cursor?: 'start' | 'end' | 'all';
-}
-
-export function triggerFocus(element?: HTMLInputElement | HTMLTextAreaElement, option?: InputFocusOptions): void {
-  if (!element) return;
-
-  element.focus(option);
-
-  const { cursor } = option || {};
-  const len = element.value.length;
-
-  if (cursor) {
-    switch (cursor) {
-      case 'start':
-        element.setSelectionRange(0, 0);
-        break;
-      case 'end':
-        element.setSelectionRange(len, len);
-        break;
-      default:
-        element.setSelectionRange(0, len);
-    }
-  }
-}

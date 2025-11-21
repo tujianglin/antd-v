@@ -622,7 +622,7 @@ watch(
       @close="onPopupClose"
     >
       <SingleSelector
-        v-bind="{ ...omit(filledProps,['onFoucs', 'onBlur', 'onClick', 'onKeydown', 'onChange', 'onOpenChange']) as any }"
+        v-bind="{ ...omit(filledProps,['onFocus', 'onBlur', 'onClick', 'onKeydown', 'onChange', 'onOpenChange']) as any }"
         ref="selectorRef"
         :class="clsx(rootClassName, mergedClassNames.root)"
         :style="{

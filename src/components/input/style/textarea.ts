@@ -121,7 +121,6 @@ export default genStyleHooks(
   ['Input', 'TextArea'],
   (token) => {
     const inputToken = mergeToken<InputToken>(token, initInputToken(token));
-
     return genTextAreaStyle(inputToken);
   },
   initComponentToken,

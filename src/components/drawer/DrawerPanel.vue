@@ -19,7 +19,7 @@ export type DrawerStylesType = SemanticStylesType<DrawerProps, SemanticName>;
 
 export interface DrawerPanelProps {
   prefixCls: string;
-
+  ariaId?: string;
   title?: VueNode;
   footer?: VueNode;
   extra?: VueNode;
@@ -46,6 +46,7 @@ export interface DrawerPanelProps {
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 const {
   prefixCls,
+  ariaId,
   title,
   footer: footerRender,
   extra: extraRender,
@@ -120,7 +121,7 @@ const [mergedClosable, mergedCloseIcon] = useClosable(
   >
     <div :class="`${prefixCls}-header-title`">
       <Render v-if="closablePlacement === 'start'" :content="mergedCloseIcon" />
-      <div v-if="title" :class="clsx(`${prefixCls}-title`, mergedClassNames.title)" :style="mergedStyles.title">
+      <div v-if="title" :class="clsx(`${prefixCls}-title`, mergedClassNames.title)" :style="mergedStyles.title" :id="ariaId">
         <Render :content="title" />
       </div>
     </div>

@@ -17,12 +17,15 @@ export type AppendWatermark = (base64Url: string, markWidth: number, container: 
 
 export default function useWatermark(
   markStyle: Ref<CSSProperties>,
+  onRemoveEvent?: () => void,
 ): [appendWatermark: AppendWatermark, removeWatermark: (container: HTMLElement) => void, isWatermarkEle: (ele: Node) => boolean] {
   const watermarkMap = shallowRef(new Map<HTMLElement, HTMLDivElement>());
 
   const appendWatermark = (base64Url: string, markWidth: number, container: HTMLElement) => {
     if (container) {
-      if (!watermarkMap.value.get(container)) {
+      const exist = watermarkMap.value.get(container);
+
+      if (!exist) {
         const newWatermarkEle = document.createElement('div');
         watermarkMap.value.set(container, newWatermarkEle);
       }
@@ -43,6 +46,9 @@ export default function useWatermark(
       watermarkEle.removeAttribute('hidden');
 
       if (watermarkEle.parentElement !== container) {
+        if (exist && onRemoveEvent) {
+          onRemoveEvent();
+        }
         container.append(watermarkEle);
       }
     }
