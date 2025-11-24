@@ -17,7 +17,7 @@ const genLegacyNavStyle: GenerateStyle<StepsToken, CSSObject> = (token) => {
       // ==                        Shared                        ==
       // ==========================================================
       // ========================== Item ==========================
-      [`${itemCls.repeat(4)}`]: {
+      [itemCls.repeat(4)]: {
         display: 'flex',
         justifyContent: 'center',
         position: 'relative',
@@ -98,7 +98,7 @@ const genLegacyNavStyle: GenerateStyle<StepsToken, CSSObject> = (token) => {
       // ==                        Vertical                      ==
       // ==========================================================
       [`&${componentCls}-vertical`]: {
-        [`${itemCls.repeat(4)}`]: {
+        [itemCls.repeat(4)]: {
           [`${itemCls}-content`]: {
             padding: 0,
           },
