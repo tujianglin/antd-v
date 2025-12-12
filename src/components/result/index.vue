@@ -7,9 +7,21 @@ import serverError from './serverError.vue';
 import useStyle from './style';
 import unauthorized from './unauthorized.vue';
 import type { VueNode } from '@/vc-util/type';
-import { computed, defineComponent, getCurrentInstance, toRefs, type Component, type CSSProperties, type VNode } from 'vue';
+import {
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  toRefs,
+  useAttrs,
+  type Component,
+  type CSSProperties,
+  type HTMLAttributes,
+  type VNode,
+} from 'vue';
 import Render from '@/vc-component/render';
 import clsx from 'clsx';
+
+import pickAttrs from '@/vc-util/pickAttrs';
 
 export type ExceptionStatusType = 403 | 404 | 500 | '403' | '404' | '500';
 export type ResultStatusType = ExceptionStatusType | keyof typeof IconMap;
@@ -19,7 +31,7 @@ export type ResultClassNamesType = SemanticClassNamesType<ResultProps, SemanticN
 
 export type ResultStylesType = SemanticStylesType<ResultProps, SemanticName>;
 
-export interface ResultProps {
+export interface ResultProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'title'> {
   icon?: VueNode;
   status?: ResultStatusType;
   title?: VueNode;
@@ -191,9 +203,13 @@ const rootStyles = computed<CSSProperties>(() => ({
   ...contextStyle?.value,
   ...style,
 }));
+
+const attrs = useAttrs();
+
+const restProps = computed(() => pickAttrs(attrs, { aria: true, data: true }));
 </script>
 <template>
-  <div :class="rootClassNames" :style="rootStyles">
+  <div v-bind="restProps" :class="rootClassNames" :style="rootStyles">
     <Icon :class="iconClassNames" :style="mergedStyles?.icon" :status="status" :icon="iconSlot" />
     <div :class="titleClassNames" :style="mergedStyles?.title"><Render :content="titleSlot" /></div>
     <div v-if="subTitleSlot" :class="subTitleClassNames" :style="mergedStyles?.subTitle"><Render :content="subTitleSlot" /></div>

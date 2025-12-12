@@ -1,20 +1,11 @@
 import { useWatch } from '@/vc-component/form';
 import { FormItemPrefixContextProvider } from './context';
-import ErrorList from './ErrorList.vue';
-import InternalForm from './Form.vue';
-import FormItem from './FormItem';
-import FormList from './FormList.vue';
+import ErrorList, { type ErrorListProps } from './ErrorList.vue';
+import InternalForm, { type FormProps } from './Form.vue';
+import FormItem, { type FormItemProps } from './FormItem';
+import FormList, { type FormListProps } from './FormList.vue';
 import useForm from './hooks/useForm';
-import type {
-  ErrorListProps,
-  FormInstance,
-  FormItemProps,
-  FormListProps,
-  FormProps,
-  Rule,
-  RuleObject,
-  RuleRender,
-} from './interface';
+import type { FormInstance, Rule, RuleObject, RuleRender } from './interface';
 
 export type { ErrorListProps, FormInstance, FormItemProps, FormListProps, FormProps, Rule, RuleObject, RuleRender };
 

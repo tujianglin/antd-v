@@ -652,7 +652,10 @@ export default genStyleHooks(
       // =====================================================
       // ==             Space Compact                       ==
       // =====================================================
-      genCompactItemStyle(inputToken),
+      genCompactItemStyle(inputToken, {
+        focus: true,
+        focusElCls: `${inputToken.componentCls}-affix-wrapper-focused`,
+      }),
     ];
   },
   initComponentToken,

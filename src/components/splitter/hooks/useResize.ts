@@ -21,7 +21,7 @@ export default function useResize(
   percentSizes: ComputedRef<number[]>,
   containerSize: Ref<number | undefined>,
   sizes: Ref<(string | number)[]>,
-  isRTL: Ref<boolean>,
+  reverse: Ref<boolean>,
 ) {
   const limitSizes = computed(() => items.value.map((item) => [item.min, item.max]));
   const mergedContainerSize = computed(() => containerSize.value || 0);
@@ -118,7 +118,7 @@ export default function useResize(
   // ======================= Collapse =======================
   const onCollapse = (index: number, type: 'start' | 'end') => {
     const currentSizes = getPxSizes();
-    const adjustedType = isRTL.value ? (type === 'start' ? 'end' : 'start') : type;
+    const adjustedType = reverse.value ? (type === 'start' ? 'end' : 'start') : type;
 
     const currentIndex = adjustedType === 'start' ? index : index + 1;
     const targetIndex = adjustedType === 'start' ? index + 1 : index;

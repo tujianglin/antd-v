@@ -32,8 +32,8 @@ import type { DrawerProps } from '../drawer/index.vue';
 import type { DropdownProps } from '../dropdown';
 import type { EmptyProps } from '../empty';
 import type { FlexProps } from '../flex/interface';
-import type { FloatButtonGroupProps } from '../float-button/interface';
-import type { FormProps } from '../form/Form.vue';
+import type { FloatButtonGroupProps, FloatButtonProps } from '../float-button/interface';
+import type { FormProps } from '../form';
 import type { ImageProps } from '../image';
 import type { InputProps, SearchProps, TextAreaProps } from '../input';
 import type { InputNumberProps } from '../input-number';
@@ -193,7 +193,7 @@ export type TabsConfig = ComponentStyleConfig &
 
 export type AnchorStyleConfig = ComponentStyleConfig & Pick<AnchorProps, 'classNames' | 'styles'>;
 
-export type AlertConfig = ComponentStyleConfig & Pick<AlertProps, 'closable' | 'closeIcon' | 'classNames' | 'styles'>;
+export type AlertConfig = ComponentStyleConfig & Pick<AlertProps, 'closable' | 'classNames' | 'styles'>;
 
 export type BadgeConfig = ComponentStyleConfig & Pick<BadgeProps, 'classNames' | 'styles'>;
 
@@ -239,9 +239,10 @@ export type TransferConfig = ComponentStyleConfig & Pick<TransferProps, 'selecti
 export type FormConfig = ComponentStyleConfig &
   Pick<FormProps, 'requiredMark' | 'colon' | 'scrollToFirstError' | 'validateMessages' | 'variant' | 'classNames' | 'styles'>;
 
-export type FloatButtonConfig = {
-  backTopIcon?: any;
-};
+export type FloatButtonConfig = ComponentStyleConfig &
+  Pick<FloatButtonProps, 'classNames' | 'styles'> & {
+    backTopIcon?: VueNode;
+  };
 
 export type FloatButtonGroupConfig = ComponentStyleConfig & Pick<FloatButtonGroupProps, 'closeIcon' | 'classNames' | 'styles'>;
 

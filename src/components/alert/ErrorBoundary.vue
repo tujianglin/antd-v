@@ -1,7 +1,7 @@
 <script lang="tsx" setup>
 import { computed, onErrorCaptured, reactive, type VNode } from 'vue';
 import Alert from './Alert.vue';
-interface ErrorBoundaryProps {
+export interface ErrorBoundaryProps {
   title?: any;
   description?: any;
   id?: string;

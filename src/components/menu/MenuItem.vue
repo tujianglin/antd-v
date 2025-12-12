@@ -34,7 +34,7 @@ type GenericComponent = Omit<MenuItemComponent, ''> &
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
-const { class: className, icon, title: customTitle, danger, extra } = defineProps<GenericComponent>();
+const { class: className, icon, title: customTitle, danger, extra, style } = defineProps<GenericComponent>();
 
 const slots = defineSlots<{
   default: () => VNode[];
@@ -117,18 +117,18 @@ const ReturnNode = () => {
         },
         className,
       )}
-      style={firstLevel.value ? styles.value.item : styles.value.subMenu.item}
+      style={{ ...(firstLevel.value ? styles.value.item : styles.value.subMenu.item), ...style }}
       title={typeof title.value === 'string' ? title.value : undefined}
     >
       {cloneElement(icon, (oriProps) => ({
         class: clsx(
-          oriProps.className,
           `${prefixCls.value}-item-icon`,
           firstLevel.value ? classNames.value.itemIcon : classNames.value.subMenu.itemIcon,
+          oriProps.class,
         ),
         style: {
-          ...oriProps.style,
           ...(firstLevel.value ? styles.value.itemIcon : styles.value.subMenu.itemIcon),
+          ...oriProps.style,
         },
       }))}
       {renderItemChildren(isInlineCollapsed.value)}

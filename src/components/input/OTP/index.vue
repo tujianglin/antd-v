@@ -37,6 +37,7 @@ const {
 const emits = defineEmits<{
   change: [string];
   input: [string[]];
+  focus: [FocusEvent];
 }>();
 
 const value = defineModel<string>('value');
@@ -158,6 +159,19 @@ function onInputActiveChange(nextIndex) {
   refs.value[nextIndex]?.focus();
 }
 
+// ======================== Focus ========================
+const onInputFocus = (event: FocusEvent, index: number) => {
+  // keep focus on the first empty cell
+  for (let i = 0; i < index; i += 1) {
+    if (!refs.value[i]?.input?.value) {
+      refs.value[i]?.focus();
+      break;
+    }
+  }
+  emits('focus', event);
+};
+
+// ======================== Render ========================
 const inputSharedProps = computed(
   (): Partial<OTPInputProps> => ({
     variant,
@@ -221,6 +235,7 @@ defineExpose({
         v-model:value="valueCells[index]"
         @active-change="onInputActiveChange"
         :autofocus="index === 0 && autofocus"
+        @focus="(event) => onInputFocus(event, index)"
         v-bind="inputSharedProps"
       />
       <Separator

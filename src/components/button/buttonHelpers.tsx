@@ -1,3 +1,4 @@
+import { isVueNode } from '@/vc-util/Children/util';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
 import clsx from 'clsx';
 import { Fragment, h, type VNode } from 'vue';
@@ -66,7 +67,7 @@ export function splitCNCharsBySpace(
   const SPACE = needInserted ? ' ' : '';
 
   // 空值处理
-  if (child === null || child === undefined || child === '') {
+  if (!isVueNode(child)) {
     return h(Fragment);
   }
 

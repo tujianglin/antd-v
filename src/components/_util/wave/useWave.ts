@@ -1,6 +1,6 @@
 import findDOMNode from '@/vc-util/Dom/findDOMNode';
 import raf from '@/vc-util/raf';
-import { getCurrentInstance, shallowRef, toRefs, type ComputedRef } from 'vue';
+import { getCurrentInstance, onBeforeUnmount, shallowRef, toRefs, type ComputedRef } from 'vue';
 import type { WaveProps } from '.';
 import { useConfigContextInject } from '../../config-provider';
 import useToken from '../../theme/useToken';
@@ -33,6 +33,11 @@ const useWave = (
   };
 
   const rafId = shallowRef<number>(null);
+
+  // Clean up RAF on unmount to prevent memory leaks and stale callbacks
+  onBeforeUnmount(() => {
+    raf.cancel(rafId.value!);
+  });
 
   const showDebounceWave: ShowWave = (event) => {
     raf.cancel(rafId.value!);

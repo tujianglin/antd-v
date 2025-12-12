@@ -25,6 +25,7 @@ import { EditOutlined } from '@ant-design/icons-vue';
 import ResizeObserver from '@/vc-component/resize-observer';
 import clsx from 'clsx';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
+import { isVueNode } from '@/vc-util/Children/util';
 
 export type BaseType = 'secondary' | 'success' | 'warning' | 'danger';
 
@@ -392,7 +393,7 @@ const renderCopy = () => {
       locale={textLocale.value}
       onCopy={onCopyClick}
       loading={copyLoading.value}
-      iconOnly={children.value === null || children.value === undefined}
+      iconOnly={!isVueNode(children.value)}
     />
   );
 };

@@ -14,7 +14,7 @@ type ItemRender = NonNullable<BreadcrumbProps['itemRender']>;
 type InternalItemRenderParams = AddParameters<ItemRender, [href?: string]>;
 
 function getBreadcrumbName(route: InternalRouteType, params: any) {
-  if (route.title === undefined || route.title === null) {
+  if (!isVueNode(route.title)) {
     return null;
   }
   const paramsKeys = Object.keys(params).join('|');
@@ -33,10 +33,7 @@ export function renderItem(prefixCls: string, item: ItemType, children: VueNode,
   const { class: className, onClick, ...restItem } = item;
 
   const passedProps = {
-    ...pickAttrs(restItem, {
-      data: true,
-      aria: true,
-    }),
+    ...pickAttrs(restItem, { data: true, aria: true }),
     onClick,
   };
 

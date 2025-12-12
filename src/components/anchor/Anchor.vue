@@ -132,6 +132,7 @@ const activeLinkRef = ref<string | null>(activeLink.value);
 const wrapperRef = ref<HTMLDivElement>(null);
 const spanLinkNode = ref<HTMLSpanElement>(null);
 const animating = ref<boolean>(false);
+const scrollRequestId = ref<(() => void) | null>(null);
 
 // eslint-disable-next-line vue/no-dupe-keys
 const {
@@ -236,6 +237,7 @@ const handleScroll = () => {
 };
 
 const handleScrollTo = (link) => {
+  const previousActiveLink = activeLinkRef.value;
   setCurrentActiveLink(link);
   const sharpLinkMatch = sharpMatcherRegex.exec(link);
   if (!sharpLinkMatch) {
@@ -246,13 +248,20 @@ const handleScrollTo = (link) => {
     return;
   }
 
+  if (animating?.value) {
+    if (previousActiveLink === link) {
+      return;
+    }
+    scrollRequestId?.value?.();
+  }
+
   const container = getCurrentContainer?.value?.();
   const scrollTop = getScroll(container);
   const eleOffsetTop = getOffsetTop(targetElement, container);
   let y = scrollTop + eleOffsetTop;
   y -= targetOffset !== undefined ? targetOffset : offsetTop || 0;
   animating.value = true;
-  scrollTo(y, {
+  scrollRequestId.value = scrollTo(y, {
     getContainer: getCurrentContainer.value,
     callback() {
       animating.value = false;

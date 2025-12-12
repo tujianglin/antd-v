@@ -7,6 +7,7 @@ import pickAttrs from '@/vc-util/pickAttrs';
 import Render from '@/vc-component/render';
 import MemoChildren from './MemoChildren.vue';
 import { useComposeRef } from '@/vc-util/ref';
+import { useLockFocus } from '@/vc-util/Dom/focus';
 
 export interface PanelProps extends Omit<IDialogPropTypes, 'getOpenCount'> {
   prefixCls: string;
@@ -14,6 +15,8 @@ export interface PanelProps extends Omit<IDialogPropTypes, 'getOpenCount'> {
   onMousedown?: (e: MouseEvent) => void;
   onMouseup?: (e: MouseEvent) => void;
   holderRef?: HTMLDivElement;
+  /** Used for focus lock. When true and open, focus will lock into the panel */
+  isFixedPos?: boolean;
 }
 
 export type PanelRef = {
@@ -45,6 +48,7 @@ const {
   height,
   classNames: modalClassNames,
   styles: modalStyles,
+  isFixedPos,
 } = defineProps<PanelProps>();
 
 const slots = defineSlots<{ default?: () => VNode[] }>();
@@ -52,22 +56,17 @@ const slots = defineSlots<{ default?: () => VNode[] }>();
 // ================================= Refs =================================
 const { panel: panelRef } = toRefs(useRefContextInject());
 
-const mergedRef = useComposeRef(holderRef, panelRef);
-//
-const sentinelStartRef = ref<HTMLDivElement>(null);
-const sentinelEndRef = ref<HTMLDivElement>(null);
+const internalRef = ref<HTMLDivElement>(null);
+const mergedRef = useComposeRef(holderRef, panelRef, internalRef);
+
+useLockFocus(
+  computed(() => visible && isFixedPos),
+  () => internalRef.value,
+);
 
 defineExpose({
   focus: () => {
-    sentinelStartRef.value?.focus({ preventScroll: true });
-  },
-  changeActive: (next) => {
-    const { activeElement } = document;
-    if (next && activeElement === sentinelEndRef.value) {
-      sentinelStartRef.value.focus({ preventScroll: true });
-    } else if (!next && activeElement === sentinelStartRef.value) {
-      sentinelEndRef.value.focus({ preventScroll: true });
-    }
+    internalRef.value?.focus({ preventScroll: true });
   },
 });
 
@@ -142,17 +141,6 @@ const content = () => {
     </div>
   );
 };
-
-const sentinelStyle: CSSProperties = {
-  width: 0,
-  height: 0,
-  overflow: 'hidden',
-  outline: 'none',
-};
-
-const entityStyle: CSSProperties = {
-  outline: 'none',
-};
 </script>
 <template>
   <div
@@ -165,12 +153,10 @@ const entityStyle: CSSProperties = {
     :class="clsx(prefixCls, className)"
     @mousedown="onMousedown"
     @mouseup="onMouseup"
+    :tabindex="-1"
   >
-    <div ref="sentinelStartRef" :tabindex="0" :style="entityStyle">
-      <MemoChildren :should-update="visible || forceRender">
-        <component :is="modalRender ? modalRender(content) : content" />
-      </MemoChildren>
-    </div>
-    <div :tabindex="0" ref="sentinelEndRef" :style="sentinelStyle"></div>
+    <MemoChildren :should-update="visible || forceRender">
+      <component :is="modalRender ? modalRender(content) : content" />
+    </MemoChildren>
   </div>
 </template>

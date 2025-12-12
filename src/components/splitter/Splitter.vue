@@ -49,7 +49,7 @@ const {
 } = toRefs(useComponentConfig('splitter'));
 const prefixCls = computed(() => getPrefixCls.value('splitter', customizePrefixCls));
 const rootCls = useCSSVarCls(prefixCls);
-const [, hashId] = useStyle(prefixCls, rootCls);
+const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
 // ======================== Direct ========================
 const [mergedOrientation, isVertical] = useOrientation(
@@ -79,7 +79,7 @@ const onContainerResize = (size) => {
 const [panelSizes, itemPxSizes, itemPtgSizes, itemPtgMinSizes, itemPtgMaxSizes, updateSizes] = useSizes(items, containerSize);
 
 // ====================== Resizable =======================
-const resizableInfos = useResizable(items, itemPxSizes, isRTL);
+const resizableInfos = useResizable(items, itemPxSizes, reverse);
 
 const [onOffsetStart, onOffsetUpdate, onOffsetEnd, onCollapse, movingIndex] = useResize(
   items,
@@ -87,7 +87,7 @@ const [onOffsetStart, onOffsetUpdate, onOffsetEnd, onCollapse, movingIndex] = us
   itemPtgSizes,
   containerSize,
   updateSizes,
-  isRTL,
+  reverse,
 );
 
 // ======================== Events ========================
@@ -155,6 +155,7 @@ const containerClassName = computed(() =>
     rootClassName,
     mergedClassNames.value?.root,
     contextClassName?.value,
+    cssVarCls?.value,
     rootCls.value,
     hashId.value,
   ),

@@ -31,7 +31,7 @@ function getShowCollapsibleIcon(prev: Option, next: Option) {
   return false;
 }
 
-export default function useResizable(items: Ref<ItemType[]>, pxSizes: ComputedRef<number[]>, isRTL: Ref<boolean>) {
+export default function useResizable(items: Ref<ItemType[]>, pxSizes: ComputedRef<number[]>, reverse: Ref<boolean>) {
   return computed(() => {
     const resizeInfos: ResizableInfo[] = [];
 
@@ -85,10 +85,10 @@ export default function useResizable(items: Ref<ItemType[]>, pxSizes: ComputedRe
 
       resizeInfos[i] = {
         resizable: mergedResizable,
-        startCollapsible: !!(isRTL.value ? endCollapsible : startCollapsible),
-        endCollapsible: !!(isRTL.value ? startCollapsible : endCollapsible),
-        showStartCollapsibleIcon: isRTL.value ? showEndCollapsibleIcon : showStartCollapsibleIcon,
-        showEndCollapsibleIcon: isRTL.value ? showStartCollapsibleIcon : showEndCollapsibleIcon,
+        startCollapsible: !!(reverse.value ? endCollapsible : startCollapsible),
+        endCollapsible: !!(reverse.value ? startCollapsible : endCollapsible),
+        showStartCollapsibleIcon: reverse.value ? showEndCollapsibleIcon : showStartCollapsibleIcon,
+        showEndCollapsibleIcon: reverse.value ? showStartCollapsibleIcon : showEndCollapsibleIcon,
       };
     }
 

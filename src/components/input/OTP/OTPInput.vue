@@ -18,6 +18,7 @@ const { class: className, index, mask, ...restProps } = defineProps<OTPInputProp
 const emits = defineEmits<{
   change: [number, string];
   activeChange: [number];
+  focus: [FocusEvent];
 }>();
 
 const attrs = useAttrs();
@@ -41,6 +42,11 @@ function syncSelection() {
     }
   });
 }
+
+const onInternalFocus = (e: FocusEvent) => {
+  emits('focus', e);
+  syncSelection();
+};
 
 // ======================== Keyboard ========================
 function onInternalKeyDown(event) {
@@ -79,7 +85,7 @@ function changeRef(el) {
       v-bind="{ ...restProps, ...attrs }"
       v-model:value="value"
       @input="onInternalChange"
-      @focus="syncSelection"
+      @focus="onInternalFocus"
       @keydown="onInternalKeyDown"
       @mousedown="syncSelection"
       @mouseup="syncSelection"

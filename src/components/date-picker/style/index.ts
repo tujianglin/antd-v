@@ -149,6 +149,7 @@ const genPickerStyle: GenerateStyle<PickerToken> = (token) => {
         // Size
         '&-large': {
           ...genPickerPadding(token.paddingBlockLG, token.paddingInlineLG),
+          borderRadius: token.borderRadiusLG,
           [`${componentCls}-input > input`]: {
             fontSize: inputFontSizeLG ?? fontSizeLG,
             lineHeight: lineHeightLG,
@@ -157,6 +158,7 @@ const genPickerStyle: GenerateStyle<PickerToken> = (token) => {
 
         '&-small': {
           ...genPickerPadding(token.paddingBlockSM, token.paddingInlineSM),
+          borderRadius: token.borderRadiusSM,
           [`${componentCls}-input > input`]: {
             fontSize: inputFontSizeSM ?? fontSizeSM,
           },

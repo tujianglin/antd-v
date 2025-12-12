@@ -33,7 +33,7 @@ export interface DrawerProps
   extends Omit<RcDrawerProps, 'maskStyle' | 'destroyOnClose' | 'mask' | 'resizable' | 'classNames' | 'styles'>,
     Omit<DrawerPanelProps, 'prefixCls' | 'ariaId'> {
   size?: sizeType | number;
-  resizable?: DrawerResizableConfig;
+  resizable?: boolean | DrawerResizableConfig;
   open?: boolean;
   afterOpenChange?: (open: boolean) => void;
   /**

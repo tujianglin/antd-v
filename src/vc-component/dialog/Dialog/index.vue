@@ -50,6 +50,7 @@ const wrapperRef = useTemplateRef('wrapperRef');
 const contentRef = useTemplateRef('contentRef');
 
 const animatedVisible = ref(visible);
+const isFixedPos = ref(false);
 
 // ========================== Init ==========================
 const ariaId = useId();
@@ -107,7 +108,7 @@ function onInternalClose(e) {
 const contentClickRef = ref(false);
 const contentTimeoutRef = ref<ReturnType<typeof setTimeout>>(null);
 
-// We need record content click incase content popup out of dialog
+// We need record content click in case content popup out of dialog
 const onContentMouseDown = () => {
   clearTimeout(contentTimeoutRef.value);
   contentClickRef.value = true;
@@ -140,11 +141,6 @@ function onWrapperKeyDown(e: KeyboardEvent) {
     onInternalClose(e);
     return;
   }
-
-  // keep focus inside dialog
-  if (visible && e.keyCode === KeyCode.TAB) {
-    contentRef.value.changeActive(!e.shiftKey);
-  }
 }
 
 // ========================= Effect =========================
@@ -154,6 +150,12 @@ watch(
     if (visible) {
       animatedVisible.value = true;
       saveLastOutSideActiveElementRef();
+
+      // Calc the position style
+      if (wrapperRef.value) {
+        const computedWrapStyle = getComputedStyle(wrapperRef.value);
+        isFixedPos.value = computedWrapStyle.position === 'fixed';
+      }
     } else if (animatedVisible.value && contentRef.value.enableMotion() && !contentRef.value.inMotion()) {
       doClose();
     }
@@ -190,7 +192,6 @@ defineExpose({
       :class="modalClassNames?.mask"
     />
     <div
-      :tabindex="-1"
       @keydown="onWrapperKeyDown"
       :class="clsx(`${prefixCls}-wrap`, wrapClassName, modalClassNames?.wrapper)"
       ref="wrapperRef"
@@ -200,6 +201,7 @@ defineExpose({
     >
       <Content
         v-bind="omit($props, ['onClose'])"
+        :is-fixed-pos="isFixedPos"
         @mousedown="onContentMouseDown"
         @mouseup="onContentMouseUp"
         ref="contentRef"

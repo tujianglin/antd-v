@@ -18,13 +18,14 @@ import { keysToCamelCaseShallow } from '@/vc-util/props';
 import type { VueNode } from '@/vc-util/type';
 import { replaceElement } from '@/vc-util/Children/util';
 import { propsToCamelCase } from '../_util/type';
-import { useMergeSemantic, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
+import { useMergeSemantic, type ClosableType, type SemanticClassNamesType, type SemanticStylesType } from '../_util/hooks';
+import { reactiveComputed } from '@vueuse/core';
 
 export interface AlertRef {
   nativeElement: HTMLDivElement;
 }
 
-export type AlertSemanticName = 'root' | 'icon' | 'section' | 'title' | 'description' | 'actions';
+export type AlertSemanticName = 'root' | 'icon' | 'section' | 'title' | 'description' | 'actions' | 'close';
 
 export type AlertClassNamesType = SemanticClassNamesType<AlertProps, AlertSemanticName>;
 export type AlertStylesType = SemanticStylesType<AlertProps, AlertSemanticName>;
@@ -33,15 +34,16 @@ export interface AlertProps {
   /** Type of Alert styles, options:`success`, `info`, `warning`, `error` */
   type?: 'success' | 'info' | 'warning' | 'error';
   /** Whether Alert can be closed */
-  closable?: boolean | ({ closeIcon?: VueNode } & AriaAttributes);
+  closable?:
+    | boolean
+    | (Exclude<ClosableType, boolean> & {
+        /** Callback when close Alert */
+        onClose?: (e: MouseEvent) => void;
+      });
   /** Content of Alert */
   title?: VueNode;
   /** Additional content of Alert */
   description?: VueNode;
-  /** Callback when close Alert */
-  onClose?: (e: MouseEvent) => void;
-  /** Trigger when animation ending of Alert */
-  afterClose?: () => void;
   /** Whether to show icon */
   showIcon?: boolean;
   /** https://www.w3.org/TR/2014/REC-html5-20141028/dom.html#aria-role-attribute */
@@ -54,7 +56,6 @@ export interface AlertProps {
   rootClassName?: string;
   banner?: boolean;
   icon?: VueNode;
-  closeIcon?: VueNode | boolean;
   action?: VueNode;
   onMouseenter?: (e: MouseEvent) => void;
   onMouseleave?: (e: MouseEvent) => void;
@@ -74,9 +75,11 @@ interface IconNodeProps {
 type CloseIconProps = {
   isClosable: boolean;
   prefixCls: AlertProps['prefixCls'];
-  closeIcon: AlertProps['closeIcon'];
-  handleClose: AlertProps['onClose'];
+  closeIcon: Exclude<AlertProps['closable'], boolean>['closeIcon'];
+  handleClose: Exclude<AlertProps['closable'], boolean>['onClose'];
   ariaProps: AriaAttributes;
+  class?: string;
+  style?: CSSProperties;
 };
 
 defineOptions({ name: 'Alert', inheritAttrs: false, compatConfig: { MODE: 3 } });
@@ -92,10 +95,8 @@ const {
   onMouseenter,
   onMouseleave,
   onClick,
-  afterClose,
   showIcon,
   closable,
-  closeIcon = undefined,
   action,
   id,
   styles,
@@ -133,10 +134,17 @@ const IconNode = (props: IconNodeProps) => {
 };
 
 const CloseIconNode = (props: CloseIconProps) => {
-  const { isClosable, prefixCls, closeIcon, handleClose, ariaProps } = propsToCamelCase(props);
+  const { isClosable, prefixCls, closeIcon, handleClose, ariaProps, class: className, style } = propsToCamelCase(props);
   const mergedCloseIcon = closeIcon === true || closeIcon === undefined ? <CloseOutlined /> : closeIcon;
   return isClosable ? (
-    <button type="button" onClick={handleClose} class={`${prefixCls}-close-icon`} tabindex={0} {...ariaProps}>
+    <button
+      type="button"
+      onClick={handleClose}
+      class={clsx(`${prefixCls}-close-icon`, className)}
+      tabindex={0}
+      style={style}
+      {...ariaProps}
+    >
       <Render content={mergedCloseIcon}></Render>
     </button>
   ) : null;
@@ -156,7 +164,6 @@ const {
   getPrefixCls,
   direction,
   closable: contextClosable,
-  closeIcon: contextCloseIcon,
   class: contextClassName,
   style: contextStyle,
   classNames: contextClassNames,
@@ -166,9 +173,13 @@ const prefixCls = computed(() => getPrefixCls.value('alert', customizePrefixCls)
 
 const [hashId, cssVarCls] = useStyle(prefixCls);
 
+const { onClose: closableOnClose, afterClose: closableAfterClose } = toRefs(
+  reactiveComputed(() => (closable && typeof closable === 'object' ? closable : {})),
+);
+
 const handleClose = (e: MouseEvent) => {
   closed.value = true;
-  otherProps?.onClose?.(e);
+  closableOnClose?.value?.(e);
 };
 
 const type = computed<AlertProps['type']>(() => {
@@ -184,10 +195,6 @@ const isClosable = computed<boolean>(() => {
   if (typeof closable === 'object' && closable.closeIcon) return true;
   if (typeof closable === 'boolean') {
     return closable;
-  }
-  // should be true when closeIcon is 0 or ''
-  if (closeIcon !== false && closeIcon !== null && closeIcon !== undefined) {
-    return true;
   }
 
   return !!contextClosable.value;
@@ -240,13 +247,10 @@ const mergedCloseIcon = computed(() => {
     return closable.closeIcon;
   }
 
-  if (closeIcon !== undefined) {
-    return closeIcon;
-  }
   if (typeof contextClosable?.value === 'object' && contextClosable.value.closeIcon) {
     return contextClosable.value.closeIcon;
   }
-  return contextCloseIcon?.value;
+  return null;
 });
 
 const mergedAriaProps = computed(() => {
@@ -265,7 +269,7 @@ const mergedAriaProps = computed(() => {
     :motion-appear="false"
     :motion-enter="false"
     @leave-start="(node) => ({ maxHeight: `${node.offsetHeight}px` })"
-    @leave-end="afterClose"
+    @leave-end="closableAfterClose"
   >
     <template #default="{ class: motionClassName, style: motionStyle, ref: motionRef }">
       <div
@@ -318,6 +322,8 @@ const mergedAriaProps = computed(() => {
           <Render :content="slots.action || action" />
         </div>
         <CloseIconNode
+          :class="mergedClassNames.close"
+          :style="mergedStyles?.close"
           :is-closable="isClosable"
           :prefix-cls="prefixCls"
           :close-icon="mergedCloseIcon"

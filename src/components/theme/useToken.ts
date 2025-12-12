@@ -119,8 +119,8 @@ export default function useToken(): [
 
   const cssVar = computed(() => {
     return {
-      prefix: ctxCssVar?.value?.prefix || 'ant',
-      key: ctxCssVar?.value?.key || 'css-var-root',
+      prefix: ctxCssVar?.value?.prefix ?? 'ant',
+      key: ctxCssVar?.value?.key ?? 'css-var-root',
     };
   });
 

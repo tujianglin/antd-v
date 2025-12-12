@@ -4,6 +4,7 @@ import { omit } from 'es-toolkit/compat';
 import { computed, getCurrentInstance, toRefs, type CSSProperties } from 'vue';
 import { isPresetSize } from '../_util/gapSize';
 import useOrientation from '../_util/hooks/useOrientation';
+import isNonNullable from '../_util/isNonNullable';
 import { useConfigContextInject } from '../config-provider';
 import type { FlexProps } from './interface';
 import useStyle from './style';
@@ -56,10 +57,10 @@ const mergedCls = computed(() => {
 
 const mergedStyle = computed((): CSSProperties => {
   const result: CSSProperties = { ...ctxFlex?.value?.style, ...style };
-  if (flex) {
+  if (isNonNullable(flex)) {
     result.flex = flex;
   }
-  if (gap && !isPresetSize(gap)) {
+  if (isNonNullable(gap) && !isPresetSize(gap)) {
     result.gap = `${gap}px`;
   }
   return result;

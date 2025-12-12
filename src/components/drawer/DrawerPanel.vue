@@ -11,7 +11,18 @@ import Render from '@/vc-component/render';
 import Skeleton from '../skeleton';
 import type { DrawerProps } from './index.vue';
 
-export type SemanticName = 'root' | 'mask' | 'header' | 'title' | 'extra' | 'section' | 'body' | 'footer' | 'wrapper' | 'dragger';
+export type SemanticName =
+  | 'root'
+  | 'mask'
+  | 'header'
+  | 'title'
+  | 'extra'
+  | 'section'
+  | 'body'
+  | 'footer'
+  | 'wrapper'
+  | 'dragger'
+  | 'close';
 
 export type DrawerClassNamesType = SemanticClassNamesType<DrawerProps, SemanticName>;
 
@@ -68,7 +79,7 @@ const vm = getCurrentInstance();
 
 const drawerContext = useComponentConfig('drawer');
 
-const { classNames: contextClassNames, styles: contextStyles } = toRefs(drawerContext);
+const { classNames: contextClassNames, styles: contextStyles, closable: contextClosable } = toRefs(drawerContext);
 
 const [mergedClassNames, mergedStyles] = useMergeSemantic<DrawerClassNamesType, DrawerStylesType, DrawerPanelProps>(
   computed(() => [contextClassNames?.value, drawerClassNames]),
@@ -76,25 +87,29 @@ const [mergedClassNames, mergedStyles] = useMergeSemantic<DrawerClassNamesType, 
   computed(() => ({ props: vm.props as unknown as DrawerPanelProps })),
 );
 
-const closablePlacement = computed(() => {
-  let result;
-  if (closable === false) {
-    result = undefined;
-  } else if (closable === undefined || closable === true) {
-    result = 'start';
-  } else {
-    result = closable?.placement === 'end' ? 'end' : 'start';
+const closablePlacement = computed<'start' | 'end' | undefined>(() => {
+  const mergedClosableVal = closable ?? (contextClosable?.value as any);
+  if (mergedClosableVal === false) {
+    return undefined;
   }
-  return result;
+  if (typeof mergedClosableVal === 'object' && mergedClosableVal && mergedClosableVal.placement === 'end') {
+    return 'end';
+  }
+  return 'start';
 });
 
 const customCloseIconRender = (icon: VueNode) => (
   <button
     type="button"
     onClick={onClose}
-    class={clsx(`${prefixCls}-close`, {
-      [`${prefixCls}-close-${closablePlacement.value}`]: closablePlacement.value === 'end',
-    })}
+    class={clsx(
+      `${prefixCls}-close`,
+      {
+        [`${prefixCls}-close-${closablePlacement?.value}`]: closablePlacement?.value === 'end',
+      },
+      mergedClassNames?.value?.close,
+    )}
+    style={mergedStyles?.value?.close}
   >
     <Render content={icon}></Render>
   </button>

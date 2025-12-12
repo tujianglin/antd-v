@@ -2,7 +2,7 @@ import { unit } from '@/vc-cssinjs';
 
 import type { CSSProperties } from 'vue';
 import { getMediaSize } from '../../grid/style';
-import { blurMaskStyle, genFocusStyle, resetComponent } from '../../style';
+import { genFocusStyle, resetComponent } from '../../style';
 import { initFadeMotion, initZoomMotion } from '../../style/motion';
 import type { AliasToken, FullToken, GenerateStyle, GenStyleFn, GlobalToken, TokenWithCommonCls } from '../../theme/internal';
 import { genStyleHooks, mergeToken } from '../../theme/internal';
@@ -155,7 +155,7 @@ export const genModalMaskStyle: GenerateStyle<TokenWithCommonCls<AliasToken>> = 
           pointerEvents: 'none',
 
           [`&${componentCls}-mask-blur`]: {
-            ...blurMaskStyle,
+            backdropFilter: 'blur(4px)',
           },
 
           [`${componentCls}-hidden`]: {

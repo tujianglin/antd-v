@@ -9,14 +9,15 @@ const ContextIsolator = defineComponent({
   },
   setup(props, { slots }) {
     return () => {
-      if (props.form) {
+      const { form, space } = props;
+      if (form) {
         return (
           <NoFormStyle override status>
             {slots.default?.()}
           </NoFormStyle>
         );
       }
-      if (props.space) {
+      if (space) {
         return <NoCompactStyle>{slots.default?.()}</NoCompactStyle>;
       }
       return slots.default?.();

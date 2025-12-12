@@ -76,12 +76,15 @@ export function registerPopup(el: HTMLElement, fn) {
   return () => activePopups.delete(el);
 }
 
-export const useComposeRef = (expose?: Record<string, any>, ref?: Ref<any>) => {
+export const useComposeRef = (expose?: Record<string, any>, ref?: Ref<any>, ref1?: Ref<any>) => {
   const vm = getCurrentInstance();
 
   const changeRef = (instacne) => {
     if (ref) {
       ref.value = instacne;
+    }
+    if (ref1) {
+      ref1.value = instacne;
     }
     vm.exposed = assign(instacne || {}, expose);
     vm.exposeProxy = assign(instacne || {}, expose);

@@ -21,6 +21,7 @@ import type { ItemHolderProps } from './ItemHolder.vue';
 import ItemHolder from './ItemHolder.vue';
 import StatusProvider from './StatusProvider.vue';
 import useItemRef from '../hooks/useItemRef';
+import isNonNullable from '../../_util/isNonNullable';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -97,9 +98,9 @@ const { name: formName } = toRefs(useFormContextInject());
 const notifyParentMetaChange = useNoStyleItemContextInject();
 
 const { validateTrigger: contextValidateTrigger } = toRefs(useFieldContextInject());
-const mergedValidateTrigger = computed(() => (validateTrigger !== undefined ? validateTrigger : contextValidateTrigger?.value));
+const mergedValidateTrigger = computed(() => (isNonNullable(validateTrigger) ? validateTrigger : contextValidateTrigger?.value));
 
-const hasName = computed(() => !(name === undefined || name === null));
+const hasName = computed(() => isNonNullable(name));
 
 const prefixCls = computed(() => getPrefixCls.value('form', customizePrefixCls));
 

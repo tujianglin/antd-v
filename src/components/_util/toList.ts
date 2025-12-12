@@ -1,5 +1,6 @@
+import { isVueNode } from '@/vc-util/Children/util';
 const toList = <T>(candidate: T | T[], skipEmpty = false): T[] => {
-  if (skipEmpty && (candidate === undefined || candidate === null)) {
+  if (skipEmpty && !isVueNode(candidate)) {
     return [];
   }
   return Array.isArray(candidate) ? candidate : [candidate];

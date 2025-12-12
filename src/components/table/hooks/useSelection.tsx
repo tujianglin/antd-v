@@ -148,7 +148,8 @@ const useSelection = (
     let convertData = data.value;
     if (preserveSelectedRowKeys?.value) {
       // use flattedData keys
-      const keysSet = new Set(flattedData.value.map((record, index) => getRowKey.value(record, index)));
+      const keysSet = new Set(flattedData.value.map(getRowKey.value));
+
       // remove preserveRecords that duplicate data
       const preserveRecords = Array.from(preserveRecordsRef.value).reduce(
         (total: RecordType[], [key, value]) => (keysSet.has(key) ? total : total.concat(value)),

@@ -1,10 +1,10 @@
-import { isValidElement } from '@/vc-util/Children/util';
+import { isValidElement, isVueNode } from '@/vc-util/Children/util';
 import type { VueNode } from '@/vc-util/type';
 import type { TooltipProps } from '../tooltip';
 
 function convertToTooltipProps<P extends TooltipProps>(tooltip: P | VueNode): P | null {
   // isNil
-  if (tooltip === undefined || tooltip === null) {
+  if (!isVueNode(tooltip)) {
     return null;
   }
 
@@ -12,9 +12,7 @@ function convertToTooltipProps<P extends TooltipProps>(tooltip: P | VueNode): P 
     return tooltip as P;
   }
 
-  return {
-    title: tooltip,
-  } as P;
+  return { title: tooltip } as P;
 }
 
 export default convertToTooltipProps;

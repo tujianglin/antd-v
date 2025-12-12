@@ -4,6 +4,7 @@ import { reactiveComputed, type ReactiveComputedReturn } from '@vueuse/core';
 import clsx from 'clsx';
 import { ref } from 'vue';
 import { mergeClassNames, mergeStyles, resolveStyleOrClass, type SemanticClassNames, type SemanticStyles } from '../_util/hooks';
+import isNonNullable from '../_util/isNonNullable';
 import type { HolderRef } from './Holder.vue';
 import Holder from './Holder.vue';
 import type { ArgsProps, ConfigOptions, MessageInstance, MessageType, NoticeType, SemanticName, TypeOpen } from './interface';
@@ -60,7 +61,7 @@ export function useInternalMessage(messageConfig?: HolderProps): readonly [React
       } = config;
 
       let mergedKey: VueKey = key!;
-      if (mergedKey === undefined || mergedKey === null) {
+      if (!isNonNullable(mergedKey)) {
         keyIndex += 1;
         mergedKey = `antd-message-${keyIndex}`;
       }

@@ -1,7 +1,7 @@
 import type { CSSObject } from '@/vc-cssinjs';
 import { Keyframes, unit } from '@/vc-cssinjs';
 
-import { CONTAINER_MAX_OFFSET } from '../../_util/hooks/useZIndex';
+import { CONTAINER_MAX_OFFSET } from '../../_util/hooks';
 import { genFocusStyle, resetComponent } from '../../style';
 import type { AliasToken, FullToken, GenerateStyle, GenStyleFn } from '../../theme/internal';
 import { genStyleHooks, mergeToken } from '../../theme/internal';
@@ -156,20 +156,11 @@ export const genNoticeStyle = (token: NotificationToken): CSSObject => {
       wordWrap: 'break-word',
       borderRadius: borderRadiusLG,
       overflow: 'hidden',
-
       // Type-specific background colors
-      '&-success': {
-        background: colorSuccessBg,
-      },
-      '&-error': {
-        background: colorErrorBg,
-      },
-      '&-info': {
-        background: colorInfoBg,
-      },
-      '&-warning': {
-        background: colorWarningBg,
-      },
+      '&-success': colorSuccessBg ? { background: colorSuccessBg } : {},
+      '&-error': colorErrorBg ? { background: colorErrorBg } : {},
+      '&-info': colorInfoBg ? { background: colorInfoBg } : {},
+      '&-warning': colorWarningBg ? { background: colorWarningBg } : {},
     },
 
     [`${noticeCls}-title`]: {
@@ -389,10 +380,13 @@ export const prepareComponentToken = (token: AliasToken) => ({
   zIndexPopup: token.zIndexPopupBase + CONTAINER_MAX_OFFSET + 50,
   width: 384,
   progressBg: `linear-gradient(90deg, ${token.colorPrimaryBorderHover}, ${token.colorPrimary})`,
-  colorSuccessBg: token.colorSuccessBg,
-  colorErrorBg: token.colorErrorBg,
-  colorInfoBg: token.colorInfoBg,
-  colorWarningBg: token.colorWarningBg,
+  // Fix notification background color issue
+  // https://github.com/ant-design/ant-design/issues/55649
+  // https://github.com/ant-design/ant-design/issues/56055
+  colorSuccessBg: undefined,
+  colorErrorBg: undefined,
+  colorInfoBg: undefined,
+  colorWarningBg: undefined,
 });
 
 export const prepareNotificationToken: (token: Parameters<GenStyleFn<'Notification'>>[0]) => NotificationToken = (token) => {

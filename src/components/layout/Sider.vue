@@ -42,7 +42,7 @@ defineOptions({ name: 'Sider', inheritAttrs: false, compatConfig: { MODE: 3 } })
 const {
   prefixCls: customizePrefixCls,
   class: className,
-  trigger,
+  trigger = null,
   defaultCollapsed = false,
   theme = 'dark',
   style = {},

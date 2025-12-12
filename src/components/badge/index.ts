@@ -1,7 +1,9 @@
-import InternalBadge from './index.vue';
+import InternalBadge from './Badge.vue';
 import Ribbon from './Ribbon.vue';
 
-export type { BadgeProps } from './index.vue';
+export type { ScrollNumberProps } from './ScrollNumber.vue';
+
+export type { BadgeProps } from './Badge.vue';
 
 type CompoundedComponent = typeof InternalBadge & {
   Ribbon: typeof Ribbon;
