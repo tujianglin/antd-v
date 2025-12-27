@@ -199,6 +199,7 @@ onMounted(() => {
     role="radiogroup"
     aria-label="segmented control"
     :tabindex="disabled ? undefined : 0"
+    :aria-orientation="vertical ? 'vertical' : 'horizontal'"
     :style="style"
     v-bind="restProps"
     :class="

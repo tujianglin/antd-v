@@ -127,7 +127,7 @@ defineExpose({
       @click="onInternalClick"
       @remove="onRemove"
       :checked="selectedKeys.includes(item.key)"
-      :disabled="globalDisabled || item.disabled"
+      :disabled="globalDisabled"
     />
   </ul>
   <Pagination

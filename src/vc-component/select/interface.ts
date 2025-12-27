@@ -55,7 +55,7 @@ export interface FieldNames {
 
 export interface BaseOptionType {
   disabled?: boolean;
-  className?: string;
+  class?: string;
   title?: string;
   [name: string]: any;
 }

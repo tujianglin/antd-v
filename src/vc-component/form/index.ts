@@ -2,11 +2,11 @@ import Field from './Field.vue';
 import { useFieldContextInject } from './FieldContext';
 import InternalForm, { type FormProps } from './Form.vue';
 import { FormProvider } from './FormContext';
+import useForm from './hooks/useForm';
+import useWatch from './hooks/useWatch';
 import type { FormInstance, FormRef } from './interface';
 import List from './List.vue';
 import { useListContextInject } from './ListContext';
-import useForm from './useForm';
-import useWatch from './useWatch';
 
 // Type exports
 

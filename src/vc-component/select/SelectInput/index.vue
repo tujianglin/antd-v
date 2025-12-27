@@ -150,7 +150,8 @@ const onInternalInputKeyDown = (event: KeyboardEvent) => {
   }
 
   // Open dropdown when a valid open key is pressed
-  if (isValidateOpenKey(which)) {
+  const isModifier = event.ctrlKey || event.altKey || event.metaKey;
+  if (!isModifier && isValidateOpenKey(which)) {
     toggleOpen?.value?.(true);
   }
 };

@@ -65,7 +65,18 @@ export interface InternalSelectProps<ValueType = any, OptionType extends BaseOpt
   styles?: SemanticStyles<SemanticName> & { popup?: SemanticStyles<PopupSemantic> };
 }
 
-type SemanticName = 'root' | 'prefix' | 'suffix';
+type SemanticName =
+  | 'root'
+  | 'prefix'
+  | 'suffix'
+  | 'input'
+  | 'placeholder'
+  | 'content'
+  | 'item'
+  | 'itemContent'
+  | 'itemRemove'
+  | 'clear';
+
 type PopupSemantic = 'root' | 'listItem' | 'list';
 
 export type SelectClassNamesType = SemanticClassNamesType<

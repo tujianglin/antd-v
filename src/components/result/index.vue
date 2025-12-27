@@ -15,13 +15,13 @@ import {
   useAttrs,
   type Component,
   type CSSProperties,
-  type HTMLAttributes,
   type VNode,
 } from 'vue';
 import Render from '@/vc-component/render';
 import clsx from 'clsx';
 
 import pickAttrs from '@/vc-util/pickAttrs';
+import type { HTMLAriaDataAttributes } from '../_util/aria-data-attrs';
 
 export type ExceptionStatusType = 403 | 404 | 500 | '403' | '404' | '500';
 export type ResultStatusType = ExceptionStatusType | keyof typeof IconMap;
@@ -31,7 +31,7 @@ export type ResultClassNamesType = SemanticClassNamesType<ResultProps, SemanticN
 
 export type ResultStylesType = SemanticStylesType<ResultProps, SemanticName>;
 
-export interface ResultProps extends /** @vue-ignore */ Omit<HTMLAttributes, 'title'> {
+export interface ResultProps extends /** @vue-ignore */ HTMLAriaDataAttributes {
   icon?: VueNode;
   status?: ResultStatusType;
   title?: VueNode;

@@ -7,7 +7,7 @@ import useControlledState from '@/vc-util/hooks/useControlledState';
 import type { VueNode } from '@/vc-util/type';
 import { reactiveComputed } from '@vueuse/core';
 import { isEmpty } from 'es-toolkit/compat';
-import { computed, ref, toRefs, useId, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, ref, toRefs, useId, type CSSProperties } from 'vue';
 import { CascaderContextProvider } from './context';
 import useDisplayValues from './hooks/useDisplayValues';
 import useMissingValues from './hooks/useMissingValues';
@@ -364,13 +364,18 @@ const popupStyle = computed<CSSProperties>(() => {
         minWidth: 'auto',
       };
 });
-const domRef = ref();
+
+const vm = getCurrentInstance();
+const changeRef = (instance) => {
+  vm.exposed = instance || {};
+  vm.exposeProxy = instance || {};
+};
 </script>
 <template>
   <CascaderContextProvider :value="cascaderContext">
     <BaseSelect
       v-bind="restProps"
-      ref="domRef"
+      :ref="changeRef"
       :id="mergedId"
       :prefix-cls="prefixCls"
       :auto-clear-search-value="autoClearSearchValue"

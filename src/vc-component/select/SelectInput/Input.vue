@@ -187,9 +187,9 @@ const sharedInputProps = computed(() => ({
   role: role?.value || 'combobox',
   'aria-expanded': open?.value || false,
   'aria-haspopup': 'listbox' as const,
-  'aria-owns': `${id?.value}_list`,
+  'aria-owns': open?.value ? `${id?.value}_list` : undefined,
   'aria-autocomplete': 'list' as const,
-  'aria-controls': `${id?.value}_list`,
+  'aria-controls': open?.value ? `${id?.value}_list` : undefined,
   'aria-activedescendant': open?.value ? activeDescendantId?.value : undefined,
 }));
 // Handle different InputComponent types

@@ -34,28 +34,24 @@ const mergedSearchValue = computed(() => {
 
 // Extract option props, excluding label and value, and handle className/style merging
 const optionProps = computed(() => {
-  let restProps: HTMLAttributes = {
-    class: `${prefixCls.value}-content-value`,
+  const restProps: HTMLAttributes = {
+    class: `${prefixCls?.value}-content-value`,
     style: {
-      visibility: mergedSearchValue.value ? 'hidden' : 'visible',
+      visibility: mergedSearchValue?.value ? 'hidden' : 'visible',
     },
   };
 
   if (displayValue?.value && selectContext?.flattenOptions) {
     const option = selectContext.flattenOptions.find((opt) => opt.value === displayValue.value);
     if (option?.data) {
-      const { label: _, value: _1, className, style, key: _key, ...rest } = option.data;
-
-      restProps = {
-        ...restProps,
-        ...rest,
+      const { class: className, style } = option.data;
+      Object.assign(restProps, {
         title: getTitle(option.data),
         class: clsx(restProps.class, className),
         style: { ...(restProps.style as any), ...style },
-      };
+      });
     }
   }
-
   if (displayValue?.value && !restProps.title) {
     restProps.title = getTitle(displayValue?.value);
   }

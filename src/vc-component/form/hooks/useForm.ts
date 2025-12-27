@@ -1,8 +1,7 @@
-import { merge } from '@/vc-util/utils/set';
+import { merge, mergeWith } from '@/vc-util/utils/set';
 import warning from '@/vc-util/warning';
 import { ref } from 'vue';
-import type { BatchTask } from './BatchUpdate.vue';
-import { HOOK_MARK } from './FieldContext';
+import { HOOK_MARK } from '../FieldContext';
 import type {
   Callbacks,
   FieldData,
@@ -26,12 +25,12 @@ import type {
   ValidateErrorEntity,
   ValidateMessages,
   ValuedNotifyInfo,
-  WatchCallBack,
-} from './interface';
-import { allPromiseFinish } from './utils/asyncUtil';
-import { defaultValidateMessages } from './utils/messages';
-import NameMap from './utils/NameMap';
-import { cloneByNamePathList, containsNamePath, getNamePath, getValue, matchNamePath, setValue } from './utils/valueUtil';
+} from '../interface';
+import { allPromiseFinish } from '../utils/asyncUtil';
+import { defaultValidateMessages } from '../utils/messages';
+import NameMap from '../utils/NameMap';
+import { cloneByNamePathList, containsNamePath, getNamePath, getValue, matchNamePath, setValue } from '../utils/valueUtil';
+import WatcherCenter from './useNotifyWatch';
 
 type FlexibleFieldEntity = Partial<FieldEntity>;
 
@@ -69,6 +68,8 @@ export class FormStore {
   private preserve?: boolean = null;
 
   private lastValidatePromise: Promise<FieldError[]> = null;
+
+  private watcherCenter = new WatcherCenter(this);
 
   constructor(forceRootUpdate: () => void) {
     this.forceRootUpdate = forceRootUpdate;
@@ -113,7 +114,6 @@ export class FormStore {
         setPreserve: this.setPreserve,
         getInitialValue: this.getInitialValue,
         registerWatch: this.registerWatch,
-        setBatchUpdate: this.setBatchUpdate,
       };
     }
 
@@ -190,47 +190,13 @@ export class FormStore {
   };
 
   // ============================= Watch ============================
-  private watchList: WatchCallBack[] = [];
 
   private registerWatch: InternalHooks['registerWatch'] = (callback) => {
-    this.watchList.push(callback);
-
-    return () => {
-      this.watchList = this.watchList.filter((fn) => fn !== callback);
-    };
+    return this.watcherCenter.register(callback);
   };
 
   private notifyWatch = (namePath: InternalNamePath[] = []) => {
-    // No need to cost perf when nothing need to watch
-    if (this.watchList.length) {
-      const values = this.getFieldsValue();
-      const allValues = this.getFieldsValue(true);
-
-      this.watchList.forEach((callback) => {
-        callback(values, allValues, namePath);
-      });
-    }
-  };
-
-  private notifyWatchNamePathList: InternalNamePath[] = [];
-  private batchNotifyWatch = (namePath: InternalNamePath) => {
-    this.notifyWatchNamePathList.push(namePath);
-    this.batch('notifyWatch', () => {
-      this.notifyWatch(this.notifyWatchNamePathList);
-      this.notifyWatchNamePathList = [];
-    });
-  };
-
-  // ============================= Batch ============================
-  private batchUpdate: BatchTask;
-
-  private setBatchUpdate = (batchUpdate: BatchTask) => {
-    this.batchUpdate = batchUpdate;
-  };
-
-  // Batch call the task, only last will be called
-  private batch = (key: string, callback: VoidFunction) => {
-    this.batchUpdate(key, callback);
+    this.watcherCenter.notify(namePath);
   };
 
   // ========================== Dev Warning =========================
@@ -650,7 +616,7 @@ export class FormStore {
   private registerField = (entity: FieldEntity) => {
     this.fieldEntities.push(entity);
     const namePath = entity.getNamePath();
-    this.batchNotifyWatch(namePath);
+    this.notifyWatch([namePath]);
 
     // Set initial values
     if (entity.props.initialValue !== undefined) {
@@ -690,7 +656,7 @@ export class FormStore {
         }
       }
 
-      this.batchNotifyWatch(namePath);
+      this.notifyWatch([namePath]);
     };
   };
 
@@ -792,9 +758,14 @@ export class FormStore {
     const { onValuesChange } = this.callbacks;
 
     if (onValuesChange) {
+      const fieldEntity = this.getFieldsMap(true).get(namePath);
       const changedValues = cloneByNamePathList(this.store, [namePath]);
       const allValues = this.getFieldsValue();
-      onValuesChange(changedValues, allValues);
+      const mergedAllValues = mergeWith([allValues, changedValues], {
+        // When value is array, it means trigger by Form.List which should replace directly
+        prepareArray: (current) => (fieldEntity?.isList() ? [] : [...(current || [])]),
+      });
+      onValuesChange(changedValues, mergedAllValues);
     }
 
     this.triggerOnFieldsChange([namePath, ...childrenFields]);
@@ -1101,6 +1072,7 @@ function useForm<Values = any>(form?: FormInstance<Values>): [FormInstance<Value
   const formRef = ref<FormInstance>(null);
   const forceUpdate = ref({});
 
+  // Create singleton FormStore
   if (!formRef.value) {
     if (form) {
       formRef.value = form;

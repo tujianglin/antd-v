@@ -1,22 +1,10 @@
 <script lang="tsx" setup>
-import {
-  computed,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  watch,
-  type CSSProperties,
-  type FormHTMLAttributes,
-  type VNode,
-} from 'vue';
-import type { BatchTask, BatchUpdateRef } from './BatchUpdate.vue';
-import BatchUpdate from './BatchUpdate.vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch, type CSSProperties, type FormHTMLAttributes, type VNode } from 'vue';
 import { FieldContextProvider, HOOK_MARK } from './FieldContext';
 import { useFormContextInject } from './FormContext';
+import useForm from './hooks/useForm';
 import type { Callbacks, FieldData, FormInstance, InternalFormInstance, Store, ValidateMessages } from './interface';
 import { ListContextProvider } from './ListContext';
-import useForm from './useForm';
 import { isSimilar } from './utils/valueUtil';
 
 type BaseFormProps = Omit<FormHTMLAttributes, 'onSubmit' | 'children'>;
@@ -70,7 +58,7 @@ const formContext = useFormContextInject();
 // We customize handle event since Context will makes all the consumer re-render:
 // https://reactjs.org/docs/context.html#contextprovider
 const [formInstance] = useForm(form);
-const { useSubscribe, setInitialValues, setCallbacks, setValidateMessages, setPreserve, destroyForm, setBatchUpdate } = (
+const { useSubscribe, setInitialValues, setCallbacks, setValidateMessages, setPreserve, destroyForm } = (
   formInstance as InternalFormInstance
 ).getInternalHooks(HOOK_MARK);
 
@@ -146,42 +134,6 @@ watch(
   },
   { immediate: true, deep: true },
 );
-// ======================== Batch Update ========================
-// zombieJ:
-// To avoid Form self re-render,
-// We create a sub component `BatchUpdate` to handle batch update logic.
-// When the call with do not change immediate, we will batch the update
-// and flush it in `useLayoutEffect` for next tick.
-
-// Set batch update ref
-const batchUpdateRef = ref<BatchUpdateRef>(null);
-const batchUpdateTasksRef = ref<[key: string, fn: VoidFunction][]>([]);
-
-const tryFlushBatch = () => {
-  if (batchUpdateRef.value) {
-    batchUpdateTasksRef.value.forEach(([key, fn]) => {
-      batchUpdateRef.value.batch(key, fn);
-    });
-    batchUpdateTasksRef.value = [];
-  }
-};
-
-// Ref update
-const setBatchUpdateRef = (batchUpdate) => {
-  batchUpdateRef.value = batchUpdate;
-  if (batchUpdate) {
-    nextTick().then(tryFlushBatch);
-  }
-};
-
-// Task list
-
-const batchUpdate: BatchTask = (key, callback) => {
-  batchUpdateTasksRef.value.push([key, callback]);
-  tryFlushBatch();
-};
-
-setBatchUpdate(batchUpdate);
 
 // ========================== Unmount ===========================
 onBeforeUnmount(() => {
@@ -236,7 +188,6 @@ const ChildrenNode = () => {
     <FieldContextProvider :value="formContextValue">
       <ChildrenNode />
     </FieldContextProvider>
-    <BatchUpdate :ref="setBatchUpdateRef" />
   </ListContextProvider>
   <component
     v-else
@@ -262,7 +213,6 @@ const ChildrenNode = () => {
       <FieldContextProvider :value="formContextValue">
         <ChildrenNode />
       </FieldContextProvider>
-      <BatchUpdate :ref="setBatchUpdateRef" />
     </ListContextProvider>
   </component>
 </template>

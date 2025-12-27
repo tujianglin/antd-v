@@ -42,7 +42,6 @@ const defaultFormInstance: InternalFormInstance = {
       setValidateMessages: warningFunc,
       setPreserve: warningFunc,
       getInitialValue: warningFunc,
-      setBatchUpdate: warningFunc,
     };
   },
 };

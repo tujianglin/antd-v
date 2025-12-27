@@ -9,6 +9,7 @@ import Render from '@/vc-component/render';
 import BreadcrumbSeparator from './BreadcrumbSeparator.vue';
 import type { BreadcrumbItemProps } from './BreadcrumbItem.vue';
 import { flattenChildren } from '@/vc-util/Dom/findDOMNode';
+import clsx from 'clsx';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -61,7 +62,7 @@ const link = computed(() => renderBreadcrumbNode(flattenChildren(slots.default?.
 </script>
 <template>
   <template v-if="link !== undefined && link !== null">
-    <li :class="mergedClassNames?.item" :style="mergedStyles?.item">
+    <li :class="clsx(`${prefixCls}-item`, mergedClassNames?.item)" :style="mergedStyles?.item">
       <Render :content="link" />
     </li>
     <BreadcrumbSeparator v-if="separator"><Render :content="separator" /></BreadcrumbSeparator>

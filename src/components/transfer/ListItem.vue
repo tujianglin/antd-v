@@ -30,10 +30,12 @@ defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 const { prefixCls, classNames, styles, renderedText, renderedEl, item, checked, disabled, onClick, onRemove, showRemove } =
   defineProps<ListItemProps<RecordType>>();
 
+const mergedDisabled = computed(() => disabled || item?.disabled);
+
 const classes = computed(() =>
   clsx(`${prefixCls}-content-item`, classNames.item, {
-    [`${prefixCls}-content-item-disabled`]: disabled || item.disabled,
-    [`${prefixCls}-content-item-checked`]: checked && !item.disabled,
+    [`${prefixCls}-content-item-disabled`]: mergedDisabled?.value,
+    [`${prefixCls}-content-item-checked`]: checked && !mergedDisabled?.value,
   }),
 );
 
@@ -48,7 +50,7 @@ const title = computed(() => {
 const [contextLocale] = useLocale('Transfer', defaultLocale.Transfer);
 
 const liProps = computed(() => ({
-  className: classes.value,
+  class: classes.value,
   style: styles.item,
   title: title.value,
 }));
@@ -64,7 +66,7 @@ const LabelNode = () => (
     <LabelNode />
     <button
       type="button"
-      :disabled="disabled || item.disabled"
+      :disabled="mergedDisabled"
       :class="`${prefixCls}-content-item-remove`"
       :aria-label="contextLocale?.remove"
       @click="() => onRemove?.(item)"
@@ -72,12 +74,12 @@ const LabelNode = () => (
       <DeleteOutlined />
     </button>
   </li>
-  <li v-else v-bind="liProps" @click="(event) => (disabled || item.disabled ? undefined : onClick(item, event))">
+  <li v-else v-bind="liProps" @click="(event) => (mergedDisabled ? undefined : onClick(item, event))">
     <Checkbox
       :class="clsx(`${prefixCls}-checkbox`, classNames.itemIcon)"
       :style="styles.itemIcon"
       :checked="checked"
-      :disabled="disabled || item.disabled"
+      :disabled="mergedDisabled"
     />
     <LabelNode />
   </li>

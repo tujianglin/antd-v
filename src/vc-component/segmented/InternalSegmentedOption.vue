@@ -73,13 +73,7 @@ const itemContent = () => (
       onKeydown={onKeydown}
       onKeyup={onKeyup}
     />
-    <div
-      class={clsx(`${prefixCls}-item-label`, segmentedClassNames?.label)}
-      title={title}
-      role="radio"
-      aria-checked={checked}
-      style={styles?.label}
-    >
+    <div class={clsx(`${prefixCls}-item-label`, segmentedClassNames?.label)} title={title} style={styles?.label}>
       <Render content={label}></Render>
     </div>
   </label>

@@ -222,7 +222,7 @@ export const prepareComponentToken: GetDefaultToken<'Tag'> = (token) => {
   const solidTextColor = isBright(new AggregationColor(token.colorBgSolid), '#fff') ? '#000' : '#fff';
 
   return {
-    defaultBg: new FastColor(token.colorFillQuaternary).onBackground(token.colorBgContainer).toHexString(),
+    defaultBg: new FastColor(token.colorFillTertiary).onBackground(token.colorBgContainer).toHexString(),
     defaultColor: token.colorText,
     solidTextColor,
   };
