@@ -62,7 +62,11 @@ usePanelStyle(cascaderPrefixCls);
 const isRtl = computed(() => mergedDirection.value === 'rtl');
 
 // ===================== Icon ======================
-const [mergedExpandIcon, loadingIcon] = useColumnIcons(prefixCls, isRtl, expandIcon);
+const [mergedExpandIcon, loadingIcon] = useColumnIcons(
+  prefixCls,
+  isRtl,
+  computed(() => expandIcon),
+);
 
 // ===================== Empty =====================
 const mergedNotFoundContent = computed(

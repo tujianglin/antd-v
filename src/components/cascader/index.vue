@@ -264,7 +264,11 @@ const disabled = useDisabledContextInject();
 const mergedDisabled = computed(() => customDisabled ?? disabled.value);
 
 // ===================== Icon ======================
-const [mergedExpandIcon, loadingIcon] = useColumnIcons(prefixCls, isRtl, expandIcon);
+const [mergedExpandIcon, loadingIcon] = useColumnIcons(
+  prefixCls,
+  isRtl,
+  computed(() => expandIcon),
+);
 
 // =================== Multiple ====================
 const checkable = useCheckable(
@@ -381,7 +385,7 @@ const restProps = computed(() => omit(rest, ['suffixIcon']) as any);
     :allow-clear="mergedAllowClear"
     :show-search="mergedShowSearch"
     :expand-icon="mergedExpandIcon"
-    :suffix-icon="suffixIcon"
+    :suffix="suffixIcon"
     :remove-icon="removeIcon"
     :loading-icon="loadingIcon"
     :checkable="checkable"

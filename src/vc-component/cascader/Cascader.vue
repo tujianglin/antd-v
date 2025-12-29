@@ -59,7 +59,7 @@ interface BaseCascaderProps<
   // Value
   changeOnSelect?: boolean;
   displayRender?: (label: string[], selectedOptions?: OptionType[]) => any;
-  checkable?: boolean | any;
+  checkable?: boolean | VueNode;
   showCheckedStrategy?: ShowCheckedStrategy;
 
   // Search
@@ -84,8 +84,8 @@ interface BaseCascaderProps<
   onPopupVisibleChange?: (open: boolean) => void;
 
   // Icon
-  expandIcon?: any;
-  loadingIcon?: any;
+  expandIcon?: VueNode;
+  loadingIcon?: VueNode;
 }
 
 export interface FieldNames<

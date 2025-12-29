@@ -136,7 +136,7 @@ const finalStyles = computed(() => ({
 <template>
   <Select
     v-bind="omit($props, ['popupClassName'])"
-    :suffix-icon="null"
+    :suffix="null"
     :prefix-cls="prefixCls"
     :class-names="finalClassNames"
     :styles="finalStyles"
