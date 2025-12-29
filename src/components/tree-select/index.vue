@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, getCurrentInstance, h, toRefs, type AriaAttributes, type CSSProperties } from 'vue';
+import { computed, getCurrentInstance, h, toRefs, type AriaAttributes } from 'vue';
 import type { TreeSelectProps as RcTreeSelectProps } from '@/vc-component/tree-select';
 import RcTreeSelect from '@/vc-component/tree-select';
 import {
@@ -67,12 +67,8 @@ export interface TreeSelectProps<ValueType = any, OptionType extends DataNode = 
       RcTreeSelectProps<ValueType, OptionType>,
       'showTreeIcon' | 'treeMotion' | 'mode' | 'getInputElement' | 'backfill' | 'treeLine' | 'switcherIcon'
     > {
-  styles?: Partial<Record<SemanticName, CSSProperties>> & {
-    popup?: Partial<Record<PopupSemantic, CSSProperties>>;
-  };
-  classNames?: Partial<Record<SemanticName, string>> & {
-    popup?: Partial<Record<PopupSemantic, string>>;
-  };
+  styles?: TreeSelectStylesType;
+  classNames?: TreeSelectClassNamesType;
   suffixIcon?: VueNode;
   size?: SizeType;
   disabled?: boolean;

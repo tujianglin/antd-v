@@ -1,5 +1,4 @@
 <script setup lang="tsx">
-import { devUseWarning } from '@/components/_util/warning';
 import { useComponentConfig } from '@/components/config-provider/context';
 import useCSSVarCls from '@/components/config-provider/hooks/useCSSVarCls';
 import { Field, useFieldContextInject, useListContextInject } from '@/vc-component/form';
@@ -108,9 +107,6 @@ const prefixCls = computed(() => getPrefixCls.value('form', customizePrefixCls))
 const rootCls = useCSSVarCls(prefixCls);
 const [hashId, cssVarCls] = useStyle(prefixCls, rootCls);
 
-// ========================= Warn =========================
-const warning = devUseWarning('Form.Item');
-
 // ========================= MISC =========================
 // Get `noStyle` required info
 const listContext = useListContextInject();
@@ -204,52 +200,11 @@ const variables = computed(() => {
 
 const vm = getCurrentInstance() as any;
 
-function renderLayout(baseChildren: VueNode, fieldId?: string, isRequired?: boolean): VueNode {
-  if (noStyle && !hidden) {
-    return (
-      <StatusProvider
-        prefixCls={prefixCls.value}
-        hasFeedback={vm.props.hasFeedback}
-        validateStatus={vm.props.validateStatus}
-        meta={meta.value}
-        errors={mergedErrors.value}
-        warnings={mergedWarnings.value}
-        noStyle
-        name={name}
-      >
-        {baseChildren}
-      </StatusProvider>
-    );
-  }
-  return (
-    <ItemHolder
-      key="row"
-      {...vm.props}
-      class={clsx(className, cssVarCls.value, rootCls.value, hashId.value)}
-      prefixCls={prefixCls.value}
-      fieldId={fieldId}
-      isRequired={isRequired}
-      errors={mergedErrors.value}
-      warnings={mergedWarnings.value}
-      meta={meta.value}
-      onSubItemMetaChange={onSubItemMetaChange}
-      layout={layout}
-      name={name}
-    >
-      {baseChildren}
-    </ItemHolder>
-  );
-}
-
 const slots = useSlots();
 const RenderContent = (props) => {
   const { control, meta: renderMeta, form: context } = props;
   const mergedName = toArray(name).length && renderMeta ? renderMeta.name : [];
   const fieldId = getFieldId(mergedName, formName?.value);
-
-  // Get slots.default result - for shouldUpdate scenario, pass context directly
-  const defaultSlotResult = slots.default?.(context);
-  const mergedChildren = flattenChildren(defaultSlotResult)[0];
 
   const isRequired =
     required !== undefined
@@ -264,44 +219,60 @@ const RenderContent = (props) => {
           }
           return false;
         });
-  let childNode: VueNode = null;
 
-  warning(
-    !(shouldUpdate && dependencies),
-    'usage',
-    "`shouldUpdate` and `dependencies` shouldn't be used together. See https://u.ant.design/form-deps.",
-  );
-  if (Array.isArray(mergedChildren) && hasName.value) {
-    warning(
-      false,
-      'usage',
-      'A `Form.Item` with a `name` prop must have a single child element. For information on how to render more complex form items, see https://u.ant.design/complex-form-item.',
-    );
-    childNode = mergedChildren;
-  } else if (dependencies && !hasName.value) {
-    warning(false, 'usage', 'Must set `name` or use a render function when `dependencies` is set.');
-    childNode = mergedChildren;
-  } else if (isVNode(mergedChildren)) {
-    warning(
-      (mergedChildren as any).props?.defaultValue === undefined,
-      'usage',
-      '`defaultValue` will not work on controlled Field. You should use `initialValues` of Form instead.',
-    );
-    mergedChildren.props = {
-      ...mergedChildren.props,
-      ...control,
-      ref: getItemRef(mergedName, mergedChildren),
-    };
-    childNode = mergedChildren;
-  } else {
-    warning(
-      !mergedName.length || !!noStyle,
-      'usage',
-      '`name` is only used for validate React element. If you are using Form.Item as layout display, please remove `name` instead.',
-    );
-    childNode = mergedChildren as VueNode;
+  function renderLayout() {
+    // Get slots.default result - for shouldUpdate scenario, pass context directly
+    const defaultSlotResult = slots.default?.(context);
+    const mergedChildren = flattenChildren(defaultSlotResult)[0];
+    let childNode: VueNode = null;
+
+    if (isVNode(mergedChildren)) {
+      mergedChildren.props = {
+        ...mergedChildren.props,
+        ...control,
+        ref: getItemRef(mergedName, mergedChildren),
+      };
+      childNode = mergedChildren;
+    } else {
+      childNode = mergedChildren as VueNode;
+    }
+    return childNode;
   }
-  return renderLayout(childNode, fieldId, isRequired);
+  return (
+    <>
+      {noStyle && !hidden ? (
+        <StatusProvider
+          prefixCls={prefixCls.value}
+          hasFeedback={vm.props.hasFeedback}
+          validateStatus={vm.props.validateStatus}
+          meta={meta.value}
+          errors={mergedErrors.value}
+          warnings={mergedWarnings.value}
+          noStyle
+          name={name}
+        >
+          {renderLayout}
+        </StatusProvider>
+      ) : (
+        <ItemHolder
+          key="row"
+          {...vm.props}
+          class={clsx(className, cssVarCls.value, rootCls.value, hashId.value)}
+          prefixCls={prefixCls.value}
+          fieldId={fieldId}
+          isRequired={isRequired}
+          errors={mergedErrors.value}
+          warnings={mergedWarnings.value}
+          meta={meta.value}
+          onSubItemMetaChange={onSubItemMetaChange}
+          layout={layout}
+          name={name}
+        >
+          {renderLayout}
+        </ItemHolder>
+      )}
+    </>
+  );
 };
 </script>
 
