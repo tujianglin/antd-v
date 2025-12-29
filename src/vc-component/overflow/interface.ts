@@ -4,7 +4,7 @@ import type { CSSProperties, HTMLAttributes } from 'vue';
 export const RESPONSIVE = 'responsive' as const;
 export const INVALIDATE = 'invalidate' as const;
 
-export interface OverflowProps<ItemType> extends /** @vue-ignore */ HTMLAttributes {
+export interface OverflowProps<ItemType> extends /** @vue-ignore */ Omit<HTMLAttributes, 'prefix'> {
   prefixCls?: string;
   class?: string;
   style?: CSSProperties;
@@ -19,6 +19,7 @@ export interface OverflowProps<ItemType> extends /** @vue-ignore */ HTMLAttribut
   renderRest?: VueNode | ((omittedItems: ItemType[]) => VueNode);
   /** @private Do not use in your production. Render raw node that need wrap Item by developer self */
   renderRawRest?: (omittedItems: ItemType[]) => VueNode;
+  prefix?: VueNode;
   suffix?: VueNode;
   component?: any;
   itemComponent?: any;

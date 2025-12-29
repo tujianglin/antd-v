@@ -11,6 +11,8 @@ import Overflow from '@/vc-component/overflow';
 import Input from '../Input.vue';
 import type { SharedContentProps } from './index.vue';
 import { useBaseSelectContextInject } from '../../hooks/useBaseProps';
+import Placeholder from './Placeholder.vue';
+import { Render } from '@/components';
 
 defineOptions({ inheritAttrs: false, compatConfig: { MODE: 3 } });
 
@@ -101,7 +103,7 @@ const defaultRenderSelector = (
       class={clsx(`${selectionItemPrefixCls.value}-content`, classNames.value?.itemContent)}
       style={styles.value?.itemContent}
     >
-      {content}
+      <Render content={content}></Render>
     </span>
     {closable && (
       <TransBtn
@@ -197,6 +199,7 @@ const changeRef = (el) => {
     :prefix-cls="`${prefixCls}-content`"
     :class="classNames?.content"
     :style="styles?.content"
+    :prefix="!displayValues?.length && (!searchValue || !triggerOpen) ? h(Placeholder) : null"
     :data="displayValues"
     :render-item="renderItem"
     :render-rest="renderRest"

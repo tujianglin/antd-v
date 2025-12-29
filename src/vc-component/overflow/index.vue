@@ -24,6 +24,7 @@ const {
   maxCount,
   renderRest,
   renderRawRest,
+  prefix,
   suffix,
   component: Component = 'div',
   itemComponent,
@@ -41,6 +42,7 @@ const itemWidths = ref(new Map<VueKey, number>());
 const prevRestWidth = ref<number>(0);
 const restWidth = ref<number>(0);
 
+const prefixWidth = ref<number>(0);
 const suffixWidth = ref<number>(0);
 const suffixFixedStart = ref<number>(null);
 
@@ -54,7 +56,7 @@ const mergedDisplayCount = computed(() => {
 
 const restReady = ref(false);
 
-const itemPrefixCls = `${prefixCls}-item`;
+const itemPrefixCls = computed(() => `${prefixCls}-item`);
 
 // Always use the max width to avoid blink
 const mergedRestWidth = computed(() => Math.max(prevRestWidth.value, restWidth.value));
@@ -140,6 +142,10 @@ function registerOverflowSize(_: VueKey, width: number | null) {
   prevRestWidth.value = restWidth.value;
 }
 
+function registerPrefixSize(_: VueKey, width: number | null) {
+  prefixWidth.value = width!;
+}
+
 function registerSuffixSize(_: VueKey, width: number | null) {
   suffixWidth.value = width!;
 }
@@ -220,7 +226,7 @@ const suffixStyle = computed((): CSSProperties => {
 });
 
 const itemSharedProps = computed(() => ({
-  prefixCls: itemPrefixCls,
+  prefixCls: itemPrefixCls?.value,
   responsive: shouldResponsive.value,
   component: itemComponent,
   invalidate: invalidate.value,
@@ -268,7 +274,7 @@ const internalRenderItemNode = () => {
 // >>>>> Rest node
 const restContextProps = computed(() => ({
   order: displayRest.value ? mergedDisplayCount.value : Number.MAX_SAFE_INTEGER,
-  class: `${itemPrefixCls}-rest`,
+  class: `${itemPrefixCls?.value}-rest`,
   registerSize: registerOverflowSize,
   display: displayRest.value,
 }));
@@ -318,6 +324,21 @@ const OverflowNode = () => {
       {...restProps}
       {...falseToUndefined(attrs)}
     >
+      {/* Prefix Node */}
+      {prefix && (
+        <Item
+          {...itemSharedProps?.value}
+          responsive={isResponsive?.value}
+          responsiveDisabled={!shouldResponsive.value}
+          order={-1}
+          class={`${itemPrefixCls?.value}-prefix`}
+          registerSize={registerPrefixSize}
+          display
+        >
+          {prefix}
+        </Item>
+      )}
+
       {mergedData.value.map(internalRenderItemNode())}
 
       {/* Rest Count Item */}
@@ -330,7 +351,7 @@ const OverflowNode = () => {
           responsive={isResponsive.value}
           responsiveDisabled={!shouldResponsive.value}
           order={mergedDisplayCount.value}
-          class={`${itemPrefixCls}-suffix`}
+          class={`${itemPrefixCls?.value}-suffix`}
           registerSize={registerSuffixSize}
           display
           style={suffixStyle.value}
