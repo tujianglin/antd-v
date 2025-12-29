@@ -223,27 +223,27 @@ const handleOnCompositionEnd = (e: CompositionEvent) => {
 
 // ========================== Render ==========================
 // >>> Root Props
-const rootProps = pickAttrs(restProps, {
-  data: true,
-});
+const rootProps = computed(() => pickAttrs(restProps, { data: true }));
 
-const inputProps: InputProps = omit(
-  {
-    ...restProps,
-    classNames: omit(mergedClassNames.value, ['button', 'root']),
-    styles: omit(mergedStyles.value, ['button', 'root']),
-    prefixCls: inputPrefixCls.value,
-    type: 'search',
-    size,
-    variant,
-    onPressEnter,
-    onCompositionStart: handleOnCompositionStart,
-    onCompositionEnd: handleOnCompositionEnd,
-    onChange,
-    disabled,
-  },
-  Object.keys(rootProps) as any[],
-);
+const inputProps = computed(() => {
+  return omit(
+    {
+      ...restProps,
+      classNames: omit(mergedClassNames.value, ['button', 'root']),
+      styles: omit(mergedStyles.value, ['button', 'root']),
+      prefixCls: inputPrefixCls.value,
+      type: 'search',
+      size,
+      variant,
+      onPressEnter,
+      onCompositionStart: handleOnCompositionStart,
+      onCompositionEnd: handleOnCompositionEnd,
+      onChange,
+      disabled,
+    },
+    Object.keys(rootProps?.value) as any,
+  );
+});
 </script>
 <template>
   <Compact :class="mergedClassName" :style="{ ...style, ...mergedStyles?.root }" v-bind="rootProps" :hidden="hidden">

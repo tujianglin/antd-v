@@ -107,7 +107,7 @@ const [mergedClassNames, mergedStyles] = useMergeSemantic<AutoCompleteClassNames
 
 const finalClassNames = computed(() => ({
   root: clsx(`${prefixCls.value}-auto-complete`, className, rootClassName, mergedClassNames.value?.root, {
-    [`${prefixCls.value}-customize`]: customizeInput,
+    [`${prefixCls.value}-customize`]: customizeInput?.value,
   }),
   prefix: mergedClassNames.value?.prefix,
   input: mergedClassNames.value?.input,

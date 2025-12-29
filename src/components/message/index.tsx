@@ -338,7 +338,7 @@ methods.forEach((type: keyof MessageMethods) => {
 // ==============================================================================
 const noop = () => {};
 
-let _actWrapper: (wrapper: any) => void = noop;
+let _actWrapper: (wrapper: (fn: () => void) => void) => void = noop;
 if (process.env.NODE_ENV === 'test') {
   _actWrapper = (wrapper) => {
     act = wrapper;
