@@ -1,5 +1,5 @@
 <script lang="tsx" setup>
-import { computed, getCurrentInstance, ref, toRefs, useTemplateRef, type CSSProperties, type VNode } from 'vue';
+import { computed, getCurrentInstance, ref, toRefs, useTemplateRef, type VNode } from 'vue';
 import {
   useMergeSemantic,
   type SemanticClassNames,
@@ -39,12 +39,8 @@ export interface SearchProps extends InputProps {
   enterButton?: VueNode | boolean;
   loading?: boolean;
   onPressEnter?: (e: KeyboardEvent) => void;
-  classNames?: Partial<Record<SemanticName, string>> & {
-    button?: Partial<Record<ButtonSemanticName, string>>;
-  };
-  styles?: Partial<Record<SemanticName, CSSProperties>> & {
-    button?: Partial<Record<ButtonSemanticName, CSSProperties>>;
-  };
+  classNames?: InputSearchClassNamesType;
+  styles?: InputSearchStylesType;
 }
 
 defineOptions({ name: 'InputSearch', inheritAttrs: false, compatConfig: { MODE: 3 } });
