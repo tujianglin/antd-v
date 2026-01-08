@@ -1,4 +1,4 @@
-import { warning } from '@/vc-util/warning';
+import { warning } from '@/vc-util';
 import type { DerivativeFunc, TokenType } from './interface';
 
 let uuid = 0;
@@ -8,7 +8,7 @@ let uuid = 0;
  * Use `createTheme` first which will help to manage the theme instance cache.
  */
 export default class Theme<DesignToken extends TokenType, DerivativeToken extends TokenType> {
-  private derivatives: any[];
+  private derivatives: DerivativeFunc<DesignToken, DerivativeToken>[];
   public readonly id: number;
 
   constructor(derivatives: DerivativeFunc<DesignToken, DerivativeToken> | DerivativeFunc<DesignToken, DerivativeToken>[]) {

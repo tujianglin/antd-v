@@ -1,17 +1,15 @@
 import { removeCSS, updateCSS } from '@/vc-util/Dom/dynamicCSS';
 import hash from '@emotion/hash';
-import type * as CSS from 'csstype';
-// @ts-ignore 111
 import unitless from '@emotion/unitless';
+import type * as CSS from 'csstype';
 import { compile, middleware, prefixer, serialize, stringify } from 'stylis';
-import { computed, type ComputedRef } from 'vue';
 import type { Theme, Transformer } from '..';
 import type Keyframes from '../Keyframes';
-import type { Linter } from '../linters/index';
-import { contentQuotesLinter, hashedAnimationLinter } from '../linters/index';
+import type { Linter } from '../linters';
+import { contentQuotesLinter, hashedAnimationLinter } from '../linters';
 import type { HashPriority } from '../StyleContext';
-import { ATTR_CACHE_PATH, ATTR_MARK, CSS_IN_JS_INSTANCE, useStyleContextInject } from '../StyleContext';
-import { isClientSide, toStyleStr } from '../util';
+import { ATTR_CACHE_PATH, ATTR_MARK, CSS_IN_JS_INSTANCE, useStyleContext } from '../StyleContext';
+import { isClientSide, toStyleStr, where } from '../util';
 import { CSS_FILE_STYLE, existPath, getStyleAndHash } from '../util/cacheMapUtil';
 import type { ExtractStyle } from './useGlobalCache';
 import useGlobalCache from './useGlobalCache';
@@ -54,33 +52,27 @@ export interface CSSObject extends CSSPropertiesWithMultiValues, CSSPseudos, CSS
 // ============================================================================
 // ==                                 Parser                                 ==
 // ============================================================================
-// Preprocessor style content to browser support one
 export function normalizeStyle(styleStr: string, autoPrefix: boolean) {
   const serialized = autoPrefix
     ? serialize(compile(styleStr), middleware([prefixer, stringify]))
     : serialize(compile(styleStr), stringify);
-  // eslint-disable-next-line no-useless-escape
-  return serialized.replace(/\{%%%\:[^;];}/g, ';');
+
+  return serialized.replace(/\{%%%:[^;];}/g, ';');
 }
 
 function isCompoundCSSProperty(value: CSSObject[string]) {
   return typeof value === 'object' && value && (SKIP_CHECK in value || MULTI_VALUE in value);
 }
 
-// 注入 hash 值
-function injectSelectorHash(key: string, hashId: string, hashPriority?: HashPriority) {
+function injectSelectorHash(key: string, hashId: string, hashPriority: HashPriority = 'high') {
   if (!hashId) {
     return key;
   }
 
-  const hashClassName = `.${hashId}`;
-  const hashSelector = hashPriority === 'low' ? `:where(${hashClassName})` : hashClassName;
+  const hashSelector = where({ hashCls: hashId, hashPriority });
 
-  // 注入 hashId
   const keys = key.split(',').map((k) => {
     const fullPath = k.trim().split(/\s+/);
-
-    // 如果 Selector 第一个是 HTML Element，那我们就插到它的后面。反之，就插到最前面。
     let firstPath = fullPath[0] || '';
     const htmlElement = firstPath.match(/^\w+/)?.[0] || '';
 
@@ -106,7 +98,6 @@ export interface ParseInfo {
   parentSelectors: string[];
 }
 
-// Parse CSSObject to style content
 export const parseStyle = (
   interpolation: CSSInterpolation,
   config: ParseConfig = {},
@@ -114,12 +105,7 @@ export const parseStyle = (
     root: true,
     parentSelectors: [],
   },
-): [
-  parsedStr: string,
-  // Style content which should be unique on all of the style (e.g. Keyframes).
-  // Firefox will flick with same animation name when exist multiple same keyframes.
-  effectStyle: Record<string, string>,
-] => {
+): [parsedStr: string, effectStyle: Record<string, string>] => {
   const { hashId, layer, path, hashPriority, transformers = [], linters = [] } = config;
   let styleStr = '';
   let effectStyle: Record<string, string> = {};
@@ -151,18 +137,15 @@ export const parseStyle = (
   const flattenStyleList = flattenList(Array.isArray(interpolation) ? interpolation : [interpolation]);
 
   flattenStyleList.forEach((originStyle) => {
-    // Only root level can use raw string
     const style: CSSObject = typeof originStyle === 'string' && !root ? {} : originStyle;
 
     if (typeof style === 'string') {
       styleStr += `${style}\n`;
     } else if ((style as any)._keyframe) {
-      // Keyframe
       parseKeyframes(style as unknown as Keyframes);
     } else {
       const mergedStyle = transformers.reduce((prev, trans) => trans?.visit?.(prev) || prev, style);
 
-      // Normal CSSObject
       Object.keys(mergedStyle).forEach((key) => {
         const value = mergedStyle[key];
 
@@ -173,30 +156,18 @@ export const parseStyle = (
           !isCompoundCSSProperty(value)
         ) {
           let subInjectHash = false;
-
-          // 当成嵌套对象来处理
           let mergedKey = key.trim();
-          // Whether treat child as root. In most case it is false.
           let nextRoot = false;
 
-          // 拆分多个选择器
           if ((root || injectHash) && hashId) {
             if (mergedKey.startsWith('@')) {
-              // 略过媒体查询，交给子节点继续插入 hashId
               subInjectHash = true;
             } else if (mergedKey === '&') {
-              // 抹掉 root selector 上的单个 &
               mergedKey = injectSelectorHash('', hashId, hashPriority);
             } else {
-              // 注入 hashId
               mergedKey = injectSelectorHash(key, hashId, hashPriority);
             }
           } else if (root && !hashId && (mergedKey === '&' || mergedKey === '')) {
-            // In case of `{ '&': { a: { color: 'red' } } }` or `{ '': { a: { color: 'red' } } }` without hashId,
-            // we will get `&{a:{color:red;}}` or `{a:{color:red;}}` string for stylis to compile.
-            // But it does not conform to stylis syntax,
-            // and finally we will get `{color:red;}` as css, which is wrong.
-            // So we need to remove key in root, and treat child `{ a: { color: 'red' } }` as root.
             mergedKey = '';
             nextRoot = true;
           }
@@ -221,16 +192,13 @@ export const parseStyle = (
               );
             }
 
-            // 如果是样式则直接插入
             const styleName = cssKey.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
 
-            // Auto suffix with px
             let formatValue = cssValue;
             if (!unitless[cssKey] && typeof formatValue === 'number' && formatValue !== 0) {
               formatValue = `${formatValue}px`;
             }
 
-            // handle animationName & Keyframe value
             if (cssKey === 'animationName' && (cssValue as Keyframes)?._keyframe) {
               parseKeyframes(cssValue as Keyframes);
               formatValue = (cssValue as Keyframes).getName(hashId);
@@ -255,7 +223,6 @@ export const parseStyle = (
   if (!root) {
     styleStr = `{${styleStr}}`;
   } else if (layer) {
-    // fixme: https://github.com/thysultan/stylis/pull/339
     if (styleStr) {
       styleStr = `@layer ${layer.name} {${styleStr}}`;
     }
@@ -272,7 +239,6 @@ export const parseStyle = (
 // ==                                Register                                ==
 // ============================================================================
 export function uniqueHash(path: (string | number)[], styleStr: string) {
-  // @ts-ignore 1111
   return hash(`${path.join('%')}${styleStr}`);
 }
 
@@ -290,7 +256,7 @@ type StyleCacheValue = [
  * Register a style to the global style sheet.
  */
 export default function useStyleRegister(
-  info: ComputedRef<{
+  info: {
     theme: Theme<any, any>;
     token: any;
     path: string[];
@@ -298,47 +264,38 @@ export default function useStyleRegister(
     layer?: LayerConfig;
     nonce?: string | (() => string);
     clientOnly?: boolean;
-    /**
-     * Tell cssinjs the insert order of style.
-     * It's useful when you need to insert style
-     * before other style to overwrite for the same selector priority.
-     */
     order?: number;
-  }>,
+  },
   styleFn: () => CSSInterpolation,
 ) {
-  const styleContext = useStyleContextInject();
+  const { path, hashId, layer, nonce, clientOnly, order = 0 } = info;
+  const styleContext = useStyleContext();
+  const { mock, hashPriority, container, transformers, linters, cache, layer: enableLayer, autoPrefix } = styleContext.value;
 
-  const fullPath = computed(() => {
-    let list = [info.value.hashId || ''];
-    if (styleContext.layer) {
-      list = [...list, 'layer'];
-    }
-    list = [...list, ...info.value.path];
-    return list;
-  });
-  // Check if need insert style
-  let isMergedClientSide = isClientSide;
-  if (process.env.NODE_ENV !== 'production' && styleContext.mock !== undefined) {
-    isMergedClientSide = styleContext.mock === 'client';
+  const fullPath: string[] = [hashId || ''];
+  if (enableLayer) {
+    fullPath.push('layer');
   }
+  fullPath.push(...path);
+
+  let isMergedClientSide = isClientSide;
+  if (process.env.NODE_ENV !== 'production' && mock !== undefined) {
+    isMergedClientSide = mock === 'client';
+  }
+
   useGlobalCache<StyleCacheValue>(
     STYLE_PREFIX,
     fullPath,
-    // Create cache if needed
     () => {
-      const { path, hashId, layer, clientOnly, order = 0 } = info.value;
-      const cachePath = fullPath.value.join('|');
+      const cachePath = fullPath.join('|');
 
-      // Get style from SSR inline style directly
       if (existPath(cachePath)) {
         const [inlineCacheStyleStr, styleHash] = getStyleAndHash(cachePath);
         if (inlineCacheStyleStr) {
           return [inlineCacheStyleStr, styleHash, {}, clientOnly, order];
         }
       }
-      const { hashPriority, transformers, linters, layer: enableLayer, autoPrefix } = styleContext;
-      // Generate style
+
       const styleObj = styleFn();
       const [parsedStyle, effectStyle] = parseStyle(styleObj, {
         hashId,
@@ -350,25 +307,18 @@ export default function useStyleRegister(
       });
 
       const styleStr = normalizeStyle(parsedStyle, autoPrefix || false);
-      const styleId = uniqueHash(fullPath.value, styleStr);
+      const styleId = uniqueHash(fullPath, styleStr);
 
       return [styleStr, styleId, effectStyle, clientOnly, order];
     },
-
-    // Remove cache if no need
     (cacheValue, fromHMR) => {
       const [, styleId] = cacheValue;
       if (fromHMR && isClientSide) {
-        removeCSS(styleId, { mark: ATTR_MARK });
+        removeCSS(styleId, { mark: ATTR_MARK, attachTo: container });
       }
     },
-
-    // Effect: Inject style here
     (cacheValue) => {
-      const { nonce } = info.value;
       const [styleStr, styleId, effectStyle, , priority] = cacheValue;
-      const { container, cache, layer: enableLayer, autoPrefix } = styleContext;
-
       if (isMergedClientSide && styleStr !== CSS_FILE_STYLE) {
         const mergedCSSConfig: Parameters<typeof updateCSS>[2] = {
           mark: ATTR_MARK,
@@ -383,8 +333,6 @@ export default function useStyleRegister(
           mergedCSSConfig.csp = { nonce: nonceStr };
         }
 
-        // ================= Split Effect Style =================
-        // We will split effectStyle here since @layer should be at the top level
         const effectLayerKeys: string[] = [];
         const effectRestKeys: string[] = [];
 
@@ -396,8 +344,6 @@ export default function useStyleRegister(
           }
         });
 
-        // ================= Inject Layer Style =================
-        // Inject layer style
         effectLayerKeys.forEach((effectKey) => {
           updateCSS(normalizeStyle(effectStyle[effectKey], autoPrefix || false), `_layer-${effectKey}`, {
             ...mergedCSSConfig,
@@ -405,19 +351,14 @@ export default function useStyleRegister(
           });
         });
 
-        // ==================== Inject Style ====================
-        // Inject style
         const style = updateCSS(styleStr, styleId, mergedCSSConfig);
 
         (style as any)[CSS_IN_JS_INSTANCE] = cache.instanceId;
 
-        // Debug usage. Dev only
         if (process.env.NODE_ENV !== 'production') {
-          style.setAttribute(ATTR_CACHE_PATH, fullPath.value.join('|'));
+          style?.setAttribute(ATTR_CACHE_PATH, fullPath.join('|'));
         }
 
-        // ================ Inject Effect Style =================
-        // Inject client side effect style
         effectRestKeys.forEach((effectKey) => {
           updateCSS(normalizeStyle(effectStyle[effectKey], autoPrefix || false), `_effect-${effectKey}`, mergedCSSConfig);
         });
@@ -430,27 +371,21 @@ export const extract: ExtractStyle<StyleCacheValue> = (cache, effectStyles, opti
   const [styleStr, styleId, effectStyle, clientOnly, order]: StyleCacheValue = cache;
   const { plain, autoPrefix } = options || {};
 
-  // Skip client only style
   if (clientOnly) {
     return null;
   }
 
   let keyStyleText = styleStr;
 
-  // ====================== Share ======================
-  // Used for vc-util
   const sharedAttrs = {
-    'data-vc-order': 'prependQueue',
-    'data-vc-priority': `${order}`,
+    'data-rc-order': 'prependQueue',
+    'data-rc-priority': `${order}`,
   };
 
-  // ====================== Style ======================
   keyStyleText = toStyleStr(styleStr, undefined, styleId, sharedAttrs, plain);
 
-  // =============== Create effect style ===============
   if (effectStyle) {
     Object.keys(effectStyle).forEach((effectKey) => {
-      // Effect style can be reused
       if (!effectStyles[effectKey]) {
         effectStyles[effectKey] = true;
         const effectStyleStr = normalizeStyle(effectStyle[effectKey], autoPrefix || false);

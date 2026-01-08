@@ -1,7 +1,8 @@
 import canUseDom from '@/vc-util/Dom/canUseDom';
 import { removeCSS, updateCSS } from '@/vc-util/Dom/dynamicCSS';
 import hash from '@emotion/hash';
-import { ATTR_MARK, ATTR_TOKEN, type HashPriority } from '../StyleContext';
+import type { HashPriority } from '../StyleContext';
+import { ATTR_MARK, ATTR_TOKEN } from '../StyleContext';
 import { Theme } from '../theme';
 
 // Create a cache for memo concat
@@ -20,7 +21,7 @@ export function memoResult<T extends object, R>(callback: () => R, deps: T[]): R
   }
 
   if (!current.has(RESULT_VALUE)) {
-    current?.set(RESULT_VALUE, callback());
+    current.set(RESULT_VALUE, callback());
   }
 
   return current.get(RESULT_VALUE);
@@ -36,7 +37,7 @@ export function flattenToken(token: any) {
   let str = flattenTokenCache.get(token) || '';
 
   if (!str) {
-    Object.keys(token || {}).forEach((key) => {
+    Object.keys(token).forEach((key) => {
       const value = token[key];
       str += key;
       if (value instanceof Theme) {
@@ -50,7 +51,6 @@ export function flattenToken(token: any) {
 
     // https://github.com/ant-design/ant-design/issues/48386
     // Should hash the string to avoid style tag name too long
-    // @ts-ignore 1111
     str = hash(str);
 
     // Put in cache
@@ -63,7 +63,6 @@ export function flattenToken(token: any) {
  * Convert derivative token to key string
  */
 export function token2key(token: any, salt: string): string {
-  // @ts-ignore 1111
   return hash(`${salt}_${flattenToken(token)}`);
 }
 

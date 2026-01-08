@@ -13,14 +13,14 @@ import getDefaultComponentToken from './getDefaultComponentToken';
 import genMaxMin from './maxmin';
 import statisticToken, { merge as mergeToken } from './statistic';
 
-import { computed, defineComponent, onMounted, onUpdated, type Ref } from 'vue';
+import { computed, defineComponent, onMounted, onUpdated, watchEffect, type Ref } from 'vue';
 import useUniqueMemo from '../_util/hooks/useUniqueMemo';
 import type { UseCSP } from '../hooks/useCSP';
 import useDefaultCSP from '../hooks/useCSP';
 import type { UsePrefix } from '../hooks/usePrefix';
 import type { UseToken } from '../hooks/useToken';
 
-type LayerConfig = Parameters<typeof useStyleRegister>[0]['value']['layer'];
+type LayerConfig = Parameters<typeof useStyleRegister>[0]['layer'];
 
 export interface StyleInfo {
   hashId: string;
@@ -187,31 +187,38 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
     return (rootCls: Ref<string>) => {
       const { cssVar, realToken } = useToken();
 
-      useCSSVarRegister(
-        computed(() => ({
-          path: [component],
-          prefix: cssVar.value.prefix,
-          key: cssVar.value.key!,
-          unitless: compUnitless,
-          ignore,
-          token: realToken.value,
-          scope: rootCls.value,
-        })),
-        () => {
-          const defaultToken = getDefaultComponentToken<CompTokenMap, AliasToken, C>(component, realToken.value, getDefaultToken);
-          const componentToken = getComponentToken<CompTokenMap, AliasToken, C>(component, realToken.value, defaultToken, {
-            deprecatedTokens: options?.deprecatedTokens,
-          });
-          if (defaultToken) {
-            Object.keys(defaultToken).forEach((key) => {
-              componentToken[prefixToken(key)] = componentToken[key];
-              // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-              delete componentToken[key];
+      // 使用 watchEffect 监听响应式数据变化，当 token 变化时重新注册 CSS 变量
+      watchEffect(() => {
+        useCSSVarRegister(
+          {
+            path: [component as string],
+            prefix: cssVar.value.prefix,
+            key: cssVar.value.key!,
+            unitless: compUnitless as Record<string, boolean>,
+            ignore: ignore as Record<string, boolean>,
+            token: realToken.value,
+            scope: rootCls.value,
+          },
+          () => {
+            const defaultToken = getDefaultComponentToken<CompTokenMap, AliasToken, C>(
+              component,
+              realToken.value,
+              getDefaultToken,
+            );
+            const componentToken = getComponentToken<CompTokenMap, AliasToken, C>(component, realToken.value, defaultToken, {
+              deprecatedTokens: options?.deprecatedTokens,
             });
-          }
-          return componentToken;
-        },
-      );
+            if (defaultToken) {
+              Object.keys(defaultToken).forEach((key) => {
+                componentToken[prefixToken(key)] = componentToken[key];
+                // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                delete componentToken[key];
+              });
+            }
+            return componentToken;
+          },
+        );
+      });
 
       return computed(() => cssVar.value?.key);
     };
@@ -276,7 +283,7 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
       const { max, min } = genMaxMin(type);
 
       // Shared config
-      const sharedConfig: Omit<Parameters<typeof useStyleRegister>[0]['value'], 'path'> = {
+      const sharedConfig: Omit<Parameters<typeof useStyleRegister>[0], 'path'> = {
         theme: theme.value,
         token: token.value,
         hashId: hashId.value,
@@ -292,67 +299,68 @@ function genStyleUtils<CompTokenMap extends TokenMap, AliasToken extends TokenTy
       if (typeof getResetStyles === 'function') {
         // Generate style for all need reset tags.
         useStyleRegister(
-          computed(() => ({ ...sharedConfig, clientOnly: false, path: ['Shared', rootPrefixCls] })),
+          {
+            theme: theme.value,
+            token: token.value,
+            hashId: hashId.value,
+            nonce: () => csp.nonce!,
+            clientOnly: false,
+            layer: mergedLayer,
+            order: options.order || -999,
+            path: ['Shared', rootPrefixCls],
+          },
           () => getResetStyles(token.value, { prefix: { rootPrefixCls, iconPrefixCls }, csp }),
         );
       }
-      useStyleRegister(
-        computed(() => ({ ...sharedConfig, path: [concatComponent, prefixCls.value, iconPrefixCls] })),
-        () => {
-          if (options.injectStyle === false) {
-            return [];
-          }
+      useStyleRegister({ ...sharedConfig, path: [concatComponent, prefixCls.value, iconPrefixCls] }, () => {
+        if (options.injectStyle === false) {
+          return [];
+        }
 
-          const { token: proxyToken, flush } = statisticToken(token);
+        const { token: proxyToken, flush } = statisticToken(token);
 
-          const defaultComponentToken = getDefaultComponentToken<CompTokenMap, AliasToken, C>(
-            component,
-            realToken.value,
-            getDefaultToken,
-          );
+        const defaultComponentToken = getDefaultComponentToken<CompTokenMap, AliasToken, C>(
+          component,
+          realToken.value,
+          getDefaultToken,
+        );
 
-          const componentCls = `.${prefixCls.value}`;
-          const componentToken = getComponentToken<CompTokenMap, AliasToken, C>(
-            component,
-            realToken.value,
-            defaultComponentToken,
-            {
-              deprecatedTokens: options.deprecatedTokens,
-            },
-          );
+        const componentCls = `.${prefixCls.value}`;
+        const componentToken = getComponentToken<CompTokenMap, AliasToken, C>(component, realToken.value, defaultComponentToken, {
+          deprecatedTokens: options.deprecatedTokens,
+        });
 
-          if (defaultComponentToken && typeof defaultComponentToken === 'object') {
-            Object.keys(defaultComponentToken).forEach((key) => {
-              defaultComponentToken[key] = `var(${token2CSSVar(key, getCompVarPrefix(component, cssVar.value.prefix))})`;
-            });
-          }
-          const mergedToken = mergeToken<any>(
-            proxyToken.value,
-            {
-              componentCls,
-              prefixCls: prefixCls.value,
-              iconCls: `.${iconPrefixCls}`,
-              antCls: `.${rootPrefixCls}`,
-              calc,
-              max,
-              min,
-            },
-            defaultComponentToken,
-          );
-          const styleInterpolation = styleFn(mergedToken, {
-            hashId: hashId.value,
-            prefixCls: prefixCls.value,
-            rootPrefixCls,
-            iconPrefixCls,
+        if (defaultComponentToken && typeof defaultComponentToken === 'object') {
+          Object.keys(defaultComponentToken).forEach((key) => {
+            defaultComponentToken[key] = `var(${token2CSSVar(key, getCompVarPrefix(component, cssVar.value.prefix))})`;
           });
-          flush(component, componentToken);
-          const commonStyle =
-            typeof getCommonStyle === 'function'
-              ? getCommonStyle(mergedToken, prefixCls.value, rootCls.value, options.resetFont)
-              : null;
-          return [options.resetStyle === false ? null : commonStyle, styleInterpolation];
-        },
-      );
+        }
+        const mergedToken = mergeToken<any>(
+          proxyToken.value,
+          {
+            componentCls,
+            prefixCls: prefixCls.value,
+            iconCls: `.${iconPrefixCls}`,
+            antCls: `.${rootPrefixCls}`,
+            calc,
+            max,
+            min,
+          },
+          defaultComponentToken,
+        );
+        const styleInterpolation = styleFn(mergedToken, {
+          hashId: hashId.value,
+          prefixCls: prefixCls.value,
+          rootPrefixCls,
+          iconPrefixCls,
+        });
+        flush(component, componentToken);
+        const commonStyle =
+          typeof getCommonStyle === 'function'
+            ? getCommonStyle(mergedToken, prefixCls.value, rootCls.value, options.resetFont)
+            : null;
+        return [options.resetStyle === false ? null : commonStyle, styleInterpolation];
+      });
       return hashId;
     };
   }

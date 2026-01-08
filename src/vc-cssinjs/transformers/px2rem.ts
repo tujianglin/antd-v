@@ -1,7 +1,6 @@
 /**
  * respect https://github.com/cuth/postcss-pxtorem
  */
-// @ts-ignore111
 import unitless from '@emotion/unitless';
 import type { CSSObject } from '..';
 import type { Transformer } from './interface';

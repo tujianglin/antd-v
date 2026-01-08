@@ -1,10 +1,10 @@
-import devWarning from '@/vc-util/warning';
+import { warning } from '@/vc-util';
 import type { LinterInfo } from './interface';
 
 export function lintWarning(message: string, info: LinterInfo) {
   const { path, parentSelectors } = info;
 
-  devWarning(
+  warning(
     false,
     `[Ant Design CSS-in-JS] ${path ? `Error in ${path}: ` : ''}${message}${
       parentSelectors.length ? ` Selector: ${parentSelectors.join(' | ')}` : ''

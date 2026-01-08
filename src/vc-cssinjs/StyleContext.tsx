@@ -1,21 +1,10 @@
-import { reactiveComputed } from '@vueuse/core';
-import {
-  defineComponent,
-  getCurrentInstance,
-  inject,
-  provide,
-  reactive,
-  ref,
-  watch,
-  type InjectionKey,
-  type PropType,
-  type Reactive,
-  type Ref,
-} from 'vue';
+import type { ComputedRef, InjectionKey } from 'vue';
+import { computed, defineComponent, getCurrentInstance, inject, provide } from 'vue';
 import CacheEntity from './Cache';
 import type { Linter } from './linters/interface';
 import { AUTO_PREFIX } from './transformers/autoPrefix';
 import type { Transformer } from './transformers/interface';
+
 export const ATTR_TOKEN = 'data-token-hash';
 export const ATTR_MARK = 'data-css-hash';
 export const ATTR_CACHE_PATH = 'data-cache-path';
@@ -27,15 +16,13 @@ export function createCache() {
   const cssinjsInstanceId = Math.random().toString(12).slice(2);
 
   // Tricky SSR: Move all inline style to the head.
-  // PS: We do not recommend tricky mode.
   if (typeof document !== 'undefined' && document.head && document.body) {
     const styles = document.body.querySelectorAll(`style[${ATTR_MARK}]`) || [];
     const { firstChild } = document.head;
 
     Array.from(styles).forEach((style) => {
-      (style as any)[CSS_IN_JS_INSTANCE] = (style as any)[CSS_IN_JS_INSTANCE] || cssinjsInstanceId;
+      (style as any)[CSS_IN_JS_INSTANCE] ||= cssinjsInstanceId;
 
-      // Not force move if no head
       if ((style as any)[CSS_IN_JS_INSTANCE] === cssinjsInstanceId) {
         document.head.insertBefore(style, firstChild);
       }
@@ -63,58 +50,16 @@ export type HashPriority = 'low' | 'high';
 export interface StyleContextProps {
   /** @private Test only. Not work in production. */
   mock?: 'server' | 'client';
-  /**
-   * Only set when you need ssr to extract style on you own.
-   * If not provided, it will auto create <style /> on the end of Provider in server side.
-   */
   cache: CacheEntity;
-  /** Tell children that this context is default generated context */
   defaultCache: boolean;
-  /** Use `:where` selector to reduce hashId css selector priority */
   hashPriority?: HashPriority;
-  /** Tell cssinjs where to inject style in */
   container?: Element | ShadowRoot;
-  /** Component wil render inline  `<style />` for fallback in SSR. Not recommend. */
   ssrInline?: boolean;
-  /** Transform css before inject in document. Please note that `transformers` do not support dynamic update */
   transformers?: Transformer[];
-  /**
-   * Linters to lint css before inject in document.
-   * Styles will be linted after transforming.
-   * Please note that `linters` do not support dynamic update.
-   */
   linters?: Linter[];
-  /** Wrap css in a layer to avoid global style conflict */
   layer?: boolean;
-  /** Hardcode here since transformer not support take effect on serialize currently */
   autoPrefix?: boolean;
 }
-
-const getCache = () => {
-  const instance = getCurrentInstance();
-  let cache: CacheEntity;
-  if (instance && instance.appContext) {
-    // 使用不同的全局属性名，避免与 ant-design-vue 冲突
-    const globalCache = instance.appContext?.config?.globalProperties?.__ANTD_V_CSSINJS_CACHE__;
-    if (globalCache) {
-      cache = globalCache;
-    } else {
-      cache = createCache();
-      if (instance.appContext.config.globalProperties) {
-        instance.appContext.config.globalProperties.__ANTD_V_CSSINJS_CACHE__ = cache;
-      }
-    }
-  } else {
-    cache = createCache();
-  }
-  return cache;
-};
-
-const StyleContext: InjectionKey<Reactive<Partial<StyleContextProps>>> = Symbol('CustomAntdVStyleContext');
-
-export type UseStyleProviderProps = Partial<StyleContextProps> | Ref<Partial<StyleContextProps>>;
-
-export type StyleProviderProps = Partial<Omit<StyleContextProps, 'autoPrefix'>>;
 
 const defaultStyleContext: StyleContextProps = {
   hashPriority: 'low',
@@ -123,62 +68,116 @@ const defaultStyleContext: StyleContextProps = {
   autoPrefix: false,
 };
 
-export const useStyleContextInject = () => {
-  const cache = getCache();
-  const injectedContext = inject(StyleContext, reactive({ ...defaultStyleContext, cache }));
+export const StyleContextKey: InjectionKey<ComputedRef<StyleContextProps>> = Symbol('StyleContext');
 
-  // 确保 cache 对象有正确的方法，避免与 ant-design-vue 的 cssinjs 冲突
-  if (injectedContext.cache && typeof injectedContext.cache.opUpdate !== 'function') {
-    // 如果获取到的 cache 对象不正确（可能来自 ant-design-vue），使用我们自己的 cache
-    injectedContext.cache = cache;
-  }
+// 缓存组件实例的 styleContext，避免在 render 中重复 inject
+const styleContextCache = new WeakMap<object, ComputedRef<StyleContextProps>>();
 
-  return injectedContext;
-};
+// 全局默认 context，用于在没有组件实例时返回
+let globalDefaultContext: ComputedRef<StyleContextProps> | null = null;
 
-export const useStyleContextProvider = (props: Reactive<StyleContextProps>) => {
-  provide(StyleContext, props);
-};
+export function useStyleContext(): ComputedRef<StyleContextProps> {
+  const instance = getCurrentInstance();
 
-export const StyleProvider = defineComponent({
-  props: {
-    value: Object as PropType<Partial<StyleContextProps>>,
-  },
-  setup(props, { slots }) {
-    const parentContext = useStyleContextInject();
+  // 如果有组件实例，尝试从缓存获取
+  if (instance) {
+    const cached = styleContextCache.get(instance);
+    if (cached) {
+      return cached;
+    }
 
-    const context = ref<StyleContextProps>({
-      ...defaultStyleContext,
-      cache: createCache(),
-    });
-
-    watch(
-      [() => props.value, () => parentContext],
-      ([propsValue]) => {
-        const mergedContext = {
-          ...parentContext,
-        } as StyleContextProps;
-        (Object.keys(propsValue) as (keyof StyleContextProps)[]).forEach((key) => {
-          const value = propsValue[key];
-          if (propsValue[key] !== undefined) {
-            (mergedContext as any)[key] = value;
-          }
-        });
-
-        const { cache, transformers = [] } = propsValue;
-        mergedContext.cache = mergedContext.cache || createCache();
-        mergedContext.defaultCache = !cache && parentContext.defaultCache;
-        // autoPrefix
-        if (transformers.includes(AUTO_PREFIX)) {
-          mergedContext.autoPrefix = true;
-        }
-
-        context.value = mergedContext;
-      },
-      { immediate: true, deep: true },
+    // 首次调用，执行 inject
+    const context = inject(
+      StyleContextKey,
+      computed(() => defaultStyleContext),
     );
 
-    useStyleContextProvider(reactiveComputed(() => context.value));
-    return () => <>{slots.default?.()}</>;
+    // 缓存结果
+    styleContextCache.set(instance, context);
+    // 同时更新全局默认 context
+    globalDefaultContext = context;
+
+    return context;
+  }
+
+  // 没有组件实例时（如在 watchEffect/computed 回调中），返回全局缓存的 context
+  if (globalDefaultContext) {
+    return globalDefaultContext;
+  }
+
+  // 兜底：返回默认 context
+  return computed(() => defaultStyleContext);
+}
+
+export interface StyleProviderProps {
+  mock?: 'server' | 'client';
+  cache?: CacheEntity;
+  hashPriority?: HashPriority;
+  container?: Element | ShadowRoot;
+  ssrInline?: boolean;
+  transformers?: Transformer[];
+  linters?: Linter[];
+  layer?: boolean;
+}
+
+export const StyleProvider = defineComponent({
+  name: 'StyleProvider',
+  props: {
+    mock: String as () => 'server' | 'client',
+    cache: Object as () => CacheEntity,
+    hashPriority: String as () => HashPriority,
+    container: Object as () => Element | ShadowRoot,
+    ssrInline: Boolean,
+    transformers: Array as () => Transformer[],
+    linters: Array as () => Linter[],
+    layer: Boolean,
+  },
+  setup(props, { slots }) {
+    const parentContext = useStyleContext();
+
+    const context = computed<StyleContextProps>(() => {
+      const mergedContext: StyleContextProps = {
+        ...parentContext.value,
+      };
+
+      const keys: (keyof StyleProviderProps)[] = [
+        'mock',
+        'cache',
+        'hashPriority',
+        'container',
+        'ssrInline',
+        'transformers',
+        'linters',
+        'layer',
+      ];
+
+      keys.forEach((key) => {
+        const value = props[key];
+        if (value !== undefined) {
+          (mergedContext as any)[key] = value;
+        }
+      });
+
+      const { cache, transformers = [] } = props;
+      mergedContext.cache = mergedContext.cache || createCache();
+      mergedContext.defaultCache = !cache && parentContext.value.defaultCache;
+
+      // autoPrefix
+      if (transformers.includes(AUTO_PREFIX as any)) {
+        mergedContext.autoPrefix = true;
+      }
+
+      return mergedContext;
+    });
+
+    provide(StyleContextKey, context);
+
+    return () => slots.default?.();
   },
 });
+
+export default {
+  useStyleContext,
+  StyleProvider,
+  createCache,
+};

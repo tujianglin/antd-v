@@ -66,6 +66,7 @@ export default function extractStyle(
       if (key.startsWith('style')) {
         cachePathMap[cachePath] = styleId;
       }
+
       // record that this style has been extracted
       cache.extracted.add(key);
 

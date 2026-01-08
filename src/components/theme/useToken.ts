@@ -126,23 +126,23 @@ export default function useToken(): [
 
   const mergedTheme = computed(() => (theme?.value || defaultTheme) as Theme<SeedToken, AliasToken>);
 
-  const { token, hashId, realToken } = toRefs(
-    useCacheToken<GlobalToken, SeedToken>(
-      mergedTheme,
-      computed(() => [defaultSeedToken, rootDesignToken?.value]),
-      computed(() => ({
-        salt: `${version}-${hashed?.value || ''}`,
-        override: override?.value,
-        getComputedToken,
-        cssVar: {
-          ...cssVar.value,
-          unitless,
-          ignore,
-          preserve,
-        },
-      })),
-    ),
+  const cacheToken = computed(() =>
+    useCacheToken<GlobalToken, SeedToken>(mergedTheme.value, [defaultSeedToken, rootDesignToken?.value], {
+      salt: `${version}-${hashed?.value || ''}`,
+      override: override?.value,
+      getComputedToken,
+      cssVar: {
+        ...cssVar.value,
+        unitless,
+        ignore,
+        preserve,
+      },
+    }),
   );
+
+  const token = computed(() => cacheToken.value[0]);
+  const hashId = computed(() => cacheToken.value[1]);
+  const realToken = computed(() => cacheToken.value[2]);
   return [
     mergedTheme,
     realToken,

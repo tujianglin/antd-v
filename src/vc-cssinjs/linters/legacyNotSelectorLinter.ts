@@ -21,11 +21,12 @@ function parsePath(info: LinterInfo) {
   }, '');
 }
 
-const linter: Linter = (_key, _value, info) => {
+const linter: Linter = (key, value, info) => {
   const parentSelectorPath = parsePath(info);
   const notList = parentSelectorPath.match(/:not\([^)]*\)/g) || [];
 
-  if (notList?.length > 0 && notList.some(isConcatSelector)) {
+  // oxlint-disable-next-line no-useless-length-check
+  if (notList.length > 0 && notList.some(isConcatSelector)) {
     lintWarning(`Concat ':not' selector not support in legacy browsers.`, info);
   }
 };

@@ -67,11 +67,10 @@ export function injectCSS(css: string, option: Options = {}) {
   const isPrependQueue = mergedOrder === 'prependQueue';
 
   const styleNode = document.createElement('style');
+  styleNode.setAttribute(APPEND_ORDER, mergedOrder);
 
   if (isPrependQueue && priority) {
     styleNode.setAttribute(APPEND_PRIORITY, `${priority}`);
-  } else {
-    styleNode.setAttribute(APPEND_ORDER, mergedOrder);
   }
 
   if (csp?.nonce) {
@@ -86,7 +85,7 @@ export function injectCSS(css: string, option: Options = {}) {
     // If is queue `prepend`, it will prepend first style and then append rest style
     if (isPrependQueue) {
       const existStyle = (option.styles || findStyles(container)).filter((node) => {
-        // Ignore style which not injected by rc-util with prepend
+        // Ignore style which not injected by vc-util with prepend
         if (!['prepend', 'prependQueue'].includes(node.getAttribute(APPEND_ORDER))) {
           return false;
         }
@@ -124,10 +123,7 @@ export function removeCSS(key: string, option: Options = {}) {
   const existNode = findExistNode(key, option);
   if (existNode) {
     const container = getContainer(option);
-    // dom 移出, 不删除数据样式
-    if (option?.mark !== 'data-css-hash') {
-      container.removeChild(existNode);
-    }
+    container.removeChild(existNode);
   }
 }
 

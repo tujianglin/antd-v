@@ -1,13 +1,11 @@
 import { removeCSS, updateCSS } from '@/vc-util/Dom/dynamicCSS';
-import { reactiveComputed } from '@vueuse/core';
-import { computed, toRefs, type Ref } from 'vue';
-import { ATTR_MARK, ATTR_TOKEN, CSS_IN_JS_INSTANCE, useStyleContextInject } from '../StyleContext';
+import hash from '@emotion/hash';
+import { ATTR_MARK, ATTR_TOKEN, CSS_IN_JS_INSTANCE, useStyleContext } from '../StyleContext';
 import { isClientSide, toStyleStr } from '../util';
 import type { TokenWithCSSVar } from '../util/css-variables';
 import { transformToken } from '../util/css-variables';
 import type { ExtractStyle } from './useGlobalCache';
 import useGlobalCache from './useGlobalCache';
-import { uniqueHash } from './useStyleRegister';
 
 export const CSS_VAR_PREFIX = 'cssVar';
 
@@ -19,7 +17,7 @@ type CSSVarCacheValue<V, T extends Record<string, V> = Record<string, V>> = [
 ];
 
 const useCSSVarRegister = <V, T extends Record<string, V>>(
-  config: Ref<{
+  config: {
     path: string[];
     key: string;
     prefix?: string;
@@ -28,33 +26,43 @@ const useCSSVarRegister = <V, T extends Record<string, V>>(
     scope?: string;
     token: any;
     hashId?: string;
-  }>,
+  },
   fn: () => T,
 ) => {
-  const { key, prefix, unitless, ignore, token, hashId, scope } = toRefs(reactiveComputed(() => config.value));
-  const styleContext = useStyleContextInject();
-  const { _tokenKey: tokenKey } = toRefs(reactiveComputed(() => token.value));
-  const stylePath = computed(() => [...config.value.path, key.value, scope.value || '', tokenKey.value]);
+  const { key, prefix, unitless, ignore, token, hashId, scope = '' } = config;
+  const styleContext = useStyleContext();
+  const {
+    cache: { instanceId },
+    container,
+    hashPriority,
+  } = styleContext.value;
+  const { _tokenKey: tokenKey } = token;
+
+  // stylePath 包含 tokenKey，用于缓存 key，主题变化时触发缓存更新
+  const stylePath = [...config.path, key, scope, tokenKey];
+
+  // styleId 不包含 tokenKey，主题变化时保持不变，实现样式替换而非新建
+  // 与 useCacheToken 中 hash(`css-var-${themeKey}`) 的策略一致
+  const stableStyleId = hash(`${CSS_VAR_PREFIX}-${config.path.join('-')}-${key}${scope ? `-${scope}` : ''}`);
 
   const cache = useGlobalCache<CSSVarCacheValue<V, T>>(
     CSS_VAR_PREFIX,
-    computed(() => stylePath.value),
+    stylePath,
     () => {
       const originToken = fn();
-      const [mergedToken, cssVarsStr] = transformToken<V, T>(originToken, key.value, {
-        prefix: prefix.value,
-        unitless: unitless.value,
-        ignore: ignore.value,
-        scope: scope.value || '',
-        hashPriority: styleContext.hashPriority,
-        hashCls: hashId?.value,
+      const [mergedToken, cssVarsStr] = transformToken<V, T>(originToken, key, {
+        prefix,
+        unitless,
+        ignore,
+        scope,
+        hashPriority,
+        hashCls: hashId,
       });
-      const styleId = uniqueHash(stylePath.value, cssVarsStr);
-      return [mergedToken, cssVarsStr, styleId, key.value];
+      return [mergedToken, cssVarsStr, stableStyleId, key];
     },
     ([, , styleId]) => {
       if (isClientSide) {
-        removeCSS(styleId, { mark: ATTR_MARK });
+        removeCSS(styleId, { mark: ATTR_MARK, attachTo: container });
       }
     },
     ([, cssVarsStr, styleId]) => {
@@ -64,18 +72,16 @@ const useCSSVarRegister = <V, T extends Record<string, V>>(
       const style = updateCSS(cssVarsStr, styleId, {
         mark: ATTR_MARK,
         prepend: 'queue',
-        attachTo: styleContext.container,
+        attachTo: container,
         priority: -999,
       });
 
-      (style as any)[CSS_IN_JS_INSTANCE] = styleContext.cache.instanceId;
-
-      // Used for `useCacheToken` to remove on batch when token removed
-      style.setAttribute(ATTR_TOKEN, key.value);
+      (style as any)[CSS_IN_JS_INSTANCE] = instanceId;
+      style?.setAttribute(ATTR_TOKEN, key);
     },
   );
 
-  return cache.value;
+  return cache;
 };
 
 export const extract: ExtractStyle<CSSVarCacheValue<any>> = (cache, _effectStyles, options) => {
@@ -88,11 +94,9 @@ export const extract: ExtractStyle<CSSVarCacheValue<any>> = (cache, _effectStyle
 
   const order = -999;
 
-  // ====================== Style ======================
-  // Used for vc-util
   const sharedAttrs = {
-    'data-vc-order': 'prependQueue',
-    'data-vc-priority': `${order}`,
+    'data-rc-order': 'prependQueue',
+    'data-rc-priority': `${order}`,
   };
 
   const styleText = toStyleStr(styleStr, cssVarKey, styleId, sharedAttrs, plain);
