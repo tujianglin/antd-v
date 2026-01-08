@@ -1,35 +1,14 @@
-<script setup lang="ts">
-import { ColorPicker, ConfigProvider, Radio, theme } from '@/components';
-import 'dayjs/locale/zh-cn';
+<script setup lang="tsx">
+import { Slider, Switch } from '@/components';
 import { ref } from 'vue';
 
-const isDark = ref(true);
-const color = ref('#ffffff');
+const disabled = ref(false);
 </script>
 
 <template>
-  <ConfigProvider
-    :theme="{
-      algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
-      token: {
-        colorPrimary: color,
-      },
-    }"
-  >
-    <Radio.Group
-      v-model:value="isDark"
-      option-type="button"
-      :options="[
-        {
-          label: '暗色',
-          value: true,
-        },
-        {
-          label: '亮色',
-          value: false,
-        },
-      ]"
-    />
-    <ColorPicker v-model:value="color" />
-  </ConfigProvider>
+  <div>
+    <Slider :value="30" :disabled="disabled" />
+    <Slider :range="true" :value="[20, 50]" :disabled="disabled" />
+    Disabled: <Switch size="small" v-model:value="disabled" />
+  </div>
 </template>
